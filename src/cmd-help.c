@@ -1,9 +1,5 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "opt.h"
-#include "util.h"
 extern char** argv_orig;
-int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command);
 
 int cmd_help(int argc, const char **argv) {
   LVal help=(LVal)NULL;
@@ -48,12 +44,13 @@ int cmd_help(int argc, const char **argv) {
       }
       for(p=pinit;p;p=Next(p)) {
         struct sub_command* fp=firstp(p);
-        int len=fp && fp->show_opt?strlen(fp->name):0;
-        len+=fp && fp->show_opt && fp->arg_example?strlen(fp->arg_example):0;
+        int show_opt=fp->show_opt;
+        int len=fp && show_opt ?strlen(fp->name):0;
+        len+=fp && show_opt && fp->arg_example?strlen(fp->arg_example):0;
         if(cmdmax<len)
           cmdmax=len;
-        len=fp && fp->show_opt && fp->short_name ?strlen(fp->short_name):0;
-        len+=fp && fp->show_opt && fp->arg_example?strlen(fp->arg_example):0;
+        len=fp && show_opt && fp->short_name ?strlen(fp->short_name):0;
+        len+=fp && show_opt && fp->arg_example?strlen(fp->arg_example):0;
         if(optmax<len)
           optmax=len;
       }

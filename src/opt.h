@@ -1,4 +1,4 @@
-#ifndef  __OPT_H__
+#ifndef __OPT_H__
 #define __OPT_H__
 #include "util.h"
 struct sub_command;
