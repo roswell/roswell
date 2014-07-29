@@ -1,0 +1,30 @@
+#                                               -*- Autoconf -*-
+# Process this file with autoconf to produce a configure script.
+
+AC_PREREQ([2.69])
+AC_INIT([lsp],[0.0.0],snmsts@gmail.com)
+
+AM_CONFIG_HEADER(config.h)
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_SRCDIR([src/lsp.c])
+AM_INIT_AUTOMAKE
+
+# Checks for programs.
+AC_PROG_CC
+#AC_PROG_INSTALL
+
+# Checks for libraries.
+
+AC_CHECK_LIB([curl], [curl_global_init],[],[AC_MSG_ERROR([libcurl development files required])])
+
+AC_CHECK_LIB([archive], [archive_read_open_filename],[],[AC_MSG_ERROR([libarchive is needed to compile lsp])])
+
+# Checks for header files.
+AC_HEADER_STDC
+AC_CHECK_HEADERS(stdlib.h stdio.h sys/stat.h archive.h)
+
+# Checks for typedefs, structures, and compiler characteristics.
+
+# Checks for library functions.
+
+AC_OUTPUT
