@@ -1,5 +1,8 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
+extern char** argv_orig;
+extern int argc_orig;
+
 char* q(const char* orig);
 void s(char* f);
 char* s_cat2(char* a,char* b);
@@ -18,6 +21,7 @@ int delete_directory(char* pathspec,int recursive);
 int delete_file(char* pathspec);
 void touch(char* path);
 char* system_(char* cmd);
+int system_redirect(const char* cmd,char* filename);
 char* uname(void);
 char* uname_m(void);
 char* which(char* cmd);
