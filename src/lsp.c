@@ -28,7 +28,7 @@ static struct sub_command commands[] = {
   { "version", cmd_version},
   { "install", cmd_install},
   { "run",cmd_run},
-  { "opt", cmd_opt},
+  { "config", cmd_opt},
   { "set", cmd_notyet},
   { "tar",cmd_tar},
   { "download",cmd_download},

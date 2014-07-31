@@ -13,8 +13,8 @@ int installed_p(char* impl,char* version)
   char* i;
   if(strcmp(impl,"sbcl-bin")==0){
     impl="sbcl";
-    i=s_cat(homedir(),q("impls/"),q(impl),q("-"),q(version),q("/"),NULL);
   }
+  i=s_cat(homedir(),q("impls/"),q(impl),q("-"),q(version),q("/"),NULL);
   ret=directory_exist_p(i);
   s(i);
   return ret;
@@ -35,13 +35,12 @@ int start(char* impl,char* version)
     printf("%s-%s are already installed.if you intend to reinstall by (TBD).\n",impl,version);
     return 0;
   }
-
   if(install_running_p(impl,version)) {
     printf("It seems running installation process for $1-$2.\n");
     return 0;
   }
-  if(strcmp(impl,"sbcl")==0 && NULL==get_opt("sbcl-compiler")) {
-    printf("compiler variable 'sbcl-compiler' should be specified");
+  if(strcmp(impl,"sbcl")==0 && NULL==get_opt("sbcl.compiler")) {
+    printf("compiler variable 'sbcl.compiler' should be specified\n");
     return 0;
   }
   /*trap "exit 1" HUP INT PIPE QUIT TERM*/
@@ -204,13 +203,14 @@ int configure(char* impl,char* version)
 int sbcl_make(char* impl,char* version) {
   char* home=homedir();
   char* src=cat(home,"src/",impl,"-",version,NULL);
-  char* cmd=cat("sh make.sh \"","sbcl","\" ","--prefix=\"",home,"impls/",impl,"-",version,"\"",NULL);
+  char* compiler=cat(argv_orig[0]," -impl ",get_opt("sbcl.compiler")," run",NULL);
+  char* cmd=cat("sh make.sh \"",compiler,"\" ","--prefix=\"",home,"impls/",impl,"-",version,"\"",NULL);
   printf("Building %s-%s\n",impl,version);
   change_directory(src);
   printf("cmd:%s\n",cmd);
   system(cmd);
   /* pipe connect for logging cim_with_output_control */
-  s(home),s(src),s(cmd);
+  s(home),s(src),s(cmd),s(compiler);
 }
 
 int sbcl_install(char* impl,char* version) {
@@ -231,7 +231,7 @@ int sbcl_install(char* impl,char* version) {
   change_directory(src);
   setenv("SBCL_HOME",sbcl_home,1);
   setenv("INSTALL_ROOT",install_root,1);
-  if(system("sh install.sh")==-1) {
+  if(system_redirect("sh install.sh","/tmp/hoge")==-1) {
     ret=0;
   }
   s(home);
