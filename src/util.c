@@ -351,8 +351,7 @@ char** parse_cmdline(char* cmdline,int *argc)
   int count,last;
   char** ret;
   for(write=0;write<2;++write) {
-    last=0;
-    count=0;
+    last=0,mode=0,count=0;
     for(i=0;cmdline[i]!='\0';++i) {
       if(cmdline[i]==' '||cmdline[i]=='\t') {
 	if(i!=0) {
@@ -377,7 +376,7 @@ char** parse_cmdline(char* cmdline,int *argc)
     }
     if(last+1!=i) {
       if(write) {
-	ret[count]=subseq(cmdline,last,i);
+	ret[count]=subseq(cmdline,last,i-mode);
 	if(mode) {
 	  ret[count]=s_decode(ret[count]);
 	  mode=0;
