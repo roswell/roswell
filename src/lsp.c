@@ -74,7 +74,7 @@ int main (int argc,char **argv) {
     subcmd=argv[0];
     subargv=&argv[1];
     argc--;
-    for(i=0;i<sizeof(commands)/sizeof(struct sub_command);i++) {
+    for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
       j = &commands[i];
       if(strcmp(subcmd,j->name)==0) {
 	found=1;
