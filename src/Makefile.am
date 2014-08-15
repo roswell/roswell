@@ -1,4 +1,6 @@
 AUTOMAKE_OPTIONS = subdir-objects
 bin_PROGRAMS = lsp
-lsp_SOURCES = lsp.c opt.c download.c util.c archive.c cmd_version.c install/cmd.c cmd_run.c install/sbcl.c
+lsp_SOURCES = lsp.c opt.c download.c util.c archive.c cmd_version.c cmd_run.c \
+	install/cmd.c install/sbcl.c install/sbcl-bin.c \
+	html.c
 include_HEADERS = opt.h util.h install/install.h

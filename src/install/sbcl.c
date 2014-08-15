@@ -1,4 +1,6 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "util.h"
 #include "install.h"
 #include "opt.h"
@@ -61,42 +63,25 @@ int sbcl_install(char* impl,char* version) {
 #endif
 }
 
-char* _version(char* impl,char* version)
+char* sbcl_version(char* impl,char* version)
 {
   /* TBD */
   if(version) {
     return q(version);
   }
-  if(strcmp(impl,"sbcl")==0) {
-    return q("1.2.1");
-  }else if(strcmp(impl,"sbcl-bin")==0) {
-    return s_cat(_version("sbcl",NULL),q("-"),uname_m(),q("-"),uname(),NULL);
-  }
+  return q("1.2.1");
 }
 
-char* uri(char* impl,char* version)
+char* sbcl_uri(char* impl,char* version)
 {
-  if(strcmp(impl,"sbcl")==0 && version) {
-    return cat("http://sourceforge.net/projects/sbcl/files/sbcl/",version,
-	       "/sbcl-",version,"-source.tar.bz2",NULL);
-  }else if(strcmp(impl,"sbcl-bin")==0) {
-    return q("http://prdownloads.sourceforge.net/sbcl/sbcl-1.2.1-x86-64-linux-binary.tar.bz2");
-  }
-  return NULL;
+  return cat("http://sourceforge.net/projects/sbcl/files/sbcl/",version,
+	     "/sbcl-",version,"-source.tar.bz2",NULL);
 }
 
-char* extention(char* impl,char* version)
+char* sbcl_extention(char* impl,char* version)
 {
   return "tar.bz2";
 }
-
-install_cmds install_sbcl_bin_full[]={
-  start,
-  download,
-  expand,
-  sbcl_install,
-  NULL
-};
 
 install_cmds install_sbcl_full[]={
   sbcl_start,
@@ -108,5 +93,4 @@ install_cmds install_sbcl_full[]={
   NULL
 };
 
-struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,_version,uri,extention};
-struct install_impls impls_sbcl={ "sbcl", install_sbcl_full,_version,uri,extention};
+struct install_impls impls_sbcl={ "sbcl", install_sbcl_full,sbcl_version,sbcl_uri,sbcl_extention};

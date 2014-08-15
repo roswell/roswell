@@ -13,6 +13,7 @@
 #endif
 
 #include <stdarg.h>
+#include "util.h"
 
 char* q(const char* orig) {
   char* ret= (char*)malloc(strlen(orig)+1);
@@ -46,7 +47,6 @@ char* s_cat(char* first,...)
   va_end(list);
 	
   return ret;
-  
 }
 
 char* cat(char* first,...)
@@ -128,6 +128,22 @@ int position_char(char* items,char* seq) {
   }
   return -1;
 }
+int position_char_not(char* items,char* seq) {
+  int i,j,stop;
+  for(i=0,stop=1;seq[i]!='\0';++i,stop=1) {
+    for(j=0;items[j]!='\0';++j) {
+      if(seq[i]==items[j]){
+	stop=0;
+	break;
+      }
+    }
+    if(stop) {
+      return i;
+    }
+  }
+  return -1;
+}
+
 
 char* substitute_char(char new,char old,char* seq) {
   int i;
@@ -203,6 +219,19 @@ char* pathname_directory(char* path) {
   for(i=strlen(path)-1;i>=0&&path[i]!='/';--i);
   ret=append_trail_slash(subseq(path,0,i));
   s(path);
+  return ret;
+}
+
+char* file_namestring(char* path) {
+  int i;
+  char* ret;
+  for(i=strlen(path)-1;i>=0&&path[i]!='/';--i);
+  if(path[i]=='/') {
+    ret=subseq(path,i+1,0);
+    s(path);
+  }else {
+    ret=path;
+  }
   return ret;
 }
 
@@ -468,3 +497,159 @@ char* which(char* cmd) {
   return p2;
 }
 
+/*list*/
+
+LVal cons(void* v,LVal l)
+{
+  struct Cons* ret=malloc(sizeof(struct Cons));
+  ret->val=(LVal)v;
+  ret->type=0;
+  ret->next=l;
+  return (LVal)toList(ret);
+}
+
+LVal consi(int v,LVal l)
+{
+  return cons((void*)((LVal)toNumber(v)),l);
+}
+
+LVal conss(char* v,LVal l)
+{
+  return cons((void*)((LVal)toString(v)|2),l);
+}
+
+LVal nreverse(LVal v)
+{
+  struct Cons* l=toPointer(v);
+  struct Cons* next;
+  struct Cons* before;
+  for(before=NULL;l;l=next) {
+    next=Next((LVal)l);
+    l->next=before;
+    before=l;
+  }
+  return (LVal)before;
+}
+
+LVal remove_if_not1(Function1 f,LVal v)
+{
+  LVal ret;
+  LVal fret;
+  for(ret=0;v;v=Next(v)) {
+    fret=f(v);
+    if(fret) {
+      if(NumberP(first(v))) {
+	ret=consi(firsti(v),ret);
+      }else if(StringP(first(v))) {
+	ret=conss(q(firsts(v)),ret);
+      }
+    }
+    sL(fret);
+  }
+  return nreverse(ret);
+}
+LVal mapcar1(Function1 f,LVal v)
+{
+  LVal ret;
+  for(ret=0;v;v=Next(v)) {
+    ret=cons(f(first(v)),ret);
+  }
+  return nreverse(ret);
+}
+
+int firsti(LVal v)
+{
+  struct Cons* l=(struct Cons*)v;
+  return (l->val>>2);
+}
+
+char* firsts(LVal v)
+{
+  struct Cons* l=(struct Cons*)v;
+  return (char*)(l->val&(~3));
+}
+
+void* firstp(LVal v)
+{
+  struct Cons* l=(struct Cons*)v;
+  return (void*)(l->val&(~3));
+}
+LVal first(LVal v)
+{
+  struct Cons* l=(struct Cons*)v;
+  return l->val;
+}
+LVal rest(LVal v)
+{
+  struct Cons* l=(struct Cons*)v;
+  return l->next;
+ }
+
+LVal nthcdr(int n,LVal v)
+{
+  for(;n>0;--n) {
+    v=rest(v);
+  }
+  return v;
+}
+
+void print_list(LVal v)
+{
+  printf("(");
+  for(;v;v=Next(v)) {
+    switch(first(v)&3) {
+    case 1:
+      printf("%d",firsti(v));
+      break;
+    case 2:
+      printf("\"%s\"",firsts(v));
+      break;
+    case 0:
+      print_list(first(v));
+      break;
+    }
+    if(Next(v))
+      printf(" ");
+  }
+  printf(")\n");
+}
+
+LVal split_string(char* string,char* by) {
+  LVal ret;
+  int pos,j,i;
+  for(i=0,pos=-1,ret=0;string[i]!='\0';i++) {
+    for(j=0;by[j]!='\0';++j) {
+      if(string[i]==by[j]) {
+	ret=conss(subseq(string,pos+1,i),V(ret));
+	pos=i;
+	break;
+      }
+    }
+  }
+  if(i!=pos+1)
+    ret=conss(subseq(string,pos+1,i),V(ret));
+  else 
+    ret=conss(q(""),V(ret));
+  return nreverse(ret);
+}
+
+void sL(LVal v)
+{
+  struct Cons* next;
+  struct Cons* l;
+  switch(v&3) {
+  case 0: //pointer
+  case 1: //number
+    break;
+  case 2: //string pointer
+    s(toString(v));
+    break;
+  case 3: //builtin structure
+    for(l=toList(v);l;l=next) {
+      next=Next((LVal)l);
+      sL(l->val);
+      free(l);
+    }
+    break;
+  }
+}

@@ -39,15 +39,11 @@ int start(char* impl,char* version)
   char* p;
   ensure_directories_exist(home);
   if(installed_p(impl,version)) {
-    printf("%s-%s are already installed.if you intend to reinstall by (TBD).\n",impl,version);
+    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",impl,version);
     return 0;
   }
   if(install_running_p(impl,version)) {
-    printf("It seems running installation process for $1-$2.\n");
-    return 0;
-  }
-  if(strcmp(impl,"sbcl")==0 && !get_opt("sbcl.compiler")) {
-    printf("compiler variable 'sbcl.compiler' should be specified\n");
+    printf("It seems running installation process for $1/$2.\n");
     return 0;
   }
   /*TBD trap "exit 1" HUP INT PIPE QUIT TERM
@@ -68,8 +64,8 @@ int download(char* impl,char* version)
   char* home= homedir();
   char* url;
   char* impl_archive;
-  printf("Downloading archive.\n");
-  url=(*(install_impl->uri))(impl,version);//get_download_path(impl,version);
+  url=(*(install_impl->uri))(impl,version);
+  printf("Downloading archive.:%s\n",url);
   /*TBD proxy support... etc*/
   if(get_opt("skip.download")) {
     printf("Skip downloading %s\n",url);
@@ -147,7 +143,7 @@ int configure(char* impl,char* version)
   if(strcmp("ecl",impl)==0 ||strcmp("ecl",impl)==0 || strcmp("clisp",impl)==0) {
     flags=s_cat(flags,q(" --mandir="),q(home),q("/share/man"));
   }
-  printf("Configuring %s-%s\n",impl,version);
+  printf("Configuring %s/%s\n",impl,version);
   cd=cat(home,"src/",impl,"-",version,NULL);
   printf ("cd:%s\n",cd);
   change_directory(cd);
@@ -170,27 +166,38 @@ install_cmds install_full[]={
 
 int cmd_install(int argc,char **argv)
 {
-  int ret=1;
+  int ret=1,k;
   install_cmds *cmds=NULL;
   if(argc!=0) {
-    char* impl=q(argv[0]);
-    char* version=NULL;
-    int i;
-    for(install_impl=NULL,i=0;i<sizeof(impls_to_install)/sizeof(struct install_impls*);++i) {
-      struct install_impls* j=impls_to_install[i];
-      if(strcmp(impl,j->name)==0) {
-	install_impl=j;
+    for(k=0;k<argc;++k) {
+      char* impl=argv[k];
+      char* version_arg=NULL;
+      char* version=NULL;
+      int i,pos;
+      pos=position_char("/",impl);
+      if(pos!=-1) {
+	version_arg=subseq(impl,pos+1,0);
+	impl=subseq(impl,0,pos);
+      }else {
+	impl=q(impl);
       }
+
+      for(install_impl=NULL,i=0;i<sizeof(impls_to_install)/sizeof(struct install_impls*);++i) {
+	struct install_impls* j=impls_to_install[i];
+	if(strcmp(impl,j->name)==0) {
+	  install_impl=j;
+	}
+      }
+      if(!install_impl) {
+	printf("%s is not implemented for install.\n",impl);
+	exit(EXIT_FAILURE);
+      }
+      version=(*(install_impl->version))(impl,version_arg);
+      for(cmds=install_impl->call;*cmds&&ret;++cmds) {
+	ret=(*cmds)(impl,version);
+      }
+      s(version),s(version_arg),s(impl);
     }
-    if(!install_impl) {
-      printf("%s is not implemented for install.\n",impl);
-      exit(EXIT_FAILURE);
-    }
-    version=(*(install_impl->version))(impl,argc==1?NULL:argv[1]);
-    for(cmds=install_impl->call;*cmds&&ret;++cmds) {
-      ret=(*cmds)(impl,version);
-    }
-    s(version);
   }else {
     printf("what would you like to install?\n");
     exit(EXIT_FAILURE);
