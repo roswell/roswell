@@ -9,7 +9,7 @@ struct attr {
 };
 
 struct Cons* attralloc(void) {
-  struct attr* ret=malloc(sizeof(struct attr));
+  struct attr* ret=alloc(sizeof(struct attr));
   ret->name=NULL;
   ret->value=NULL;
   return toPointer(cons(ret,(LVal)NULL));
@@ -29,7 +29,7 @@ void attrsfree(struct Cons* a) {
     struct attr* p=(struct attr*)firstp((LVal)a);
     s(p->name),s(p->value);
     next=a->next;
-    free(a);
+    dealloc(a);
     a=next;
   }
 }
@@ -121,7 +121,7 @@ struct tag {
 };
 
 struct Cons* tagalloc(void) {
-  struct tag* t=malloc(sizeof(struct tag));
+  struct tag* t=alloc(sizeof(struct tag));
   t->type=0;
   t->name=NULL;
   t->attr=NULL;
@@ -132,8 +132,8 @@ void tagfree(LVal l) {
   struct tag* t=firstp(l);
   s(t->name);
   attrsfree(t->attr);
-  free(t);
-  free((void*)l);
+  dealloc(t);
+  dealloc((void*)l);
 }
 
 void tagsfree(struct Cons* t) {

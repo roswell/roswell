@@ -39,7 +39,7 @@ int cmd_run(int argc,char **argv)
 	  break;
 	}
       }
-      arg=malloc(sizeof(char*)*(offset+2+argc));
+      arg=alloc(sizeof(char*)*(offset+2+argc));
       arg[0]=bin;
       if(core_p) {
 	offset=2;
@@ -50,7 +50,7 @@ int cmd_run(int argc,char **argv)
     }else if (strcmp(impl,"native")==0) {
       bin= which(version);
       if(strcmp(bin,"")!=0) {
-	arg=malloc(sizeof(char*)*(offset+2+argc));
+	arg=alloc(sizeof(char*)*(offset+2+argc));
 	arg[0]=bin;
       }else {
 	printf("can't find %s.\n",version);

@@ -1,6 +1,9 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 #include <stdint.h>
+#ifndef _WIN32
+#include <dirent.h>
+#endif
 extern char** argv_orig;
 extern int argc_orig;
 
@@ -39,6 +42,8 @@ void print_list(LVal v);
 LVal split_string(char* string,char* by);
 void sL(LVal l);
 
+void* alloc(size_t bytes);
+void dealloc(void* f);
 char* q(const char* orig);
 void s(char* f);
 char* s_cat2(char* a,char* b);
@@ -63,5 +68,6 @@ int system_redirect(const char* cmd,char* filename);
 char* uname(void);
 char* uname_m(void);
 char* which(char* cmd);
+LVal directory(char* path);
 
 #endif

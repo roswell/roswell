@@ -15,18 +15,29 @@
 #include <stdarg.h>
 #include "util.h"
 
+void* alloc(size_t bytes) {
+  void* p=malloc(bytes);
+  printf("**%d\n",p);
+  return p;
+}
+
+void dealloc(void* f) {
+  printf("*:%d\n",f);
+  free(f);
+}
+
 char* q(const char* orig) {
-  char* ret= (char*)malloc(strlen(orig)+1);
+  char* ret= (char*)alloc(strlen(orig)+1);
   strcpy(ret,orig);
   return ret;
 }
 
 void s(char* f) {
-  free(f);
+  dealloc(f);
 }
 
 char* s_cat2(char* a,char* b) {
-  char* ret= (char*)malloc(strlen(a)+strlen(b)+1);
+  char* ret= (char*)alloc(strlen(a)+strlen(b)+1);
   strcpy(ret,a);
   strcat(ret,b);
   s(a);
@@ -82,7 +93,7 @@ char* subseq(char* base,int beg,int end)
   }
   if(end<=beg)
     return NULL;
-  ret=malloc(end-beg+1);
+  ret=alloc(end-beg+1);
   for(i=0;i<end-beg;++i) {
     ret[i]=base[i+beg];
   }
@@ -104,7 +115,7 @@ char* remove_char(char* items,char* orig)
       }
     }
   }
-  ret=malloc(j+1-found);
+  ret=alloc(j+1-found);
   for(j=0,k=0;orig[j]!='\0';++j,++k) {
     for(i=0;items[i]!='\0';++i) {
       ret[k]=orig[j];
@@ -366,7 +377,7 @@ char* s_decode(char* str) {
       }
     }
     if(!write) {
-      ret=malloc(sizeof(char)*(count+1));
+      ret=alloc(sizeof(char)*(count+1));
       ret[count]='\0';
     }
   }
@@ -414,7 +425,7 @@ char** parse_cmdline(char* cmdline,int *argc)
       ++count;
     }
     if(!write)
-      ret=malloc(sizeof(char**)*(count+1));
+      ret=alloc(sizeof(char**)*(count+1));
   }
   ret[count]=NULL;
   *argc=count;
@@ -425,9 +436,9 @@ int free_cmdline(char** argv)
 {
   char** p;
   for(p=argv;*p!=NULL;++p) {
-    free(*p);
+    dealloc(*p);
   }
-  free(argv);
+  dealloc(argv);
   return 1;
 }
 
@@ -497,11 +508,32 @@ char* which(char* cmd) {
   return p2;
 }
 
+LVal directory(char* path)
+{
+  //#ifndef _WIN32
+  LVal ret=0;
+  DIR* dir=opendir(path);
+  struct dirent *dirent;
+
+  if(dir==NULL)
+    return 0;
+  while(dirent=readdir(dir)) {
+    char* str=q(dirent->d_name);
+    if(dirent->d_type&DT_DIR) {
+      str=s_cat2(str,q("/"));
+    }
+    ret=conss(str,ret);
+  }
+  closedir(dir);
+  return ret;
+  //#endif
+}
+
 /*list*/
 
 LVal cons(void* v,LVal l)
 {
-  struct Cons* ret=malloc(sizeof(struct Cons));
+  struct Cons* ret=alloc(sizeof(struct Cons));
   ret->val=(LVal)v;
   ret->type=0;
   ret->next=l;
@@ -520,13 +552,12 @@ LVal conss(char* v,LVal l)
 
 LVal nreverse(LVal v)
 {
-  struct Cons* l=toPointer(v);
-  struct Cons* next;
-  struct Cons* before;
-  for(before=NULL;l;l=next) {
-    next=Next((LVal)l);
-    l->next=before;
-    before=l;
+  LVal next;
+  LVal before;
+  for(before=0;v;v=next) {
+    next=Next(v);
+    ((struct Cons*)v)->next=before;
+    before=v;
   }
   return (LVal)before;
 }
@@ -638,17 +669,16 @@ void sL(LVal v)
   struct Cons* next;
   struct Cons* l;
   switch(v&3) {
-  case 0: //pointer
   case 1: //number
     break;
   case 2: //string pointer
     s(toString(v));
     break;
-  case 3: //builtin structure
+  case 0: //builtin structure
     for(l=toList(v);l;l=next) {
       next=Next((LVal)l);
       sL(l->val);
-      free(l);
+      dealloc(l);
     }
     break;
   }

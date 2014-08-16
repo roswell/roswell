@@ -8,18 +8,18 @@ void free_opts(struct opts* opt)
   void* tmp;
   while(opt) {
     if(opt->value) {
-      free((void*)opt->value);
+      dealloc((void*)opt->value);
       opt->value=NULL;
     }
     if(opt->name) {
-      free((void*)opt->name);
+      dealloc((void*)opt->name);
       opt->name=NULL;
     }
     tmp=opt->next;
     opt->next=NULL;
     tmp=opt;
     opt=opt->next;
-    free(tmp);
+    dealloc(tmp);
   }
 }
 
@@ -59,7 +59,7 @@ struct opts* load_opts(const char* path) {
   while(fgets(buf,1024,fp) !=NULL) {
     int i,mode,last;
     char* str;
-    cur->next=(struct opts*)malloc(sizeof(struct opts));
+    cur->next=(struct opts*)alloc(sizeof(struct opts));
     cur=cur->next;
     cur->type=OPT_VOID;
     cur->value=NULL;
@@ -119,7 +119,7 @@ int set_opt(struct opts** opts,const char* name,char* value,int type)
     opt=opt->next;
   }
   if(!found) {
-    opt=(struct opts*)malloc(sizeof(struct opts));
+    opt=(struct opts*)alloc(sizeof(struct opts));
     opt->next=*opts;
     opt->type=type;
     opt->name=(const char*)remove_char("\n\t",(char*)name);
