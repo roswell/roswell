@@ -12,6 +12,7 @@ struct opts* global_opt;
 struct opts* local_opt=NULL;
 
 extern int cmd_install(int argc,char **argv);
+extern int cmd_list(int argc,char **argv);
 extern int cmd_download(int argc,char **argv);
 extern int cmd_tar(int argc,char **argv);
 extern int cmd_version(int argc,char **argv);
@@ -24,14 +25,15 @@ int cmd_notyet(int argc,char **argv)
 }
 
 static struct sub_command commands[] = {
-  { "help", cmd_notyet},
-  { "version", cmd_version},
-  { "install", cmd_install},
-  { "run",cmd_run},
-  { "config", cmd_opt},
-  { "set", cmd_notyet},
-  { "tar",cmd_tar},
-  { "download",cmd_download},
+  { "help", cmd_notyet,0},
+  { "list", cmd_list,1},
+  { "version", cmd_version,0},
+  { "install", cmd_install,1},
+  { "run",cmd_run,1},
+  { "config", cmd_opt,1},
+  { "set", cmd_notyet,0},
+  { "tar",cmd_tar,0},
+  { "download",cmd_download,0},
 };
 
 int main (int argc,char **argv) {
@@ -84,6 +86,12 @@ int main (int argc,char **argv) {
     }
     if(!found) {
       printf("action %s not found\n",subcmd);
+    }
+  }else {
+    for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
+      j = &commands[i];
+      if(j->show_opt)
+	printf("%s\n",j->name);
     }
   }
   free_opts(global_opt);

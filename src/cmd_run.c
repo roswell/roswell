@@ -15,7 +15,18 @@ int cmd_run(int argc,char **argv)
     version=subseq(impl,pos+1,0);
     impl=subseq(impl,0,pos);
   }else {
+    if(!impl)
+      impl=get_opt("default-impl");
     version=get_opt("version");
+    when(!version){
+      char* opt=cat(q(impl),q("-"),q("version"),NULL);
+      version=get_opt(opt);
+      s(opt);
+    }
+    if(impl) 
+      impl=q(impl);
+    if(version) 
+      version=s(version);
   }
   if(impl) {
     char** arg=NULL;
@@ -66,6 +77,6 @@ int cmd_run(int argc,char **argv)
   }else {
     printf("impl doesn't specified stop");
   }
-  s(home);
+  s(home),s(impl),s(version);
   return ret;
 }

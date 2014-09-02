@@ -21,7 +21,10 @@ struct sub_command
 {
   const char* name;
   sub_command_fnc call;
+  int show_opt;
+  char* path;
 };
+
 extern struct opts* global_opt;
 extern struct opts* local_opt;
 struct opts* load_opts(const char* path);

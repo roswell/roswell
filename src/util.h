@@ -15,9 +15,12 @@ struct Cons {
 };
 
 typedef LVal (*Function1)(LVal v);
+typedef LVal (*Compare2)(LVal v1,LVal v2);
+
 #define toPointer(v) ((void*)(((intptr_t)v)&~3))
 #define NumberP(v) (((v)&3)==1)
 #define toNumber(v) (((v)<<2)+1)
+#define Number(v) (((v)>>2))
 #define StringP(v) (((v)&3)==2)
 #define toString(v) ((char*)(((intptr_t)v)&~3))
 #define ListP(v) (((v)&3)==3)
@@ -31,12 +34,16 @@ LVal nreverse(LVal l);
 LVal remove_if_not1(Function1 f,LVal v);
 LVal mapcar1(Function1 f,LVal v);
 
+LVal string_equal(LVal v1,LVal v2);
+LVal find(LVal v,LVal l,Compare2 c);
+
 int firsti(LVal l);
 char* firsts(LVal l);
 void* firstp(LVal l);
 LVal first(LVal v);
 LVal rest(LVal v);
 LVal nthcdr(int n,LVal v);
+LVal length(LVal l);
 
 void print_list(LVal v);
 LVal split_string(char* string,char* by);

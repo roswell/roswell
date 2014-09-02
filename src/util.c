@@ -17,12 +17,12 @@
 
 void* alloc(size_t bytes) {
   void* p=malloc(bytes);
-  printf("**%d\n",p);
+  //  printf("**%d\n",p);
   return p;
 }
 
 void dealloc(void* f) {
-  printf("*:%d\n",f);
+  //printf("*:%d\n",f);
   free(f);
 }
 
@@ -74,6 +74,7 @@ char* cat(char* first,...)
 	
   return ret;
 }
+
 char* subseq(char* base,int beg,int end)
 {
   int len=-1;
@@ -583,9 +584,21 @@ LVal mapcar1(Function1 f,LVal v)
 {
   LVal ret;
   for(ret=0;v;v=Next(v)) {
-    ret=cons(f(first(v)),ret);
+    ret=cons((void*)f(first(v)),ret);
   }
   return nreverse(ret);
+}
+LVal string_equal(LVal v1,LVal v2) {
+  return strcmp(toString(v1),toString(v2))==0;
+}
+
+LVal find(LVal v,LVal l,Compare2 c)
+{
+  for(;l;l=Next(l)) {
+    if(c(v,first(l)))
+      return first(l);
+  }
+  return 0;
 }
 
 int firsti(LVal v)
@@ -622,6 +635,11 @@ LVal nthcdr(int n,LVal v)
     v=rest(v);
   }
   return v;
+}
+LVal length(LVal l) {
+  int c;
+  for(c=0;l;++c,l=Next(l));
+  return toNumber(c);
 }
 
 void print_list(LVal v)
@@ -676,7 +694,7 @@ void sL(LVal v)
     break;
   case 0: //builtin structure
     for(l=toList(v);l;l=next) {
-      next=Next((LVal)l);
+      next=(struct Cons*)Next((LVal)l);
       sL(l->val);
       dealloc(l);
     }
