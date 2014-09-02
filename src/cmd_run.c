@@ -16,17 +16,17 @@ int cmd_run(int argc,char **argv)
     impl=subseq(impl,0,pos);
   }else {
     if(!impl)
-      impl=get_opt("default-impl");
+      impl=get_opt("default.impl");
     version=get_opt("version");
-    when(!version){
-      char* opt=cat(q(impl),q("-"),q("version"),NULL);
+    if(!version){
+      char* opt=s_cat(q(impl),q("."),q("version"),NULL);
       version=get_opt(opt);
       s(opt);
     }
     if(impl) 
       impl=q(impl);
     if(version) 
-      version=s(version);
+      version=q(version);
   }
   if(impl) {
     char** arg=NULL;
@@ -36,7 +36,7 @@ int cmd_run(int argc,char **argv)
     if(strcmp(impl,"sbcl-bin")==0) {
       impl="sbcl";
       if(version) {
-	version=cat(q(version),q("-"),uname_m(),q("-"),uname(),NULL);
+	version=s_cat(q(version),q("-"),uname_m(),q("-"),uname(),NULL);
       }
     }
     if(strcmp(impl,"sbcl")==0) {

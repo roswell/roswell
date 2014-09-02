@@ -205,6 +205,5 @@ int cmd_opt(int argc, const char **argv)
       save_opts(path,opt);
     }
   }
-  s(home);
-  s(path);
+  s(home),s(path);
 }

@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include "opt.h"
 #include "util.h"
 #include "install/install.h"
 static int in_resume=0;
@@ -195,6 +196,21 @@ int cmd_install(int argc,char **argv)
       version=(*(install_impl->version))(impl,version_arg);
       for(cmds=install_impl->call;*cmds&&ret;++cmds) {
 	ret=(*cmds)(impl,version);
+      }
+      { // after install latest installed impl/version should be default for 'run'
+        struct opts* opt=global_opt;
+        struct opts** opts=&opt;
+        int i;
+        char* home=homedir();
+        char* path=cat(home,"config",NULL);
+        char* v=cat(impl,".version",NULL);
+        for(i=0;version[i]!='\0';++i)
+          if(version[i]=='-')
+            version[i]='\0';
+        set_opt(opts,"default.impl",impl,0);
+        set_opt(opts,v,version,0);
+        save_opts(path,opt);
+        s(home),s(path),s(v);
       }
       s(version),s(version_arg),s(impl);
     }
