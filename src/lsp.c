@@ -11,7 +11,7 @@ int argc_orig;
 struct opts* global_opt;
 struct opts* local_opt=NULL;
 
-extern int cmd_install(int argc,char **argv);
+extern int cmd_pull(int argc,char **argv);
 extern int cmd_list(int argc,char **argv);
 extern int cmd_download(int argc,char **argv);
 extern int cmd_tar(int argc,char **argv);
@@ -28,7 +28,7 @@ static struct sub_command commands[] = {
   { "help", cmd_notyet,0},
   { "list", cmd_list,1},
   { "version", cmd_version,0},
-  { "install", cmd_install,1},
+  { "pull", cmd_pull,1},
   { "run",cmd_run,1},
   { "config", cmd_opt,1},
   { "set", cmd_notyet,0},

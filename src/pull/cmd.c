@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "opt.h"
 #include "util.h"
-#include "install/install.h"
+#include "pull/install.h"
 static int in_resume=0;
 static char *flags =NULL;
 struct install_impls *install_impl;
@@ -165,7 +165,7 @@ install_cmds install_full[]={
   NULL
 };
 
-int cmd_install(int argc,char **argv)
+int cmd_pull(int argc,char **argv)
 {
   int ret=1,k;
   install_cmds *cmds=NULL;
