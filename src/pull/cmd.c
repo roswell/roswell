@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "opt.h"
 #include "util.h"
-#include "pull/install.h"
+#include "pull/pull.h"
 static int in_resume=0;
 static char *flags =NULL;
 struct install_impls *install_impl;

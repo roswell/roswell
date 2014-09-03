@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
-#include "install.h"
+#include "pull.h"
 #include "opt.h"
 
 extern char* sbcl_extention(char* impl,char* version);

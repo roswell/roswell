@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "util.h"
-#include "install.h"
+#include "pull.h"
 #include "opt.h"
 
 int sbcl_start(char* impl,char* version)
