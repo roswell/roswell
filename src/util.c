@@ -7,6 +7,7 @@
 #ifndef _WIN32
 #include <pwd.h>
 #include <unistd.h>
+#include <signal.h>
 #endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -527,6 +528,34 @@ LVal directory(char* path)
   }
   closedir(dir);
   return ret;
+  //#endif
+}
+
+
+void signal_callback_handler(int signum)
+{
+  printf("Caught signal %d\n",signum);
+  exit(1);
+}
+
+char* atexit_delete=NULL;
+
+void atexit_handler(void) {
+  printf("exit handler\n");
+  delete_file(atexit_delete);
+  s(atexit_delete);
+}
+
+void setup_signal_handler (char* file_to_delete)
+{
+  //#ifndef _WIN32
+  atexit_delete=q(file_to_delete);
+  signal(SIGHUP,  signal_callback_handler);
+  signal(SIGINT,  signal_callback_handler);
+  signal(SIGPIPE, signal_callback_handler);
+  signal(SIGQUIT, signal_callback_handler);
+  signal(SIGTERM, signal_callback_handler);
+  atexit(atexit_handler);
   //#endif
 }
 

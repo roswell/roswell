@@ -76,5 +76,5 @@ char* uname(void);
 char* uname_m(void);
 char* which(char* cmd);
 LVal directory(char* path);
-
+void setup_signal_handler (char* file_to_delete);
 #endif
