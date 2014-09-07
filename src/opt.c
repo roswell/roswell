@@ -190,18 +190,17 @@ int cmd_opt(int argc, const char **argv)
   struct opts* opt=global_opt;
   struct opts** opts=&opt;
   if(argc==0) {
-    printf("local:\n");
+    printf("oneshot:\n");
     print_opts(local_opt);
-    printf("global:\n");
+    printf("local:\n");
     print_opts(opt);
-  }else if(strcmp(argv[0],"set")==0) {
-    if(argc>=3) {
-      set_opt(opts, argv[1],(char*)argv[2],0);
+  }else {
+    // TBD parse options
+    if(argc==1) {
+      unset_opt(opts, argv[0]);
       save_opts(path,opt);
-    }
-  }else if(strcmp(argv[0],"unset")==0) {
-    if(argc>=2) {
-      unset_opt(opts, argv[1]);
+    }else if(argc==2) {
+      set_opt(opts, argv[0],(char*)argv[1],0);
       save_opts(path,opt);
     }
   }
