@@ -66,6 +66,7 @@ char* pathname_directory (char* path);
 char* filname_namestring (char* path);
 char* ensure_directories_exist (char* path);
 int directory_exist_p (char* path);
+int file_exist_p (char* path);
 int change_directory(const char* path);
 int delete_directory(char* pathspec,int recursive);
 int delete_file(char* pathspec);

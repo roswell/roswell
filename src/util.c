@@ -276,7 +276,20 @@ int directory_exist_p (char* path) {
   }
   return ret;
 #else
-#  error not imprement directory_exist_p  
+#  error not imprement directory_exist_p
+#endif
+}
+
+int file_exist_p (char* path) {
+#ifdef HAVE_SYS_STAT_H
+  struct stat sb;
+  int ret=0;
+  if (stat(path, &sb) == 0 && S_ISREG(sb.st_mode)) {
+    ret=1;
+  }
+  return ret;
+#else
+#  error not imprement file_exist_p
 #endif
 }
 

@@ -34,7 +34,8 @@ int cmd_run(int argc,char **argv)
     int offset=0;
     int i;
     if(strcmp(impl,"sbcl-bin")==0) {
-      impl="sbcl";
+      s(impl);
+      impl=q("sbcl");
       if(version) {
 	version=s_cat(q(version),q("-"),uname_m(),q("-"),uname(),NULL);
       }
@@ -68,12 +69,16 @@ int cmd_run(int argc,char **argv)
 	exit(EXIT_FAILURE);
       }
     }
-    
+
     for(i=0;i<argc;++i) {
       arg[i+1+offset]=argv[i];
     }
-    arg[i+1+offset]=NULL;
-    execvp(bin,arg);
+    if(file_exist_p(bin)) {
+      arg[i+1+offset]=NULL;
+      execvp(bin,arg);
+    }else{
+      printf("%s/%s is not installed.stop.\n",impl,version);
+    }
   }else {
     printf("impl doesn't specified stop");
   }
