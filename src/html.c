@@ -15,9 +15,9 @@ struct Cons* attralloc(void) {
   return toPointer(cons(ret,(LVal)NULL));
 }
 
-void print_attr(struct Cons* i) {
-  for(;i;i=i->next) {
-    struct attr* p=(struct attr*)firstp((LVal)i);
+void print_attr(LVal i) {
+  for(;i;i=((struct Cons*)i)->next) {
+    struct attr* p=(struct attr*)firstp(i);
     printf("<%s=%s>",p->name,p->value);
   }
   printf("\n");
@@ -379,13 +379,16 @@ int main(int argc,char** argv)
 
 }
 */
+
 char* sbcl_bin(char* file)
 {
   struct Cons *ret,*ret2;
+  char* str;
+  LVal ret3;
   ret=atag_list(file);
   ret2=remove_if_not1(filter_sbcl_uri,ret);
-  //ret3=mapcar1(separate_sbcl_uri,ret2);
-  
-  print_list(ret2);
-  sL(ret),sL(ret2); 
+  ret3= split_string(firsts(ret2),"-");
+  str=q(firsts(nthcdr(1,ret3)));
+  sL(ret),sL(ret2),sL(ret3);
+  return str;
 }

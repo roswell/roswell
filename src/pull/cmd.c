@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "opt.h"
 #include "util.h"
 #include "pull/pull.h"
@@ -47,14 +48,14 @@ int start(char* impl,char* version)
     printf("It seems running installation process for $1/$2.\n");
     return 0;
   }
-  /*TBD trap "exit 1" HUP INT PIPE QUIT TERM
-    trap "rm -f $CIM_HOME/tmp/$1-$2.lock" EXIT*/
   p=cat(home,"tmp/",impl,"-",version,"/",NULL);
   ensure_directories_exist(p);
   s(p);
- 
+
   p=cat(home,"tmp/",impl,"-",version,".lock",NULL);
+  setup_signal_handler(p);
   touch(p);
+
   s(p);
   s(home);
   return 1;
@@ -66,11 +67,11 @@ int download(char* impl,char* version)
   char* url;
   char* impl_archive;
   url=(*(install_impl->uri))(impl,version);
-  printf("Downloading archive.:%s\n",url);
-  /*TBD proxy support... etc*/
   if(get_opt("skip.download")) {
     printf("Skip downloading %s\n",url);
   }else {
+    printf("Downloading archive.:%s\n",url);
+    /*TBD proxy support... etc*/
     if(url) {
       impl_archive=cat(home,"archives/",impl,"-",version,".",(*(install_impl->extention))(impl,version),NULL);
       ensure_directories_exist(impl_archive);

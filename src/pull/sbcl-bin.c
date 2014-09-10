@@ -10,20 +10,30 @@ extern int sbcl_install(char* impl,char* version);
 char* arch(void) {
   return s_cat(uname_m(),q("-"),uname(),NULL);
 }
+
+char* sbcl_bin(char* file);
+
 char* sbcl_version_bin(char* impl,char* version)
 {
   char* home= homedir();
   char* platforms_html=cat(home,"tmp/sbcl.html",NULL);
   ensure_directories_exist(platforms_html);
-  download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
   /* TBD */
   if(version) {
+    s(platforms_html);
     return s_cat(q(version),q("-"),arch(),NULL);
   }else {
-    sbcl_bin(platforms_html);
-    return s_cat(q("1.2.1"),q("-"),arch(),NULL);
+    char* version;
+    char* ret;
+    printf("version not specified\nto specify version,downloading platform-table.html...");
+    download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
+    printf("done\n");
+    version=sbcl_bin(platforms_html);
+    printf("version to install would be '%s'\n",version);
+    ret = s_cat(version,q("-"),arch(),NULL);
+    s(platforms_html);
+    return ret;
   }
-  s(platforms_html);
 }
 
 char* sbcl_uri_bin(char* impl,char* version)
