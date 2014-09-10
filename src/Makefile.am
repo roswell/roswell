@@ -1,6 +1,7 @@
 AUTOMAKE_OPTIONS = subdir-objects
 bin_PROGRAMS = lsp
-lsp_SOURCES = lsp.c opt.c download.c util.c archive.c cmd_version.c cmd_run.c \
-	pull/cmd.c pull/sbcl.c pull/sbcl-bin.c \
-	list/cmd.c \
-	html.c
+lsp_SOURCES = lsp.c opt.c download.c util.c archive.c html.c\
+	cmds/version/cmd.c \
+	cmds/run/cmd.c \
+	cmds/pull/cmd.c cmds/pull/sbcl.c cmds/pull/sbcl-bin.c \
+	cmds/list/cmd.c
