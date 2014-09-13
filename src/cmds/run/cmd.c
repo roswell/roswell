@@ -43,18 +43,18 @@ int cmd_run(int argc,char **argv)
     if(strcmp(impl,"sbcl")==0) {
       char* impl_path= cat(home,"impls/",impl,"-",version,NULL);
       int core_p=1;
-      
+      offset=2;
       bin= cat(impl_path,"/bin/sbcl",NULL);
       for(i=0;i<argc;++i) {
 	if(strcmp(argv[i],"--core")==0) {
 	  core_p=0;
+          offset=0;
 	  break;
 	}
       }
       arg=alloc(sizeof(char*)*(offset+2+argc));
       arg[0]=bin;
       if(core_p) {
-	offset=2;
 	arg[1]="--core";
 	arg[2]=cat(impl_path,"/lib/sbcl/sbcl.core",NULL);
       }
