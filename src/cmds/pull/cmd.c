@@ -198,7 +198,7 @@ int cmd_pull(int argc,char **argv)
       for(cmds=install_impl->call;*cmds&&ret;++cmds) {
 	ret=(*cmds)(impl,version);
       }
-      { // after install latest installed impl/version should be default for 'run'
+      if(ret) { // after install latest installed impl/version should be default for 'run'
         struct opts* opt=global_opt;
         struct opts** opts=&opt;
         int i;
