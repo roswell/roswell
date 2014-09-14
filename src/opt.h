@@ -28,5 +28,6 @@ struct sub_command
 extern struct opts* global_opt;
 extern struct opts* local_opt;
 struct opts* load_opts(const char* path);
+int set_opt(struct opts** opts,const char* name,char* value,int type);
 char* get_opt(const char* name);
 #endif

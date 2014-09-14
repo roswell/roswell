@@ -96,5 +96,3 @@ int main (int argc,char **argv) {
   }
   free_opts(global_opt);
 }
-
-/* ./lsp tar -xvf ~/.lsp/archives/sbcl-1.2.1.tar.bz2 */

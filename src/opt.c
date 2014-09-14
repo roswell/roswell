@@ -139,6 +139,7 @@ int get_opt_type(struct opts* opt,const char* name)
   } 
   return 0;
 }
+
 char* _get_opt(struct opts* opt,const char* name)
 {
   while(opt) {

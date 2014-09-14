@@ -500,6 +500,40 @@ int system_redirect(const char* cmd,char* filename)
   return(0);
 }
 
+int system_redirect_function(const char* cmd,Function1 f)
+{
+  pid_t pid;
+  int fd[2];
+  char c;
+  if (pipe(fd)==-1) {
+    perror("pipe");
+    return -1;
+  }
+  pid=fork();
+  if(pid==-1) {
+    perror("fork");
+    return -1;
+  }
+  if(pid==0) {
+    int argc;
+    char** argv=parse_cmdline((char*)cmd,&argc);
+    /* standard output */
+    close(fd[0]);
+    close(1),close(2);
+    dup2(fd[1],1),dup2(fd[1],2);
+    close(fd[1]);
+    execvp(argv[0],argv);
+  }else {
+    FILE *in,*out;
+    close(fd[1]);
+    if((in=fdopen(fd[0], "r"))!=NULL) {
+      f(in);
+      fclose(in);
+    }
+  }
+  return(0);
+}
+
 char* uname(void) {
   char *p=system_("uname");
   char *p2;
@@ -515,6 +549,7 @@ char* uname_m(void) {
   s(p);
   return substitute_char('-','_',p2);
 }
+
 char* which(char* cmd) {
   char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
   char* p=system_(which_cmd);
