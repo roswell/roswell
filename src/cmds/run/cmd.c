@@ -1,7 +1,21 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 #include "util.h"
 #include "opt.h"
+
+#ifdef _WIN32
+BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar){
+  CHAR szPrintBuffer[512];
+  DWORD nCharsWritten;
+  if(CTRL_C_EVENT == ctrlChar){
+    return TRUE;
+  }
+  return FALSE;
+}
+#endif
 
 int cmd_run(int argc,char **argv)
 {
@@ -41,10 +55,14 @@ int cmd_run(int argc,char **argv)
       }
     }
     if(strcmp(impl,"sbcl")==0) {
-      char* impl_path= cat(home,"impls/",impl,"-",version,NULL);
+      char* impl_path= cat(home,"impls",SLASH,impl,"-",version,NULL);
       int core_p=1;
       offset=2;
-      bin= cat(impl_path,"/bin/sbcl",NULL);
+      bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
+#ifdef _WIN32
+               ".exe",
+#endif
+               NULL);
       for(i=0;i<argc;++i) {
 	if(strcmp(argv[i],"--core")==0) {
 	  core_p=0;
@@ -56,7 +74,7 @@ int cmd_run(int argc,char **argv)
       arg[0]=bin;
       if(core_p) {
 	arg[1]="--core";
-	arg[2]=cat(impl_path,"/lib/sbcl/sbcl.core",NULL);
+	arg[2]=cat("\"",impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core","\"",NULL);
       }
       s(impl_path);
     }else if (strcmp(impl,"native")==0) {
@@ -75,7 +93,17 @@ int cmd_run(int argc,char **argv)
     }
     if(file_exist_p(bin)) {
       arg[i+1+offset]=NULL;
+#ifdef _WIN32
+      s(home);home=q(arg[0]);
+      for(i=1;arg[i]!=NULL;++i) {
+        home=s_cat(home,q(" "),q(arg[i]),NULL);
+      }
+      SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+      system(home);
+      //_execvp(bin,arg);
+#else
       execvp(bin,arg);
+#endif
     }else{
       printf("%s/%s is not installed.stop.\n",impl,version);
     }

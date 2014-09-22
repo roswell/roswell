@@ -8,6 +8,10 @@
 #include <pwd.h>
 #include <unistd.h>
 #include <signal.h>
+#else
+#include <windows.h>
+#include <Shellapi.h>
+#include <shlobj.h>
 #endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -188,8 +192,8 @@ char* downcase(char* orig) {
 
 char* append_trail_slash(char* str) {
   char* ret;
-  if(str[strlen(str)-1]!='/') {
-    ret=s_cat2(q(str),q("/"));
+  if(str[strlen(str)-1]!=SLASH[0]) {
+    ret=s_cat2(q(str),q(SLASH));
   }else {
     ret=q(str);
   }
@@ -198,9 +202,6 @@ char* append_trail_slash(char* str) {
 }
 
 char* homedir(void) {
-#ifdef _WIN32
-  return q("/dummy");
-#else
   char *c;
   char *postfix="_HOME";
   struct passwd * pwd;
@@ -213,17 +214,22 @@ char* homedir(void) {
   if(env) {
     return append_trail_slash(q(env));
   }
+#ifdef _WIN32
+  TCHAR szAppData[MAX_PATH];
+  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData))) {
+    c=q(szAppData);
+  }
+#else
   pwd= getpwnam(getenv("USER"));
   if(pwd) {
     c=q(pwd->pw_dir);
-  }else {
+  }
+#endif
+  else {
     /* error? */
     return NULL;
   }
-  
-  c=append_trail_slash(c);
-  return s_cat(c,q("."),q(PACKAGE),q("/"),NULL);
-#endif
+  return s_cat(append_trail_slash(c),q("."),q(PACKAGE),q(SLASH),NULL);
 }
 
 char* pathname_directory(char* path) {
@@ -251,13 +257,13 @@ char* file_namestring(char* path) {
 char* ensure_directories_exist (char* path) {
   int len = strlen(path);
   if(len) {
-    for(--len;(path[len]!='/'||len==-1);--len);
+    for(--len;(path[len]!=SLASH[0]||len==-1);--len);
     path=subseq(path,0,len+1);
   }
   #ifndef _WIN32
   char* cmd=s_cat2(q("mkdir -p "),path);
   #else
-  char* cmd=q("");
+  char* cmd=s_cat(q("mkdir "),path,q(" 2>NUL"),NULL);
   #endif
   if(system(cmd)==-1) {
     printf("failed:%s\n",cmd);
@@ -318,7 +324,18 @@ int delete_directory(char* pathspec,int recursive) {
     return 1;
   }
 #else
-  #error not implemented delete_directory
+  if(!recursive) {
+    return(!!RemoveDirectory(pathspec));
+  }else {
+    SHFILEOPSTRUCT fs;
+    ZeroMemory(&fs, sizeof(SHFILEOPSTRUCT));
+    fs.hwnd = NULL;
+    fs.wFunc = FO_DELETE;
+    fs.pFrom = pathspec;
+    fs.pTo = NULL;
+    fs.fFlags=FOF_SIMPLEPROGRESS|FOF_NOCONFIRMATION;
+    return (SHFileOperation(&fs) == 0);
+  }
 #endif  
 }
 
@@ -335,7 +352,7 @@ int delete_file(char* pathspec) {
     return 1;
   }
 #else
-  #error not implemented delete_file
+//  #error not implemented delete_file
 #endif  
 }
 
@@ -459,6 +476,7 @@ int free_cmdline(char** argv)
 
 int system_redirect(const char* cmd,char* filename)
 {
+#ifndef _WIN32
   pid_t pid;
   int fd[2];
   char c;
@@ -498,10 +516,12 @@ int system_redirect(const char* cmd,char* filename)
     }
   }
   return(0);
+#endif
 }
 
 int system_redirect_function(const char* cmd,Function1 f)
 {
+#ifndef _WIN32
   pid_t pid;
   int fd[2];
   char c;
@@ -527,27 +547,37 @@ int system_redirect_function(const char* cmd,Function1 f)
     FILE *in,*out;
     close(fd[1]);
     if((in=fdopen(fd[0], "r"))!=NULL) {
-      f(in);
+      f((LVal)in);
       fclose(in);
     }
   }
   return(0);
+#endif
 }
 
 char* uname(void) {
+#ifndef _WIN32
   char *p=system_("uname");
   char *p2;
   p2=remove_char("\r\n",p);
   s(p);
   return downcase(p2);
+#else
+  return q("windows");
+#endif
 }
 
 char* uname_m(void) {
+#ifndef _WIN32
   char *p=system_("uname -m");
   char *p2;
   p2=remove_char("\r\n",p);
   s(p);
   return substitute_char('-','_',p2);
+#else
+  /*TBD check x86 or x86-64 */
+  return q("x86");
+#endif
 }
 
 char* which(char* cmd) {
@@ -560,7 +590,7 @@ char* which(char* cmd) {
 
 LVal directory(char* path)
 {
-  //#ifndef _WIN32
+#ifndef _WIN32
   LVal ret=0;
   DIR* dir=opendir(path);
   struct dirent *dirent;
@@ -576,7 +606,7 @@ LVal directory(char* path)
   }
   closedir(dir);
   return ret;
-  //#endif
+#endif
 }
 
 
@@ -596,7 +626,7 @@ void atexit_handler(void) {
 
 void setup_signal_handler (char* file_to_delete)
 {
-  //#ifndef _WIN32
+#ifndef _WIN32
   atexit_delete=q(file_to_delete);
   signal(SIGHUP,  signal_callback_handler);
   signal(SIGINT,  signal_callback_handler);
@@ -604,7 +634,7 @@ void setup_signal_handler (char* file_to_delete)
   signal(SIGQUIT, signal_callback_handler);
   signal(SIGTERM, signal_callback_handler);
   atexit(atexit_handler);
-  //#endif
+#endif
 }
 
 /*list*/

@@ -1,8 +1,8 @@
 #                                               -*- Autoconf -*-
 # Process this file with autoconf to produce a configure script.
 
-AC_PREREQ([2.68])
-AC_INIT([lsp],[0.0.0.4],snmsts@gmail.com)
+AC_PREREQ([2.65])
+AC_INIT([lsp],[0.0.0.5],snmsts@gmail.com)
 
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])

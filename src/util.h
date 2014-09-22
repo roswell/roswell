@@ -14,6 +14,12 @@ struct Cons {
   LVal next;
 };
 
+#ifdef _WIN32
+#define SLASH "\\"
+#else
+#define SLASH "/"
+#endif
+
 typedef LVal (*Function1)(LVal v);
 typedef LVal (*Compare2)(LVal v1,LVal v2);
 

@@ -23,7 +23,7 @@ int installed_p(char* impl,char* version)
     impl=subseq(impl,0,pos);
   }else
     impl=q(impl);
-  i=s_cat(homedir(),q("impls/"),q(impl),q("-"),q(version),q("/"),NULL);
+  i=s_cat(homedir(),q("impls"),q(SLASH),q(impl),q("-"),q(version),q(SLASH),NULL);
   ret=directory_exist_p(i);
   s(i),s(impl);
   return ret;
@@ -48,11 +48,11 @@ int start(char* impl,char* version)
     printf("It seems running installation process for $1/$2.\n");
     return 0;
   }
-  p=cat(home,"tmp/",impl,"-",version,"/",NULL);
+  p=cat(home,"tmp",SLASH,impl,"-",version,SLASH,NULL);
   ensure_directories_exist(p);
   s(p);
 
-  p=cat(home,"tmp/",impl,"-",version,".lock",NULL);
+  p=cat(home,"tmp",SLASH,impl,"-",version,".lock",NULL);
   setup_signal_handler(p);
   touch(p);
 
@@ -73,7 +73,7 @@ int download(char* impl,char* version)
     printf("Downloading archive.:%s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
-      impl_archive=cat(home,"archives/",impl,"-",version,".",(*(install_impl->extention))(impl,version),NULL);
+      impl_archive=cat(home,"archives",SLASH,impl,"-",version,".",(*(install_impl->extention))(impl,version),NULL);
       ensure_directories_exist(impl_archive);
 
       if(download_simple(url,impl_archive,0)) {
@@ -105,7 +105,7 @@ int expand(char* impl,char* version)
   }else
     impl=q(impl);
   version=q(version);
-  dist_path=cat(home,"src/",impl,"-",version,"/",NULL);
+  dist_path=cat(home,"src",SLASH,impl,"-",version,SLASH,NULL);
 
   printf("Extracting archive. %s to %s\n",archive,dist_path);
   
@@ -113,8 +113,8 @@ int expand(char* impl,char* version)
   ensure_directories_exist(dist_path);
 
   /* TBD log output */
-  argv[1]=cat(home,"archives/",archive,NULL);
-  argv[3]=cat(home,"src/",NULL);
+  argv[1]=cat(home,"archives",SLASH,archive,NULL);
+  argv[3]=cat(home,"src",SLASH,NULL);
   cmd_tar(argc,argv);
 
   s(argv[1]),s(argv[3]);

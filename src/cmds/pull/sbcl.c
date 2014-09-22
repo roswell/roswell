@@ -86,7 +86,7 @@ int sbcl_install(char* impl,char* version) {
   printf("done.\n");
   return ret;
 #else
-#error not implemented.
+
 #endif
 }
 
