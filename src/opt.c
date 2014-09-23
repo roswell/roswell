@@ -51,6 +51,7 @@ struct opts* load_opts(const char* path) {
   char buf[1024];
   struct opts opt;
   struct opts *cur=&opt;
+  opt.next=NULL;
 
   if((fp=fopen(path,"r"))==NULL) {
     return NULL;
