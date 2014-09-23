@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #ifdef HAVE_CONFIG_H
@@ -22,77 +23,75 @@ extern int cmd_run(int argc,char **argv);
 int cmd_notyet(int argc,char **argv)
 {
   printf("notyet\n");
+  return 1;
 }
 
 static struct sub_command commands[] = {
-  { "help", cmd_notyet,0},
-  { "list", cmd_list,1},
-  { "version", cmd_version,0},
-  { "pull", cmd_pull,1},
-  { "run",cmd_run,1},
-  { "config", cmd_opt,1},
-  { "set", cmd_notyet,0},
-  { "tar",cmd_tar,0},
-  { "download",cmd_download,0},
+  /* longopt,shortopt,cmd_function,?, */
+  { "help","h?",cmd_notyet,0,1},
+  { "list",NULL,cmd_list,1,1},
+  { "version",NULL,cmd_version,0,1},
+  { "pull",NULL,cmd_pull,1,1},
+  { "run",NULL,cmd_run,1,1},
+  { "config",NULL,cmd_opt,1,1},
+  { "set",NULL,cmd_notyet,0,1},
+  { "tar",NULL,cmd_tar,0,1},
+  { "download",NULL,cmd_download,0,1},
 };
 
-int main (int argc,char **argv) {
-  char **subargv=NULL;
-  char *subcmd=NULL;
+int proccmd(int argc,char** argv) {
   int i;
-  int found=0;
-  struct sub_command* j;
+  int pos;
+  if(argv[0][0]=='-') {
+    if(argv[0][1]=='-') { //long option
+      for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
+        if(strcmp(&argv[0][2],commands[i].name)==0) {
+          int result= commands[i].call(argc,argv);
+          if(commands[i].terminating){
+            exit(result);
+          }else {
+            return result;
+          }
+        }
+      }
+    }else { //short option
+      if(argv[0][2]=='\0') {
+        for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
+          if(position_char(&argv[0][1],(char*)commands[i].short_name)!=-1) {
+            int result= commands[i].call(argc,argv);
+            if(commands[i].terminating){
+              exit(result);
+            }else {
+              return result;
+            }
+          }
+        }
+      }
+    }
+  }else if((pos=position_char("=",argv[0]))!=-1) {
+    char *l,*r;
+    l=subseq(argv[0],0,pos);
+    r=subseq(argv[0],pos+1,0);
+    set_opt(&local_opt,l,r,0);
+    s(l),s(r);
+  }else {
+    printf("invalid command %s\n",argv[0]);
+  }
+  return 1;
+}
+
+int main (int argc,char **argv) {
+  int i;
   argv_orig=argv;
   argc_orig=argc;
   char* path=s_cat(homedir(),q("config"),NULL);
   global_opt=load_opts(path);
   s(path);
   if(argc==1) {
-    subcmd="help";
-    subargv=NULL;
-    argc=0;
-  } else {
-    argc--;
-    argv++;
-    
-    while(argc>0 && argv[0][0]=='-') {
-      struct opts* opt=local_opt;
-      struct opts** opts=&opt;
-      if(argv[0][1]!='-' && argv[0][1]!='\0' && argc>1 && argv[1][0]!='-') {
-	set_opt(opts, &argv[0][1],(char*)argv[1],0);
-	argc--;
-	argv++;
-      }else{
-	int index=1;
-	if(argv[0][1]=='-') ++index;
-	set_opt(opts, &argv[0][index],(char*)"1",0);
-      }
-      local_opt=*opts;
-      argc--;
-      argv++;
-    }
-  }
-  if(argc>0) {
-    subcmd=argv[0];
-    subargv=&argv[1];
-    argc--;
-    for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
-      j = &commands[i];
-      if(strcmp(subcmd,j->name)==0) {
-	found=1;
-	j->call(argc,subargv);
-	break;
-      }
-    }
-    if(!found) {
-      printf("action %s not found\n",subcmd);
-    }
-  }else {
-    for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
-      j = &commands[i];
-      if(j->show_opt)
-	printf("%s\n",j->name);
-    }
+    char* tmp[]={"--help"};
+    proccmd(0,tmp);
+  }else{
+    for(i=1;i<argc;i+=proccmd(argc-i,&argv[i]));
   }
   free_opts(global_opt);
 }

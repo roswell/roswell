@@ -42,6 +42,7 @@ int cmd_run(int argc,char **argv)
     if(version) 
       version=q(version);
   }
+
   if(impl) {
     char** arg=NULL;
     char* bin=NULL;
@@ -63,7 +64,7 @@ int cmd_run(int argc,char **argv)
                ".exe",
 #endif
                NULL);
-      for(i=0;i<argc;++i) {
+      for(i=1;i<argc;++i) {
 	if(strcmp(argv[i],"--core")==0) {
 	  core_p=0;
           offset=0;
@@ -74,7 +75,15 @@ int cmd_run(int argc,char **argv)
       arg[0]=bin;
       if(core_p) {
 	arg[1]="--core";
-	arg[2]=cat("\"",impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core","\"",NULL);
+	arg[2]=cat(
+#ifdef _WIN32
+                   //"\"",
+#endif
+                   impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",
+#ifdef _WIN32
+                   //"\"",
+#endif
+                   NULL);
       }
       s(impl_path);
     }else if (strcmp(impl,"native")==0) {
@@ -88,11 +97,12 @@ int cmd_run(int argc,char **argv)
       }
     }
 
-    for(i=0;i<argc;++i) {
-      arg[i+1+offset]=argv[i];
+    for(i=1;i<argc;++i) {
+      arg[i+offset]=argv[i];
     }
+
     if(file_exist_p(bin)) {
-      arg[i+1+offset]=NULL;
+      arg[i+offset]=NULL;
 #ifdef _WIN32
       s(home);home=q(arg[0]);
       for(i=1;arg[i]!=NULL;++i) {

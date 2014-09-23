@@ -17,11 +17,14 @@ enum opt_type {
   OPT_STRING,
   OPT_BOOL
 };
+
 struct sub_command
 {
   const char* name;
+  const char* short_name;
   sub_command_fnc call;
   int show_opt;
+  int terminating;
   char* path;
 };
 

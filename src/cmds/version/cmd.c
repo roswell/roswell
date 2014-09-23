@@ -2,9 +2,10 @@
 #  include "config.h"
 #endif
 #include <stdio.h>
+#include <stdlib.h>
 
 int cmd_version(int argc,char **argv)
 {
   printf("%s\n",PACKAGE_STRING);
-  return 0;
+  return EXIT_SUCCESS;
 }

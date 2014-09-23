@@ -44,11 +44,11 @@ LVal sbcl_make_redirected(LVal v) {
 int sbcl_make(char* impl,char* version) {
   char* home=homedir();
   char* src=cat(home,"src/",impl,"-",version,NULL);
-  char* compiler=cat(argv_orig[0]," -impl ",get_opt("sbcl.compiler")," run",NULL);
-  char* cmd=cat("sh make.sh \"",compiler,"\" ","--prefix=",home,"impls/",impl,"-",version,NULL);
+  char* compiler=cat(argv_orig[0]," impl=",get_opt("sbcl.compiler")," --run",NULL);
+  char* cmd=cat("sh make.sh \"--xc-host=",compiler,"\" ","--prefix=",home,"impls/",impl,"-",version,NULL);
   log_path=cat(home,"impls/log/",impl,"-",version,"/make.log",NULL);
 
-  printf("Building %s-%s\n",impl,version);
+  printf("Building %s-%s with %s\n",impl,version,compiler);
   change_directory(src);
   ensure_directories_exist(log_path);
   printf("cmd:%s\n",cmd);

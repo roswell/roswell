@@ -170,8 +170,8 @@ int cmd_pull(int argc,char **argv)
 {
   int ret=1,k;
   install_cmds *cmds=NULL;
-  if(argc!=0) {
-    for(k=0;k<argc;++k) {
+  if(argc!=1) {
+    for(k=1;k<argc;++k) {
       char* impl=argv[k];
       char* version_arg=NULL;
       char* version=NULL;
