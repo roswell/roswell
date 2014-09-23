@@ -120,12 +120,12 @@ struct tag {
   struct Cons* attr;
 };
 
-struct Cons* tagalloc(void) {
+LVal tagalloc(void) {
   struct tag* t=alloc(sizeof(struct tag));
   t->type=0;
   t->name=NULL;
   t->attr=NULL;
-  return toPointer(cons(t,(LVal)NULL));
+  return (LVal)toPointer(cons(t,(LVal)NULL));
 }
 
 void tagfree(LVal l) {
@@ -136,7 +136,8 @@ void tagfree(LVal l) {
   dealloc((void*)l);
 }
 
-void tagsfree(struct Cons* t) {
+void tagsfree(LVal tags) {
+  struct Cons* t=(struct Cons*)tags;
   struct Cons* next;
   for(;t;t=next) {
     next=t->next;
@@ -144,7 +145,8 @@ void tagsfree(struct Cons* t) {
   }
 }
 
-struct Cons* delete_not_open_tags(struct Cons* tag) {
+struct Cons* delete_not_open_tags(LVal t) {
+  struct Cons* tag=(struct Cons*)t;
   struct Cons* ret=tag;
   struct Cons* next;
   for(;tag->next!=NULL&&((struct tag*)firstp(tag))->type!=1;tag=next) {  /* find first*/
@@ -153,7 +155,7 @@ struct Cons* delete_not_open_tags(struct Cons* tag) {
   }
   while(tag->next) {
     if(((struct tag*)firstp(tag->next))->type!=1) {
-      next=Next(Next(tag));//tag->next->next;
+      next=Next(Next(tag));
       tagfree(tag->next);
       tag->next=next;
     }else{
@@ -163,26 +165,27 @@ struct Cons* delete_not_open_tags(struct Cons* tag) {
   return ret;
 }
 
-struct Cons* delete_not_tags(char* tags,struct Cons* tag) {
+LVal delete_not_tags(char* tags,struct Cons* tag) {
   struct Cons* ret;
   struct Cons* next;
-  for(;Next((LVal)tag)/*->next*/!=NULL&&((struct tag*)firstp(tag))->name&&strcmp(((struct tag*)firstp(tag))->name,tags)!=0;tag=Next((LVal)tag)/*->next*/);  /* find first*/
+  for(;Next((LVal)tag)!=NULL&&((struct tag*)firstp(tag))->name&&strcmp(((struct tag*)firstp(tag))->name,tags)!=0;tag=Next((LVal)tag));  /* find first*/
   ret=tag;
   while(tag->next) {
-    if(((struct tag*)firstp(Next((LVal)tag)/*->next*/))->name&&
-       strcmp(((struct tag*)firstp(Next((LVal)tag)/*->next*/))->name,tags)!=0) {
-      next=Next(Next(tag));//->next->next;
+    if(((struct tag*)firstp(Next((LVal)tag)))->name&&
+       strcmp(((struct tag*)firstp(Next((LVal)tag)))->name,tags)!=0) {
+      next=Next(Next(tag));
       tagfree(tag->next);
       tag->next=next;
     }else {
       tag=tag->next;
     }
   }
-  return ret;
+  return (LVal)ret;
 }
 
-struct Cons* filter_href(struct Cons* tags)
+LVal filter_href(LVal t)
 {
+  struct Cons* tags=(struct Cons*)t;
   struct Cons* ret=NULL;
   char* href;
   for(;tags;tags=tags->next) {
@@ -199,19 +202,11 @@ struct Cons* filter_href(struct Cons* tags)
       ret=toPointer(conss(href,(LVal)ret));
     }
   }
-  return ret;
+  return (LVal)ret;
 }
 
-void print_tags(struct Cons* tags) {
-  for(;tags;tags=tags->next){
-    if(((struct tag*)firstp(tags))->name)
-      printf("%s",((struct tag*)firstp(tags))->name);
-    print_attr(((struct tag*)firstp(tags))->attr);
-  }
-}
-
-struct Cons* parse_tags(FILE* fp,struct Cons* before,int mode) {
-  struct Cons* current=tagalloc();
+LVal parse_tags(FILE* fp,LVal before,int mode) {
+  LVal current=tagalloc();
   char str[2]={'\0','\0'};
   int c;
   char* buf=q("");
@@ -224,7 +219,7 @@ struct Cons* parse_tags(FILE* fp,struct Cons* before,int mode) {
 	  s(buf);
 	  return parse_tags(fp,before,1);
 	}else {
-	  current->next=parse_tags(fp,current,1);
+	  ((struct Cons*)current)->next=parse_tags(fp,current,1);
 	  s(buf);
 	  return current;
 	}
@@ -277,9 +272,9 @@ struct Cons* parse_tags(FILE* fp,struct Cons* before,int mode) {
 	  }
 	}
 	if(strcmp(((struct tag*)firstp(current))->name,"script")==0) {
-	  current->next=parse_tags(fp,current,2);
+	  ((struct Cons*)current)->next=parse_tags(fp,current,2);
 	}else{
-	  current->next=parse_tags(fp,current,0);
+	  ((struct Cons*)current)->next=parse_tags(fp,current,0);
 	}
 	s(buf);
 	return current;
@@ -300,7 +295,7 @@ struct Cons* parse_tags(FILE* fp,struct Cons* before,int mode) {
 	    s(buf);
 	    return parse_tags(fp,current,1);
 	  }else {
-	    current->next=parse_tags(fp,current,1);
+	    ((struct Cons*)current)->next=parse_tags(fp,current,1);
 	    s(buf);
 	    return current;
 	  }
@@ -316,13 +311,13 @@ struct Cons* parse_tags(FILE* fp,struct Cons* before,int mode) {
   return current;
 }
 
-struct Cons* atag_list(char* filename)
+LVal atag_list(char* filename)
 {
   FILE* fp;
-  struct Cons* ret=NULL;
+  LVal ret=NULL;
   fp=fopen(filename,"r");
   if(fp!=NULL) {
-    struct Cons* tags=parse_tags(fp,NULL,0);
+    LVal tags=parse_tags(fp,(LVal)NULL,0);
     tags=delete_not_tags("a",delete_not_open_tags(tags));
     ret=nreverse(filter_href(tags));
     tagsfree(tags);
@@ -341,7 +336,7 @@ LVal filter_sbcl_uri(LVal v) {
     char *third,*fourth;
     char *m2;
     int i;
-    LVal tmp=file_namestring(q(firsts(v)));
+    char* tmp=file_namestring(q(firsts(v)));
     LVal ret= split_string(tmp,"-");
     s(tmp);
     third=firsts(nthcdr(2,ret));
@@ -356,7 +351,7 @@ LVal filter_sbcl_uri(LVal v) {
     }
     i=(strcmp(m2,m)==0&&strcmp(firsts(nthcdr(i,ret)),u)==0);
     
-    s(m2),s(str),s(m),s(u),s(ret);
+    s(m2),s(str),s(m),s(u),sL(ret);
     if(i)
       return toNumber(1);
     else
@@ -382,9 +377,8 @@ int main(int argc,char** argv)
 
 char* sbcl_bin(char* file)
 {
-  struct Cons *ret,*ret2;
   char* str;
-  LVal ret3;
+  LVal ret3,ret2,ret;
   ret=atag_list(file);
   ret2=remove_if_not1(filter_sbcl_uri,ret);
   ret3= split_string(firsts(ret2),"-");
