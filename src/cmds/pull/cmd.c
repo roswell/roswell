@@ -13,46 +13,47 @@ struct install_impls *impls_to_install[]={
   &impls_sbcl
 };
 
-int installed_p(char* impl,char* version) 
+int installed_p(struct install_options* param)
 {
   int ret;
   char* i;
   int pos;
-  pos=position_char("-",impl);
+  char *impl;
+  pos=position_char("-",param->impl);
   if(pos!=-1) {
-    impl=subseq(impl,0,pos);
+    impl=subseq(param->impl,0,pos);
   }else
-    impl=q(impl);
-  i=s_cat(homedir(),q("impls"),q(SLASH),q(impl),q("-"),q(version),q(SLASH),NULL);
+    impl=q(param->impl);
+  i=s_cat(homedir(),q("impls"),q(SLASH),q(impl),q("-"),q(param->version),q(SLASH),NULL);
   ret=directory_exist_p(i);
   s(i),s(impl);
   return ret;
 }
 
-int install_running_p(char* impl,char* version)
+int install_running_p(struct install_options* param)
 {
   /* TBD */
   return 0;
 }
 
-int start(char* impl,char* version)
+int start(struct install_options* param)
 {
   char* home= homedir();
   char* p;
   ensure_directories_exist(home);
-  if(installed_p(impl,version)) {
-    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",impl,version);
+  if(installed_p(param)) {
+    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",param->impl,param->version);
     return 0;
   }
-  if(install_running_p(impl,version)) {
+  if(install_running_p(param)) {
     printf("It seems running installation process for $1/$2.\n");
     return 0;
   }
-  p=cat(home,"tmp",SLASH,impl,"-",version,SLASH,NULL);
+  p=cat(home,"tmp",SLASH,param->impl,"-",param->version,SLASH,NULL);
   ensure_directories_exist(p);
   s(p);
 
-  p=cat(home,"tmp",SLASH,impl,"-",version,".lock",NULL);
+  p=cat(home,"tmp",SLASH,param->impl,"-",param->version,".lock",NULL);
   setup_signal_handler(p);
   touch(p);
 
@@ -61,19 +62,18 @@ int start(char* impl,char* version)
   return 1;
 }
 
-int download(char* impl,char* version)
+int download(struct install_options* param)
 {
   char* home= homedir();
-  char* url;
+  char* url=(*(install_impl->uri))(param);
   char* impl_archive;
-  url=(*(install_impl->uri))(impl,version);
   if(get_opt("skip.download")) {
     printf("Skip downloading %s\n",url);
   }else {
     printf("Downloading archive.:%s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
-      impl_archive=cat(home,"archives",SLASH,impl,"-",version,".",(*(install_impl->extention))(impl,version),NULL);
+      impl_archive=cat(home,"archives",SLASH,param->impl,"-",param->version,".",(*(install_impl->extention))(param),NULL);
       ensure_directories_exist(impl_archive);
 
       if(download_simple(url,impl_archive,0)) {
@@ -90,7 +90,7 @@ int download(char* impl,char* version)
   return 1;
 }
 
-int expand(char* impl,char* version)
+int expand(struct install_options* param)
 {
   char* home= homedir();
   char* argv[5]={"-xf",NULL,"-C",NULL,NULL};
@@ -98,13 +98,14 @@ int expand(char* impl,char* version)
   int pos;
   char* archive;
   char* dist_path;
-  archive=cat(impl,"-",version,".",(*(install_impl->extention))(impl,version),NULL);
-  pos=position_char("-",impl);
+  char *impl,*version;
+  archive=cat(param->impl,"-",param->version,".",(*(install_impl->extention))(param),NULL);
+  pos=position_char("-",param->impl);
   if(pos!=-1) {
-    impl=subseq(impl,0,pos);
+    impl=subseq(param->impl,0,pos);
   }else
-    impl=q(impl);
-  version=q(version);
+    impl=q(param->impl);
+  version=q(param->version);
   dist_path=cat(home,"src",SLASH,impl,"-",version,SLASH,NULL);
 
   printf("Extracting archive. %s to %s\n",archive,dist_path);
@@ -126,8 +127,9 @@ int expand(char* impl,char* version)
   return 1;
 }
 
-int configure(char* impl,char* version)
+int configure(struct install_options* param)
 {
+  char *impl=param->impl,*version=param->version;
   char* home= homedir();
   char* confgcache= cat(home,"/src/",impl,"-",version,"/src/confg.cache",NULL);
   char* cd;
@@ -170,50 +172,50 @@ int cmd_pull(int argc,char **argv)
 {
   int ret=1,k;
   install_cmds *cmds=NULL;
+  struct install_options param;
   if(argc!=1) {
     for(k=1;k<argc;++k) {
-      char* impl=argv[k];
       char* version_arg=NULL;
-      char* version=NULL;
       int i,pos;
-      pos=position_char("/",impl);
+      param.impl=argv[k];
+      pos=position_char("/",param.impl);
       if(pos!=-1) {
-	version_arg=subseq(impl,pos+1,0);
-	impl=subseq(impl,0,pos);
+	param.version=subseq(param.impl,pos+1,0);
+	param.impl=subseq(param.impl,0,pos);
       }else {
-	impl=q(impl);
+        param.version=NULL;
+	param.impl=q(param.impl);
       }
 
       for(install_impl=NULL,i=0;i<sizeof(impls_to_install)/sizeof(struct install_impls*);++i) {
 	struct install_impls* j=impls_to_install[i];
-	if(strcmp(impl,j->name)==0) {
+	if(strcmp(param.impl,j->name)==0) {
 	  install_impl=j;
 	}
       }
       if(!install_impl) {
-	printf("%s is not implemented for install.\n",impl);
+	printf("%s is not implemented for install.\n",param.impl);
 	exit(EXIT_FAILURE);
       }
-      version=(*(install_impl->version))(impl,version_arg);
-      for(cmds=install_impl->call;*cmds&&ret;++cmds) {
-	ret=(*cmds)(impl,version);
-      }
+      for(cmds=install_impl->call;*cmds&&ret;++cmds)
+	ret=(*cmds)(&param);
       if(ret) { // after install latest installed impl/version should be default for 'run'
         struct opts* opt=global_opt;
         struct opts** opts=&opt;
         int i;
         char* home=homedir();
         char* path=cat(home,"config",NULL);
-        char* v=cat(impl,".version",NULL);
+        char* v=cat(param.impl,".version",NULL);
+        char* version=param.version;
         for(i=0;version[i]!='\0';++i)
           if(version[i]=='-')
             version[i]='\0';
-        set_opt(opts,"default.impl",impl,0);
+        set_opt(opts,"default.impl",param.impl,0);
         set_opt(opts,v,version,0);
         save_opts(path,opt);
         s(home),s(path),s(v);
       }
-      s(version),s(version_arg),s(impl);
+      s(param.version),s(param.impl);
     }
   }else {
     printf("what would you like to install?\n");

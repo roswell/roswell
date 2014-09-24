@@ -5,9 +5,9 @@
 #include "pull.h"
 #include "opt.h"
 
-int sbcl_start(char* impl,char* version)
+int sbcl_start(struct install_options* param)
 {
-  if(strcmp(impl,"sbcl")==0 && !get_opt("sbcl.compiler")) {
+  if(strcmp(param->impl,"sbcl")==0 && !get_opt("sbcl.compiler")) {
     printf("compiler variable 'sbcl.compiler'.assume it as 'sbcl-bin'\n");
     set_opt(&local_opt,"sbcl.compiler",(char*)"sbcl-bin",0);
   }
@@ -40,8 +40,9 @@ LVal sbcl_make_redirected(LVal v) {
   printf("\n make done with %dlines output.\n",counter);
 }
 
-
-int sbcl_make(char* impl,char* version) {
+int sbcl_make(struct install_options* param) {
+  char* impl=param->impl;
+  char* version=param->version;
   char* home=homedir();
   char* src=cat(home,"src/",impl,"-",version,NULL);
   char* compiler=cat(argv_orig[0]," impl=",get_opt("sbcl.compiler")," --run",NULL);
@@ -59,10 +60,12 @@ int sbcl_make(char* impl,char* version) {
   return 1;
 }
 
-int sbcl_install(char* impl,char* version) {
+int sbcl_install(struct install_options* param) {
 #ifndef _WIN32
   int ret=1;
   char* home= homedir();
+  char* impl=param->impl;
+  char* version=param->version;
   if(strcmp(impl,"sbcl-bin")==0) {
     impl="sbcl";
   }
@@ -90,28 +93,32 @@ int sbcl_install(char* impl,char* version) {
 #endif
 }
 
-char* sbcl_version(char* impl,char* version)
+int sbcl_version(struct install_options* param)
 {
-  if(version && strcmp(version,"latest")!=0) {
-    return q(version);
+  if(param->version && strcmp(param->version,"latest")!=0) {
+    param->version= q(param->version);
+    return 1;
   }
   /* TBD */
-  printf("detecting versions\n"); 
-  return q("1.2.3");
+  printf("detecting versions\n");
+  param->version= q("1.2.3");
+  return 1;
 }
 
-char* sbcl_uri(char* impl,char* version)
+char* sbcl_uri(struct install_options* param)
 {
+  char* version=param->version;
   return cat("http://sourceforge.net/projects/sbcl/files/sbcl/",version,
 	     "/sbcl-",version,"-source.tar.bz2",NULL);
 }
 
-char* sbcl_extention(char* impl,char* version)
+char* sbcl_extention(struct install_options* param)
 {
   return "tar.bz2";
 }
 
 install_cmds install_sbcl_full[]={
+  sbcl_version,
   sbcl_start,
   start,
   download,
@@ -121,4 +128,4 @@ install_cmds install_sbcl_full[]={
   NULL
 };
 
-struct install_impls impls_sbcl={ "sbcl", install_sbcl_full,sbcl_version,sbcl_uri,sbcl_extention};
+struct install_impls impls_sbcl={ "sbcl", install_sbcl_full,sbcl_uri,sbcl_extention};

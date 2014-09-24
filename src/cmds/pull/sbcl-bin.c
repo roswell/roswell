@@ -4,7 +4,7 @@
 #include "pull.h"
 #include "opt.h"
 
-extern int sbcl_install(char* impl,char* version);
+extern int sbcl_install(struct install_options* param);
 
 char* arch(void) {
   return s_cat(uname_m(),q("-"),uname(),NULL);
@@ -12,31 +12,31 @@ char* arch(void) {
 
 char* sbcl_bin(char* file);
 
-char* sbcl_version_bin(char* impl,char* version)
+int sbcl_version_bin(struct install_options* param)
 {
   char* home= homedir();
+  char* ret;
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl.html",NULL);
   ensure_directories_exist(platforms_html);
 
-  /* TBD */
-  if(version) {
-    s(platforms_html);
-    return s_cat(q(version),q("-"),arch(),NULL);
+  if(param->version) {
+    ret=s_cat(param->version,q("-"),arch(),NULL);
   }else {
     char* version;
-    char* ret;
     printf("version not specified\nto specify version,downloading platform-table.html...");
     download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
     printf("done\n");
     version=sbcl_bin(platforms_html);
     printf("version to install would be '%s'\n",version);
     ret = s_cat(version,q("-"),arch(),NULL);
-    s(platforms_html);
-    return ret;
   }
+  s(platforms_html);
+  param->version=ret;
+  return 1;
 }
 
-char* sbcl_bin_extention(char* impl,char* version) {
+char* sbcl_bin_extention(struct install_options* param)
+{
 #ifdef _WIN32
   return "msi";
 #else
@@ -44,17 +44,20 @@ char* sbcl_bin_extention(char* impl,char* version) {
 #endif
 }
 
-char* sbcl_uri_bin(char* impl,char* version)
+char* sbcl_uri_bin(struct install_options* param)
 {
   /*should I care about it's existance? */
-  return cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",version,
+  return cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
 	     "-binary.",
-             sbcl_bin_extention(impl,version)
+             sbcl_bin_extention(param)
              ,NULL);
 }
 
 #ifdef _WIN32
-int sbcl_bin_expand(char* impl,char* version){
+int sbcl_bin_expand(struct install_options* param)
+{
+  char* impl=param->impl;
+  char* version=param->version;
   int ret;
   char* home= homedir();
   char* archive=cat(impl,"-",version,".msi",NULL);
@@ -90,7 +93,10 @@ int sbcl_bin_expand(char* impl,char* version){
   s(cmd),s(home),s(version);
   return !ret;
 }
-int sbcl_bin_install(char* impl,char* version) {
+
+int sbcl_bin_install(struct install_options* param) {
+  char* impl=param->impl;
+  char* version=param->version;
   char* home= homedir();
   char* str;
   char* version_num= subseq(version,0,position_char("-",version));
@@ -111,6 +117,7 @@ int sbcl_bin_install(char* impl,char* version) {
 #endif
 
 install_cmds install_sbcl_bin_full[]={
+  sbcl_version_bin,
   start,
   download,
 #ifndef _WIN32
@@ -123,4 +130,4 @@ install_cmds install_sbcl_bin_full[]={
   NULL
 };
 
-struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,sbcl_version_bin,sbcl_uri_bin,sbcl_bin_extention};
+struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,sbcl_uri_bin,sbcl_bin_extention};
