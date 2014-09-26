@@ -6,8 +6,8 @@
 
 extern int sbcl_install(struct install_options* param);
 
-char* arch(void) {
-  return s_cat(uname_m(),q("-"),uname(),NULL);
+char* arch_(struct install_options* param) {
+  return cat(param->arch,"-",param->os,NULL);
 }
 
 char* sbcl_bin(char* file);
@@ -19,19 +19,18 @@ int sbcl_version_bin(struct install_options* param)
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl.html",NULL);
   ensure_directories_exist(platforms_html);
 
-  if(param->version) {
-    ret=s_cat(param->version,q("-"),arch(),NULL);
-  }else {
-    char* version;
+  if(!param->version) {
     printf("version not specified\nto specify version,downloading platform-table.html...");
     download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
     printf("done\n");
-    version=sbcl_bin(platforms_html);
-    printf("version to install would be '%s'\n",version);
-    ret = s_cat(version,q("-"),arch(),NULL);
+    param->version=sbcl_bin(platforms_html);
+    printf("version to install would be '%s'\n",param->version);
+  }else {
+    param->version=q(param->version);
   }
+  param->arch_in_archive_name=1;
+  param->expand_path=cat(home,"src",SLASH,param->impl,"-",param->version,"-",arch_(param),SLASH,NULL);
   s(platforms_html);
-  param->version=ret;
   return 1;
 }
 
@@ -47,29 +46,33 @@ char* sbcl_bin_extention(struct install_options* param)
 char* sbcl_uri_bin(struct install_options* param)
 {
   /*should I care about it's existance? */
-  return cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
-	     "-binary.",
-             sbcl_bin_extention(param)
-             ,NULL);
+  char* arch=arch_(param);
+  char* ret=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
+                "-",arch,
+                "-binary.",
+                sbcl_bin_extention(param)
+                ,NULL);
+  s(arch);
+  return ret;
 }
 
 #ifdef _WIN32
 int sbcl_bin_expand(struct install_options* param)
 {
   char* impl=param->impl;
-  char* version=param->version;
+  char* version=q(param->version);
   int ret;
   char* home= homedir();
-  char* archive=cat(impl,"-",version,".msi",NULL);
-  char* log_path=cat(home,"impls",SLASH,"log",SLASH,impl,"-",version,SLASH,"install.log",NULL);
+  char* arch= arch_(param);
+  char* archive=cat(impl,"-",version,"-",arch,".msi",NULL);
+  char* log_path=cat(home,"impls",SLASH,"log",SLASH,impl,"-",version,"-",arch,SLASH,"install.log",NULL);
   char* dist_path;
   int pos=position_char("-",impl);
   if(pos!=-1) {
     impl=subseq(impl,0,pos);
   }else
     impl=q(impl);
-  version=q(version);
-  dist_path=cat(home,"src",SLASH,impl,"-",version,SLASH,NULL);
+  dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
   printf("Extracting archive. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
   delete_directory(dist_path,1);
@@ -90,7 +93,7 @@ int sbcl_bin_expand(struct install_options* param)
   s(dist_path);
   s(log_path);
   s(archive);
-  s(cmd),s(home),s(version);
+  s(cmd),s(home),s(version),s(arch);
   return !ret;
 }
 
@@ -99,19 +102,19 @@ int sbcl_bin_install(struct install_options* param) {
   char* version=param->version;
   char* home= homedir();
   char* str;
-  char* version_num= subseq(version,0,position_char("-",version));
+  char* version_num= q(version);
   str=cat("echo f|xcopy \"",
-          home,"src\\sbcl-",version,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe\" \"",
-          home,"impls\\sbcl-",version,"\\bin\\sbcl.exe\" >NUL",NULL);
+          home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe\" \"",
+          home,"impls\\sbcl-",version,"-",arch,"\\bin\\sbcl.exe\" >NUL",NULL);
   system(str),s(str);
   str=cat("echo f|xcopy \"",
-          home,"src\\sbcl-",version,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core\" \"",
-          home,"impls\\sbcl-",version,"\\lib\\sbcl\\sbcl.core\" >NUL",NULL);
+          home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core\" \"",
+          home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\sbcl.core\" >NUL",NULL);
   system(str),s(str);
   str=cat("echo d|xcopy \"",
-          home,"src\\sbcl-",version,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
-          home,"impls\\sbcl-",version,"\\lib\\sbcl\\contrib\" >NUL",NULL);
-  system(str),s(str);
+          home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
+          home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\contrib\" >NUL",NULL);
+  system(str),s(str),s(arch);
   s(home);
 }
 #endif

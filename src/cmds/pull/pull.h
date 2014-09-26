@@ -5,7 +5,11 @@ struct install_options
 {
   char* impl;
   char* version;
+  char* os;
   char* arch;
+  int arch_in_archive_name;
+  void* opt;
+  char* expand_path; /*expand dist */
 };
 
 typedef int (*install_cmds)(struct install_options* param);

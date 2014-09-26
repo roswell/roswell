@@ -48,15 +48,12 @@ int cmd_run(int argc,char **argv)
     char* bin=NULL;
     int offset=0;
     int i;
-    if(strcmp(impl,"sbcl-bin")==0) {
-      s(impl);
-      impl=q("sbcl");
-      if(version) {
-	version=s_cat(q(version),q("-"),uname_m(),q("-"),uname(),NULL);
-      }
-    }
-    if(strcmp(impl,"sbcl")==0) {
-      char* impl_path= cat(home,"impls",SLASH,impl,"-",version,NULL);
+    if(strcmp(impl,"sbcl")==0 ||
+       strcmp(impl,"sbcl-bin")==0) {
+      char* arch=uname_m();
+      char* os=uname();
+      char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+      s(arch),s(os);
       int core_p=1;
       offset=2;
       bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",

@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <archive.h>
+#include <archive_entry.h>
 
 #include "opt.h"
 #include "util.h"
@@ -12,6 +14,8 @@ struct install_impls *impls_to_install[]={
   &impls_sbcl_bin,
   &impls_sbcl
 };
+
+extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
 
 int installed_p(struct install_options* param)
 {
@@ -62,6 +66,17 @@ int start(struct install_options* param)
   return 1;
 }
 
+char* download_archive_name(struct install_options* param)
+{
+  char* ret=cat(param->impl,"-",param->version,NULL);
+  if(param->arch_in_archive_name==0) {
+    ret=s_cat(ret,q("."),q((*(install_impl->extention))(param)),NULL);
+  }else {
+    ret=s_cat(ret,cat("-",param->arch,"-",param->os,".",q((*(install_impl->extention))(param)),NULL),NULL);
+  }
+  return ret;
+}
+
 int download(struct install_options* param)
 {
   char* home= homedir();
@@ -73,7 +88,9 @@ int download(struct install_options* param)
     printf("Downloading archive.:%s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
-      impl_archive=cat(home,"archives",SLASH,param->impl,"-",param->version,".",(*(install_impl->extention))(param),NULL);
+      char* archive_name=download_archive_name(param);
+      impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
+      s(archive_name);
       ensure_directories_exist(impl_archive);
 
       if(download_simple(url,impl_archive,0)) {
@@ -90,6 +107,18 @@ int download(struct install_options* param)
   return 1;
 }
 
+LVal expand_callback(LVal v1,LVal v2) {
+  char* path=(char*)v1;
+  struct install_options* param=(struct install_options*)v2;
+  if(param->arch_in_archive_name) {
+    int pos=position_char("/",path);
+    if(pos!=-1) {
+      return (LVal)s_cat(cat(param->impl,"-",param->version,"-",param->arch,"-",param->os,NULL),subseq(path,pos,0),NULL);
+    }
+  }
+  return (LVal)q(path);
+}
+
 int expand(struct install_options* param)
 {
   char* home= homedir();
@@ -99,15 +128,16 @@ int expand(struct install_options* param)
   char* archive;
   char* dist_path;
   char *impl,*version;
-  archive=cat(param->impl,"-",param->version,".",(*(install_impl->extention))(param),NULL);
+  archive=download_archive_name(param);
   pos=position_char("-",param->impl);
   if(pos!=-1) {
     impl=subseq(param->impl,0,pos);
   }else
     impl=q(param->impl);
   version=q(param->version);
-  dist_path=cat(home,"src",SLASH,impl,"-",version,SLASH,NULL);
-
+  if(!param->expand_path)
+    param->expand_path=cat(home,"src",SLASH,impl,"-",version,SLASH,NULL);
+  dist_path=param->expand_path;
   printf("Extracting archive. %s to %s\n",archive,dist_path);
   
   delete_directory(dist_path,1);
@@ -116,11 +146,10 @@ int expand(struct install_options* param)
   /* TBD log output */
   argv[1]=cat(home,"archives",SLASH,archive,NULL);
   argv[3]=cat(home,"src",SLASH,NULL);
-  cmd_tar(argc,argv);
+  extract(argv[1], 1, ARCHIVE_EXTRACT_TIME,argv[3],expand_callback,param);
 
   s(argv[1]),s(argv[3]);
   s(impl);
-  s(dist_path);
   s(archive);
   s(home);
   s(version);
@@ -173,6 +202,10 @@ int cmd_pull(int argc,char **argv)
   int ret=1,k;
   install_cmds *cmds=NULL;
   struct install_options param;
+  param.os=uname();
+  param.arch=uname_m();
+  param.arch_in_archive_name=0;
+  param.expand_path=NULL;
   if(argc!=1) {
     for(k=1;k<argc;++k) {
       char* version_arg=NULL;
@@ -215,7 +248,8 @@ int cmd_pull(int argc,char **argv)
         save_opts(path,opt);
         s(home),s(path),s(v);
       }
-      s(param.version),s(param.impl);
+      s(param.version),s(param.impl),s(param.arch),s(param.os);
+      s(param.expand_path);
     }
   }else {
     printf("what would you like to install?\n");

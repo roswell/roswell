@@ -21,6 +21,7 @@ struct Cons {
 #endif
 
 typedef LVal (*Function1)(LVal v);
+typedef LVal (*Function2)(LVal v1,LVal v2);
 typedef LVal (*Compare2)(LVal v1,LVal v2);
 
 #define toPointer(v) ((void*)(((intptr_t)v)&~3))

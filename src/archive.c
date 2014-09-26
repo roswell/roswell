@@ -12,7 +12,7 @@
 #include "util.h"
 
 static void errmsg(const char *);
-static int extract(const char *filename, int do_extract, int flags,const char* outputpath);
+int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
 static int copy_data(struct archive *, struct archive *);
 static void msg(const char *);
 
@@ -68,18 +68,18 @@ int cmd_tar(int argc, const char **argv)
   }
   switch (mode) {
   case 't':
-    extract(filename, 0, flags,outputpath);
+    extract(filename, 0, flags,outputpath,NULL,NULL);
     break;
   case 'x':
-    extract(filename, 1, flags,outputpath);
+    extract(filename, 1, flags,outputpath,NULL,NULL);
     break;
   }
 
   return (0);
 }
 
-static int
-extract(const char *filename, int do_extract, int flags,const char* outputpath)
+int
+extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f_,void* p_)
 {
   struct archive *a;
   struct archive *ext;
@@ -116,9 +116,21 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath)
     if (verbose || !do_extract)
       msg(archive_entry_pathname(entry));
     if(outputpath) {
-      char* p=s_cat2(q(outputpath),q(archive_entry_pathname(entry)));
-      archive_entry_copy_pathname(entry,p);
-      s(p);
+      char* p;
+      char* result;
+      if(f_) {
+        result=(char*)f_((LVal)archive_entry_pathname(entry),(LVal)p_);
+        if(result)
+          p=s_cat2(q(outputpath),result);
+        else
+          p=NULL;
+      }else {
+        p=s_cat2(q(outputpath),q(archive_entry_pathname(entry)));
+      }
+      if(p) {
+        archive_entry_copy_pathname(entry,p);
+        s(p);
+      }
     }
 
     if (do_extract) {

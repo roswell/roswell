@@ -44,9 +44,9 @@ int sbcl_make(struct install_options* param) {
   char* impl=param->impl;
   char* version=param->version;
   char* home=homedir();
-  char* src=cat(home,"src/",impl,"-",version,NULL);
+  char* src=cat(home,"src",SLASH,impl,"-",version,NULL);
   char* compiler=cat(argv_orig[0]," impl=",get_opt("sbcl.compiler")," --run",NULL);
-  char* cmd=cat("sh make.sh \"--xc-host=",compiler,"\" ","--prefix=",home,"impls/",impl,"-",version,NULL);
+  char* cmd=cat("sh make.sh \"--xc-host=",compiler,"\" ","--prefix=",home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
   log_path=cat(home,"impls/log/",impl,"-",version,"/make.log",NULL);
 
   printf("Building %s-%s with %s\n",impl,version,compiler);
@@ -66,16 +66,12 @@ int sbcl_install(struct install_options* param) {
   char* home= homedir();
   char* impl=param->impl;
   char* version=param->version;
-  if(strcmp(impl,"sbcl-bin")==0) {
-    impl="sbcl";
-  }
-  char* impl_path= cat(home,"impls/",impl,"-",version,NULL);
-  char* src=cat(home,"src/",impl,"-",version,NULL);
+  char* impl_path= cat(home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
+  char* src=param->expand_path;
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   char* install_root=q(impl_path);
   char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
-  impl="sbcl";
-  printf("installing %s-%s ",impl,version);
+  printf("installing %s/%s ",impl,version);
   ensure_directories_exist(impl_path);
   ensure_directories_exist(log_path);
   change_directory(src);
@@ -85,7 +81,7 @@ int sbcl_install(struct install_options* param) {
   if(system_redirect("sh install.sh",log_path)==-1) {
     ret=0;
   }
-  s(home),s(impl_path),s(src),s(sbcl_home),s(install_root),s(log_path);
+  s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
   printf("done.\n");
   return ret;
 #else
