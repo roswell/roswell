@@ -36,6 +36,14 @@ char* q(const char* orig) {
   strcpy(ret,orig);
   return ret;
 }
+char* qsprintf(int bufsize,char* format,...) {
+  char* result=alloc(bufsize+1);
+  va_list list;
+  va_start(list,format);
+  vsnprintf(result,bufsize+1,format,list);
+  va_end(list);
+  return result;
+}
 
 void s(char* f) {
   dealloc(f);

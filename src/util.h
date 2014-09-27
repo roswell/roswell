@@ -59,6 +59,7 @@ void sL(LVal l);
 void* alloc(size_t bytes);
 void dealloc(void* f);
 char* q(const char* orig);
+char* qsprintf(int bufsize,char* format,...);
 void s(char* f);
 char* s_cat2(char* a,char* b);
 char* s_cat(char* first,...);
