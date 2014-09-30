@@ -33,7 +33,7 @@ LVal filter_impl_fromdir(LVal v) {
   return 0;
 }
 
-int list_impls(int argc,char **argv)
+int list_impls(int argc,char **argv,struct sub_command* cmd)
 {
   char* impls=s_cat2(homedir(),q("impls/"));
   LVal dirs=nreverse(directory(impls)); //sort?
@@ -62,7 +62,7 @@ LVal filter_versions_fromdir(LVal v) {
   return (c>1);
 }
 
-int list_versions(int argc,char **argv)
+int list_versions(int argc,char **argv,struct sub_command* cmd)
 {
   char* sub=subseq(argv[1],-4,0);
   if(strcmp(sub,"-bin")==0) {
@@ -84,7 +84,7 @@ int list_versions(int argc,char **argv)
   s(sub);
 }
 
-static struct sub_command commands[] = {
+static struct sub_command list_commands[] = {
   { "installed", NULL,list_impls},
   { "sbcl", NULL,list_versions},
   { "sbcl-bin", NULL,list_versions},
@@ -96,11 +96,11 @@ int cmd_list(int argc,char **argv)
   struct sub_command* j;
   int ret=1,k,i,found=0;
   if(argc!=1) {
-    for(i=1;i<sizeof(commands)/sizeof(struct sub_command);++i) {
-      j = &commands[i];
+    for(i=1;i<sizeof(list_commands)/sizeof(struct sub_command);++i) {
+      j = &list_commands[i];
       if(strcmp(argv[1],j->name)==0) {
 	found=1;
-	j->call(argc,argv);
+	j->call(argc,argv,j);
 	break;
       }
     }
@@ -108,8 +108,8 @@ int cmd_list(int argc,char **argv)
     char* str = file_namestring(q(argv_orig[0]));
     printf("usage %s %s\n\n",str,argv[0]);
     s(str);
-    for(i=0;i<sizeof(commands)/sizeof(struct sub_command);++i) {
-      j = &commands[i];
+    for(i=0;i<sizeof(list_commands)/sizeof(struct sub_command);++i) {
+      j = &list_commands[i];
       printf("%s\n",j->name);
     }
     return(EXIT_SUCCESS);

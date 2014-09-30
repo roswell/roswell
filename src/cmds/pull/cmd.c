@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <archive.h>
 #include <archive_entry.h>
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
 
 #include "opt.h"
 #include "util.h"
@@ -197,7 +200,7 @@ install_cmds install_full[]={
   NULL
 };
 
-int cmd_pull(int argc,char **argv)
+int cmd_pull(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1,k;
   install_cmds *cmds=NULL;
@@ -243,7 +246,7 @@ int cmd_pull(int argc,char **argv)
         for(i=0;version[i]!='\0';++i)
           if(version[i]=='-')
             version[i]='\0';
-        set_opt(opts,"default.impl",param.impl,0);
+        set_opt(opts,"default.lisp",param.impl,0);
         set_opt(opts,v,version,0);
         save_opts(path,opt);
         s(home),s(path),s(v);
@@ -256,4 +259,9 @@ int cmd_pull(int argc,char **argv)
     exit(EXIT_FAILURE);
   }
   return ret;
+}
+
+void register_cmd_pull(void)
+{
+  top_commands=add_command(top_commands,"pull"    ,NULL,cmd_pull,1,1,"Pull archive and build it for "PACKAGE" environment",NULL);
 }

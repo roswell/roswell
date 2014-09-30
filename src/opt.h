@@ -1,7 +1,8 @@
 #ifndef  __OPT_H__
 #define __OPT_H__
-
-typedef int (*sub_command_fnc)(int argc,char **argv);
+#include "util.h"
+struct sub_command;
+typedef int (*sub_command_fnc)(int argc,char **argv,struct sub_command* cmd);
 
 struct opts
 {
@@ -25,9 +26,25 @@ struct sub_command
   sub_command_fnc call;
   int show_opt;
   int terminating;
-  char* path;
+  char* description;
+  char* arg_example;
 };
 
+struct command_help
+{
+  const char* name;
+  const char* usage;
+  LVal commands;
+  LVal opts;
+  const char* header;
+  const char* footer;
+};
+
+LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer);
+extern LVal top_helps;
+LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating,char* description,char* arg_example);
+extern LVal top_commands;
+extern LVal top_options;
 extern struct opts* global_opt;
 extern struct opts* local_opt;
 struct opts* load_opts(const char* path);

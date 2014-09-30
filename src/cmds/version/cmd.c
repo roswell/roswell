@@ -6,6 +6,6 @@
 
 int cmd_version(int argc,char **argv)
 {
-  printf("%s\n",PACKAGE_STRING);
+  fprintf(stderr,"%s\n",PACKAGE_STRING);
   return EXIT_SUCCESS;
 }

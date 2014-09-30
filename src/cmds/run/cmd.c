@@ -17,20 +17,80 @@ BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar){
 }
 #endif
 
-int cmd_run(int argc,char **argv)
+LVal run_commands=NULL;
+LVal run_options =NULL;
+
+char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
+{
+  char** arg=NULL;
+  char* home=homedir();
+  char* arch=uname_m();
+  char* os=uname();
+  int offset=2;
+  int i;
+  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  int core_p=1;
+  char *bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
+#ifdef _WIN32
+           ".exe",
+#endif
+           NULL);
+  s(arch),s(os);
+  for(i=1;i<argc;++i) {
+    if(strcmp(argv[i],"--core")==0) {
+      core_p=0;
+      offset=0;
+      break;
+    }
+  }
+  arg=alloc(sizeof(char*)*(offset+2+argc));
+  arg[0]=bin;
+  if(core_p) {
+    arg[1]="--core";
+    arg[2]=cat(
+#ifdef _WIN32
+               //"\"",
+#endif
+               impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",
+#ifdef _WIN32
+               //"\"",
+#endif
+               NULL);
+  }
+  s(impl_path);
+  
+  for(i=1;i<argc;++i) {
+    arg[i+offset]=argv[i];
+  }
+  arg[i+offset]=NULL;
+  return arg;
+}
+
+int cmd_run(int argc,char **argv,struct sub_command* cmd)
+{
+  LVal options=run_options,commands=run_commands;
+  if(argc==1) {
+    char* tmp[]={"help","run"};
+    return proccmd(2,tmp,top_options,top_commands);
+  }else{
+    return proccmd(argc-1,&argv[1],options,commands);
+  }
+}
+
+int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1;
   char* impl;
   char* version;
-  char* home=homedir();
+
   int pos;
-  impl=get_opt("impl");
+  impl=get_opt("lisp");
   if(impl && (pos=position_char("/",impl))!=-1) {
     version=subseq(impl,pos+1,0);
     impl=subseq(impl,0,pos);
   }else {
     if(!impl)
-      impl=get_opt("default.impl");
+      impl=get_opt("default.lisp");
     version=get_opt("version");
     if(!version){
       char* opt=s_cat(q(impl),q("."),q("version"),NULL);
@@ -45,78 +105,58 @@ int cmd_run(int argc,char **argv)
 
   if(impl) {
     char** arg=NULL;
-    char* bin=NULL;
-    int offset=0;
+
     int i;
     if(strcmp(impl,"sbcl")==0 ||
        strcmp(impl,"sbcl-bin")==0) {
-      char* arch=uname_m();
-      char* os=uname();
-      char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
-      s(arch),s(os);
-      int core_p=1;
-      offset=2;
-      bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
-#ifdef _WIN32
-               ".exe",
-#endif
-               NULL);
-      for(i=1;i<argc;++i) {
-	if(strcmp(argv[i],"--core")==0) {
-	  core_p=0;
-          offset=0;
-	  break;
-	}
-      }
-      arg=alloc(sizeof(char*)*(offset+2+argc));
-      arg[0]=bin;
-      if(core_p) {
-	arg[1]="--core";
-	arg[2]=cat(
-#ifdef _WIN32
-                   //"\"",
-#endif
-                   impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",
-#ifdef _WIN32
-                   //"\"",
-#endif
-                   NULL);
-      }
-      s(impl_path);
-    }else if (strcmp(impl,"native")==0) {
-      bin= which(version);
-      if(strcmp(bin,"")!=0) {
-	arg=alloc(sizeof(char*)*(offset+2+argc));
-	arg[0]=bin;
-      }else {
-	printf("can't find %s.\n",version);
-	exit(EXIT_FAILURE);
-      }
+      arg=cmd_run_sbcl(impl,version,argc,argv);
     }
-
-    for(i=1;i<argc;++i) {
-      arg[i+offset]=argv[i];
-    }
-
-    if(file_exist_p(bin)) {
-      arg[i+offset]=NULL;
+    if(file_exist_p(arg[0])) {
+      char* cmd;
 #ifdef _WIN32
-      s(home);home=q(arg[0]);
+      cmd=q(arg[0]);
       for(i=1;arg[i]!=NULL;++i) {
-        home=s_cat(home,q(" "),q(arg[i]),NULL);
+        cmd=s_cat(cmd,q(" "),q(arg[i]),NULL);
       }
       SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-      system(home);
-      //_execvp(bin,arg);
+      system(cmd);
+      s(cmd);
 #else
-      execvp(bin,arg);
+      execvp(arg[0],arg);
 #endif
     }else{
-      printf("%s/%s is not installed.stop.\n",impl,version);
+      fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);
     }
   }else {
-    printf("impl doesn't specified stop");
+    fprintf(stderr,"impl doesn't specified stop\n");
   }
-  s(home),s(impl),s(version);
+  s(impl),s(version);
   return ret;
+}
+
+int cmd_run_execute(int argc,char **argv,struct sub_command* cmd)
+{
+}
+
+int cmd_run_output(int argc,char **argv,struct sub_command* cmd)
+{
+}
+
+int cmd_run_help(int argc,char **argv,struct sub_command* cmd)
+{
+}
+
+void register_cmd_run(void)
+{
+  char* _help;
+  /*options*/
+  /*commands*/
+  run_commands=add_command(run_commands,"*" ,NULL,cmd_run_star,0,1,NULL,NULL);
+  run_commands=add_command(run_commands,"help" ,NULL,cmd_run_help,0,1,NULL,NULL);
+
+  top_commands=add_command(top_commands,"run"     ,NULL,cmd_run,1,1,"Run lisp environment",NULL);
+  _help=cat("Usage: ",argv_orig[0]," run [OPTIONS] '(S-Expression)' [args...]\n"
+            "Usage: ",argv_orig[0]," run [OPTIONS] script-file [args...]\n\n",NULL);
+  top_helps=add_help(top_helps,"run",_help,run_commands,run_options,NULL,NULL);
+  s(_help);
 }
