@@ -100,14 +100,13 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
 }
 
 int opt_top(int argc,char** argv,struct sub_command* cmd) {
-  char* arg=argv[0];
-  if(strcmp("lisp",arg)==0) {
-    set_opt(&local_opt,"lisp",argv[1],0);
-  }else if(strcmp("wrap",arg)==0) {
-    set_opt(&local_opt,"wrap",argv[1],0);
-  }else if(strcmp("image",arg)==0) {
-    set_opt(&local_opt,"image",argv[1],0);
-  }
+  const char* arg=cmd->name;
+  if(arg && argc>1)
+    set_opt(&local_opt,arg,argv[1],0);
+  return 2;
+}
+
+int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
   return 2;
 }
 
@@ -121,7 +120,7 @@ int main (int argc,char **argv) {
   top_options=add_command(top_options,"image","-m",opt_top,1,0,"build from Lisp image IMAGE","IMAGE");
   top_options=add_command(top_options,"file","-f",opt_top,1,0,"include lisp FILE while building","FILE");
   top_options=add_command(top_options,"load","-L",cmd_notyet,1,0,"load lisp FILE while building","FILE");
-  top_options=add_command(top_options,"source-registry","-S",cmd_notyet,1,0,"override source registry of asdf systems","X");
+  top_options=add_command(top_options,"source-registry","-S",opt_top,1,0,"override source registry of asdf systems","X");
   top_options=add_command(top_options,"system","-s",cmd_notyet,1,0,"load asdf SYSTEM while building","SYSTEM");
   top_options=add_command(top_options,"load-system",NULL,cmd_notyet,1,0,"same as above (buildapp compatibility)","SYSTEM");
   top_options=add_command(top_options,"package","-p",cmd_notyet,1,0,"change current package to PACKAGE","PACKAGE");
@@ -142,7 +141,11 @@ int main (int argc,char **argv) {
   top_options=add_command(top_options,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
   top_options=add_command(top_options,"verbose","-v",cmd_notyet,1,0,"be quite noisy while building",NULL);
   top_options=add_command(top_options,"quiet","-q",cmd_notyet,1,0,"be quite quiet while building (default)",NULL);
+
+  /* abbrevs */
   top_options=add_command(top_options,"version",NULL,cmd_version,0,1,NULL,NULL);
+  top_options=add_command(top_options,"help","-h",cmd_help,0,1,NULL,NULL);
+  top_options=add_command(top_options,"help","-?",cmd_help,0,1,NULL,NULL);
 
   top_options=nreverse(top_options);
   /*commands*/
@@ -156,7 +159,7 @@ int main (int argc,char **argv) {
   top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,"Show the "PACKAGE" version information",NULL);
   top_commands=add_command(top_commands,"tar"     ,NULL,cmd_tar,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"download",NULL,cmd_download,0,1,NULL,NULL);
-  top_commands=add_command(top_commands,"help","h,?",cmd_help,0,1,NULL,NULL);
+  top_commands=add_command(top_commands,"help",NULL,cmd_help,0,1,NULL,NULL);
 
   top_commands=nreverse(top_commands);
   top_helps=add_help(top_helps,NULL,"Usage: %s [OPTIONS] COMMAND [args...]\n\n",top_commands,top_options,NULL,NULL);

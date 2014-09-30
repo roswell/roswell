@@ -10,7 +10,7 @@ int cmd_help(int argc, const char **argv)
   LVal help=NULL;
   int i;int cmdmax,optmax;
   char *fmt;
-  if(argc==1 && strcmp(argv[0],"help")==0) {
+  if(argc==1) {
     help=top_helps;
   }else {
     LVal i=top_helps;
