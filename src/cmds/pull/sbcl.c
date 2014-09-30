@@ -45,7 +45,7 @@ int sbcl_make(struct install_options* param) {
   char* version=param->version;
   char* home=homedir();
   char* src=cat(home,"src",SLASH,impl,"-",version,NULL);
-  char* compiler=cat(argv_orig[0]," impl=",get_opt("sbcl.compiler")," --run",NULL);
+  char* compiler=cat(argv_orig[0]," lisp=",get_opt("sbcl.compiler")," --no-rc run !",NULL);
   char* cmd=cat("sh make.sh \"--xc-host=",compiler,"\" ","--prefix=",home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
   log_path=cat(home,"impls/log/",impl,"-",version,"/make.log",NULL);
 
