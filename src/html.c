@@ -28,20 +28,20 @@ void attrsfree(struct Cons* a) {
   for(;a;) {
     struct attr* p=(struct attr*)firstp((LVal)a);
     s(p->name),s(p->value);
-    next=a->next;
+    next=(struct Cons*)a->next;
     dealloc(a);
     a=next;
   }
 }
 
-struct Cons * parse_attr(char* str) {
+LVal parse_attr(char* str) {
   int i;
   int pos;
   char* name;
   char* val;
   struct Cons tmp;
   struct Cons *ret=&tmp,*cur=ret;
-  tmp.next=NULL;
+  tmp.next=(LVal)NULL;
   for(i=0;str[i]!='\0';++i) {
     name=NULL;
     val=NULL;
@@ -95,21 +95,21 @@ struct Cons * parse_attr(char* str) {
 	    val=subseq(&str[i],0,pos);
 	    break;
 	  }
-	  cur->next=attralloc();;
+	  cur->next=(LVal)attralloc();;
 	  p=(struct attr*)firstp((LVal)cur->next);
 	  p->name=name;
 	  p->value=val;
-	  cur=cur->next;
+	  cur=(struct Cons *)cur->next;
 	}else {
-	  cur->next=attralloc();
+	  cur->next=(LVal)attralloc();
 	  p=(struct attr*)firstp((LVal)cur->next);
 	  p->name=name;
-	  cur=cur->next;
+	  cur=(struct Cons *)cur->next;
 	}
       }
     }
   }
-  return ret->next;
+  return (LVal)ret->next;
 }
 
 struct tag {
@@ -140,44 +140,44 @@ void tagsfree(LVal tags) {
   struct Cons* t=(struct Cons*)tags;
   struct Cons* next;
   for(;t;t=next) {
-    next=t->next;
+    next=(struct Cons*)t->next;
     tagfree((LVal)t);
   }
 }
 
-struct Cons* delete_not_open_tags(LVal t) {
-  struct Cons* tag=(struct Cons*)t;
-  struct Cons* ret=tag;
-  struct Cons* next;
-  for(;tag->next!=NULL&&((struct tag*)firstp(tag))->type!=1;tag=next) {  /* find first*/
-    next=tag->next;
+LVal delete_not_open_tags(LVal t) {
+  LVal tag=t;
+  LVal ret=tag;
+  LVal next;
+  for(;((struct Cons*)tag)->next!=(LVal)NULL&&((struct tag*)firstp(tag))->type!=1;tag=next) {  /* find first*/
+    next=Next(tag);
     tagfree(tag);
   }
-  while(tag->next) {
-    if(((struct tag*)firstp(tag->next))->type!=1) {
+  while(Next(tag)) {
+    if(((struct tag*)firstp(Next(tag)))->type!=1) {
       next=Next(Next(tag));
-      tagfree(tag->next);
-      tag->next=next;
+      tagfree(Next(tag));
+      ((struct Cons*)tag)->next=next;
     }else{
-      tag=tag->next;
+      tag=Next(tag);
     }
   }
   return ret;
 }
 
-LVal delete_not_tags(char* tags,struct Cons* tag) {
-  struct Cons* ret;
-  struct Cons* next;
-  for(;Next((LVal)tag)!=NULL&&((struct tag*)firstp(tag))->name&&strcmp(((struct tag*)firstp(tag))->name,tags)!=0;tag=Next((LVal)tag));  /* find first*/
+LVal delete_not_tags(char* tags,LVal tag) {
+  LVal ret;
+  LVal next;
+  for(;Next((LVal)tag)!=(LVal)NULL&&((struct tag*)firstp(tag))->name&&strcmp(((struct tag*)firstp(tag))->name,tags)!=0;tag=Next(tag));  /* find first*/
   ret=tag;
-  while(tag->next) {
+  while(Next(tag)) {
     if(((struct tag*)firstp(Next((LVal)tag)))->name&&
        strcmp(((struct tag*)firstp(Next((LVal)tag)))->name,tags)!=0) {
       next=Next(Next(tag));
-      tagfree(tag->next);
-      tag->next=next;
+      tagfree(Next(tag));
+      ((struct Cons*)tag)->next=next;
     }else {
-      tag=tag->next;
+      tag=Next(tag);
     }
   }
   return (LVal)ret;
@@ -185,13 +185,13 @@ LVal delete_not_tags(char* tags,struct Cons* tag) {
 
 LVal filter_href(LVal t)
 {
-  struct Cons* tags=(struct Cons*)t;
-  struct Cons* ret=NULL;
+  LVal tags=t;
+  LVal ret=(LVal)NULL;
   char* href;
-  for(;tags;tags=tags->next) {
+  for(;tags!=(LVal)NULL;tags=Next(tags)) {
     href=NULL;
-    struct Cons* a=((struct tag*)firstp(tags))->attr;
-    for(;a;a=a->next) {
+    LVal a=(LVal)((struct tag*)firstp(tags))->attr;
+    for(;a;a=Next(a)) {
       struct attr* v=(struct attr*)firstp(a);
       if(strcmp(v->name,"href")==0) {
 	href=q(v->value);
@@ -199,10 +199,10 @@ LVal filter_href(LVal t)
       }
     }
     if(href) {
-      ret=toPointer(conss(href,(LVal)ret));
+      ret=(LVal)toPointer(conss(href,ret));
     }
   }
-  return (LVal)ret;
+  return ret;
 }
 
 LVal parse_tags(FILE* fp,LVal before,int mode) {
@@ -263,7 +263,7 @@ LVal parse_tags(FILE* fp,LVal before,int mode) {
 	  if(pos!=-1) {
 	    ((struct tag*)firstp(current))->name=subseq(buf,0,pos);
 	    buf2=subseq(buf,pos,0);
-	    ((struct tag*)firstp(current))->attr=parse_attr(buf2);
+	    ((struct tag*)firstp(current))->attr=(struct Cons*)parse_attr(buf2);
 	    s(buf);
 	    buf=buf2;
 	  }else {
