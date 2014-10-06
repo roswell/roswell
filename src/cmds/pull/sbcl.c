@@ -45,7 +45,8 @@ int sbcl_make(struct install_options* param) {
   char* version=param->version;
   char* home=homedir();
   char* src=cat(home,"src",SLASH,impl,"-",version,NULL);
-  char* compiler=cat(argv_orig[0]," lisp=",get_opt("sbcl.compiler")," --no-rc run !",NULL);
+  char* arg0=truename(argv_orig[0]);
+  char* compiler=cat(arg0," lisp=",get_opt("sbcl.compiler")," --no-rc run --",NULL);
   char* cmd=cat("sh make.sh \"--xc-host=",compiler,"\" ","--prefix=",home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
   log_path=cat(home,"impls/log/",impl,"-",version,"/make.log",NULL);
 
@@ -56,7 +57,7 @@ int sbcl_make(struct install_options* param) {
   if(system_redirect_function(cmd,sbcl_make_redirected)==-1) {
     return 0;
   }
-  s(home),s(src),s(cmd),s(compiler),s(log_path);
+  s(home),s(src),s(cmd),s(compiler),s(arg0),s(log_path);
   return 1;
 }
 
