@@ -197,7 +197,6 @@ char* downcase(char* orig) {
   return orig;
 }
 
-
 char* append_trail_slash(char* str) {
   char* ret;
   if(str[strlen(str)-1]!=SLASH[0]) {
@@ -206,6 +205,29 @@ char* append_trail_slash(char* str) {
     ret=q(str);
   }
   s(str);
+  return ret;
+}
+
+char* escape_string(char* str) {
+  //character code might bi problem.
+  char* ret;
+  int i,j;
+  for(i=0,j=0;str[i]!='\0';++i,++j) {
+    if(str[i]=='\\' ||
+       str[i]=='"') {
+      ++j;
+    }
+  }
+  ret=alloc(1+j);
+  for(i=0,j=0;str[i]!='\0';++i,++j) {
+    if(str[i]=='\\' ||
+       str[i]=='"') {
+      ret[j]='\\';
+      ++j;
+    }
+    ret[j]=str[i];
+  }
+  ret[j]='\0';
   return ret;
 }
 
@@ -240,10 +262,18 @@ char* homedir(void) {
   return s_cat(append_trail_slash(c),q("."),q(PACKAGE),q(SLASH),NULL);
 }
 
+char* truename(const char* path) {
+#ifndef _WIN32
+  return realpath(path,NULL);
+#else
+  /* TBD */
+#endif
+}
+
 char* pathname_directory(char* path) {
   int i;
   char* ret;
-  for(i=strlen(path)-1;i>=0&&path[i]!='/';--i);
+  for(i=strlen(path)-1;i>=0&&path[i]!=SLASH[0];--i);
   ret=append_trail_slash(subseq(path,0,i));
   s(path);
   return ret;
