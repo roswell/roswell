@@ -20,51 +20,7 @@ BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar){
 LVal run_commands=NULL;
 LVal run_options =NULL;
 
-char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
-{
-  char** arg=NULL;
-  char* home=homedir();
-  char* arch=uname_m();
-  char* os=uname();
-  int offset=2;
-  int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
-  int core_p=1;
-  char *bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
-#ifdef _WIN32
-           ".exe",
-#endif
-           NULL);
-  s(arch),s(os);
-  for(i=1;i<argc;++i) {
-    if(strcmp(argv[i],"--core")==0) {
-      core_p=0;
-      offset=0;
-      break;
-    }
-  }
-  arg=alloc(sizeof(char*)*(offset+2+argc));
-  arg[0]=bin;
-  if(core_p) {
-    arg[1]="--core";
-    arg[2]=cat(
-#ifdef _WIN32
-               //"\"",
-#endif
-               impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",
-#ifdef _WIN32
-               //"\"",
-#endif
-               NULL);
-  }
-  s(impl_path);
-  
-  for(i=1;i<argc;++i) {
-    arg[i+offset]=argv[i];
-  }
-  arg[i+offset]=NULL;
-  return arg;
-}
+extern char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv);
 
 int cmd_run(int argc,char **argv,struct sub_command* cmd)
 {
@@ -150,13 +106,15 @@ void register_cmd_run(void)
 {
   char* _help;
   /*options*/
+  run_options=add_command(run_options,"",NULL,cmd_run_star,0,1,NULL,NULL);
   /*commands*/
+
   run_commands=add_command(run_commands,"*" ,NULL,cmd_run_star,0,1,NULL,NULL);
   run_commands=add_command(run_commands,"help" ,NULL,cmd_run_help,0,1,NULL,NULL);
 
   top_commands=add_command(top_commands,"run"     ,NULL,cmd_run,1,1,"Run lisp environment",NULL);
-  _help=cat("Usage: ",argv_orig[0]," run [OPTIONS] '(S-Expression)' [args...]\n"
-            "Usage: ",argv_orig[0]," run [OPTIONS] script-file [args...]\n\n",NULL);
+  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] run '(S-Expression)' [args...]\n"
+            "Usage: ",argv_orig[0]," [OPTIONS] run script-file [args...]\n\n",NULL);
   top_helps=add_help(top_helps,"run",_help,run_commands,run_options,NULL,NULL);
   s(_help);
 }
