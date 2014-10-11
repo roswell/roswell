@@ -264,10 +264,13 @@ char* homedir(void) {
 
 char* truename(const char* path) {
 #ifndef _WIN32
-  return realpath(path,NULL);
+  char* ret=realpath(path,NULL);
+  if(ret)
+    return ret;
 #else
   /* TBD */
 #endif
+  return which((char*)path);
 }
 
 char* pathname_directory(char* path) {
