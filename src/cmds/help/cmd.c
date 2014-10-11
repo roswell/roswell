@@ -4,7 +4,7 @@
 #include "opt.h"
 #include "util.h"
 extern char** argv_orig;
-
+extern int cmd_notyet(int argc,char **argv,struct sub_command* cmd);
 int cmd_help(int argc, const char **argv)
 {
   LVal help=NULL;
@@ -56,7 +56,7 @@ int cmd_help(int argc, const char **argv)
         if(i==0)
           fmt=s_cat(q("    %-"),qsprintf(5,"%d",cmdmax+2),q("s%s\n"),NULL);
         else
-          fmt=s_cat(q("    %-"),qsprintf(5,"%d",optmax+2),q("s --%-"),qsprintf(5,"%d",cmdmax+2),q("s%s\n"),NULL);
+          fmt=s_cat(q("    %-"),qsprintf(5,"%d",optmax+2),q("s --%-"),qsprintf(5,"%d",cmdmax+2),q("s%s"),NULL);
     
         for(p=pinit;p;p=Next(p)) {
           struct sub_command* fp=firstp(p);
@@ -67,6 +67,10 @@ int cmd_help(int argc, const char **argv)
               char* tmp=cat((char*)(fp->name?fp->name:"")," ",fp->arg_example&&fp->name?fp->arg_example:"",NULL);
               char* tmp2=cat((char*)(fp->short_name?fp->short_name:"")," ",fp->arg_example&&fp->short_name?fp->arg_example:"",NULL);
               fprintf(stderr,fmt,tmp2,tmp,fp->description?fp->description:"");
+              if(fp->call==&cmd_notyet)
+                fprintf(stderr,"\t\t[Not implemented yet]\n");
+              else
+                fprintf(stderr,"\n");
               s(tmp),s(tmp2);
              }
           }
