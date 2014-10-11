@@ -21,6 +21,7 @@ extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
 extern void register_cmd_pull(void);
+int verbose=0;
 //dummy
 int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
 {
@@ -32,10 +33,13 @@ LVal top_commands =NULL;
 LVal top_options =NULL;
 
 LVal top_helps =NULL;
+LVal subcommand_name=NULL;
 
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int i;
   int pos;
+  if(verbose>0)
+    fprintf(stderr,"proccmd:%s\n",argv[0]);
   if(argv[0][0]=='-' || argv[0][0]=='+') {
     if(argv[0][0]=='-' &&
        argv[0][1]=='-') { /*long option*/
@@ -89,6 +93,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     for(p=command;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
       if(fp->name&&(strcmp(fp->name,argv[0])==0||strcmp(fp->name,"*")==0)) {
+        subcommand_name=conss(q(fp->name),subcommand_name);
         exit(fp->call(argc,argv,fp));
       }
     }
@@ -103,6 +108,17 @@ int opt_top(int argc,char** argv,struct sub_command* cmd) {
   if(arg && argc>1)
     set_opt(&local_opt,arg,argv[1],0);
   return 2;
+}
+
+int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
+  if(strcmp(cmd->name,"verbose")==0) {
+    ++verbose;
+  }else if(strcmp(cmd->name,"quiet")==0) {
+    --verbose;
+  }
+  if(verbose>0)
+    fprintf(stderr,"opt_verbose:%s\n",cmd->name);
+  return 1;
 }
 
 int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
@@ -124,11 +140,11 @@ int main (int argc,char **argv) {
   /*options*/
   /* toplevel */
   top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"load lisp FILE while building","CODE");
-  top_options=add_command(top_options,"lisp","-l",opt_top,1,0,"try use these LISP implementation","NAME");
   top_options=add_command(top_options,"image","-m",opt_top,1,0,"build from Lisp image IMAGE","IMAGE");
+  top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"try use these LISP implementation","NAME");
 
   /*top_options=add_command(top_options,"file","-f",opt_top_build,1,0,"include lisp FILE while building","FILE");*/
-  top_options=add_command(top_options,"load","-L",opt_top_build,1,0,"load lisp FILE while building","FILE");
+  top_options=add_command(top_options,"load","-l",opt_top_build,1,0,"load lisp FILE while building","FILE");
   top_options=add_command(top_options,"source-registry","-S",opt_top_build,1,0,"override source registry of asdf systems","X");
   top_options=add_command(top_options,"system","-s",opt_top_build,1,0,"load asdf SYSTEM while building","SYSTEM");
   top_options=add_command(top_options,"load-system",NULL,opt_top_build,1,0,"same as above (buildapp compatibility)","SYSTEM");
@@ -151,8 +167,8 @@ int main (int argc,char **argv) {
   top_options=add_command(top_options,"no-rc","+R",cmd_notyet,1,0,"skip /etc/cl-launchrc, ~/.cl-launchrc",NULL);
   top_options=add_command(top_options,"quicklisp","-Q",cmd_notyet,1,0,"use quicklisp",NULL);
   top_options=add_command(top_options,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
-  top_options=add_command(top_options,"verbose","-v",cmd_notyet,1,0,"be quite noisy while building",NULL);
-  top_options=add_command(top_options,"quiet","-q",cmd_notyet,1,0,"be quite quiet while building (default)",NULL);
+  top_options=add_command(top_options,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
+  top_options=add_command(top_options,"quiet","-q",opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
 
   /* abbrevs */
   top_options=add_command(top_options,"version","-V",cmd_version,0,1,NULL,NULL);
@@ -163,8 +179,6 @@ int main (int argc,char **argv) {
   /*commands*/
   register_cmd_run();
   register_cmd_pull();
-  top_commands=add_command(top_commands,"execute" ,"!",cmd_notyet,1,1,"Run the specified software without generating a script",NULL);
-  top_commands=add_command(top_commands,"output" ,NULL,cmd_notyet,1,1,"Generate an executable script or binary from the software specification",NULL);
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
 
   /*         {"list",NULL,cmd_list,1,1}, */
@@ -175,7 +189,7 @@ int main (int argc,char **argv) {
   top_commands=add_command(top_commands,"help",NULL,cmd_help,0,1,NULL,NULL);
 
   top_commands=nreverse(top_commands);
-  top_helps=add_help(top_helps,NULL,"Usage: %s [OPTIONS] COMMAND [args...]\n\n",top_commands,top_options,NULL,NULL);
+  top_helps=add_help(top_helps,NULL,"Usage: %s [OPTIONS] [COMMAND] [args...]\n\n",top_commands,top_options,NULL,NULL);
   char* path=s_cat(homedir(),q("config"),NULL);
   global_opt=load_opts(path);
   struct opts** opts=&global_opt;
@@ -186,5 +200,9 @@ int main (int argc,char **argv) {
     proccmd(1,tmp,top_options,top_commands);
   }else
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
+  if(get_opt("program")) {
+    char* tmp[]={"script"};
+    proccmd(1,tmp,top_options,top_commands);
+  }
   free_opts(global_opt);
 }
