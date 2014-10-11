@@ -8,7 +8,8 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   char* home=homedir();
   char* arch=uname_m();
   char* os=uname();
-  int offset=5; /*bin --noinform --core param NULL that 5 are default. */
+  int offset=7; /*[binpath for sbcl] --noinform --core param
+                  --no-sysinit --no-userinit [terminating NULL] that total 7 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help");
@@ -18,6 +19,7 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   char* dynamic_stack_size=get_opt("dynamic-stack-size");
   char* sbcl_version=get_opt("version");
   int paramc=0;
+  int script=0;
   char *bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
 #ifdef _WIN32
            ".exe",
@@ -27,6 +29,8 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   if(help) {
     offset++;
   }
+  if(strcmp(firsts(subcommand_name),"script")==0)
+    offset+=1,script=1;
   if(dynamic_space_size)
     offset+=2;
   if(dynamic_stack_size)
@@ -73,6 +77,10 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   for(i=1;i<argc;++i) {
     arg[paramc++]=argv[i];
   }
+  arg[paramc++]=q("--no-sysinit");
+  arg[paramc++]=q("--no-userinit");
+  if(script)
+    arg[paramc++]=q("--disable-debugger");
 
   if(program) {
     char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
@@ -88,12 +96,18 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
     arg[paramc++]=q("--load");
     arg[paramc++]=s_cat2(lisp_path,q("init.lisp"));
     arg[paramc++]=q("--eval");
-    arg[paramc++]=cat("(ros:run '(",program,"))",NULL);
+    arg[paramc++]=cat("(ros:run '(",program,script?"(:quit ())":"","))",NULL);
   }
 
   s(impl_path);
 
   arg[paramc]=NULL;
+  if(verbose>0) {
+    fprintf(stderr,"args=");
+    for(i=0;arg[i]!=NULL;++i)
+      fprintf(stderr,"%s ",arg[i]);
+    fprintf(stderr,"\n");
+  }
   s(image),s(help),s(dynamic_space_size),s(dynamic_stack_size);
   return arg;
 }

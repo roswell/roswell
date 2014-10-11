@@ -24,12 +24,27 @@ extern char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv);
 
 int cmd_run(int argc,char **argv,struct sub_command* cmd)
 {
-  LVal options=run_options,commands=run_commands;
-  if(argc==1) {
-    char* tmp[]={"help","run"};
+  char* current=get_opt("program");
+  if(argc==1 && !current) {
+    char* tmp[]={"help",(char*)cmd->name};
     return proccmd(2,tmp,top_options,top_commands);
-  }else{
-    return proccmd(argc-1,&argv[1],options,commands);
+  }else {
+    int i;
+    if(verbose>0)
+      fprintf(stderr,"cmd_run:argc=%d,cmd->name:%s argv[0]=%s\n",argc,cmd->name,argv[0]);
+    for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],run_options,run_commands));
+    current=get_opt("program");
+    if(current&& strcmp((char*)cmd->name,"run")!=0) {
+      char* tmp[]={"--"};
+      proccmd(1,tmp,run_options,run_commands);
+    }else {
+      char* tmp[]={"help","run"};
+      return proccmd(2,tmp,top_options,top_commands);
+    }
+    if(verbose>0) {
+      fprintf(stderr,"cmd_run ends here %d\n",i);
+    }
+    return i;
   }
 }
 
@@ -38,7 +53,6 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   int ret=1;
   char* impl;
   char* version;
-
   int pos;
   impl=get_opt("lisp");
   if(impl && (pos=position_char("/",impl))!=-1) {
@@ -47,8 +61,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   }else {
     if(!impl)
       impl=get_opt("default.lisp");
-    version=get_opt("version");
-    if(!version){
+    if(impl) {
       char* opt=s_cat(q(impl),q("."),q("version"),NULL);
       version=get_opt(opt);
       s(opt);
@@ -90,31 +103,19 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   return ret;
 }
 
-int cmd_run_execute(int argc,char **argv,struct sub_command* cmd)
-{
-}
-
-int cmd_run_output(int argc,char **argv,struct sub_command* cmd)
-{
-}
-
-int cmd_run_help(int argc,char **argv,struct sub_command* cmd)
-{
-}
-
 void register_cmd_run(void)
 {
   char* _help;
   /*options*/
-  run_options=add_command(run_options,"",NULL,cmd_run_star,0,1,NULL,NULL);
+  run_options=add_command(top_options,"",NULL,cmd_run_star,0,1,NULL,NULL);
   /*commands*/
-
-  run_commands=add_command(run_commands,"*" ,NULL,cmd_run_star,0,1,NULL,NULL);
-  run_commands=add_command(run_commands,"help" ,NULL,cmd_run_help,0,1,NULL,NULL);
-
-  top_commands=add_command(top_commands,"run"     ,NULL,cmd_run,1,1,"Run lisp environment",NULL);
-  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] run '(S-Expression)' [args...]\n"
-            "Usage: ",argv_orig[0]," [OPTIONS] run script-file [args...]\n\n",NULL);
+  top_commands=add_command(top_commands,"script" ,NULL,cmd_run,1,1,"Run lisp environment then quit (default)",NULL);
+  top_commands=add_command(top_commands,"run"    ,NULL,cmd_run,1,1,"Run lisp environment",NULL);
+  top_commands=add_command(top_commands,"output" ,NULL,cmd_run,1,1,"Generate an executable script or binary from the software specification",NULL);
+  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] run [OPTIONS] -- [implementation-native-options...]\n\n",NULL);
   top_helps=add_help(top_helps,"run",_help,run_commands,run_options,NULL,NULL);
+  s(_help);
+  _help=cat("Usage: ",argv_orig[0]," OPTIONS [script] [OPTIONS] [-- implementation-native-options...]\n\n",NULL);
+  top_helps=add_help(top_helps,"script",_help,run_commands,run_options,NULL,NULL);
   s(_help);
 }

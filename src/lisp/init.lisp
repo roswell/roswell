@@ -40,6 +40,11 @@
   (declare (ignorable cmd rest))
   (cl:eval (read-from-string arg)))
 
+(defun quit (cmd arg &rest rest)
+  (declare (ignorable cmd arg rest))
+  #+sbcl
+  (sb-ext:exit))
+
 (export 
  (defun run (list)
    (loop :for elt :in list
