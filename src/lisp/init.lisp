@@ -1,4 +1,6 @@
 (cl:in-package :cl-user)
+#-asdf
+(require :asdf)
 
 (defpackage :ros
   (:use :cl)
