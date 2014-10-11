@@ -16,6 +16,7 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   char* program=get_opt("program");
   char* dynamic_space_size=get_opt("dynamic-space-size");
   char* dynamic_stack_size=get_opt("dynamic-stack-size");
+  char* sbcl_version=get_opt("version");
   int paramc=0;
   char *bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
 #ifdef _WIN32
@@ -30,6 +31,8 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
     offset+=2;
   if(dynamic_stack_size)
     offset+=2;
+  if(sbcl_version)
+    offset+=1;
   if(program)
     offset+=4;
 
@@ -63,6 +66,9 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
     arg[paramc++]=q("--dynamic-stack-size");
     arg[paramc++]=q(dynamic_stack_size);
   }
+  if(sbcl_version) {
+    arg[paramc++]=q("--version");
+  }
   /* runtime options end here */
   for(i=1;i<argc;++i) {
     arg[paramc++]=argv[i];
@@ -83,7 +89,6 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
     arg[paramc++]=s_cat2(lisp_path,q("init.lisp"));
     arg[paramc++]=q("--eval");
     arg[paramc++]=cat("(ros:run '(",program,"))",NULL);
-    fprintf(stderr,"rosrun:%s\n",arg[paramc-1]);
   }
 
   s(impl_path);
