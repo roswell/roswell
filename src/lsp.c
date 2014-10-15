@@ -55,7 +55,8 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
           }
         }
       }
-      /* invalid option? */
+      if(verbose>0)
+        fprintf(stderr,"proccmd:invalid? %s\n",argv[0]);
     }else { /*short option*/
       if(argv[0][1]!='\0') {
         LVal p;
@@ -97,7 +98,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
         exit(fp->call(argc,argv,fp));
       }
     }
-    printf("invalid command\n");
+    fprintf(stderr,"invalid command\n");
     proccmd(1,tmp,top_options,top_commands);
   }
   return 1;
@@ -133,42 +134,47 @@ int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
   return 2;
 }
 
+LVal register_runtime_options(LVal opt) {
+  /*opt=add_command(opt,"file","-f",opt_top_build,1,0,"include lisp FILE while building","FILE");*/
+  opt=add_command(opt,"load","-l",opt_top_build,1,0,"load lisp FILE while building","FILE");
+  opt=add_command(opt,"source-registry","-S",opt_top_build,1,0,"override source registry of asdf systems","X");
+  opt=add_command(opt,"system","-s",opt_top_build,1,0,"load asdf SYSTEM while building","SYSTEM");
+  opt=add_command(opt,"load-system",NULL,opt_top_build,1,0,"same as above (buildapp compatibility)","SYSTEM");
+  opt=add_command(opt,"package","-p",opt_top_build,1,0,"change current package to PACKAGE","PACKAGE");
+  opt=add_command(opt,"system-package","-sp",opt_top_build,1,0,"combination of -s SP and -p SP","SP");
+  opt=add_command(opt,"eval","-e",opt_top_build,1,0,"evaluate FORM while building","FORM");
+  opt=add_command(opt,"require",NULL,opt_top_build,1,0,"require MODULE while building","MODULE");
+
+  opt=add_command(opt,"restart","-r",cmd_notyet,1,0,"restart from build by calling (FUNC)","FUNC");
+  opt=add_command(opt,"entry","-E",cmd_notyet,1,0,"restart from build by calling (FUNC argv)","FUNC");
+  opt=add_command(opt,"init","-i",cmd_notyet,1,0,"evaluate FORM after restart","FORM");
+  opt=add_command(opt,"print","-ip",cmd_notyet,1,0,"evaluate and princ FORM after restart","FORM");
+  opt=add_command(opt,"write","-iw",cmd_notyet,1,0,"evaluate and write FORM after restart","FORM");
+
+  opt=add_command(opt,"final","-F",cmd_notyet,1,0,"evaluate FORM before dumping IMAGE","FORM");
+
+  /* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
+  /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
+  opt=add_command(opt,"rc","-R",cmd_notyet,1,0,"try read /etc/cl-launchrc, ~/.cl-launchrc",NULL);
+  opt=add_command(opt,"no-rc","+R",cmd_notyet,1,0,"skip /etc/cl-launchrc, ~/.cl-launchrc",NULL);
+  opt=add_command(opt,"quicklisp","-Q",cmd_notyet,1,0,"use quicklisp",NULL);
+  opt=add_command(opt,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
+  opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
+  opt=add_command(opt,"quiet","-q",opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
+  return opt;
+}
+
 int main (int argc,char **argv) {
   int i;
   argv_orig=argv;
   argc_orig=argc;
+  char* _help;
   /*options*/
   /* toplevel */
   top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"load lisp FILE while building","CODE");
   top_options=add_command(top_options,"image","-m",opt_top,1,0,"build from Lisp image IMAGE","IMAGE");
   top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"try use these LISP implementation","NAME");
-
-  /*top_options=add_command(top_options,"file","-f",opt_top_build,1,0,"include lisp FILE while building","FILE");*/
-  top_options=add_command(top_options,"load","-l",opt_top_build,1,0,"load lisp FILE while building","FILE");
-  top_options=add_command(top_options,"source-registry","-S",opt_top_build,1,0,"override source registry of asdf systems","X");
-  top_options=add_command(top_options,"system","-s",opt_top_build,1,0,"load asdf SYSTEM while building","SYSTEM");
-  top_options=add_command(top_options,"load-system",NULL,opt_top_build,1,0,"same as above (buildapp compatibility)","SYSTEM");
-  top_options=add_command(top_options,"package","-p",opt_top_build,1,0,"change current package to PACKAGE","PACKAGE");
-  top_options=add_command(top_options,"system-package","-sp",opt_top_build,1,0,"combination of -s SP and -p SP","SP");
-  top_options=add_command(top_options,"eval","-e",opt_top_build,1,0,"evaluate FORM while building","FORM");
-  top_options=add_command(top_options,"require",NULL,opt_top_build,1,0,"require MODULE while building","MODULE");
-
-  top_options=add_command(top_options,"restart","-r",cmd_notyet,1,0,"restart from build by calling (FUNC)","FUNC");
-  top_options=add_command(top_options,"entry","-E",cmd_notyet,1,0,"restart from build by calling (FUNC argv)","FUNC");
-  top_options=add_command(top_options,"init","-i",cmd_notyet,1,0,"evaluate FORM after restart","FORM");
-  top_options=add_command(top_options,"print","-ip",cmd_notyet,1,0,"evaluate and princ FORM after restart","FORM");
-  top_options=add_command(top_options,"write","-iw",cmd_notyet,1,0,"evaluate and write FORM after restart","FORM");
-
-  top_options=add_command(top_options,"final","-F",cmd_notyet,1,0,"evaluate FORM before dumping IMAGE","FORM");
-
-  /* top_options=add_command(top_options,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
-  /* top_options=add_command(top_options,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
-  top_options=add_command(top_options,"rc","-R",cmd_notyet,1,0,"try read /etc/cl-launchrc, ~/.cl-launchrc",NULL);
-  top_options=add_command(top_options,"no-rc","+R",cmd_notyet,1,0,"skip /etc/cl-launchrc, ~/.cl-launchrc",NULL);
-  top_options=add_command(top_options,"quicklisp","-Q",cmd_notyet,1,0,"use quicklisp",NULL);
-  top_options=add_command(top_options,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
-  top_options=add_command(top_options,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
-  top_options=add_command(top_options,"quiet","-q",opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
+  top_options=register_runtime_options(top_options);
 
   /* abbrevs */
   top_options=add_command(top_options,"version","-V",cmd_version,0,1,NULL,NULL);
@@ -189,7 +195,11 @@ int main (int argc,char **argv) {
   top_commands=add_command(top_commands,"help",NULL,cmd_help,0,1,NULL,NULL);
 
   top_commands=nreverse(top_commands);
-  top_helps=add_help(top_helps,NULL,"Usage: %s [OPTIONS] [COMMAND] [args...]\n\n",top_commands,top_options,NULL,NULL);
+  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [Command] arguments...  \n",
+            "Usage: ",argv_orig[0]," [OPTIONS] [--] programfile arguments...  \n\n",NULL);
+  top_helps=add_help(top_helps,NULL,_help,top_commands,top_options,NULL,NULL);
+  s(_help);
+
   char* path=s_cat(homedir(),q("config"),NULL);
   global_opt=load_opts(path);
   struct opts** opts=&global_opt;
