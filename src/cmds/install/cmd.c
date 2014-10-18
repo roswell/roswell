@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <archive.h>
 #include <archive_entry.h>
 #ifdef HAVE_CONFIG_H
@@ -8,7 +9,7 @@
 
 #include "opt.h"
 #include "util.h"
-#include "pull.h"
+#include "ros_install.h"
 static int in_resume=0;
 static char *flags =NULL;
 struct install_impls *install_impl;
@@ -159,48 +160,14 @@ int expand(struct install_options* param)
   return 1;
 }
 
-int configure(struct install_options* param)
-{
-  char *impl=param->impl,*version=param->version;
-  char* home= homedir();
-  char* confgcache= cat(home,"/src/",impl,"-",version,"/src/confg.cache",NULL);
-  char* cd;
-  char* configure;
-  int ret;
-  if(in_resume) {
-    delete_file(confgcache);
-  }
-  if(flags==NULL) {
-    flags=q("");
-  }
-  if(strcmp("gcl",impl)==0) {
-    flags=s_cat(flags,q(" --enable-ansi"));
-  }
-  if(strcmp("ecl",impl)==0 ||strcmp("ecl",impl)==0 || strcmp("clisp",impl)==0) {
-    flags=s_cat(flags,q(" --mandir="),q(home),q("/share/man"));
-  }
-  printf("Configuring %s/%s\n",impl,version);
-  cd=cat(home,"src/",impl,"-",version,NULL);
-  printf ("cd:%s\n",cd);
-  change_directory(cd);
-  /* pipe connect for logging cim_with_output_control */
-  configure=cat("./configure ",flags," --prefix=",home,"/impls/",impl,"-",version,NULL);
-  ret=system(configure);
-  s(configure);
-  s(cd);
-  s(confgcache);
-  s(home);
-}
-
 install_cmds install_full[]={
   start,
   download,
   expand,
-  configure,
   NULL
 };
 
-int cmd_pull(int argc,char **argv,struct sub_command* cmd)
+int cmd_install(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1,k;
   install_cmds *cmds=NULL;
@@ -261,7 +228,7 @@ int cmd_pull(int argc,char **argv,struct sub_command* cmd)
   return ret;
 }
 
-void register_cmd_pull(void)
+void register_cmd_install(void)
 {
-  top_commands=add_command(top_commands,"install"    ,NULL,cmd_pull,1,1,"Install archive and build it for "PACKAGE" environment",NULL);
+  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install archive and build it for "PACKAGE" environment",NULL);
 }

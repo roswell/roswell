@@ -53,6 +53,7 @@ extern int verbose;
 LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer);
 LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating,char* description,char* arg_example);
 struct opts* load_opts(const char* path);
+int save_opts(const char* path,struct opts* opt);
 int set_opt(struct opts** opts,const char* name,char* value,int type);
 int unset_opt(struct opts** opts,const char* name);
 char* get_opt(const char* name);

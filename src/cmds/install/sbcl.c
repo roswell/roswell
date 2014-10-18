@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "util.h"
-#include "pull.h"
+#include "ros_install.h"
 #include "opt.h"
 
 int sbcl_start(struct install_options* param)

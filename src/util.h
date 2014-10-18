@@ -7,6 +7,8 @@
 extern char** argv_orig;
 extern int argc_orig;
 
+int download_simple (char* uri,char* path,int verbose);
+
 typedef intptr_t LVal;
 struct Cons {
   LVal val;

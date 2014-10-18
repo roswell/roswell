@@ -20,7 +20,7 @@ extern int cmd_config(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
-extern void register_cmd_pull(void);
+extern void register_cmd_install(void);
 int verbose=0;
 //dummy
 int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
@@ -29,11 +29,11 @@ int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
   return 1;
 }
 
-LVal top_commands =NULL;
-LVal top_options =NULL;
+LVal top_commands =(LVal)NULL;
+LVal top_options =(LVal)NULL;
 
-LVal top_helps =NULL;
-LVal subcommand_name=NULL;
+LVal top_helps =(LVal)NULL;
+LVal subcommand_name=(LVal)NULL;
 
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int i;
@@ -193,7 +193,7 @@ int main (int argc,char **argv) {
 
   top_options=nreverse(top_options);
   /*commands*/
-  register_cmd_pull();
+  register_cmd_install();
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
 
   /*         {"list",NULL,cmd_list,1,1}, */

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
-#include "pull.h"
+#include "ros_install.h"
 #include "opt.h"
 
 extern int sbcl_install(struct install_options* param);
