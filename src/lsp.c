@@ -122,6 +122,15 @@ int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
   return 1;
 }
 
+int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
+  if(cmd->name) {
+    char* current=get_opt("program");
+    current=cat(current?current:"","(:",cmd->name,")",NULL);
+    set_opt(&local_opt,"program",current,0);
+  }
+  return 1;
+}
+
 int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
     char* current=get_opt("program");
@@ -144,6 +153,7 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"system-package","-sp",opt_top_build,1,0,"combination of -s SP and -p SP","SP");
   opt=add_command(opt,"eval","-e",opt_top_build,1,0,"evaluate FORM while building","FORM");
   opt=add_command(opt,"require",NULL,opt_top_build,1,0,"require MODULE while building","MODULE");
+  opt=add_command(opt,"quit","-q",opt_top_build0,1,0,"quit lisp here",NULL);
 
   opt=add_command(opt,"restart","-r",cmd_notyet,1,0,"restart from build by calling (FUNC)","FUNC");
   opt=add_command(opt,"entry","-E",cmd_notyet,1,0,"restart from build by calling (FUNC argv)","FUNC");
@@ -160,7 +170,7 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"quicklisp","-Q",cmd_notyet,1,0,"use quicklisp",NULL);
   opt=add_command(opt,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
   opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
-  opt=add_command(opt,"quiet","-q",opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
+  opt=add_command(opt,"quiet",NULL,opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
   return opt;
 }
 
@@ -183,7 +193,6 @@ int main (int argc,char **argv) {
 
   top_options=nreverse(top_options);
   /*commands*/
-  register_cmd_run();
   register_cmd_pull();
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
 
@@ -193,10 +202,10 @@ int main (int argc,char **argv) {
   top_commands=add_command(top_commands,"tar"     ,NULL,cmd_tar,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"download",NULL,cmd_download,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"help",NULL,cmd_help,0,1,NULL,NULL);
-
+  register_cmd_run();
   top_commands=nreverse(top_commands);
-  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [Command] arguments...  \n",
-            "Usage: ",argv_orig[0]," [OPTIONS] [--] programfile arguments...  \n\n",NULL);
+  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [Command arguments...]  \n",
+            "Usage: ",argv_orig[0]," [OPTIONS] [[--] script-path arguments...]  \n\n",NULL);
   top_helps=add_help(top_helps,NULL,_help,top_commands,top_options,NULL,NULL);
   s(_help);
 
@@ -211,8 +220,8 @@ int main (int argc,char **argv) {
   }else
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
   if(get_opt("program")) {
-    char* tmp[]={"script"};
-    proccmd(1,tmp,top_options,top_commands);
+    char* tmp[]={"run","--"};
+    proccmd(2,tmp,top_options,top_commands);
   }
   free_opts(global_opt);
 }

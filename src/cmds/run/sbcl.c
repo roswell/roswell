@@ -2,24 +2,26 @@
 #include "util.h"
 #include "opt.h"
 
-char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
+char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
 {
   char** arg=NULL;
   char* home=homedir();
   char* arch=uname_m();
   char* os=uname();
+  char* impl=(char*)cmd->name;
+  char* version=(char*)cmd->short_name;
   int offset=7; /*[binpath for sbcl] --noinform --core param
                   --no-sysinit --no-userinit [terminating NULL] that total 7 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help");
+  char* script=get_opt("script");
   char* image=get_opt("image");
   char* program=get_opt("program");
   char* dynamic_space_size=get_opt("dynamic-space-size");
   char* dynamic_stack_size=get_opt("dynamic-stack-size");
   char* sbcl_version=get_opt("version");
   int paramc=0;
-  int script=0;
   char *bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",
 #ifdef _WIN32
            ".exe",
@@ -29,15 +31,15 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   if(help) {
     offset++;
   }
-  if(strcmp(firsts(subcommand_name),"script")==0)
-    offset+=1,script=1;
   if(dynamic_space_size)
     offset+=2;
   if(dynamic_stack_size)
     offset+=2;
   if(sbcl_version)
     offset+=1;
-  if(program)
+  if(script)
+    offset+=1;
+  if(program||script)
     offset+=4;
 
   arg=alloc(sizeof(char*)*(offset+argc));
@@ -82,7 +84,7 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
   if(script)
     arg[paramc++]=q("--disable-debugger");
 
-  if(program) {
+  if(program || script) {
     char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
     char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
     char* lisp_path;
@@ -96,7 +98,7 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
     arg[paramc++]=q("--load");
     arg[paramc++]=s_cat2(lisp_path,q("init.lisp"));
     arg[paramc++]=q("--eval");
-    arg[paramc++]=cat("(ros:run '(",program,script?"(:quit ())":"","))",NULL);
+    arg[paramc++]=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
   }
 
   s(impl_path);
@@ -106,8 +108,9 @@ char** cmd_run_sbcl(char* impl,char* version,int argc,char** argv)
     fprintf(stderr,"args=");
     for(i=0;arg[i]!=NULL;++i)
       fprintf(stderr,"%s ",arg[i]);
-    fprintf(stderr,"\n");
+    fprintf(stderr,"\nhelp=%s ",help?"t":"nil");
+    fprintf(stderr,"script=%s\n",script?script:"nil");
   }
-  s(image),s(help),s(dynamic_space_size),s(dynamic_stack_size);
+  s(image),s(help),s(script),s(dynamic_space_size),s(dynamic_stack_size);
   return arg;
 }

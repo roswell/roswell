@@ -29,7 +29,9 @@ struct sub_command
   char* description;
   char* arg_example;
 };
-
+#define OPT_SHOW_NONE (0)
+#define OPT_SHOW_HELP (1)
+//#define OPT_SHOW_
 struct command_help
 {
   const char* name;

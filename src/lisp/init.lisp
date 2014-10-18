@@ -9,6 +9,7 @@
 (in-package :ros)
 (push :ros-launched *features*)
 (defvar *verbose* nil)
+(export (defvar *argv* nil))
 
 (defun load (cmd arg &rest rest)
   (declare (ignorable cmd rest))
@@ -40,10 +41,24 @@
   (declare (ignorable cmd rest))
   (cl:eval (read-from-string arg)))
 
-(defun quit (cmd arg &rest rest)
-  (declare (ignorable cmd arg rest))
+(defun quit (cmd &rest rest)
+  (declare (ignorable cmd rest))
   #+sbcl
   (sb-ext:exit))
+
+(export
+ (defun script (cmd arg &rest rest)
+   (declare (ignorable cmd arg))
+   (setf *argv* rest)
+   (with-open-file (in arg)
+     (let ((line(read-line in)))
+       (cl:load (make-concatenated-stream
+                 (make-string-input-stream
+                  (if (equal (subseq line 0 (min (length line) 2)) "#!")
+                      "" line))
+                 in
+                 (make-string-input-stream
+                  "(cl:apply 'main ros:*argv*)")))))))
 
 (export 
  (defun run (list)

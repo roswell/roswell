@@ -1,0 +1,5 @@
+#!/usr/bin/env ros
+
+(defun main (&rest argv)
+  (format t "Hello World!~%")
+  (format t "argv=~S~%" argv))
