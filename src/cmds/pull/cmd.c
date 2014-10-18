@@ -263,5 +263,5 @@ int cmd_pull(int argc,char **argv,struct sub_command* cmd)
 
 void register_cmd_pull(void)
 {
-  top_commands=add_command(top_commands,"pull"    ,NULL,cmd_pull,1,1,"Pull archive and build it for "PACKAGE" environment",NULL);
+  top_commands=add_command(top_commands,"install"    ,NULL,cmd_pull,1,1,"Install archive and build it for "PACKAGE" environment",NULL);
 }
