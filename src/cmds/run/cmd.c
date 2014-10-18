@@ -135,7 +135,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);
     }
   }else {
-    fprintf(stderr,"impl doesn't specified stop\n");
+    fprintf(stderr,"lisp doesn't specified stop\n");
   }
   s(impl),s(version);
   return ret;
