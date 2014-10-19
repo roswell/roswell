@@ -18,7 +18,7 @@ AM_PROG_CC_C_O
 # Checks for libraries.
 
 AC_CHECK_LIB([curl], [curl_global_init],[],[AC_MSG_ERROR([libcurl development files required])])
-AC_CHECK_LIB([archive], [archive_read_open_filename],[],[AC_MSG_ERROR([libarchive is needed to compile lsp])])
+AC_CHECK_LIB([archive], [archive_read_open_filename],[],[AC_MSG_ERROR([libarchive is needed to compile roswell])])
 
 # Checks for header files.
 AC_HEADER_STDC
