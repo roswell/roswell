@@ -262,6 +262,20 @@ char* homedir(void) {
   return s_cat(append_trail_slash(c),q("."),q(PACKAGE),q(SLASH),NULL);
 }
 
+char* lispdir(void) {
+    char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
+    char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
+    char* lisp_path;
+    s(ros_bin);
+    if(directory_exist_p(ros_bin_lisp)) {
+      lisp_path=ros_bin_lisp;
+    }else {
+      s(ros_bin_lisp);
+      lisp_path=q(LISP_PATH);
+    }
+    return lisp_path;
+}
+
 char* truename(const char* path) {
 #ifndef _WIN32
   char* ret=realpath(path,NULL);

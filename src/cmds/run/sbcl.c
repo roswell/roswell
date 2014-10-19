@@ -85,16 +85,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     arg[paramc++]=q("--disable-debugger");
 
   if(program || script) {
-    char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
-    char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
-    char* lisp_path;
-    s(ros_bin);
-    if(directory_exist_p(ros_bin_lisp)) {
-      lisp_path=ros_bin_lisp;
-    }else {
-      s(ros_bin_lisp);
-      lisp_path=q(LISP_PATH);
-    }
+    char* lisp_path=lispdir();
     arg[paramc++]=q("--load");
     arg[paramc++]=s_cat2(lisp_path,q("init.lisp"));
     arg[paramc++]=q("--eval");

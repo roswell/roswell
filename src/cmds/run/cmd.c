@@ -26,7 +26,6 @@ LVal run_commands=(LVal)NULL;
 LVal run_options =(LVal)NULL;
 
 extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
-extern int proccmd(int argc,char** argv,LVal option,LVal command);
 extern LVal register_runtime_options(LVal opt);
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
