@@ -306,8 +306,8 @@ char* ensure_directories_exist (char* path) {
   #else
   char* cmd=s_cat(q("mkdir "),path,q(" 2>NUL"),NULL);
   #endif
-  if(system(cmd)==-1) {
-    printf("failed:%s\n",cmd);
+  if(system(cmd)!=0) {
+    fprintf(stderr,"failed:%s\n",cmd);
     return NULL;
   };
   s(cmd);
@@ -359,11 +359,7 @@ int delete_directory(char* pathspec,int recursive) {
   }
   ret=system(cmd);
   s(cmd);
-  if(ret==-1) {
-    return 0;
-  }else {
-    return 1;
-  }
+  return ret==0;
 #else
   if(!recursive) {
     return(!!RemoveDirectory(pathspec));
@@ -387,11 +383,7 @@ int delete_file(char* pathspec) {
   cmd=s_cat2(q("rm -f "),q(pathspec));
   ret=system(cmd);
   s(cmd);
-  if(ret==-1) {
-    return 0;
-  }else {
-    return 1;
-  }
+  return ret==0;
 #else
 //  #error not implemented delete_file
 #endif  
@@ -403,8 +395,7 @@ void touch(char* path) {
 #else
   char* cmd=q("");
 #endif
-  if(system(cmd)==-1){
-  };
+  system(cmd);
   s(cmd);
 }
 
