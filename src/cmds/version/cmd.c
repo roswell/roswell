@@ -10,6 +10,8 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include "util.h"
+#include "opt.h"
 
 int cmd_version(int argc,char **argv,struct sub_command* cmd)
 {

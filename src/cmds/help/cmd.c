@@ -1,13 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "opt.h"
 #include "util.h"
 extern char** argv_orig;
 extern int cmd_notyet(int argc,char **argv,struct sub_command* cmd);
 int cmd_help(int argc, const char **argv)
 {
-  LVal help=NULL;
+  LVal help=(LVal)NULL;
   int i;int cmdmax,optmax;
   char *fmt;
   if(argc==1) {
@@ -80,4 +79,5 @@ int cmd_help(int argc, const char **argv)
       }
     }
   }
+  return 0;
 }

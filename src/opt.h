@@ -57,5 +57,6 @@ int save_opts(const char* path,struct opts* opt);
 int set_opt(struct opts** opts,const char* name,char* value,int type);
 int unset_opt(struct opts** opts,const char* name);
 char* get_opt(const char* name);
+void print_opts(struct opts* opt);
 void free_opts(struct opts* opt);
 #endif

@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
 #endif
 #include "util.h"
 #include "opt.h"
@@ -20,8 +22,8 @@ BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar){
 }
 #endif
 
-LVal run_commands=NULL;
-LVal run_options =NULL;
+LVal run_commands=(LVal)NULL;
+LVal run_options =(LVal)NULL;
 
 extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
 extern int proccmd(int argc,char** argv,LVal option,LVal command);
@@ -83,6 +85,7 @@ int cmd_script(int argc,char **argv,struct sub_command* cmd)
     s(result);
     cmd_run_star(1,tmp,cmd);
   }
+  return 0;
 }
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd)

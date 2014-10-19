@@ -314,7 +314,7 @@ LVal parse_tags(FILE* fp,LVal before,int mode) {
 LVal atag_list(char* filename)
 {
   FILE* fp;
-  LVal ret=NULL;
+  LVal ret=(LVal)NULL;
   fp=fopen(filename,"r");
   if(fp!=NULL) {
     LVal tags=parse_tags(fp,(LVal)NULL,0);

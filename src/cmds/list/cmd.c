@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "util.h"
 #include "opt.h"
 
@@ -42,6 +41,7 @@ int list_impls(int argc,char **argv,struct sub_command* cmd)
   sL(dirs);
   print_list(impl_filter);
   s(impls);
+  return 0;
 }
 
 LVal impl_versions=0;
@@ -82,6 +82,7 @@ int list_versions(int argc,char **argv,struct sub_command* cmd)
     
   }
   s(sub);
+  return 0;
 }
 
 static struct sub_command list_commands[] = {

@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "util.h"
 #include "ros_install.h"
 #include "opt.h"
@@ -21,14 +20,14 @@ LVal sbcl_make_redirected(LVal v) {
   int counter=0;
   if((out=fopen(log_path,"a"))!=NULL) {
     in=(FILE*)v;
-    printf("%7d ",0);
+    fprintf(stderr,"%7d ",0);
     while((c = fgetc(in)) != EOF) {
       if(c=='\n') {
         ++counter;
         if(counter%20==0)
-          printf(".");
+          fprintf(stderr,".");
         if(counter%1200==0)
-          printf("\n%7d ",counter);
+          fprintf(stderr,"\n%7d ",counter);
         fflush(stdout);
       }
       if (fputc(c, out) == EOF) {
@@ -37,7 +36,8 @@ LVal sbcl_make_redirected(LVal v) {
     }
     fclose(out);
   }
-  printf("\n make done with %dlines output.\n",counter);
+  fprintf(stderr,"\n make done with %dlines output.\n",counter);
+  return (LVal)NULL;
 }
 
 int sbcl_make(struct install_options* param) {
@@ -48,17 +48,16 @@ int sbcl_make(struct install_options* param) {
   char* arg0=truename(argv_orig[0]);
   char* compiler=cat(arg0," lisp=",get_opt("sbcl.compiler")," --no-rc run --",NULL);
   char* cmd=cat("sh make.sh \"--xc-host=",compiler,"\" ","--prefix=",home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
+  int ret;
   log_path=cat(home,"impls/log/",impl,"-",version,"/make.log",NULL);
 
   printf("Building %s-%s with %s\n",impl,version,compiler);
   change_directory(src);
   ensure_directories_exist(log_path);
   printf("cmd:%s\n",cmd);
-  if(system_redirect_function(cmd,sbcl_make_redirected)==-1) {
-    return 0;
-  }
+  ret = system_redirect_function(cmd,sbcl_make_redirected)!=0;
   s(home),s(src),s(cmd),s(compiler),s(arg0),s(log_path);
-  return 1;
+  return ret;
 }
 
 int sbcl_install(struct install_options* param) {

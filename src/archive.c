@@ -146,6 +146,7 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
   }
   archive_read_close(a);
   archive_read_free(a);
+  return 0;
 }
 
 static int

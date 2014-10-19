@@ -1,6 +1,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 #include <stdint.h>
+#include <string.h>
 #ifndef _WIN32
 #include <dirent.h>
 #endif

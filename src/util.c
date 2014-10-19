@@ -629,7 +629,7 @@ LVal directory(char* path)
 
   if(dir==NULL)
     return 0;
-  while(dirent=readdir(dir)) {
+  while((dirent=readdir(dir))!=0) {
     char* str=q(dirent->d_name);
     if(dirent->d_type&DT_DIR) {
       str=s_cat2(str,q("/"));

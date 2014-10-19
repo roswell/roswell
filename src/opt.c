@@ -23,7 +23,7 @@ void free_opts(struct opts* opt)
   }
 }
 
-void print_opts(struct opts* opt) 
+void print_opts(struct opts* opt)
 {
   void* tmp;
   char* typestr;
@@ -183,6 +183,7 @@ int unset_opt(struct opts** opts,const char* name)
 }
 
 int set_opts_int(struct opts* opts,const char* name,int value) {
+  return 0;
 }
 
 LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer)
