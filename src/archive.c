@@ -36,33 +36,33 @@ int cmd_tar(int argc, const char **argv)
     while ((opt = *p++) != '\0') {
       switch (opt) {
       case 'f':
-	if (*p != '\0')
-	  filename = p;
-	else
-	  filename = *++argv;
-	p += strlen(p);
-	break;
+        if (*p != '\0')
+          filename = p;
+        else
+          filename = *++argv;
+        p += strlen(p);
+        break;
       case 'C':
-	if (*p != '\0')
-	  outputpath = p;
-	else
-	  outputpath = *++argv;
-	p += strlen(p);
-	break;
+        if (*p != '\0')
+          outputpath = p;
+        else
+          outputpath = *++argv;
+        p += strlen(p);
+        break;
       case 'p':
-	flags |= ARCHIVE_EXTRACT_PERM;
-	flags |= ARCHIVE_EXTRACT_ACL;
-	flags |= ARCHIVE_EXTRACT_FFLAGS;
-	break;
+        flags |= ARCHIVE_EXTRACT_PERM;
+        flags |= ARCHIVE_EXTRACT_ACL;
+        flags |= ARCHIVE_EXTRACT_FFLAGS;
+        break;
       case 't':
-	mode = opt;
-	break;
+        mode = opt;
+        break;
       case 'v':
-	verbose++;
-	break;
+        verbose++;
+        break;
       case 'x':
-	mode = opt;
-	break;
+        mode = opt;
+        break;
       }
     }
   }
@@ -89,9 +89,15 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
   a = archive_read_new();
   ext = archive_write_disk_new();
   archive_write_disk_set_options(ext, flags);
+#if ARCHIVE_VERSION_NUMBER < 3000000
+  archive_read_support_compression_bzip2(a);
+  archive_read_support_compression_gzip(a);
+#else
   archive_read_support_filter_bzip2(a);
   archive_read_support_filter_gzip(a);
+#endif
   archive_read_support_format_tar(a);
+
 #ifndef NO_LOOKUP
   archive_write_disk_set_standard_lookup(ext);
 #endif
@@ -136,16 +142,20 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
     if (do_extract) {
       r = archive_write_header(ext, entry);
       if (r != ARCHIVE_OK)
-	errmsg(archive_error_string(a));
+        errmsg(archive_error_string(a));
       else
-	copy_data(a, ext);
+        copy_data(a, ext);
     }
 
     if (verbose || !do_extract)
       msg("\n");
   }
   archive_read_close(a);
+#if ARCHIVE_VERSION_NUMBER < 3000000
+  archive_read_finish(a);
+#else
   archive_read_free(a);
+#endif
 }
 
 static int
