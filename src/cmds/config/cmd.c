@@ -7,15 +7,15 @@ int cmd_config(int argc, const char **argv)
   char* home=homedir();
   char* path=cat(home,"config",NULL);
   int ret;
-  struct opts* opt=global_opt;
-  struct opts** opts=&opt;
   if(argc==1) {
     printf("oneshot:\n");
     print_opts(local_opt);
     printf("local:\n");
-    print_opts(opt);
+    print_opts(global_opt);
     ret= 1;
   }else {
+    struct opts* opt=global_opt;
+    struct opts** opts=&opt;
     // TBD parse options
     if(argc==2) {
       unset_opt(opts, argv[1]);
@@ -28,5 +28,5 @@ int cmd_config(int argc, const char **argv)
     }
   }
   s(home),s(path);
-  return ret;
+  return 0;
 }

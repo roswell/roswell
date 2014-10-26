@@ -30,7 +30,6 @@ int cmd_tar(int argc, const char **argv)
   compress = '\0';
   flags = ARCHIVE_EXTRACT_TIME;
   /* Among other sins, getopt(3) pulls in printf(3). */
-  argv--;
   while (*++argv != NULL && **argv == '-') {
     const char *p = *argv + 1;
     while ((opt = *p++) != '\0') {

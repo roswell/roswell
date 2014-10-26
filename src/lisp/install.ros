@@ -1,0 +1,143 @@
+;;
+(cl:in-package :cl-user)
+(require :asdf)
+(require :uiop)
+#+sbcl(require :sb-posix)
+(defpackage :ros.install
+  (:use :cl))
+
+(in-package :ros.install)
+
+(defvar *opts* nil)
+(defvar *home-path* nil)
+(defvar *ros-path* nil)
+
+(defun system- (cmd)
+  (with-output-to-string (*standard-output*)
+    (uiop/run-program:run-program cmd :output t)))
+
+(defun uname ()
+  (if (uiop:os-windows-p)
+      "windows"
+      (string-downcase(remove #\Newline (remove #\Return (system- "uname"))))))
+
+(defun uname-m ()
+  (if (uiop:os-windows-p)
+      "x86"
+      (substitute #\- #\_ (remove #\Newline (remove #\Return (system- "uname -m"))))))
+
+(defun date (&optional (universal-time (get-universal-time)))
+  (multiple-value-bind (second minute hour date month year day daylight time-zone)
+      (decode-universal-time universal-time)
+    (format nil "~A ~A ~2A ~2,,,'0A:~2,,,'0A:~2,,,'0A ~3A~A ~A"
+            (nth day '("Mon" "Tue" "Wed" "Thu" "Fri" "Sat" "Sun"))
+            (nth month '("Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
+            date hour minute second time-zone (if daylight "S" " ") year)))
+
+(defun get-opt (item)
+  (second (assoc item *opts* :test #'equal)))
+
+(defun set-opt (item val)
+  (let ((found (assoc item *opts* :test #'equal)))
+    (if found
+        (setf (second found) val)
+        (push (list item val) *opts*))))
+
+(defun save-opt (item val)
+  (uiop/run-program:run-program (format nil "~A config ~A ~A" *ros-path* item val)))
+
+(defun homedir ()
+  *home-path*)
+
+(defun setenv (name value)
+  (if (uiop:os-windows-p)
+      (error "tbd")
+      #+sbcl(sb-posix:setenv name value 1)))
+
+(defun unsetenv (name)
+  (if (uiop:os-windows-p)
+      (error "tbd")
+      #+sbcl(sb-posix:unsetenv name)))
+
+;;end here from util/opts.c
+
+(defvar *install-cmds* nil)
+
+(defun installedp (argv)
+  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (getf argv :version)) (homedir))) t))
+
+(defun install-running-p (argv)
+  ;;TBD
+  (declare (ignore argv))
+  nil)
+
+(defun setup-signal-handler (path)
+  ;;TBD
+  (declare (ignore path)))
+
+(defun start (argv)
+  (print argv)
+  (ensure-directories-exist (homedir))
+  (let ((target (getf argv :target))
+        (version (getf argv :version)))
+    (when (installedp argv)
+      (format t "~A/~A are already installed.if you intend to reinstall by (TBD).~%"
+              target version)
+      (return-from start (cons nil argv)))
+    (when (install-running-p argv)
+      (format t "It seems running installation process for ~A/~A.\n"
+              target version)
+      (return-from start (cons nil argv)))
+    (ensure-directories-exist (merge-pathnames (format nil "tmp/~A-~A/" target version) (homedir)))
+    (let ((p (merge-pathnames (format nil "tmp/~A-~A.lock" target version) (homedir))))
+      (setup-signal-handler p)
+      (with-open-file (o p :direction :probe :if-does-not-exist :create))))
+  (cons t argv))
+
+(defun download (uri file &key proxy)
+  (declare (ignorable proxy))
+  (uiop/run-program:run-program (format nil "~A download ~A ~A" *ros-path* uri file)
+                                :output :interactive))
+
+(defun expand (archive dest &key verbose)
+  (uiop/run-program:run-program (format nil "~A tar -x~Af ~A -C ~A" *ros-path* 
+                                        (if verbose "v" "")
+                                        archive
+                                        dest)
+                                :output :interactive))
+
+(defun setup (argv)
+  (save-opt "default.lisp" (getf argv :target))
+  (save-opt (format nil "~A.version" (getf argv :target)) (getf argv :version))
+  (cons t argv))
+
+(defun main (impl/version &rest argv)
+  (format t "launched install ~A~%" impl/version)
+  (let* (imp
+         version
+         (seq impl/version)
+         (pos (position #\/ impl/version))
+         sub)
+    (if pos
+        (setq imp (subseq seq 0 pos)
+              version (subseq seq (1+ pos)))
+        (setq imp seq))
+
+    (setf sub (merge-pathnames
+               (format nil "install/~A.lisp" imp)
+               (make-pathname :name nil :type nil :defaults *load-pathname*)))
+    (when (probe-file sub)
+      (load sub))
+    (let (*read-eval*)
+      (setf *opts* (append (read-from-string (first argv))
+                           (read-from-string (second argv)))
+            *home-path* (make-pathname :defaults (third argv))
+            *ros-path* (make-pathname :defaults (fourth argv))
+            argv (nthcdr 4 argv)))
+    (if *install-cmds*
+        (loop
+           for call in *install-cmds*
+           for i = (funcall call `(:target ,imp :version ,version 
+                                           :argv ,argv)) then (funcall call (rest i))
+           while (first i))
+        (format t "not supported software ~A" imp))))

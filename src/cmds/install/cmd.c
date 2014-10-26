@@ -14,8 +14,8 @@ static char *flags =NULL;
 struct install_impls *install_impl;
 
 struct install_impls *impls_to_install[]={
-  &impls_sbcl_bin,
-  &impls_sbcl
+  &impls_sbcl_bin//,
+  //&impls_sbcl
 };
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
@@ -159,13 +159,6 @@ int expand(struct install_options* param)
   return 1;
 }
 
-install_cmds install_full[]={
-  start,
-  download,
-  expand,
-  NULL
-};
-
 int cmd_install(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1,k;
@@ -196,8 +189,33 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
 	}
       }
       if(!install_impl) {
-	printf("%s is not implemented for install.\n",param.impl);
-	exit(EXIT_FAILURE);
+        char* lisp_path=lispdir();
+        int i,j,argc_;
+        char** tmp;
+        char* install_ros=s_cat2(lisp_path,q("install.ros"));
+        if(verbose>0) {
+          fprintf(stderr,"%s is not implemented for install. %s argc:%d\n",param.impl,install_ros,argc);
+          for(i=0;i<argc;++i)
+            fprintf(stderr,"%s:",argv[i]);
+          fprintf(stderr,"\n");
+        }
+        tmp=(char**)alloc(sizeof(char*)*(argc+8));
+        i=0;
+        tmp[i++]=q("--no-rc");
+        tmp[i++]=q("lisp=sbcl-bin");
+        tmp[i++]=q("--");
+        tmp[i++]=install_ros;
+        tmp[i++]=q(argv[1]);
+        tmp[i++]=sexp_opts(local_opt);
+        tmp[i++]=sexp_opts(global_opt);
+        tmp[i++]=homedir();
+        tmp[i++]=truename(argv_orig[0]);
+        for(j=2;j<argc;tmp[i++]=q(argv[j++]));
+        argc_=i;
+        for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
+        for(j=0;j<argc_;s(tmp[j++]));
+        dealloc(tmp);
+        return 0;
       }
       for(cmds=install_impl->call;*cmds&&ret;++cmds)
 	ret=(*cmds)(&param);

@@ -74,6 +74,7 @@ int position_char_not(char* items,char* seq);
 char* upcase(char* orig);
 char* escape_string(char* str);
 char* homedir(void);
+char* lispdir(void);
 char* truename(const char* path);
 char* pathname_directory (char* path);
 char* file_namestring (char* path);
@@ -92,4 +93,6 @@ char* uname_m(void);
 char* which(char* cmd);
 LVal directory(char* path);
 void setup_signal_handler (char* file_to_delete);
+
+int proccmd(int argc,char** argv,LVal option,LVal command);
 #endif

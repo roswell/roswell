@@ -25,7 +25,6 @@ void free_opts(struct opts* opt)
 
 void print_opts(struct opts* opt)
 {
-  void* tmp;
   char* typestr;
   while(opt) {
     switch(opt->type) {
@@ -44,6 +43,16 @@ void print_opts(struct opts* opt)
     printf("%s=%s[%s]\n",opt->name,opt->value,typestr);
     opt=opt->next;
   }
+}
+
+char* sexp_opts(struct opts* opt)
+{
+  void* ret=q("(");
+  while(opt) {
+    ret=s_cat(ret,q("(\""),q(opt->name),q("\"\""),q(opt->value),q("\")"),NULL);
+    opt=opt->next;
+  }
+  return ret=s_cat2(ret,q(")"));
 }
 
 struct opts* load_opts(const char* path) {

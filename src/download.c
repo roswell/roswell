@@ -7,8 +7,6 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   return written;
 }
-extern char* homedir(void);
-extern int ensure_directories_exist (char* path);
 
 int download_simple (char* uri,char* path,int verbose)
 {
@@ -45,7 +43,8 @@ int download_simple (char* uri,char* path,int verbose)
 
 int cmd_download (int argc,char **argv) {
   if(argc>=2) {
-    return download_simple(argv[0],argv[1],1);
+    fprintf(stderr,"download %s %s",argv[1],argv[2]);
+    return download_simple(argv[1],argv[2],1);
   }
   return 0;
 }
