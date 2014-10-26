@@ -7,14 +7,9 @@
   (:shadow :load :eval :package))
 
 (in-package :ros)
-(push :ros-launched *features*)
-(defvar *verbose* nil)
+(push :ros.init *features*)
+(defvar *verbose* 0)
 (export (defvar *argv* nil))
-
-(defun load (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
-  (unless (cl:load arg :if-does-not-exist nil)
-    (when *verbose* (format t "~s not exists~%" arg))))
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
@@ -54,11 +49,16 @@
      (let ((line(read-line in)))
        (cl:load (make-concatenated-stream
                  (make-string-input-stream
-                  (if (equal (subseq line 0 (min (length line) 2)) "#!")
-                      "" line))
+                  (format nil "(cl:setf cl:*load-pathname* #P~S)~A" arg
+                          (if (equal (subseq line 0 (min (length line) 2)) "#!")
+                              "" line)))
                  in
                  (make-string-input-stream
-                  "(cl:apply 'main ros:*argv*)")))))))
+                  (if (eql cmd :script)
+                      "(cl:apply 'main ros:*argv*)"
+                      ""))))))))
+
+(setf (fdefinition 'load) #'script)
 
 (export 
  (defun run (list)

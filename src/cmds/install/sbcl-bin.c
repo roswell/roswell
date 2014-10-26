@@ -103,19 +103,24 @@ int sbcl_bin_install(struct install_options* param) {
   char* home= homedir();
   char* str;
   char* version_num= q(version);
+  int ret;
   str=cat("echo f|xcopy \"",
           home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe\" \"",
           home,"impls\\sbcl-",version,"-",arch,"\\bin\\sbcl.exe\" >NUL",NULL);
-  system(str),s(str);
+  ret=system(str);s(str);
+  if(!ret) return 0;
   str=cat("echo f|xcopy \"",
           home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core\" \"",
           home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\sbcl.core\" >NUL",NULL);
-  system(str),s(str);
+  ret=system(str);s(str);
+  if(!ret) return 0;
   str=cat("echo d|xcopy \"",
           home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
           home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\contrib\" >NUL",NULL);
-  system(str),s(str),s(arch);
-  s(home);
+  ret=system(str);
+  s(str),s(arch),s(home);
+  if(!ret) return 0;
+  return 1;
 }
 #endif
 

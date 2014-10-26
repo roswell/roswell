@@ -22,6 +22,7 @@ extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
 int verbose=0;
+int rc=1;
 //dummy
 int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
 {
@@ -49,6 +50,8 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
         if(strcmp(&argv[0][2],fp->name)==0) {
           int result= fp->call(argc,argv,fp);
           if(fp->terminating) {
+            if(verbose>0)
+              fprintf(stderr,"terminating:%s\n",argv[0]);
             exit(result);
           }else {
             return result;
@@ -65,6 +68,8 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
           if(fp->short_name&&strcmp(argv[0],fp->short_name)==0) {
             int result= fp->call(argc,argv,fp);
             if(fp->terminating) {
+              if(verbose>0)
+                fprintf(stderr,"terminating:%s\n",argv[0]);
               exit(result);
             }else {
               return result;
@@ -122,6 +127,17 @@ int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
   return 1;
 }
 
+int opt_top_rc(int argc,char** argv,struct sub_command* cmd) {
+  if(strcmp(cmd->name,"rc")==0) {
+    rc=1;
+  }else if(strcmp(cmd->name,"no-rc")==0) {
+    rc=0;
+  }
+  if(verbose>0)
+    fprintf(stderr,"opt_rc:%s\n",cmd->name);
+  return 1;
+}
+
 int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name) {
     char* current=get_opt("program");
@@ -165,8 +181,8 @@ LVal register_runtime_options(LVal opt) {
 
   /* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
   /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
-  opt=add_command(opt,"rc","-R",cmd_notyet,1,0,"try read /etc/cl-launchrc, ~/.cl-launchrc",NULL);
-  opt=add_command(opt,"no-rc","+R",cmd_notyet,1,0,"skip /etc/cl-launchrc, ~/.cl-launchrc",NULL);
+  opt=add_command(opt,"rc","-R",cmd_notyet,1,0,"try read /etc/rosrc, ~/.rosrc",NULL);
+  opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.rosrc",NULL);
   opt=add_command(opt,"quicklisp","-Q",cmd_notyet,1,0,"use quicklisp",NULL);
   opt=add_command(opt,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
   opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);

@@ -28,5 +28,5 @@ int cmd_config(int argc, const char **argv)
     }
   }
   s(home),s(path);
-  return ret;
+  return 0;
 }

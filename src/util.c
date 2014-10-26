@@ -271,7 +271,7 @@ char* lispdir(void) {
       lisp_path=ros_bin_lisp;
     }else {
       s(ros_bin_lisp);
-      lisp_path=q(LISP_PATH);
+      lisp_path=append_trail_slash(q(LISP_PATH));
     }
     return lisp_path;
 }
