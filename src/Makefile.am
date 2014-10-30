@@ -1,7 +1,7 @@
 AUTOMAKE_OPTIONS = subdir-objects
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
-roslisp_DATA = lisp/init.lisp lisp/install.ros
+roslisp_DATA = lisp/init.lisp lisp/install.ros lisp/asdf.lisp
 roslispinstalldir = $(roslispdir)/install
 roslispinstall_DATA = lisp/install/sbcl.lisp
 
