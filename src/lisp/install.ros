@@ -1,7 +1,8 @@
 ;;
 (cl:in-package :cl-user)
 (require :asdf)
-(require :uiop)
+(ignore-errors
+  (require :uiop))
 #+sbcl(require :sb-posix)
 (defpackage :ros.install
   (:use :cl))
@@ -11,6 +12,11 @@
 (defvar *opts* nil)
 (defvar *home-path* nil)
 (defvar *ros-path* nil)
+
+(unless (find-package :uiop)
+  (let ((path (merge-pathnames "asdf.lisp" *load-pathname*)))
+    (with-output-to-string (*error-output*)
+      (load path))))
 
 (defun system- (cmd)
   (with-output-to-string (*standard-output*)
