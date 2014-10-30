@@ -66,9 +66,10 @@
   (cons t argv))
 
 (defun sbcl-make (argv)
-  (with-open-file (out (merge-pathnames (format nil "impls/log/~A-~A/make.log"
-                                                (getf argv :target) (getf argv :version))
-                                        (homedir))
+  (with-open-file (out (ensure-directories-exist
+                        (merge-pathnames (format nil "impls/log/~A-~A/make.log"
+                                                 (getf argv :target) (getf argv :version))
+                                         (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~A~%" (date))
     (let* ((src (get-opt "src"))
