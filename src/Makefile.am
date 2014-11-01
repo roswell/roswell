@@ -9,7 +9,7 @@ bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c\
 	cmds/version/cmd.c \
 	cmds/run/cmd.c cmds/run/sbcl.c\
-	cmds/install/cmd.c cmds/install/sbcl.c cmds/install/sbcl-bin.c \
+	cmds/install/cmd.c cmds/install/sbcl-bin.c \
 	cmds/list/cmd.c \
 	cmds/help/cmd.c \
 	cmds/config/cmd.c

@@ -14,8 +14,7 @@ static char *flags =NULL;
 struct install_impls *install_impl;
 
 struct install_impls *impls_to_install[]={
-  &impls_sbcl_bin//,
-  //&impls_sbcl
+  &impls_sbcl_bin
 };
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
@@ -24,15 +23,15 @@ int installed_p(struct install_options* param)
 {
   int ret;
   char* i;
-  int pos;
   char *impl;
-  pos=position_char("-",param->impl);
-  if(pos!=-1) {
-    impl=subseq(param->impl,0,pos);
-  }else
-    impl=q(param->impl);
-  i=s_cat(homedir(),q("impls"),q(SLASH),q(impl),q("-"),q(param->version),q(SLASH),NULL);
+
+  impl=q(param->impl);
+  i=s_cat(homedir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
+          q(impl),q(SLASH),q(param->version),q(SLASH),NULL);
   ret=directory_exist_p(i);
+  if(verbose>0) {
+    fprintf(stderr,"directory_exist_p(%s)=%d\n",i,ret);
+  }
   s(i),s(impl);
   return ret;
 }
