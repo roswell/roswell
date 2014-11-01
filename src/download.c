@@ -2,9 +2,23 @@
 #include <stdlib.h>
 #include <curl/curl.h>
 
+static int count=0;
+static int block=10240;
+static int fold=90;
+
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
+  int current = count/block;
+  int dots;
+  int i;
+  count+=written;
+  for(i=current;i<count/block;++i){
+    printf(".");
+    fflush(stdout);
+    if(i%fold==0)
+      printf("\n");
+  }
   return written;
 }
 

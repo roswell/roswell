@@ -101,7 +101,7 @@ int download(struct install_options* param)
 	return 0;
 	/* fail */
       }else{
-	printf("download done:%s\n",url);
+	printf("\ndone\n");
       }
     }
     s(impl_archive),s(url);
