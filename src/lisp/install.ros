@@ -70,7 +70,7 @@
 (defvar *install-cmds* nil)
 
 (defun installedp (argv)
-  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (getf argv :version)) (homedir))) t))
+  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
 
 (defun install-running-p (argv)
   ;;TBD
@@ -82,7 +82,6 @@
   (declare (ignore path)))
 
 (defun start (argv)
-  (print argv)
   (ensure-directories-exist (homedir))
   (let ((target (getf argv :target))
         (version (getf argv :version)))
@@ -114,7 +113,7 @@
 
 (defun setup (argv)
   (save-opt "default.lisp" (getf argv :target))
-  (save-opt (format nil "~A.version" (getf argv :target)) (getf argv :version))
+  (save-opt (format nil "~A.version" (getf argv :target)) (get-opt "as"))
   (cons t argv))
 
 (defun main (impl/version &rest argv)

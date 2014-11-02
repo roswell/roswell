@@ -33,12 +33,18 @@
     (when (or (null version) (equal version "latest"))
       ;;TBD
       (setf (getf argv :version) "1.2.4")))
+  (cons t argv))
+
+(defun sbcl-argv-parse (argv)
+  (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
+    (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv))))
+                      (getf argv :version))))
   (set-opt "download.uri" (format nil "~@{~A~}" "http://sourceforge.net/projects/sbcl/files/sbcl/" 
                                   (getf argv :version) "/sbcl-" (getf argv :version) "-source.tar.bz2"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos 
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (getf argv :version)) (homedir)))
+  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (cons t argv))
 
@@ -60,7 +66,7 @@
   (cons t argv))
 
 (defun sbcl-expand (argv)
-  (format t "~&Extracting archive.:~A~%" (get-opt "download.archive"))
+  (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
@@ -68,7 +74,7 @@
 (defun sbcl-make (argv)
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/make.log"
-                                                 (getf argv :target) (getf argv :version))
+                                                 (getf argv :target) (get-opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~A~%" (date))
@@ -85,9 +91,9 @@
   (let* ((impl-path (get-opt "prefix"))
          (src (get-opt "src"))
          (install-root impl-path)
-         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (getf argv :version)) (homedir))))
+         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
     (format t "~&prefix :~s~%" impl-path)
-    (format t "~&installing ~A/~A" (getf argv :target) (getf argv :version))
+    (format t "~&installing ~A/~A" (getf argv :target) (get-opt "as"))
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
     (uiop/os:chdir src)
@@ -105,6 +111,7 @@
 
 (setq *install-cmds*
       (list 'sbcl-version
+            'sbcl-argv-parse
             'sbcl-start
             'start
             'sbcl-download
