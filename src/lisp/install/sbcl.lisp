@@ -48,6 +48,15 @@
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
+  (labels ((with (opt default)
+             (set-opt opt
+                      (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
+                            ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) nil)
+                            (t default)))))
+    (with "thread" t)
+    (with "core-compression" t)
+    (with "ldb" nil)
+    (with "xref-for-internals" nil))
   (cons t argv))
 
 (defun sbcl-start (argv)
@@ -74,13 +83,30 @@
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
 
+(defun sbcl-config (argv)
+  (with-open-file (out (merge-pathnames
+                        (format nil "src/sbcl-~A/customize-target-features.lisp"
+                                (getf argv :version)) (homedir))
+                       :direction :output :if-exists :supersede :if-does-not-exist :create)
+    (format out "~s"
+            `(lambda (list)
+               (dolist (i '((:sb-thread ,(get-opt "thread"))
+                            (:sb-core-compression ,(get-opt "core-compression"))
+                            (:sb-ldb ,(get-opt "ldb"))
+                            (:sb-xref-for-internals ,(get-opt "xref-for-internals"))))
+                 (if (second i)
+                     (pushnew (first i) list)
+                     (setf list (remove (first i) list))))
+               list)))
+  (cons t argv))
+
 (defun sbcl-make (argv)
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/make.log"
                                                  (getf argv :target) (get-opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
-    (format out "~A~%" (date))
+    (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run --" *ros-path* (get-opt "sbcl.compiler")))
            (cmd (format nil "sh make.sh \"--xc-host=~A\" \"--prefix=~A\"" compiler (get-opt "prefix")))
@@ -104,7 +130,7 @@
     (unsetenv "SBCL_HOME")
     (setenv "INSTALL_ROOT" (format nil "~A" install-root))
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
-      (format out "~A~%" (date))
+      (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
         (uiop/run-program:run-program "sh install.sh" :output t)))
@@ -118,6 +144,7 @@
             'start
             'sbcl-download
             'sbcl-expand
+            'sbcl-config
             'sbcl-make
             'sbcl-install
             'setup))
