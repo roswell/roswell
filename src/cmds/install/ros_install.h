@@ -19,7 +19,6 @@ int start(struct install_options* param);
 int download(struct install_options* param);
 int expand(struct install_options* param);
 
-extern install_cmds install_sbcl_full[];
 extern install_cmds install_sbcl_bin_full[];
 
 struct install_impls
@@ -28,10 +27,8 @@ struct install_impls
   install_cmds *call;
   install_cmd_string uri;
   install_cmd_string extention;
-
+  int util;
 };
 
 extern struct install_impls impls_sbcl_bin;
-extern struct install_impls impls_sbcl;
-
 #endif

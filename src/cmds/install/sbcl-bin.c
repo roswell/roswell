@@ -4,8 +4,6 @@
 #include "ros_install.h"
 #include "opt.h"
 
-extern int sbcl_install(struct install_options* param);
-
 char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
@@ -16,7 +14,7 @@ int sbcl_version_bin(struct install_options* param)
 {
   char* home= homedir();
   char* ret;
-  char* platforms_html=cat(home,"tmp",SLASH,"sbcl.html",NULL);
+  char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
   ensure_directories_exist(platforms_html);
 
   if(!param->version) {
@@ -167,4 +165,4 @@ install_cmds install_sbcl_bin_full[]={
   NULL
 };
 
-struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,sbcl_uri_bin,sbcl_bin_extention};
+struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,sbcl_uri_bin,sbcl_bin_extention,0};
