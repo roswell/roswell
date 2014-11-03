@@ -1,5 +1,6 @@
 (in-package :ros.install)
 
+#+sbcl
 (defclass count-line-stream (sb-gray:fundamental-character-output-stream)
   ((base :initarg :base 
          :initform *standard-output*
@@ -12,7 +13,7 @@
                 :reader count-line-stream-count-char)
    (count :initform -1
           :accessor count-line-stream-count)))
-
+#+sbcl
 (defmethod sb-gray:stream-write-char ((stream count-line-stream) character)
   (when (char= character (count-line-stream-count-char stream))
     (loop
@@ -25,6 +26,7 @@
                (funcall char stream))
        (force-output stream-))))
 
+#+sbcl
 (defun line-number (stream)
   (format (count-line-stream-base stream) "~&~8d " (count-line-stream-count stream)))
 
@@ -56,13 +58,14 @@
   (cons t argv))
 
 (defun sbcl-download (argv)
-  (when (get-opt "download.skip")
-    (format t "~&Skip downloading ~A~%" (get-opt "download.uri"))
-    (return-from sbcl-download
-      (cons t argv)))
-  (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
-  ;;TBD proxy support... and other params progress bar?
-  (download (get-opt "download.uri") (get-opt "download.archive"))
+  (if (or (not (probe-file (get-opt "download.archive")))
+          (get-opt "download.force"))
+      (progn
+        (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
+        ;;TBD proxy support... and other params progress bar?
+        (download (get-opt "download.uri") (get-opt "download.archive")))
+      (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
+              (get-opt "download.uri")))
   (cons t argv))
 
 (defun sbcl-expand (argv)
@@ -81,7 +84,7 @@
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run --" *ros-path* (get-opt "sbcl.compiler")))
            (cmd (format nil "sh make.sh \"--xc-host=~A\" \"--prefix=~A\"" compiler (get-opt "prefix")))
-           (*standard-output* (make-broadcast-stream out (make-instance 'count-line-stream))))
+           (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (uiop/run-program:run-program cmd :output t)))
   (cons t argv))
@@ -103,8 +106,7 @@
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
-                                out
-                                (make-instance 'count-line-stream))))
+                                out #+sbcl(make-instance 'count-line-stream))))
         (uiop/run-program:run-program "sh install.sh" :output t)))
     (format t"done.~%"))
   (cons t argv))
