@@ -85,7 +85,7 @@
   (ensure-directories-exist (homedir))
   (let ((target (getf argv :target))
         (version (getf argv :version)))
-    (when (installedp argv)
+    (when (and (installedp argv) (not (get-opt "install.force")))
       (format t "~A/~A are already installed.if you intend to reinstall by (TBD).~%"
               target version)
       (return-from start (cons nil argv)))
