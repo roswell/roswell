@@ -403,6 +403,19 @@ int delete_file(char* pathspec) {
 #endif  
 }
 
+int rename_file(char* file,char* new_name) {
+#ifndef _WIN32
+  char* cmd;
+  int ret;
+  cmd=s_cat(q("mv "),q(file),q(" "),q(new_name),NULL);
+  ret=system(cmd);
+  s(cmd);
+  return ret==0;
+#else
+#error not implemented rename_file
+#endif
+}
+
 void touch(char* path) {
 #ifndef _WIN32
   char* cmd=s_cat2(q("touch "),q(path));

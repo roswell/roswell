@@ -84,6 +84,7 @@ int file_exist_p (char* path);
 int change_directory(const char* path);
 int delete_directory(char* pathspec,int recursive);
 int delete_file(char* pathspec);
+int rename_file(char* file,char* new_name);
 void touch(char* path);
 char* system_(char* cmd);
 int system_redirect(const char* cmd,char* filename);

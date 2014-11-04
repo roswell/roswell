@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <curl/curl.h>
+#include "util.h"
 
 static int count=0;
 static int block=10240;
@@ -27,6 +28,7 @@ int download_simple (char* uri,char* path,int verbose)
   CURL *curl;
   CURLcode res;
   FILE *bodyfile;
+  char* path_partial=cat(path,".partial",NULL);
 
   curl = curl_easy_init();
   if(curl) {
@@ -34,9 +36,10 @@ int download_simple (char* uri,char* path,int verbose)
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
 
-    bodyfile = fopen(path,"wb");
+    bodyfile = fopen(path_partial,"wb");
     if (bodyfile == NULL) {
       curl_easy_cleanup(curl);
+      s(path_partial);
       return -1;
     }
     curl_easy_setopt(curl,CURLOPT_WRITEDATA,bodyfile);
@@ -51,7 +54,11 @@ int download_simple (char* uri,char* path,int verbose)
   if(res != CURLE_OK) {
     return -2;
   }else {
-    return 0;
+    int ret=rename_file(path_partial,path);
+    s(path_partial);
+    if(ret)
+      return 0;
+    return -3;
   }
 }
 
