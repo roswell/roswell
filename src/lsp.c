@@ -217,7 +217,7 @@ int main (int argc,char **argv) {
   top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,"Show the "PACKAGE" version information",NULL);
   top_commands=add_command(top_commands,"tar"     ,NULL,cmd_tar,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"download",NULL,cmd_download,0,1,NULL,NULL);
-  top_commands=add_command(top_commands,"help",NULL,cmd_help,0,1,NULL,NULL);
+  top_commands=add_command(top_commands,"help",NULL,cmd_help,1,1,"Show Command help",NULL);
   register_cmd_run();
   top_commands=nreverse(top_commands);
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [Command arguments...]  \n",
@@ -236,8 +236,8 @@ int main (int argc,char **argv) {
   }else
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
   if(get_opt("program")) {
-    char* tmp[]={"run","--"};
-    proccmd(2,tmp,top_options,top_commands);
+    char* tmp[]={"run","-q","--"};
+    proccmd(3,tmp,top_options,top_commands);
   }
   free_opts(global_opt);
 }
