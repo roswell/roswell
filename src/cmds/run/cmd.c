@@ -36,18 +36,19 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd)
   if(verbose>0)
     fprintf(stderr,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current) {
-    char* tmp[]={"help",(char*)cmd->name};
+    char* tmp[]={(char*)cmd->name,"--"};
     return proccmd(2,tmp,top_options,top_commands);
   }else {
     int i;
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],run_options,run_commands));
     current=get_opt("program");
-    if(current&& strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
+    if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
       char* tmp[]={"--"};
       proccmd(1,tmp,run_options,run_commands);
     }else {
-      char* tmp[]={"help",ROS_RUN_REPL};
-      return proccmd(2,tmp,top_options,top_commands);
+      char* tmp[]={"--",ROS_RUN_REPL};
+      proccmd(1,tmp,run_options,run_commands);
+      //return proccmd(1,tmp,top_options,top_commands);
     }
     if(verbose>0) {
       fprintf(stderr,"cmd_%s ends here %d\n",cmd->name,i);
@@ -159,7 +160,7 @@ void register_cmd_run(void)
   /*commands*/
   top_options=add_command(top_options,""         ,NULL,cmd_script,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
   //  top_commands=add_command(top_commands,"output"     ,NULL,cmd_run,1,1,"Generate an executable script or binary from the software specification",NULL);
-  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_NONE,1,"Run lisp environment",NULL);
+  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1,"Run repl",NULL);
   top_commands=add_command(top_commands,"*"         ,NULL,cmd_script,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
 
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] "ROS_RUN_REPL" [OPTIONS] -- [implementation-native-options...]\n\n",NULL);
