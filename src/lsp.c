@@ -13,14 +13,15 @@ struct opts* global_opt;
 struct opts* local_opt=NULL;
 
 extern int cmd_list(int argc,char **argv,struct sub_command* cmd);
-extern int cmd_download(int argc,char **argv,struct sub_command* cmd);
-extern int cmd_tar(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_version(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_config(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
+extern int cmd_internal(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
+extern void register_cmd_internal(void);
+
 int verbose=0;
 int rc=1;
 //dummy
@@ -210,13 +211,14 @@ int main (int argc,char **argv) {
   top_options=nreverse(top_options);
   /*commands*/
   register_cmd_install();
+  top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
 
   /*         {"list",NULL,cmd_list,1,1}, */
   /*         {"set",NULL,cmd_notyet,0,1}, */
   top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,"Show the "PACKAGE" version information",NULL);
-  top_commands=add_command(top_commands,"tar"     ,NULL,cmd_tar,0,1,NULL,NULL);
-  top_commands=add_command(top_commands,"download",NULL,cmd_download,0,1,NULL,NULL);
+  register_cmd_internal();
+
   top_commands=add_command(top_commands,"help",NULL,cmd_help,1,1,"Show Command help",NULL);
   register_cmd_run();
   top_commands=nreverse(top_commands);
