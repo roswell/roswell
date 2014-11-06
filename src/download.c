@@ -61,11 +61,3 @@ int download_simple (char* uri,char* path,int verbose)
     return -3;
   }
 }
-
-int cmd_download (int argc,char **argv) {
-  if(argc>=2) {
-    fprintf(stderr,"download %s %s",argv[1],argv[2]);
-    return download_simple(argv[1],argv[2],1);
-  }
-  return 0;
-}
