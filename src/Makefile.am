@@ -6,7 +6,7 @@ roslispinstalldir = $(roslispdir)/install
 roslispinstall_DATA = lisp/install/sbcl.lisp
 
 bin_PROGRAMS = ros
-ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c\
+ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
 	cmds/version/cmd.c \
 	cmds/run/cmd.c cmds/run/sbcl.c\
 	cmds/install/cmd.c cmds/install/sbcl-bin.c \
