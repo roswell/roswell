@@ -49,7 +49,7 @@
      (let ((line(read-line in)))
        (cl:load (make-concatenated-stream
                  (make-string-input-stream
-                  (format nil "(cl:setf cl:*load-pathname* #P~S)(cl:*load-truename* (truename cl:*load-pathname*))~A" arg
+                  (format nil "(cl:setf cl:*load-pathname* #P~S)(cl:setf cl:*load-truename* (truename cl:*load-pathname*))~A" arg
                           (if (equal (subseq line 0 (min (length line) 2)) "#!")
                               "" line)))
                  in

@@ -101,11 +101,11 @@
 
 (defun download (uri file &key proxy)
   (declare (ignorable proxy))
-  (uiop/run-program:run-program (format nil "~A download ~A ~A" *ros-path* uri file)
+  (uiop/run-program:run-program (format nil "~A roswell-internal-use download ~A ~A" *ros-path* uri file)
                                 :output :interactive))
 
 (defun expand (archive dest &key verbose)
-  (uiop/run-program:run-program (format nil "~A tar -x~Af ~A -C ~A" *ros-path* 
+  (uiop/run-program:run-program (format nil "~A roswell-internal-use tar -x~Af ~A -C ~A" *ros-path*
                                         (if verbose "v" "")
                                         archive
                                         dest)
