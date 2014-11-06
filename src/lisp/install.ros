@@ -13,6 +13,11 @@
 (defvar *home-path* nil)
 (defvar *ros-path* nil)
 
+(defun roswell-internal (args output)
+  (uiop/run-program:run-program
+   (format nil "~A roswell-internal-use~{ ~A~}"
+           *ros-path* args) :output output))
+
 (unless (find-package :uiop)
   (let ((path (merge-pathnames "asdf.lisp" *load-pathname*)))
     (with-output-to-string (*error-output*)
@@ -23,14 +28,10 @@
     (uiop/run-program:run-program cmd :output t)))
 
 (defun uname ()
-  (if (uiop:os-windows-p)
-      "windows"
-      (string-downcase(remove #\Newline (remove #\Return (system- "uname"))))))
+  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
 
 (defun uname-m ()
-  (if (uiop:os-windows-p)
-      "x86"
-      (substitute #\- #\_ (remove #\Newline (remove #\Return (system- "uname -m"))))))
+  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
 
 (defun date (&optional (universal-time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year day daylight time-zone)
@@ -101,15 +102,10 @@
 
 (defun download (uri file &key proxy)
   (declare (ignorable proxy))
-  (uiop/run-program:run-program (format nil "~A roswell-internal-use download ~A ~A" *ros-path* uri file)
-                                :output :interactive))
+  (roswell-internal `("download" ,uri ,file) :interactive))
 
 (defun expand (archive dest &key verbose)
-  (uiop/run-program:run-program (format nil "~A roswell-internal-use tar -x~Af ~A -C ~A" *ros-path*
-                                        (if verbose "v" "")
-                                        archive
-                                        dest)
-                                :output :interactive))
+  (roswell-internal `("tar" ,(if verbose "-xvf" "-xf") ,archive "-C" ,dest) :interactive))
 
 (defun setup (argv)
   (save-opt "default.lisp" (getf argv :target))
