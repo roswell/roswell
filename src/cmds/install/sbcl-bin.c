@@ -28,7 +28,7 @@ int sbcl_version_bin(struct install_options* param)
   }
   param->arch_in_archive_name=1;
   param->expand_path=cat(home,"src",SLASH,param->impl,"-",param->version,"-",arch_(param),SLASH,NULL);
-  s(platforms_html);
+  s(platforms_html),s(home);
   return 1;
 }
 

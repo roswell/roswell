@@ -10,7 +10,7 @@
 (in-package #:cl-user)
 
 (defun main (exec path &rest r)
-  (declare (ignorable r))
+  (declare (ignorable exec r))
   (unless (find-package :quicklisp-quickstart)
     (error "something wrong"))
   (quicklisp-quickstart:install :path path))
