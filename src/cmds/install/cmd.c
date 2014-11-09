@@ -14,7 +14,8 @@ static char *flags =NULL;
 struct install_impls *install_impl;
 
 struct install_impls *impls_to_install[]={
-  &impls_sbcl_bin
+  &impls_sbcl_bin,
+  &utils_quicklisp
 };
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
@@ -26,8 +27,9 @@ int installed_p(struct install_options* param)
   char *impl;
 
   impl=q(param->impl);
+  //TBD for util.
   i=s_cat(homedir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
-          q(impl),q(SLASH),q(param->version),q(SLASH),NULL);
+          q(impl),q(param->version?SLASH:""),q(param->version?param->version:""),q(SLASH),NULL);
   ret=directory_exist_p(i);
   if(verbose>0) {
     fprintf(stderr,"directory_exist_p(%s)=%d\n",i,ret);
@@ -48,18 +50,18 @@ int start(struct install_options* param)
   char* p;
   ensure_directories_exist(home);
   if(installed_p(param)) {
-    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",param->impl,param->version);
+    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",param->impl,param->version?param->version:"");
     return 0;
   }
   if(install_running_p(param)) {
     printf("It seems running installation process for $1/$2.\n");
     return 0;
   }
-  p=cat(home,"tmp",SLASH,param->impl,"-",param->version,SLASH,NULL);
+  p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",SLASH,NULL);
   ensure_directories_exist(p);
   s(p);
 
-  p=cat(home,"tmp",SLASH,param->impl,"-",param->version,".lock",NULL);
+  p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",".lock",NULL);
   setup_signal_handler(p);
   touch(p);
 
@@ -70,7 +72,7 @@ int start(struct install_options* param)
 
 char* download_archive_name(struct install_options* param)
 {
-  char* ret=cat(param->impl,"-",param->version,NULL);
+  char* ret=cat(param->impl,param->version?"-":"",param->version?param->version:"",NULL);
   if(param->arch_in_archive_name==0) {
     ret=s_cat(ret,q("."),q((*(install_impl->extention))(param)),NULL);
   }else {
@@ -83,18 +85,14 @@ int download(struct install_options* param)
 {
   char* home= homedir();
   char* url=(*(install_impl->uri))(param);
-  char* impl_archive;
-  if(get_opt("skip.download")) {
-    printf("Skip downloading %s\n",url);
-  }else {
+  char* archive_name=download_archive_name(param);
+  char* impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
+  if(!file_exist_p(impl_archive)
+     || get_opt("download.force")) {
     printf("Downloading archive.:%s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
-      char* archive_name=download_archive_name(param);
-      impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
-      s(archive_name);
       ensure_directories_exist(impl_archive);
-
       if(download_simple(url,impl_archive,0)) {
 	printf("Failed to Download.\n");
 	return 0;
@@ -102,9 +100,12 @@ int download(struct install_options* param)
       }else{
 	printf("\ndone\n");
       }
+      s(url);
     }
-    s(impl_archive),s(url);
+  } else {
+    printf("Skip downloading %s\n",url);
   }
+  s(impl_archive);
   s(home);
   return 1;
 }
@@ -115,7 +116,7 @@ LVal expand_callback(LVal v1,LVal v2) {
   if(param->arch_in_archive_name) {
     int pos=position_char("/",path);
     if(pos!=-1) {
-      return (LVal)s_cat(cat(param->impl,"-",param->version,"-",param->arch,"-",param->os,NULL),subseq(path,pos,0),NULL);
+      return (LVal)s_cat(cat(param->impl,"-",param->version?param->version:"","-",param->arch,"-",param->os,NULL),subseq(path,pos,0),NULL);
     }
   }
   return (LVal)q(path);
@@ -226,17 +227,18 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
         char* path=cat(home,"config",NULL);
         char* v=cat(param.impl,".version",NULL);
         char* version=param.version;
-        for(i=0;version[i]!='\0';++i)
-          if(version[i]=='-')
-            version[i]='\0';
         if(!install_impl->util){
+          for(i=0;version[i]!='\0';++i)
+            if(version[i]=='-')
+              version[i]='\0';
           set_opt(opts,"default.lisp",param.impl,0);
           set_opt(opts,v,version,0);
           save_opts(path,opt);
         }
         s(home),s(path),s(v);
       }
-      s(param.version),s(param.impl),s(param.arch),s(param.os);
+      if(param.version)s(param.version);
+      s(param.impl),s(param.arch),s(param.os);
       s(param.expand_path);
     }
   }else {

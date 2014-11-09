@@ -39,6 +39,9 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     offset+=1;
   if(script)
     offset+=1;
+  if(quicklisp)
+    offset+=2;
+
   if(program||script)
     offset+=4;
 
@@ -83,6 +86,11 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   arg[paramc++]=q("--no-userinit");
   if(script)
     arg[paramc++]=q("--disable-debugger");
+
+  if(quicklisp) {
+    arg[paramc++]=q("--eval");
+    arg[paramc++]=cat("#-quicklisp(cl:load \"",home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp\")",NULL);
+  }
 
   if(program || script) {
     char* lisp_path=lispdir();

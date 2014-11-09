@@ -31,4 +31,5 @@ struct install_impls
 };
 
 extern struct install_impls impls_sbcl_bin;
+extern struct install_impls utils_quicklisp;
 #endif

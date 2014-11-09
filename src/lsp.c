@@ -24,6 +24,7 @@ extern void register_cmd_internal(void);
 
 int verbose=0;
 int rc=1;
+int quicklisp=1;
 //dummy
 int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
 {
@@ -139,6 +140,17 @@ int opt_top_rc(int argc,char** argv,struct sub_command* cmd) {
   return 1;
 }
 
+int opt_top_ql(int argc,char** argv,struct sub_command* cmd) {
+  if(strcmp(cmd->name,"quicklisp")==0) {
+    quicklisp=1;
+  }else if(strcmp(cmd->name,"no-quicklisp")==0) {
+    quicklisp=0;
+  }
+  if(verbose>0)
+    fprintf(stderr,"opt_quicklisp:%s\n",cmd->name);
+  return 1;
+}
+
 int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name) {
     char* current=get_opt("program");
@@ -184,8 +196,8 @@ LVal register_runtime_options(LVal opt) {
   /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
   opt=add_command(opt,"rc","-R",cmd_notyet,1,0,"try read /etc/rosrc, ~/.rosrc",NULL);
   opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.rosrc",NULL);
-  opt=add_command(opt,"quicklisp","-Q",cmd_notyet,1,0,"use quicklisp",NULL);
-  opt=add_command(opt,"no-quicklisp","+Q",cmd_notyet,1,0,"do not use quicklisp",NULL);
+  opt=add_command(opt,"quicklisp","-Q",opt_top_ql,1,0,"use quicklisp",NULL);
+  opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0,"do not use quicklisp",NULL);
   opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
   opt=add_command(opt,"quiet",NULL,opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
   return opt;
