@@ -98,6 +98,18 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
   }else {
     char* tmp[]={"help"};
     LVal p;
+    if(command==top_commands && position_char(".",argv[0])==-1) {
+      /* local commands*/
+      char* home=homedir();
+      char* cmddir=cat(home,"subcmd",SLASH,NULL);
+      char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
+      if(directory_exist_p(cmddir)&&file_exist_p(cmdpath)) {
+        argv[0]=cmdpath;
+        proccmd(argc,argv,top_options,top_commands);
+      }
+      s(home),s(cmddir),s(cmdpath);
+    }
+    /* search internal commands.*/
     for(p=command;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
       if(fp->name&&(strcmp(fp->name,argv[0])==0||strcmp(fp->name,"*")==0)) {
