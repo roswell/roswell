@@ -1,0 +1,2 @@
+(defun main (&rest r)
+  (format t "output ~S~%" r))

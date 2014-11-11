@@ -4,6 +4,8 @@ roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 roslisp_DATA = lisp/init.lisp lisp/install.ros lisp/asdf.lisp
 roslispinstalldir = $(roslispdir)/install
 roslispinstall_DATA = lisp/install/sbcl.lisp lisp/install/quicklisp.lisp
+roslispsubcmddir = $(roslispdir)/subcmd
+roslispsubcmd_DATA = lisp/output.ros
 
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
