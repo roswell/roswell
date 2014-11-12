@@ -1,2 +1,6 @@
+#!/bin/env ros
+"output executables"
+
 (defun main (&rest r)
-  (format t "output ~S~%" r))
+ (format t "env:~S~%" (uiop/os:getenv "ROS_OPTS"))
+ (format t "output ~S~%" r))

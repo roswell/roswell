@@ -110,6 +110,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     fprintf(stderr,"\nhelp=%s ",help?"t":"nil");
     fprintf(stderr,"script=%s\n",script?script:"nil");
   }
-  s(image),s(help),s(script),s(dynamic_space_size),s(dynamic_stack_size);
+  s(image),s(help),s(dynamic_space_size),s(dynamic_stack_size);
   return arg;
 }

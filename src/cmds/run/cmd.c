@@ -96,6 +96,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   int pos;
   if(verbose>0) {
     fprintf(stderr,"cmd_run_star:%s argc=%d argv[0]=%s \n",cmd->name,argc,argv[0]);
+    fprintf(stderr,"localopt:%s\n",sexp_opts(local_opt));
   }
   impl=get_opt("lisp");
   if(impl && (pos=position_char("/",impl))!=-1) {
@@ -127,6 +128,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
     }
     if(file_exist_p(arg[0])) {
       char* cmd;
+      char* opts=sexp_opts(local_opt);
+      setenv("ROS_OPTS",opts,1);
+      s(opts);
 #ifdef _WIN32
       cmd=q(arg[0]);
       for(i=1;arg[i]!=NULL;++i) {

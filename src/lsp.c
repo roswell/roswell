@@ -193,6 +193,18 @@ int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
   return 2;
 }
 
+int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
+  if(cmd->name && argc>1) {
+    char* current=get_opt("restart");
+    char* escaped=escape_string(argv[1]);
+    int len=strlen(escaped)+strlen(cmd->name)+7;
+    current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
+    s(escaped);
+    set_opt(&local_opt,"restart",current,0);
+  }
+  return 2;
+}
+
 LVal register_runtime_options(LVal opt) {
   /*opt=add_command(opt,"file","-f",opt_top_build,1,0,"include lisp FILE while building","FILE");*/
   opt=add_command(opt,"load","-l",opt_top_build,1,0,"load lisp FILE while building","FILE");
@@ -205,17 +217,17 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"require",NULL,opt_top_build,1,0,"require MODULE while building","MODULE");
   opt=add_command(opt,"quit","-q",opt_top_build0,1,0,"quit lisp here",NULL);
 
-  opt=add_command(opt,"restart","-r",cmd_notyet,1,0,"restart from build by calling (FUNC)","FUNC");
-  opt=add_command(opt,"entry","-E",cmd_notyet,1,0,"restart from build by calling (FUNC argv)","FUNC");
-  opt=add_command(opt,"init","-i",cmd_notyet,1,0,"evaluate FORM after restart","FORM");
-  opt=add_command(opt,"print","-ip",cmd_notyet,1,0,"evaluate and princ FORM after restart","FORM");
-  opt=add_command(opt,"write","-iw",cmd_notyet,1,0,"evaluate and write FORM after restart","FORM");
+  opt=add_command(opt,"restart","-r",opt_restart_after,1,0,"restart from build by calling (FUNC)","FUNC");
+  opt=add_command(opt,"entry","-E",opt_restart_after,1,0,"restart from build by calling (FUNC argv)","FUNC");
+  opt=add_command(opt,"init","-i",opt_restart_after,1,0,"evaluate FORM after restart","FORM");
+  opt=add_command(opt,"print","-ip",opt_restart_after,1,0,"evaluate and princ FORM after restart","FORM");
+  opt=add_command(opt,"write","-iw",opt_restart_after,1,0,"evaluate and write FORM after restart","FORM");
 
   opt=add_command(opt,"final","-F",cmd_notyet,1,0,"evaluate FORM before dumping IMAGE","FORM");
 
   /* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
   /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
-  opt=add_command(opt,"rc","-R",cmd_notyet,1,0,"try read /etc/rosrc, ~/.rosrc",NULL);
+  opt=add_command(opt,"rc","-R",opt_top_rc,1,0,"try read /etc/rosrc, ~/.rosrc",NULL);
   opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.rosrc",NULL);
   opt=add_command(opt,"quicklisp","-Q",opt_top_ql,1,0,"use quicklisp",NULL);
   opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0,"do not use quicklisp",NULL);
