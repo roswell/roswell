@@ -49,7 +49,7 @@ char* sexp_opts(struct opts* opt)
 {
   void* ret=q("(");
   while(opt) {
-    ret=s_cat(ret,q("(\""),q(opt->name),q("\"\""),q(opt->value),q("\")"),NULL);
+    ret=s_cat(ret,q("(\""),q(opt->name),q("\"\""),escape_string((char*)opt->value),q("\")"),NULL);
     opt=opt->next;
   }
   return ret=s_cat2(ret,q(")"));

@@ -4,7 +4,7 @@
 
 (defpackage :ros
   (:use :cl)
-  (:shadow :load :eval :package))
+  (:shadow :load :eval :package :restart))
 
 (in-package :ros)
 (push :ros.init *features*)
@@ -40,6 +40,14 @@
   (declare (ignorable cmd rest))
   #+sbcl
   (sb-ext:exit))
+
+(defun restart (cmd arg &rest rest)
+  (declare (ignorable cmd rest))
+  (funcall (read-from-string arg)))
+
+(defun entry (cmd arg &rest rest)
+  (declare (ignorable cmd rest))
+  (apply (read-from-string arg) *argv*))
 
 (export
  (defun script (cmd arg &rest rest)

@@ -2,5 +2,15 @@
 "output executables"
 
 (defun main (&rest r)
- (format t "env:~S~%" (uiop/os:getenv "ROS_OPTS"))
- (format t "output ~S~%" r))
+  (let ((cmds (let((*read-eval*))
+                (read-from-string
+          (format nil "(~A)"(second(assoc "restart" (read-from-string (uiop/os:getenv "ROS_OPTS"))
+                                          :test #'equal)))))))
+    #+sbcl
+    (sb-ext:save-lisp-and-die
+     (first r)
+     :toplevel
+     #'(lambda ()
+         (setf ros:*argv* (rest *posix-argv*))
+         (ros:run cmds))
+     :executable t)))
