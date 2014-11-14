@@ -4,7 +4,7 @@
 
 (defpackage :ros
   (:use :cl)
-  (:shadow :load :eval :package :restart))
+  (:shadow :load :eval :package :restart :print :write))
 
 (in-package :ros)
 (push :ros.init *features*)
@@ -48,6 +48,16 @@
 (defun entry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
   (apply (read-from-string arg) *argv*))
+
+(setf (fdefinition 'init) #'eval)
+
+(defun print (cmd arg &rest rest)
+  (declare (ignorable cmd rest))
+  (cl:print (cl:eval (read-from-string arg))))
+
+(defun write (cmd arg &rest rest)
+  (declare (ignorable cmd rest))
+  (cl:write (cl:eval (read-from-string arg))))
 
 (export
  (defun script (cmd arg &rest rest)
