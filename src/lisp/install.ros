@@ -1,9 +1,12 @@
 ;;
 (cl:in-package :cl-user)
+
 (require :asdf)
-(ignore-errors
-  (require :uiop))
 #+sbcl(require :sb-posix)
+(ignore-errors
+  #+quicklisp(ql:quickload :uiop)
+  #-quicklisp(require :uiop))
+
 (defpackage :ros.install
   (:use :cl))
 
@@ -12,11 +15,6 @@
 (defvar *opts* nil)
 (defvar *home-path* nil)
 (defvar *ros-path* nil)
-
-(unless (find-package :uiop)
-  (let ((path (merge-pathnames "asdf.lisp" *load-pathname*)))
-    (with-output-to-string (*error-output*)
-      (load path))))
 
 (defun roswell-internal (args output)
   (uiop/run-program:run-program
