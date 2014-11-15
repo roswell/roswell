@@ -1,5 +1,5 @@
 #!/bin/env ros
-"output executables"
+"create executables"
 
 (defun main (&rest r)
   (let ((cmds (let((*read-eval*))
