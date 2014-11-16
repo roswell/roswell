@@ -195,7 +195,7 @@ int set_opts_int(struct opts* opts,const char* name,int value) {
   return 0;
 }
 
-LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer)
+LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer,sub_command_fnc call)
 {
   struct command_help* p=alloc(sizeof(struct command_help));
   help=cons(p,help);
@@ -205,6 +205,7 @@ LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal op
   p->opts=opts;
   p->header=header?q(header):NULL;
   p->footer=footer?q(footer):NULL;
+  p->call=call;
   return help;
 }
 

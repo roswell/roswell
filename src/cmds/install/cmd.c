@@ -199,12 +199,13 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
             fprintf(stderr,"%s:",argv[i]);
           fprintf(stderr,"\n");
         }
-        tmp=(char**)alloc(sizeof(char*)*(argc+8));
+        tmp=(char**)alloc(sizeof(char*)*(argc+9));
         i=0;
         tmp[i++]=q("--no-rc");
         tmp[i++]=q("lisp=sbcl-bin");
         tmp[i++]=q("--");
         tmp[i++]=install_ros;
+        tmp[i++]=q("install");
         tmp[i++]=q(argv[1]);
         tmp[i++]=sexp_opts(local_opt);
         tmp[i++]=sexp_opts(global_opt);
@@ -242,13 +243,25 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
       s(param.expand_path);
     }
   }else {
-    printf("what would you like to install?\n");
+    char* tmp[]={"help","install"};
+    proccmd(2,tmp,top_options,top_commands);
     exit(EXIT_FAILURE);
   }
   return ret;
 }
 
+int install_help(int argc,char **argv,struct sub_command* cmd)
+{
+  int i;
+  fprintf(stderr,"argc %d;\n",argc);
+  for(i=0;i<argc;++i) {
+    printf("%d %s\n",i,argv[i]);
+  }
+  return 0;
+}
+
 void register_cmd_install(void)
 {
   top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install archive and build it for "PACKAGE" environment",NULL);
+  top_helps=add_help(top_helps,"install",q(""),(LVal)NULL,(LVal)NULL,NULL,NULL,install_help);
 }

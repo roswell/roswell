@@ -110,8 +110,8 @@
   (save-opt (format nil "~A.version" (getf argv :target)) (get-opt "as"))
   (cons t argv))
 
-(defun main (impl/version &rest argv)
-  (format t "launched install ~A~%" impl/version)
+(defun main (subcmd impl/version &rest argv)
+  (format t "launched ~A ~A~%" subcmd impl/version)
   (let* (imp
          version
          (seq impl/version)

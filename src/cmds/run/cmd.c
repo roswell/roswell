@@ -168,10 +168,10 @@ void register_cmd_run(void)
   top_commands=add_command(top_commands,"*"         ,NULL,cmd_script,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
 
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] "ROS_RUN_REPL" [OPTIONS] [-- implementation-native-options...]\n\n",NULL);
-  top_helps=add_help(top_helps,ROS_RUN_REPL,_help,run_commands,run_options,NULL,NULL);
+  top_helps=add_help(top_helps,ROS_RUN_REPL,_help,run_commands,run_options,NULL,NULL,NULL);
   s(_help);
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [--] script-file arguments...\n\n",
             NULL);
-  top_helps=add_help(top_helps,"--",_help,run_commands,run_options,NULL,NULL);
+  top_helps=add_help(top_helps,"--",_help,run_commands,run_options,NULL,NULL,NULL);
   s(_help);
 }

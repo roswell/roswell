@@ -22,6 +22,9 @@ int cmd_help(int argc, const char **argv)
   }
   if(help) {
     struct command_help* h=firstp(help);
+    if(h->call) {
+      return h->call(argc-1,(char**)&(argv[1]),NULL);
+    }
     if(h->usage)
       fprintf(stderr,h->usage,argv_orig[0]);
 
@@ -56,7 +59,6 @@ int cmd_help(int argc, const char **argv)
           fmt=s_cat(q("    %-"),qsprintf(5,"%d",cmdmax+2),q("s%s\n"),NULL);
         else
           fmt=s_cat(q("    %-"),qsprintf(5,"%d",optmax+2),q("s --%-"),qsprintf(5,"%d",cmdmax+2),q("s%s"),NULL);
-    
         for(p=pinit;p;p=Next(p)) {
           struct sub_command* fp=firstp(p);
           if(fp && fp->name && fp->show_opt) {

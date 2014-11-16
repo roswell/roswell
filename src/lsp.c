@@ -269,7 +269,7 @@ int main (int argc,char **argv) {
   top_commands=nreverse(top_commands);
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [Command arguments...]  \n",
             "Usage: ",argv_orig[0]," [OPTIONS] [[--] script-path arguments...]  \n\n",NULL);
-  top_helps=add_help(top_helps,NULL,_help,top_commands,top_options,NULL,NULL);
+  top_helps=add_help(top_helps,NULL,_help,top_commands,top_options,NULL,NULL,NULL);
   s(_help);
 
   char* path=s_cat(homedir(),q("config"),NULL);
