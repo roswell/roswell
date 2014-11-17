@@ -253,10 +253,28 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
 int install_help(int argc,char **argv,struct sub_command* cmd)
 {
   int i;
-  fprintf(stderr,"argc %d;\n",argc);
-  for(i=0;i<argc;++i) {
-    printf("%d %s\n",i,argv[i]);
+  if(argc==1) {
+    char* lisp_path=lispdir();
+    fprintf(stderr,"Candidates to install are:\nsbcl-bin\n");
+    char* install=s_cat2(lisp_path,q("install/"));
+    LVal d=directory(install);
+    {
+      LVal v=d;
+      for(;v;v=Next(v)) {
+        char* str=firsts(v);
+        if(str[strlen(str)-1]!='/') {
+          int p=position_char(".",str);
+          if(p!=-1) {
+            char *sub=subseq(str,0,p);
+            printf("%s\n",sub);
+            s(sub);
+          }
+        }
+      }
+    }
+    sL(d);
   }
+  
   return 0;
 }
 
