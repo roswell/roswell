@@ -137,6 +137,19 @@
     (format t"done.~%"))
   (cons t argv))
 
+(defun sbcl-clean (argv)
+  (declare (ignore argv))
+  (format t "~&Cleaning~%")
+  (let ((src (get-opt "src")))
+    (uiop/os:chdir src)
+    (format t "chdir ~A" src)
+    (let* ((out (make-broadcast-stream))
+           (*standard-output* (make-broadcast-stream
+                               out #+sbcl(make-instance 'count-line-stream))))
+        (uiop/run-program:run-program "sh clean.sh" :output t))
+    (format t "done.~%"))
+  (cons t argv))
+
 (setq *install-cmds*
       (list 'sbcl-version
             'sbcl-argv-parse
@@ -147,4 +160,5 @@
             'sbcl-config
             'sbcl-make
             'sbcl-install
+            'sbcl-clean
             'setup))
