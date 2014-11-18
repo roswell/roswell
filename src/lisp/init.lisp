@@ -76,7 +76,9 @@
                       "(cl:apply 'main ros:*argv*)"
                       ""))))))))
 
-(setf (fdefinition 'load) #'script)
+(defun load (x file)
+  (declare (ignore x))
+  (cl:load file))
 
 (export 
  (defun run (list)

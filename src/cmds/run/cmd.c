@@ -94,6 +94,29 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   char* impl;
   char* version;
   int pos;
+  if(rc) {
+    char* init=s_cat(homedir(),q("init.lisp"),NULL);
+#ifdef _WIN32
+    char* etc="";
+#else
+    char* etc="/etc/rosrc";
+#endif
+    char* current=get_opt("program");
+    char *path,*would;
+    if(file_exist_p(init)) {
+      path=cat("(:load \"",init,"\")");
+      would=cat(path,current?current:"",NULL);
+      s(current);
+      set_opt(&local_opt,"program",would,0);
+    }
+    s(init),s(path);
+    current=get_opt("program");
+    if(file_exist_p(etc)) {
+      path=cat("(:load \"",etc,"\")");
+      would=cat(path,current?current:"",NULL);
+      set_opt(&local_opt,"program",would,0);
+    }
+  }
   if(verbose>0) {
     fprintf(stderr,"cmd_run_star:%s argc=%d argv[0]=%s \n",cmd->name,argc,argv[0]);
     fprintf(stderr,"localopt:%s\n",sexp_opts(local_opt));
