@@ -21,9 +21,10 @@ alien technology.I recall 'roswell incident' by the concept.I'm not sure what yo
 ### install sbcl-bin
 first of all you have to install lisp environment. so type
 
-    $ ros pull sbcl-bin
+    $ ros install sbcl-bin
+    $ ros install quicklisp
 
-would install sbcl from internet.
+would install binary version of sbcl and quicklisp from the internet.
 
 ### command help
 after the installation type ros and you'll get some information by
