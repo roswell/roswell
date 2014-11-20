@@ -273,8 +273,30 @@ int install_help(int argc,char **argv,struct sub_command* cmd)
       }
     }
     sL(d);
+  }else if(argc==2) {
+        char* lisp_path=lispdir();
+        int i,j,argc_;
+        char** tmp;
+        char* install_ros=s_cat2(lisp_path,q("install.ros"));
+        tmp=(char**)alloc(sizeof(char*)*(argc+9));
+        i=0;
+        tmp[i++]=q("--no-rc");
+        tmp[i++]=q("lisp=sbcl-bin");
+        tmp[i++]=q("--");
+        tmp[i++]=install_ros;
+        tmp[i++]=q("help");
+        tmp[i++]=q(argv[1]);
+        tmp[i++]=sexp_opts(local_opt);
+        tmp[i++]=sexp_opts(global_opt);
+        tmp[i++]=homedir();
+        tmp[i++]=truename(argv_orig[0]);
+        for(j=2;j<argc;tmp[i++]=q(argv[j++]));
+        argc_=i;
+        for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
+        for(j=0;j<argc_;s(tmp[j++]));
+        dealloc(tmp);
+        return 0;
   }
-  
   return 0;
 }
 

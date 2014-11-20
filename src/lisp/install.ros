@@ -4,7 +4,7 @@
 (require :asdf)
 #+sbcl(require :sb-posix)
 (ignore-errors
-  #+quicklisp(ql:quickload :uiop)
+  #+quicklisp(with-output-to-string (*standard-output*)(ql:quickload :uiop))
   #-quicklisp(require :uiop))
 
 (defpackage :ros.install
@@ -133,10 +133,13 @@
             *home-path* (make-pathname :defaults (third argv))
             *ros-path* (make-pathname :defaults (fourth argv))
             argv (nthcdr 4 argv)))
-    (if *install-cmds*
-        (loop
-           for call in *install-cmds*
-           for i = (funcall call `(:target ,imp :version ,version 
-                                           :argv ,argv)) then (funcall call (rest i))
-           while (first i))
-        (format t "not supported software ~A" imp))))
+    (let ((cmds (cond
+                  ((equal subcmd "install") *install-cmds*)
+                  ((equal subcmd "help") nil))))
+      (if cmds
+          (loop
+             for call in cmds
+             for i = (funcall call `(:target ,imp :version ,version
+                                             :argv ,argv)) then (funcall call (rest i))
+             while (first i))
+          (format t "not supported software ~A" imp)))))
