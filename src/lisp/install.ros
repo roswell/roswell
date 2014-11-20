@@ -1,4 +1,4 @@
-;;
+#!/usr/bin/env ros
 (cl:in-package :cl-user)
 
 (require :asdf)

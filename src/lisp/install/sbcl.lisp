@@ -138,7 +138,6 @@
   (cons t argv))
 
 (defun sbcl-clean (argv)
-  (declare (ignore argv))
   (format t "~&Cleaning~%")
   (let ((src (get-opt "src")))
     (uiop/os:chdir src)
