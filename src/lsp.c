@@ -205,6 +205,18 @@ int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
   return 2;
 }
 
+int opt_final(int argc,char** argv,struct sub_command* cmd) {
+  if(cmd->name && argc>1) {
+    char* current=get_opt("final");
+    char* escaped=escape_string(argv[1]);
+    int len=strlen(escaped)+strlen(cmd->name)+7;
+    current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
+    s(escaped);
+    set_opt(&local_opt,"final",current,0);
+  }
+  return 2;
+}
+
 LVal register_runtime_options(LVal opt) {
   /*opt=add_command(opt,"file","-f",opt_top_build,1,0,"include lisp FILE while building","FILE");*/
   opt=add_command(opt,"load","-l",opt_top_build,1,0,"load lisp FILE while building","FILE");
@@ -223,7 +235,7 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"print","-ip",opt_restart_after,1,0,"evaluate and princ FORM after restart","FORM");
   opt=add_command(opt,"write","-iw",opt_restart_after,1,0,"evaluate and write FORM after restart","FORM");
 
-  opt=add_command(opt,"final","-F",cmd_notyet,1,0,"evaluate FORM before dumping IMAGE","FORM");
+  opt=add_command(opt,"final","-F",opt_final,1,0,"evaluate FORM before dumping IMAGE","FORM");
 
   /* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
   /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
