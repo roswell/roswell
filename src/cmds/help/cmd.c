@@ -3,7 +3,6 @@
 #include "opt.h"
 #include "util.h"
 extern char** argv_orig;
-extern int cmd_notyet(int argc,char **argv,struct sub_command* cmd);
 int cmd_help(int argc, const char **argv)
 {
   LVal help=(LVal)NULL;
@@ -69,10 +68,7 @@ int cmd_help(int argc, const char **argv)
               char* tmp=cat((char*)(fp->name?fp->name:"")," ",fp->arg_example&&fp->name?fp->arg_example:"",NULL);
               char* tmp2=cat((char*)(fp->short_name?fp->short_name:"")," ",fp->arg_example&&fp->short_name?fp->arg_example:"",NULL);
               fprintf(stderr,fmt,tmp2,tmp,fp->description?fp->description:"");
-              if(fp->call==&cmd_notyet)
-                fprintf(stderr,"\t\t[Not implemented yet]\n");
-              else
-                fprintf(stderr,"\n");
+              fprintf(stderr,"\n");
               s(tmp),s(tmp2);
              }
           }

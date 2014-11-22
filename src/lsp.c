@@ -25,12 +25,6 @@ extern void register_cmd_internal(void);
 int verbose=0;
 int rc=1;
 int quicklisp=0;
-//dummy
-int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
-{
-  printf("notyet\n");
-  return 1;
-}
 
 LVal top_commands =(LVal)NULL;
 LVal top_options =(LVal)NULL;
