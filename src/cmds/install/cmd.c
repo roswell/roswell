@@ -164,6 +164,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
   int ret=1,k;
   install_cmds *cmds=NULL;
   struct install_options param;
+  quicklisp=1;
   param.os=uname();
   param.arch=uname_m();
   param.arch_in_archive_name=0;

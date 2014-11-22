@@ -24,7 +24,7 @@ extern void register_cmd_internal(void);
 
 int verbose=0;
 int rc=1;
-int quicklisp=1;
+int quicklisp=0;
 //dummy
 int cmd_notyet(int argc,char **argv,struct sub_command* cmd)
 {
@@ -242,7 +242,7 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"rc","-R",opt_top_rc,1,0,"try read /etc/rosrc, ~/.rosrc",NULL);
   opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.rosrc",NULL);
   opt=add_command(opt,"quicklisp","-Q",opt_top_ql,1,0,"use quicklisp",NULL);
-  opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0,"do not use quicklisp",NULL);
+  opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0,"do not use quicklisp (default)",NULL);
   opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
   opt=add_command(opt,"quiet",NULL,opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
   return opt;

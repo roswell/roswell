@@ -9,6 +9,7 @@ int cmd_help(int argc, const char **argv)
   LVal help=(LVal)NULL;
   int i;int cmdmax,optmax;
   char *fmt;
+  quicklisp=1;
   if(argc==1) {
     help=top_helps;
   }else {
