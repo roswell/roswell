@@ -39,7 +39,10 @@
 
 (defun sbcl-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
-    (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv))))
+    (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
+                           (format nil "~A-~A"
+                                   (getf argv :version)
+                                   (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
   (set-opt "download.uri" (format nil "~@{~A~}" "http://sourceforge.net/projects/sbcl/files/sbcl/" 
                                   (getf argv :version) "/sbcl-" (getf argv :version) "-source.tar.bz2"))
@@ -149,6 +152,26 @@
     (format t "done.~%"))
   (cons t argv))
 
+(defun sbcl-help (argv)
+  (flet ((fmt (param default more)
+           (format t "--~A~A ~A~%~5T~A~%" (cond ((eql default t)
+                                             "without-")
+                                            ((null default)
+                                             "with-")
+                                            (t
+                                             ""))
+                   param (or (and (not (null default))
+                                  (not (eql default t))
+                                  default)
+                             "") more)))
+    (format t "sbcl install options~%")
+    (fmt "as" "nickname" "install non-default optioned version of SBCL")
+    (fmt "thread" t "Build SBCL without support for native threads")
+    (fmt "core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
+    (fmt "ldb" nil "Include low-level debugger in the build")
+    (fmt "xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)"))
+  (cons t argv))
+
 (setq *install-cmds*
       (list 'sbcl-version
             'sbcl-argv-parse
@@ -161,3 +184,6 @@
             'sbcl-install
             'sbcl-clean
             'setup))
+
+(setq *help-cmds*
+      (list 'sbcl-help))

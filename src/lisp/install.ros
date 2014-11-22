@@ -67,6 +67,7 @@
 ;;end here from util/opts.c
 
 (defvar *install-cmds* nil)
+(defvar *help-cmds* nil)
 
 (defun installedp (argv)
   (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
@@ -111,7 +112,6 @@
   (cons t argv))
 
 (defun main (subcmd impl/version &rest argv)
-  (format t "launched ~A ~A~%" subcmd impl/version)
   (let* (imp
          version
          (seq impl/version)
@@ -135,7 +135,7 @@
             argv (nthcdr 4 argv)))
     (let ((cmds (cond
                   ((equal subcmd "install") *install-cmds*)
-                  ((equal subcmd "help") nil))))
+                  ((equal subcmd "help") *help-cmds*))))
       (if cmds
           (loop
              for call in cmds
