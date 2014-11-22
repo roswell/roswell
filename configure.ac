@@ -7,7 +7,7 @@ AC_INIT([roswell],[0.0.2.16],snmsts@gmail.com)
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_SRCDIR([src/lsp.c])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE([enable])
 
 # Checks for programs.
