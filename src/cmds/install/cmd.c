@@ -256,7 +256,7 @@ int install_help(int argc,char **argv,struct sub_command* cmd)
   int i;
   if(argc==1) {
     char* lisp_path=lispdir();
-    fprintf(stderr,"Candidates to install are:\nsbcl-bin\n");
+    fprintf(stderr,"Candidates to install are:\n");
     char* install=s_cat2(lisp_path,q("install/"));
     LVal d=directory(install);
     {

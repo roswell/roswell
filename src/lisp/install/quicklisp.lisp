@@ -18,5 +18,9 @@
 
 (in-package :ros.install)
 
+(defun quicklisp-help (argv)
+  (format t "no options for quicklisp~%")
+  (cons t argv))
+
 (setq *help-cmds*
       (list 'quicklisp-help))

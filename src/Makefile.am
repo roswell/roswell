@@ -3,7 +3,7 @@ AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 roslisp_DATA = lisp/init.lisp lisp/install.ros
 roslispinstalldir = $(roslispdir)/install
-roslispinstall_DATA = lisp/install/sbcl.lisp lisp/install/quicklisp.lisp
+roslispinstall_DATA = lisp/install/sbcl-bin.lisp lisp/install/sbcl.lisp lisp/install/quicklisp.lisp
 roslispsubcmddir = $(roslispdir)/subcmd
 roslispsubcmd_DATA = lisp/output.ros lisp/dump.ros
 
