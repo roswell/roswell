@@ -1,15 +1,18 @@
 #!/bin/env ros
 "dump image for faster startup"
 
-(defun main (&rest r)
-  (let ((cmds (let((*read-eval*))
-                (read-from-string
-          (format nil "(~A)"(second(assoc "restart" (read-from-string (uiop/os:getenv "ROS_OPTS"))
-                                          :test #'equal)))))))
-    #+sbcl
-    (apply #'sb-ext:save-lisp-and-die
-           (first r)
-           `(,@(when cmds '(:toplevel))
-             ,@(when cmds #'(lambda ()
-                              (setf ros:*argv* (rest *posix-argv*))
-                              (ros:run cmds)))))))
+(defun main (subcmd cmd &rest r)
+  (cond ((and (equal subcmd "main") r)
+         (let ((cmds (let((*read-eval*))
+                       (read-from-string
+                        (format nil "(~A)"(second(assoc "restart" (read-from-string (uiop/os:getenv "ROS_OPTS"))
+                                                        :test #'equal)))))))
+           #+sbcl
+           (apply #'sb-ext:save-lisp-and-die
+                  (first r)
+                  `(,@(when cmds '(:toplevel))
+                      ,@(when cmds #'(lambda ()
+                                       (setf ros:*argv* (rest *posix-argv*))
+                                       (ros:run cmds)))))))
+        ((or (equal subcmd "help") (not r))
+         (format t "Usage: ros [OPTIONS] ~A DUMP-FILENAME~%" cmd))))

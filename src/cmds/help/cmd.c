@@ -31,6 +31,9 @@ int cmd_help(int argc, const char **argv)
     LVal p;
     LVal pinit;
     int i;
+    char* subcmds=s_cat(lispdir(),q("subcmd"),q(SLASH),NULL);
+    LVal dir=directory(subcmds);
+
     for(i=0;i<2;++i) {
       cmdmax=0;
       optmax=0;
@@ -53,6 +56,16 @@ int cmd_help(int argc, const char **argv)
         if(optmax<len)
           optmax=len;
       }
+      if(i==0 && help==top_helps) {
+        LVal x=dir;
+        LVal v;
+        for(v=x;v;v=Next(v)) {
+          char* s=firsts(v);
+          int len=strlen(s)-4; /* ".ros" */
+          if (len>0 && strcmp(s+len,".ros")==0 && cmdmax<len)
+            cmdmax=len;
+        }
+      }
       if(cmdmax) {
         fprintf(stderr,"%s",cmd_opt);
         if(i==0)
@@ -73,10 +86,35 @@ int cmd_help(int argc, const char **argv)
              }
           }
         }
+        if(i==0 && help==top_helps) {
+          LVal v;
+          for(v=dir;v;v=Next(v)) {
+            char* f=firsts(v);
+            int len=strlen(f)-4; /* ".ros" */
+            if (len>0 && strcmp(f+len,".ros")==0) {
+              FILE* in;
+              char buf[800];
+              char* fname=cat(subcmds,SLASH,f);
+              if((in=fopen(fname,"r"))!=NULL) {
+                fgets(buf,800,in);
+                fgets(buf,800,in);
+                fclose(in);
+              }else{
+                strcpy(buf,"");
+              }
+              s(fname);
+              f[len]='\0';
+              buf[strlen(buf)-2]='\0';
+              fprintf(stderr,fmt,f,buf+1);
+            }
+          }
+        }
         s(fmt);
         fprintf(stderr,"\n");
       }
     }
+    sL(dir);
+    s(subcmds);
   }
   return 0;
 }

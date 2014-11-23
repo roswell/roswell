@@ -1,16 +1,19 @@
 #!/bin/env ros
 "create executables"
 
-(defun main (&rest r)
-  (let ((cmds (let((*read-eval*))
-                (read-from-string
-          (format nil "(~A)"(second(assoc "restart" (read-from-string (uiop/os:getenv "ROS_OPTS"))
-                                          :test #'equal)))))))
-    #+sbcl
-    (sb-ext:save-lisp-and-die
-     (first r)
-     :toplevel
-     #'(lambda ()
-         (setf ros:*argv* (rest *posix-argv*))
-         (ros:run cmds))
-     :executable t)))
+(defun main (subcmd cmd &rest r)
+  (cond ((and (equal subcmd "main") r)
+         (let ((cmds (let((*read-eval*))
+                       (read-from-string
+                        (format nil "(~A)"(second(assoc "restart" (read-from-string (uiop/os:getenv "ROS_OPTS"))
+                                                        :test #'equal)))))))
+           #+sbcl
+           (sb-ext:save-lisp-and-die
+            (first r)
+            :toplevel
+            #'(lambda ()
+                (setf ros:*argv* (rest *posix-argv*))
+                (ros:run cmds))
+            :executable t)))
+        ((or (equal subcmd "help") (not r))
+         (format t "Usage: ros [OPTIONS] ~A EXECUTABLE-FILENAME~%" cmd))))

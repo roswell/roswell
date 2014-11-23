@@ -32,6 +32,21 @@ LVal top_options =(LVal)NULL;
 LVal top_helps =(LVal)NULL;
 LVal subcommand_name=(LVal)NULL;
 
+int proccmd(int argc,char** argv,LVal option,LVal command);
+
+int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command) {
+  char** argv2=(char**)alloc(sizeof(char*)*(argc+2));
+  int i,ret;
+  for(i=0;i<argc;++i) {
+    argv2[i+2]=argv[i];
+  }
+  argv2[0]=path;
+  argv2[1]=subcmd;
+  ret=proccmd(argc+2,argv2,option,command);
+  dealloc(argv2);
+  return ret;
+}
+
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int i;
   int pos;
@@ -99,16 +114,14 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
       char* cmddir=cat(home,"subcmd",SLASH,NULL);
       char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
       if(directory_exist_p(cmddir)&&file_exist_p(cmdpath)) {
-        argv[0]=cmdpath;
-        proccmd(argc,argv,top_options,top_commands);
+        proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       }
       s(home),s(cmddir),s(cmdpath);
       /* systemwide commands*/
       cmddir=cat(lisp_path,"subcmd",SLASH,NULL);
       cmdpath=cat(cmddir,argv[0],".ros",NULL);
       if(directory_exist_p(cmddir)&&file_exist_p(cmdpath)) {
-        argv[0]=cmdpath;
-        proccmd(argc,argv,top_options,top_commands);
+        proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       }
       s(lisp_path),s(cmddir),s(cmdpath);
     }
