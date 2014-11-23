@@ -7,6 +7,14 @@
     "Request URL and write the body of the response to FILE."
     (declare (ignorable url file follow-redirects quietly
               maximum-redirects))))
+#+(#.(cl:if (cl:find-package :ros.install) :and :or))
+(progn
+  (in-package :ros.install)
+  (defun quicklisp-help (argv)
+    (format t "no options for quicklisp~%")
+    (cons t argv))
+  (setq ros.install::*help-cmds*
+        (list 'quicklisp-help)))
 
 (in-package #:cl-user)
 
@@ -16,11 +24,3 @@
       (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path)
       (error "something wrong")))
 
-(in-package :ros.install)
-
-(defun quicklisp-help (argv)
-  (format t "no options for quicklisp~%")
-  (cons t argv))
-
-(setq *help-cmds*
-      (list 'quicklisp-help))

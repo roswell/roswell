@@ -15,6 +15,7 @@ struct opts* local_opt=NULL;
 extern int cmd_list(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_version(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_config(int argc,char **argv,struct sub_command* cmd);
+extern int cmd_setup(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_internal(int argc,char **argv,struct sub_command* cmd);
 
@@ -277,6 +278,7 @@ int main (int argc,char **argv) {
   register_cmd_install();
   top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
+  top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"setup",NULL);
 
   /*         {"list",NULL,cmd_list,1,1}, */
   /*         {"set",NULL,cmd_notyet,0,1}, */

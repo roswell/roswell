@@ -14,5 +14,6 @@ ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
 	cmds/install/cmd.c cmds/install/sbcl-bin.c cmds/install/quicklisp.c \
 	cmds/list/cmd.c \
 	cmds/help/cmd.c \
-	cmds/config/cmd.c
+	cmds/config/cmd.c \
+	cmds/setup/cmd.c
 noinst_HEADERS = util.h opt.h cmds/install/ros_install.h
