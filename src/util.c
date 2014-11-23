@@ -45,7 +45,8 @@ char* qsprintf(int bufsize,char* format,...) {
   return result;
 }
 
-void s(char* f) {
+void s_internal(char* f,char* name,char* file,int line) {
+  /*fprintf(stderr,"%s %d s(%s)\n",file,line,name);*/
   dealloc(f);
 }
 

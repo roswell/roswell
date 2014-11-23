@@ -120,7 +120,7 @@ int set_opt(struct opts** opts,const char* name,char* value,int type)
   while(opt) {
     if(strcmp(opt->name,name)==0) {
       found=1;
-      s((char*)opt->value);
+      /*s((char*)opt->value);*/
       opt->value=remove_char("\n\t",value);
       if(type!=0) {
 	opt->type=type;

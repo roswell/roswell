@@ -37,6 +37,8 @@ typedef LVal (*Compare2)(LVal v1,LVal v2);
 #define toList(v) ((struct Cons*)(((intptr_t)v)&~3))
 #define V(v) ((LVal)(v))
 #define Next(v) ((LVal)(((struct Cons*)toPointer(v))->next))
+#define s(v) (s_internal(v,#v,__FILE__,__LINE__))
+
 LVal consi(int  v,LVal l);
 LVal conss(char* v,LVal l);
 LVal cons(void* v,LVal l);
@@ -63,7 +65,7 @@ void* alloc(size_t bytes);
 void dealloc(void* f);
 char* q(const char* orig);
 char* qsprintf(int bufsize,char* format,...);
-void s(char* f);
+void s_internal(char* f,char* name,char* file,int line);
 char* s_cat2(char* a,char* b);
 char* s_cat(char* first,...);
 char* cat(char* first,...);
