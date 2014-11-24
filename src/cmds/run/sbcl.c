@@ -40,8 +40,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   if(script)
     offset+=1;
   if(quicklisp) {
-    char* setup_file=
-      cat(home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp",NULL);
+    char* setup_file=get_opt("quicklisp");
     if(file_exist_p(setup_file)) {
       offset+=2;
     }else {

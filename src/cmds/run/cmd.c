@@ -94,6 +94,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   char* impl;
   char* version;
   int pos;
+  char* home=homedir();
+  set_opt(&local_opt,"quicklisp",cat(home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp",NULL),0);
+  s(home);
   if(rc) {
     char* init=s_cat(homedir(),q("init.lisp"),NULL);
 #ifdef _WIN32
