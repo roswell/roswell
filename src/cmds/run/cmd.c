@@ -108,8 +108,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       would=cat(path,current?current:"",NULL);
       s(current);
       set_opt(&local_opt,"program",would,0);
+      s(path);
     }
-    s(init),s(path);
+    s(init);
     current=get_opt("program");
     if(file_exist_p(etc)) {
       path=cat("(:load \"",etc,"\")");
