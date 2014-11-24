@@ -154,7 +154,7 @@ int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
     --verbose;
   }
   if(verbose>0)
-    fprintf(stderr,"opt_verbose:%s\n",cmd->name);
+    fprintf(stderr,"opt_verbose:%s %d\n",cmd->name,verbose);
   return 1;
 }
 

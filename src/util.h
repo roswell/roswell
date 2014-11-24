@@ -7,6 +7,7 @@
 #endif
 extern char** argv_orig;
 extern int argc_orig;
+extern int verbose;
 
 int download_simple (char* uri,char* path,int verbose);
 
@@ -38,6 +39,7 @@ typedef LVal (*Compare2)(LVal v1,LVal v2);
 #define V(v) ((LVal)(v))
 #define Next(v) ((LVal)(((struct Cons*)toPointer(v))->next))
 #define s(v) (s_internal(v,#v,__FILE__,__LINE__))
+#define q(v) (q_internal(v,__FILE__,__LINE__))
 
 LVal consi(int  v,LVal l);
 LVal conss(char* v,LVal l);
@@ -63,7 +65,7 @@ void sL(LVal l);
 
 void* alloc(size_t bytes);
 void dealloc(void* f);
-char* q(const char* orig);
+char* q_internal(const char* orig,char* file,int line);
 char* qsprintf(int bufsize,char* format,...);
 void s_internal(char* f,char* name,char* file,int line);
 char* s_cat2(char* a,char* b);

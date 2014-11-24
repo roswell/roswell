@@ -16,8 +16,6 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 static int copy_data(struct archive *, struct archive *);
 static void msg(const char *);
 
-static int verbose = 0;
-
 int cmd_tar(int argc, const char **argv)
 {
   const char *filename = NULL;

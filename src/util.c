@@ -20,6 +20,8 @@
 #include <stdarg.h>
 #include "util.h"
 
+extern int verbose;
+
 void* alloc(size_t bytes) {
   void* p=malloc(bytes);
   //  printf("**%d\n",p);
@@ -27,15 +29,23 @@ void* alloc(size_t bytes) {
 }
 
 void dealloc(void* f) {
-  //printf("*:%d\n",f);
   free(f);
 }
 
-char* q(const char* orig) {
+char* q_(const char* orig) {
   char* ret= (char*)alloc(strlen(orig)+1);
   strcpy(ret,orig);
   return ret;
 }
+
+char* q_internal(const char* orig,char* file,int line) {
+  if(verbose>1)
+    fprintf(stderr,"%s %d q(%s) %u \n",file,line,orig,(unsigned)orig);
+  char* ret= (char*)alloc(strlen(orig)+1);
+  strcpy(ret,orig);
+  return ret;
+}
+
 char* qsprintf(int bufsize,char* format,...) {
   char* result=alloc(bufsize+1);
   va_list list;
@@ -46,7 +56,8 @@ char* qsprintf(int bufsize,char* format,...) {
 }
 
 void s_internal(char* f,char* name,char* file,int line) {
-  /*fprintf(stderr,"%s %d s(%s)\n",file,line,name);*/
+  if(verbose>1)
+    fprintf(stderr,"%s %d s(%s) %u \n",file,line,name,(unsigned)f);
   dealloc(f);
 }
 
@@ -54,8 +65,8 @@ char* s_cat2(char* a,char* b) {
   char* ret= (char*)alloc(strlen(a)+strlen(b)+1);
   strcpy(ret,a);
   strcat(ret,b);
-  s(a);
-  s(b);
+  dealloc(a);
+  dealloc(b);
   return ret;
 }
 
@@ -76,13 +87,13 @@ char* s_cat(char* first,...)
 
 char* cat(char* first,...)
 {
-  char* ret=q(first);
+  char* ret=q_(first);
   char* i;
   va_list list;
   va_start(list,first);
 
   for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*)) {
-    ret=s_cat2(ret,q(i));
+    ret=s_cat2(ret,q_(i));
   }
   va_end(list);
 	
@@ -239,28 +250,28 @@ char* homedir(void) {
   char *env=NULL;
   int i;
 
-  c=s_cat2(upcase(q(PACKAGE)),q(postfix));
+  c=s_cat2(upcase(q_(PACKAGE)),q_(postfix));
   env=getenv(c);
   s(c);
   if(env) {
-    return append_trail_slash(q(env));
+    return append_trail_slash(env);
   }
 #ifdef _WIN32
   TCHAR szAppData[MAX_PATH];
   if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData))) {
-    c=q(szAppData);
+    c=q_(szAppData);
   }
 #else
   pwd= getpwnam(getenv("USER"));
   if(pwd) {
-    c=q(pwd->pw_dir);
+    c=q_(pwd->pw_dir);
   }
 #endif
   else {
     /* error? */
     return NULL;
   }
-  return s_cat(append_trail_slash(c),q("."),q(PACKAGE),q(SLASH),NULL);
+  return s_cat(append_trail_slash(c),q_("."),q(PACKAGE),q(SLASH),NULL);
 }
 
 char* lispdir(void) {
