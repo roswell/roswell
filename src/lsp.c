@@ -278,7 +278,7 @@ int main (int argc,char **argv) {
   register_cmd_install();
   top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1,NULL,NULL);
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
-  top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"setup",NULL);
+  top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"Initial setup",NULL);
 
   /*         {"list",NULL,cmd_list,1,1}, */
   /*         {"set",NULL,cmd_notyet,0,1}, */
