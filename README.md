@@ -18,11 +18,10 @@ I felt making it easier to use Lisp for people is a kind of making opportunity f
     $ sudo make install
 
 ## How to use
-### install sbcl-bin
+### setting up
 First of all, you have to install Lisp environment. You can install a binary version of SBCL and Quicklisp from internet by these commands:
 
-    $ ros install sbcl-bin
-    $ ros install quicklisp
+    $ ros setup
 
 ### command help
 After the installation type ros and you'll get some information by
