@@ -1,0 +1,6 @@
+#!/bin/env ros
+"List Information"
+
+(defun main (subcmd cmd &rest r)
+  (declare (ignore subcmd cmd r))
+  (format t "list subcmd invoked~%"))
