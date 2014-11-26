@@ -123,7 +123,8 @@ int cmd_help(int argc, const char **argv)
       if (len>0 && strcmp(f+len,".ros")==0) {
         FILE* in;
         char* fname=cat(subcmds,SLASH,f);
-        proccmd_with_subcmd(fname,"help",argc,(char**)argv,top_options,top_commands);
+        if(strncmp(f,argv[1],strlen(argv[1]))==0)
+          proccmd_with_subcmd(fname,"help",argc,(char**)argv,top_options,top_commands);
       }
     }
   }
