@@ -3,11 +3,16 @@
 #include "opt.h"
 #include "util.h"
 extern char** argv_orig;
+int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command);
+
 int cmd_help(int argc, const char **argv)
 {
   LVal help=(LVal)NULL;
   int i;int cmdmax,optmax;
   char *fmt;
+  char* subcmds=s_cat(lispdir(),q("subcmd"),q(SLASH),NULL);
+  LVal dir=directory(subcmds);
+
   quicklisp=1;
   if(argc==1) {
     help=top_helps;
@@ -31,9 +36,6 @@ int cmd_help(int argc, const char **argv)
     LVal p;
     LVal pinit;
     int i;
-    char* subcmds=s_cat(lispdir(),q("subcmd"),q(SLASH),NULL);
-    LVal dir=directory(subcmds);
-
     for(i=0;i<2;++i) {
       cmdmax=0;
       optmax=0;
@@ -113,8 +115,20 @@ int cmd_help(int argc, const char **argv)
         fprintf(stderr,"\n");
       }
     }
-    sL(dir);
-    s(subcmds);
+  }else {
+    LVal v;
+    for(v=dir;v;v=Next(v)) {
+      char* f=firsts(v);
+      int len=strlen(f)-4; /* ".ros" */
+      if (len>0 && strcmp(f+len,".ros")==0) {
+        FILE* in;
+        char* fname=cat(subcmds,SLASH,f);
+        proccmd_with_subcmd(fname,"help",argc,(char**)argv,top_options,top_commands);
+      }
+    }
   }
+  sL(dir);
+  s(subcmds);
+
   return 0;
 }
