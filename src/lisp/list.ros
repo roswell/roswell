@@ -1,6 +1,85 @@
 #!/bin/env ros
 "List Information"
 
+(defpackage :ros.list
+  (:use :cl))
+(in-package :ros.list)
+
+(ros:quicklisp)
+(unless (member "uiop" *modules* :test 'equal)
+  (with-output-to-string (*standard-output*)
+    (ql:quickload :uiop)))
+
+(defun opt(param)
+  (let(*read-eval*)
+    (second (assoc param (read-from-string (ros:getenv "ROS_OPTS")) :test 'equal))))
+
+(defun homedir ()
+  (opt "homedir"))
+
+(defun roswell-internal (args output)
+  (uiop/run-program:run-program
+   (format nil "~A roswell-internal-use~{ ~A~}"
+           (opt "argv0") args) :output output))
+
+(defun uname ()
+  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
+
+(defun uname-m ()
+  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
+
+(defun list-impls (impl &key function params)
+  (declare (ignorable params))
+  (let ((dir (directory
+              (make-pathname
+               :defaults (merge-pathnames
+                          (format nil "impls/~A/~A/~A/" (uname-m) (uname) impl)
+                          (homedir))
+               :name :wild
+               :type :wild))))
+    (mapcar function
+            dir)))
+
+(export
+ (defun installed (&rest r)
+   (cond
+     ((null r)
+      (format t "detail shown by~%~A list installed [implemntation]~2%implementations:~%"
+              (opt "argv0"))
+      (let ((dir (directory
+                  (make-pathname
+                   :defaults (merge-pathnames
+                              (format nil "impls/~A/~A/" (uname-m) (uname))
+                              (homedir))
+                   :name :wild
+                   :type :wild))))
+        (mapc (lambda (d) (format t "    ~A~%" (first (last (pathname-directory d)))))  dir)))
+     ((probe-file
+       (merge-pathnames
+        (format nil "impls/~A/~A/~A" (uname-m) (uname) (first r))
+        (homedir)))
+      (list-impls (first r)
+                  :function (lambda (d) (format t "~A/~A~%"
+                                                (first r)
+                                                (first (last (pathname-directory d)))))
+                  :params r)))))
+(setf (get 'installed :doc) "List implementations that already installed")
+
 (defun main (subcmd cmd &rest r)
-  (declare (ignore subcmd cmd r))
-  (format t "list subcmd invoked~%"))
+  (declare (ignorable cmd))
+  (cond ((or (equal subcmd "help") (not r))
+         (format t "Usage: ~A ~A [type] [options]~2%~20ADescription~%"
+                 (opt "argv0")
+                 (cond ((equal subcmd "help")
+                        (first r))
+                       ((not r)
+                        cmd))
+                 "Types:")
+         (do-external-symbols (i (find-package :ros.list))
+           (format t "~(~20A~)~A~&" i (or (get i :doc) ""))))
+        (t (let* ((*read-eval*)
+                  (symbol (read-from-string (first r)))
+                  (f (ignore-errors (fdefinition symbol))))
+             (if (and f (eql :external (nth-value 1 (find-symbol (string symbol)))))
+                 (apply f (rest r))
+                 (format t "not suppported type for list~%"))))))

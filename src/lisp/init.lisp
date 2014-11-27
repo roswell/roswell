@@ -1,6 +1,8 @@
 (cl:in-package :cl-user)
 #-asdf
 (require :asdf)
+#+sbcl
+(require :sb-posix)
 
 (defpackage :ros
   (:use :cl)
@@ -10,6 +12,21 @@
 (push :ros.init *features*)
 (defvar *verbose* 0)
 (export (defvar *argv* nil))
+
+;; small tools
+(export
+ (defun getenv (x)
+   #+sbcl(sb-posix:getenv x)
+   #-sbcl(error "not implemented")))
+
+(export
+ (defun quicklisp ()
+   (unless (find :quicklisp *features*)
+     (let((*read-eval*))
+       (cl:load (second (assoc "quicklisp" (read-from-string (getenv "ROS_OPTS"))
+                               :test 'equal)))))))
+
+;;
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
