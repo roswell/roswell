@@ -46,7 +46,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     }else {
       quicklisp=0;
     }
-    s(setup_file);
   }
   if(program||script)
     offset+=4;
