@@ -117,7 +117,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
     s(init);
     current=get_opt("program");
     if(file_exist_p(etc)) {
-      path=cat("(:load \"",etc,"\")");
+      path=cat("(:load \"",etc,"\")",NULL);
       would=cat(path,current?current:"",NULL);
       set_opt(&local_opt,"program",would,0);
     }
