@@ -1,8 +1,12 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+#ifdef HAVE_ARCHIVE_H
 #include <archive.h>
 #include <archive_entry.h>
+#endif
 #include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,18 +17,19 @@
 
 static void errmsg(const char *);
 int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
+#ifdef HAVE_ARCHIVE_H
 static int copy_data(struct archive *, struct archive *);
+#endif
 static void msg(const char *);
 
 int cmd_tar(int argc, const char **argv)
 {
+#ifdef HAVE_ARCHIVE_H
   const char *filename = NULL;
   const char *outputpath = NULL;
   int compress, flags, mode, opt;
 
-  (void)argc;
   mode = 'x';
-  verbose = 0;
   compress = '\0';
   flags = ARCHIVE_EXTRACT_TIME;
   /* Among other sins, getopt(3) pulls in printf(3). */
@@ -71,13 +76,14 @@ int cmd_tar(int argc, const char **argv)
     extract(filename, 1, flags,outputpath,NULL,NULL);
     break;
   }
-
+#endif
   return (0);
 }
 
 int
 extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f_,void* p_)
 {
+#ifdef HAVE_ARCHIVE_H
   struct archive *a;
   struct archive *ext;
   struct archive_entry *entry;
@@ -123,6 +129,7 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
       char* result;
       if(f_) {
         result=(char*)f_((LVal)archive_entry_pathname(entry),(LVal)p_);
+        printf("result=%s,output=%s\n",result,outputpath);
         if(result)
           p=s_cat2(q(outputpath),result);
         else
@@ -153,9 +160,11 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
 #else
   archive_read_free(a);
 #endif
+#endif
   return 0;
 }
 
+#ifdef HAVE_ARCHIVE_H
 static int
 copy_data(struct archive *ar, struct archive *aw)
 {
@@ -179,6 +188,7 @@ copy_data(struct archive *ar, struct archive *aw)
     }
   }
 }
+#endif
 
 static void
 msg(const char *m)

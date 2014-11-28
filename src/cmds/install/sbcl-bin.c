@@ -3,7 +3,7 @@
 #include "util.h"
 #include "ros_install.h"
 #include "opt.h"
-
+char* download_archive_name(struct install_options* param);
 char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
@@ -27,7 +27,7 @@ int sbcl_version_bin(struct install_options* param)
     param->version=q(param->version);
   }
   param->arch_in_archive_name=1;
-  param->expand_path=cat(home,"src",SLASH,param->impl,"-",param->version,"-",arch_(param),SLASH,NULL);
+  param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch_(param),SLASH,NULL);
   s(platforms_html),s(home);
   return 1;
 }
@@ -54,9 +54,9 @@ char* sbcl_uri_bin(struct install_options* param)
   return ret;
 }
 
-#ifdef _WIN32
 int sbcl_bin_expand(struct install_options* param)
 {
+#ifdef _WIN32
   char* impl=param->impl;
   char* version=q(param->version);
   int ret;
@@ -93,9 +93,23 @@ int sbcl_bin_expand(struct install_options* param)
   s(archive);
   s(cmd),s(home),s(version),s(arch);
   return !ret;
+#else
+  char* argv[6]={"","-xf",NULL,"-C",NULL,NULL};
+  char* archive=download_archive_name(param);
+  char* version=q(param->version);
+  char* dist_path=param->expand_path;
+  char* home= homedir();
+  printf("Extracting archive. %s to %s\n",archive,dist_path);
+  delete_directory(dist_path,1);
+  ensure_directories_exist(dist_path);
+  argv[2]=cat(home,"archives",SLASH,archive,NULL);
+  argv[4]=cat(home,"src",SLASH,NULL);
+  return !cmd_tar(5,argv);
+#endif
 }
 
 int sbcl_bin_install(struct install_options* param) {
+#ifdef _WIN32
   char* impl=param->impl;
   char* version=param->version;
   char* home= homedir();
@@ -119,8 +133,31 @@ int sbcl_bin_install(struct install_options* param) {
   s(str),s(arch),s(home);
   if(!ret) return 0;
   return 1;
-}
+#else
+  int ret=1;
+  char* home= homedir();
+  char* impl=param->impl;
+  char* version=param->version;
+  char* impl_path= cat(home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
+  char* src=param->expand_path;
+  char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
+  char* install_root=q(impl_path);
+  char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
+  printf("installing %s/%s ",impl,version);
+  ensure_directories_exist(impl_path);
+  ensure_directories_exist(log_path);
+  change_directory(src);
+  setenv("SBCL_HOME",sbcl_home,1);
+  setenv("INSTALL_ROOT",install_root,1);
+
+  if(system_redirect("sh install.sh",log_path)==-1) {
+    ret=0;
+  }
+  s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
+  printf("done.\n");
+  return ret;
 #endif
+}
 
 int sbcl_install(struct install_options* param) {
 #ifndef _WIN32
@@ -155,13 +192,8 @@ install_cmds install_sbcl_bin_full[]={
   sbcl_version_bin,
   start,
   download,
-#ifndef _WIN32
-  expand,
-  sbcl_install,
-#else
   sbcl_bin_expand,
   sbcl_bin_install,
-#endif
   NULL
 };
 

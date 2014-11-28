@@ -1,7 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+#ifdef HAVE_ARCHIVE_H
 #include <archive.h>
 #include <archive_entry.h>
+#endif
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
@@ -107,55 +112,6 @@ int download(struct install_options* param)
   }
   s(impl_archive);
   s(home);
-  return 1;
-}
-
-LVal expand_callback(LVal v1,LVal v2) {
-  char* path=(char*)v1;
-  struct install_options* param=(struct install_options*)v2;
-  if(param->arch_in_archive_name) {
-    int pos=position_char("/",path);
-    if(pos!=-1) {
-      return (LVal)s_cat(cat(param->impl,"-",param->version?param->version:"","-",param->arch,"-",param->os,NULL),subseq(path,pos,0),NULL);
-    }
-  }
-  return (LVal)q(path);
-}
-
-int expand(struct install_options* param)
-{
-  char* home= homedir();
-  char* argv[5]={"-xf",NULL,"-C",NULL,NULL};
-  int argc=4;
-  int pos;
-  char* archive;
-  char* dist_path;
-  char *impl,*version;
-  archive=download_archive_name(param);
-  pos=position_char("-",param->impl);
-  if(pos!=-1) {
-    impl=subseq(param->impl,0,pos);
-  }else
-    impl=q(param->impl);
-  version=q(param->version);
-  if(!param->expand_path)
-    param->expand_path=cat(home,"src",SLASH,impl,"-",version,SLASH,NULL);
-  dist_path=param->expand_path;
-  printf("Extracting archive. %s to %s\n",archive,dist_path);
-  
-  delete_directory(dist_path,1);
-  ensure_directories_exist(dist_path);
-
-  /* TBD log output */
-  argv[1]=cat(home,"archives",SLASH,archive,NULL);
-  argv[3]=cat(home,"src",SLASH,NULL);
-  extract(argv[1], 1, ARCHIVE_EXTRACT_TIME,argv[3],expand_callback,param);
-
-  s(argv[1]),s(argv[3]);
-  s(impl);
-  s(archive);
-  s(home);
-  s(version);
   return 1;
 }
 
