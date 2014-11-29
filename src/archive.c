@@ -16,7 +16,7 @@
 #include "util.h"
 
 static void errmsg(const char *);
-int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
+int extract(const char *filename, int do_extract, int flags,const char* outputpath);
 #ifdef HAVE_ARCHIVE_H
 static int copy_data(struct archive *, struct archive *);
 #endif
@@ -24,14 +24,15 @@ static void msg(const char *);
 
 int cmd_tar(int argc, const char **argv)
 {
-#ifdef HAVE_ARCHIVE_H
   const char *filename = NULL;
   const char *outputpath = NULL;
-  int compress, flags, mode, opt;
+  int compress, flags=0, mode, opt;
 
   mode = 'x';
   compress = '\0';
+#ifdef HAVE_ARCHIVE_H
   flags = ARCHIVE_EXTRACT_TIME;
+#endif
   /* Among other sins, getopt(3) pulls in printf(3). */
   while (*++argv != NULL && **argv == '-') {
     const char *p = *argv + 1;
@@ -52,9 +53,13 @@ int cmd_tar(int argc, const char **argv)
         p += strlen(p);
         break;
       case 'p':
+#ifdef HAVE_ARCHIVE_H
         flags |= ARCHIVE_EXTRACT_PERM;
         flags |= ARCHIVE_EXTRACT_ACL;
         flags |= ARCHIVE_EXTRACT_FFLAGS;
+#else
+        flags = 1;
+#endif
         break;
       case 't':
         mode = opt;
@@ -70,20 +75,34 @@ int cmd_tar(int argc, const char **argv)
   }
   switch (mode) {
   case 't':
-    extract(filename, 0, flags,outputpath,NULL,NULL);
+    extract(filename, 0, flags,outputpath);
     break;
   case 'x':
-    extract(filename, 1, flags,outputpath,NULL,NULL);
+    extract(filename, 1, flags,outputpath);
     break;
   }
-#endif
   return (0);
 }
 
-int
-extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f_,void* p_)
+int extract(const char *filename, int do_extract, int flags,const char* outputpath)
 {
-#ifdef HAVE_ARCHIVE_H
+#ifndef HAVE_ARCHIVE_H
+  char* str;
+  int len=strlen(filename);
+  int type=0; /*gz*/
+  if(len>4) {
+    int i;
+    for(i=len-4;filename[i]!='\0';++i)
+      if(filename[i]=='b'||filename[i]=='B')
+        type=1; /*bz*/
+  }
+  str=cat(type?"bzip2":"gzip"," -dc ",filename," | tar -",extract?"x":"t",
+    flags?"p":"","f - -C ",outputpath,NULL);
+  if(verbose>0)
+    fprintf(stderr,"extractcmd=%s\n",str);
+  int ret=system(str);
+  s(str);
+#else
   struct archive *a;
   struct archive *ext;
   struct archive_entry *entry;
@@ -127,20 +146,9 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
     if(outputpath) {
       char* p;
       char* result;
-      if(f_) {
-        result=(char*)f_((LVal)archive_entry_pathname(entry),(LVal)p_);
-        printf("result=%s,output=%s\n",result,outputpath);
-        if(result)
-          p=s_cat2(q(outputpath),result);
-        else
-          p=NULL;
-      }else {
-        p=s_cat2(q(outputpath),q(archive_entry_pathname(entry)));
-      }
-      if(p) {
-        archive_entry_copy_pathname(entry,p);
-        s(p);
-      }
+      p=s_cat2(q(outputpath),q(archive_entry_pathname(entry)));
+      archive_entry_copy_pathname(entry,p);
+      s(p);
     }
 
     if (do_extract) {
@@ -160,8 +168,8 @@ extract(const char *filename, int do_extract, int flags,const char* outputpath,F
 #else
   archive_read_free(a);
 #endif
-#endif
   return 0;
+#endif
 }
 
 #ifdef HAVE_ARCHIVE_H
@@ -188,7 +196,6 @@ copy_data(struct archive *ar, struct archive *aw)
     }
   }
 }
-#endif
 
 static void
 msg(const char *m)
@@ -204,3 +211,4 @@ errmsg(const char *m)
     ret=write(2, m, strlen(m));
   }
 }
+#endif

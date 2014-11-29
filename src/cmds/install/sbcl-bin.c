@@ -159,35 +159,6 @@ int sbcl_bin_install(struct install_options* param) {
 #endif
 }
 
-int sbcl_install(struct install_options* param) {
-#ifndef _WIN32
-  int ret=1;
-  char* home= homedir();
-  char* impl=param->impl;
-  char* version=param->version;
-  char* impl_path= cat(home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
-  char* src=param->expand_path;
-  char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
-  char* install_root=q(impl_path);
-  char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
-  printf("installing %s/%s ",impl,version);
-  ensure_directories_exist(impl_path);
-  ensure_directories_exist(log_path);
-  change_directory(src);
-  setenv("SBCL_HOME",sbcl_home,1);
-  setenv("INSTALL_ROOT",install_root,1);
-  
-  if(system_redirect("sh install.sh",log_path)==-1) {
-    ret=0;
-  }
-  s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
-  printf("done.\n");
-  return ret;
-#else
-
-#endif
-}
-
 install_cmds install_sbcl_bin_full[]={
   sbcl_version_bin,
   start,
