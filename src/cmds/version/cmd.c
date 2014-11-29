@@ -4,7 +4,7 @@
 #ifdef HAVE_LIBCURL
 #  include <curl/curl.h>
 #endif
-#ifdef HAVE_LIBARCHIVE
+#ifdef HAVE_ARCHIVE_H
 #  include <archive.h>
 #endif
 
