@@ -30,11 +30,38 @@
 (defun line-number (stream)
   (format (count-line-stream-base stream) "~&~8d " (count-line-stream-count stream)))
 
+(defun sbcl-get-version ()
+  (let (result
+        (file (merge-pathnames "tmp/sbcl.html" (homedir))))
+    (format t "checking version....~%")
+    (if (< (+ (* 60 60) (file-write-date file)) (get-universal-time))
+        (download "https://github.com/sbcl/sbcl/releases" file)
+        (format t "download sbcl.html every one hour. skip.~%"))
+    (with-open-file (in file)
+      (ros:quicklisp)
+      (with-output-to-string (*standard-output*)
+        (funcall (intern (string :quickload) :ql)
+               :cl-html-parse))
+      (funcall (read-from-string "net.html.parser:parse-html")
+               in
+               :callbacks
+               (list (cons :a (lambda (arg)
+                                (let ((href (getf (cdr (car arg)) :href)))
+                                  (when (and (> (length href) 6)
+                                             (equal (subseq href (-(length href) 6))
+                                                    "tar.gz"))
+                                    (push (subseq href (1+ (or (position #\- href)
+                                                               (position #\_ href)))
+                                                  (- (length href) 7)) result))))))
+               :callback-only t))
+    (setq result (nreverse result))
+    (format t "sbcl ~s to install~%" (first result))
+    result))
+
 (defun sbcl-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
-      ;;TBD
-      (setf (getf argv :version) "1.2.4")))
+      (setf (getf argv :version) (first (sbcl-get-version)))))
   (cons t argv))
 
 (defun sbcl-argv-parse (argv)
