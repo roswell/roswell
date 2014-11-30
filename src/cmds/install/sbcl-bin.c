@@ -18,9 +18,16 @@ int sbcl_version_bin(struct install_options* param)
   ensure_directories_exist(platforms_html);
 
   if(!param->version) {
+    int ret;
     printf("version not specified\nto specify version,downloading platform-table.html...");
-    download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
-    printf("done\n");
+    ret=download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
+    if(ret==0)
+      printf("done\n");
+    else {
+      printf("download error\n");
+      return 0;
+    }
+
     param->version=sbcl_bin(platforms_html);
     printf("version to install would be '%s'\n",param->version);
   }else {
