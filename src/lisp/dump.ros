@@ -1,14 +1,46 @@
 #!/bin/env ros
-"dump image for faster startup"
+"Dump image for faster startup or Make Executable"
+
+(defvar *opts* (let ((*read-eval*))
+                 (read-from-string (uiop/os:getenv "ROS_OPTS"))))
+
+(defun dump-output (params)
+  (declare (ignorable params))
+  #+sbcl
+  (sb-ext:save-lisp-and-die
+   (first params)))
+
+(defun dump-list (params)
+  (declare (ignorable params)))
+
+(defun dump-executable (params)
+  (if params
+      (let ((cmds (let ((*read-eval*))
+                    (read-from-string
+                     (format nil "(~A)"
+                             (second (assoc "restart" *opts*
+                                            :test #'equal)))))))
+        #+sbcl
+        (sb-ext:save-lisp-and-die
+         (first params)
+         :toplevel
+         #'(lambda ()
+             (setf ros:*argv* (rest *posix-argv*))
+             (ros:run cmds))
+         :executable t))
+      (format t "ros dump executable help~%")))
+
+(defvar *subcmds*
+  '(("list" "List of dumped for current Lisp" dump-list)
+    ("output" "Create dump" dump-output)
+    #+sbcl("executable" "Create executable" dump-executable)))
 
 (defun main (subcmd cmd &rest r)
   (cond ((and (equal subcmd "main") r)
-         (let (#+nil(cmds (let((*read-eval*))
-                       (read-from-string
-                        (format nil "(~A)"(second(assoc "restart" (read-from-string (uiop/os:getenv "ROS_OPTS"))
-                                                        :test #'equal)))))))
-           #+sbcl
-           (sb-ext:save-lisp-and-die
-            (first r))))
+         (funcall (third (assoc (first r) *subcmds* :test 'equal)) (rest r)))
         ((or (equal subcmd "help") (not r))
-         (format t "Usage: ros [OPTIONS] ~A DUMP-FILENAME~%" cmd))))
+         (format t "Usage: ~A [OPTIONS] ~A subcmd [ARGS]~%"
+                 (second (assoc "argv0" *opts* :test 'equal)) cmd)
+         (loop :with len := (1+ (loop :for (cmd . nil) :in *subcmds* :maximize (length cmd)))
+            :for (cmd desc symbol) :in *subcmds*
+            :do (format t "  ~VA ~A~%" len cmd desc)))))
