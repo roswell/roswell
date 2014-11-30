@@ -147,6 +147,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   if(impl) {
     char** arg=NULL;
     int i;
+    set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
     if(strcmp(impl,"sbcl")==0 ||
        strcmp(impl,"sbcl-bin")==0) {
       struct sub_command cmd;

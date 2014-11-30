@@ -1,17 +1,78 @@
 #!/bin/env ros
 "Dump image for faster startup or Make Executable"
 
+(defpackage :ros.dump
+  (:use :cl))
+(in-package :ros.dump)
+
 (defvar *opts* (let ((*read-eval*))
                  (read-from-string (uiop/os:getenv "ROS_OPTS"))))
 
-(defun dump-output (params)
-  (declare (ignorable params))
-  #+sbcl
-  (sb-ext:save-lisp-and-die
-   (first params)))
+(defun opt(param)
+  (second (assoc param *opts* :test 'equal)))
+
+(defun homedir ()
+  (opt "homedir"))
+
+(defun roswell-internal (args output)
+  (uiop/run-program:run-program
+   (format nil "~A roswell-internal-use~{ ~A~}"
+           (opt "argv0") args) :output output))
+
+(defun uname ()
+  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
+
+(defun uname-m ()
+  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
+
+(defun dump-dir ()
+  (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                           (uname-m) (uname) (opt "impl"))
+                   (homedir)))
+
+(defun dump-output (params &optional force)
+  (flet ((dump (path &optional mode)
+           (if (and (not force)
+                    (probe-file path))
+               (if (eql mode :normal)
+                   (format t "dump ~s already exists~%" (pathname-name path))
+                   (format t "file ~s already exists~%" path))
+               (progn
+                 #+sbcl
+                 (sb-ext:save-lisp-and-die path)))))
+    (cond
+      ((null params)
+       (format t "Usage: ~A [OPTIONS] dump output [-f] [-o] name~%"
+               (second (assoc "argv0" *opts* :test 'equal))))
+      ((equal "-f" (first params))
+       (dump-output (rest params) t))
+      ((equal "-o" (first params))
+       (if (> (length params) 1)
+           (dump (second params))
+           (format t "dump file should be specified.~%")))
+      (t (let ((path (merge-pathnames (format nil "~A.core"
+                                              (first params))
+                                      (dump-dir))))
+           (dump (ensure-directories-exist path) :normal))))))
 
 (defun dump-list (params)
-  (declare (ignorable params)))
+  (declare (ignorable params)) ;; tbd list images not only for current image
+  (format t "preserved dump lists for ~A:~%" (opt "impl"))
+  (format t "~{  ~A~%~}" (mapcar #'pathname-name
+                               (directory (make-pathname :name :wild
+                                                         :type :wild
+                                                         :defaults
+                                                         (dump-dir))))))
+
+(defun dump-rm (params)
+  (declare (ignorable params))
+  (let ((path (make-pathname :name (first params)
+                             :type "core"
+                             :defaults
+                             (dump-dir))))
+    (if (probe-file path)
+        (delete-file path)
+        (format t "image doesn't exist ~s~%" (first params)))))
 
 (defun dump-executable (params)
   (if params
@@ -25,14 +86,15 @@
          (first params)
          :toplevel
          #'(lambda ()
-             (setf ros:*argv* (rest *posix-argv*))
+             (setf ros:*argv* (rest sb-ext:*posix-argv*))
              (ros:run cmds))
          :executable t))
       (format t "ros dump executable help~%")))
 
 (defvar *subcmds*
-  '(("list" "List of dumped for current Lisp" dump-list)
+  '(("list" "List images" dump-list)
     ("output" "Create dump" dump-output)
+    ("rm" "delete image" dump-rm)
     #+sbcl("executable" "Create executable" dump-executable)))
 
 (defun main (subcmd cmd &rest r)
