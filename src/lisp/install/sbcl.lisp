@@ -34,9 +34,10 @@
   (let (result
         (file (merge-pathnames "tmp/sbcl.html" (homedir))))
     (format t "checking version....~%")
-    (if (< (+ (* 60 60) (file-write-date file)) (get-universal-time))
-        (download "https://github.com/sbcl/sbcl/releases" file)
-        (format t "download sbcl.html every one hour. skip.~%"))
+    (if (and (probe-file file)
+             (>= (get-universal-time) (+ (* 60 60) (file-write-date file))))
+        (format t "download sbcl.html every one hour. skip.~%")
+        (download "https://github.com/sbcl/sbcl/releases" file))
     (with-open-file (in file)
       (ros:quicklisp)
       (with-output-to-string (*standard-output*)
