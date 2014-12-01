@@ -65,7 +65,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
 #endif
                NULL);
   }else {
-    arg[paramc++]=q(image);
+    arg[paramc++]=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
   }
   if(help) {
     arg[paramc++]=q("--help");
@@ -99,8 +99,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
 
   if(program || script) {
     char* lisp_path=lispdir();
-    arg[paramc++]=q("--load");
-    arg[paramc++]=s_cat2(lisp_path,q("init.lisp"));
+    arg[paramc++]=q("--eval");
+    arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),lisp_path,q("init.lisp"),q("\"))"),NULL);
     arg[paramc++]=q("--eval");
     arg[paramc++]=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
   }
@@ -115,6 +115,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     fprintf(stderr,"\nhelp=%s ",help?"t":"nil");
     fprintf(stderr,"script=%s\n",script?script:"nil");
   }
-  s(image),s(help),s(dynamic_space_size),s(dynamic_stack_size);
+  s(help),s(dynamic_space_size),s(dynamic_stack_size);
   return arg;
 }

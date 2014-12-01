@@ -10,7 +10,6 @@
   (:export :run :*argv* :script :quicklisp :getenv))
 
 (in-package :ros)
-(push :ros.init *features*)
 (defvar *verbose* 0)
 (defvar *argv* nil)
 
@@ -102,3 +101,5 @@
 (defun run (list)
   (loop :for elt :in list
      :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
+
+(push :ros.init *features*)
