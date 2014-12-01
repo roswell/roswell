@@ -1,0 +1,42 @@
+#!/bin/env ros
+"Delete installed implementations."
+
+(defpackage :ros.delete
+  (:use :cl))
+(in-package :ros.delete)
+
+
+(defvar *opts* (let ((*read-eval*))
+                 (read-from-string (uiop/os:getenv "ROS_OPTS"))))
+
+(defun opt(param)
+  (second (assoc param *opts* :test 'equal)))
+
+(defun homedir ()
+  (opt "homedir"))
+
+
+(defun roswell-internal (args output)
+  (uiop/run-program:run-program
+   (format nil "~A roswell-internal-use~{ ~A~}"
+           (opt "argv0") args) :output output))
+
+(defun uname ()
+  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
+
+(defun uname-m ()
+  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
+
+(defun main (subcmd cmd &rest r)
+  (cond ((and (equal subcmd "main") r)
+         (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/"
+                                              (uname-m) (uname) (first r))
+                                      (homedir))))
+           (if (position :up (pathname-directory path))
+               ()
+               (uiop/filesystem:delete-directory-tree path :validate t))))
+        ((or (equal subcmd "help") (not r))
+         (format t "Usage: ~A [OPTIONS] ~A impl/version ~%"
+                 (second (assoc "argv0" *opts* :test 'equal)) cmd))))
+
+
