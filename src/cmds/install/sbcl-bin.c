@@ -119,6 +119,7 @@ int sbcl_bin_install(struct install_options* param) {
 #ifdef _WIN32
   char* impl=param->impl;
   char* version=param->version;
+  char* arch=param->arch;
   char* home= homedir();
   char* str;
   char* version_num= q(version);
@@ -137,7 +138,7 @@ int sbcl_bin_install(struct install_options* param) {
           home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
           home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\contrib\" >NUL",NULL);
   ret=system(str);
-  s(str),s(arch),s(home);
+  s(str),s(home);
   if(!ret) return 0;
   return 1;
 #else

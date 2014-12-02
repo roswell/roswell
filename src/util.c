@@ -242,6 +242,10 @@ char* escape_string(char* str) {
   ret[j]='\0';
   return ret;
 }
+#ifdef _WIN32
+setenv(const char* name,const char* value,int overwrite){
+}
+#endif
 
 char* homedir(void) {
   char *c;
@@ -275,6 +279,7 @@ char* homedir(void) {
 }
 
 char* lispdir(void) {
+    fprintf(stderr,"/%s5-\n",which(argv_orig[0]));
     char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
     char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
     char* lisp_path;
@@ -424,7 +429,7 @@ int rename_file(char* file,char* new_name) {
   s(cmd);
   return ret==0;
 #else
-#error not implemented rename_file
+  MoveFile(file,new_name);
 #endif
 }
 
@@ -453,6 +458,7 @@ char* system_(char* cmd) {
   (void)pclose(fp);
   return s;
 #else
+  
 #endif
 }
 
@@ -652,7 +658,11 @@ char* uname_m(void) {
 }
 
 char* which(char* cmd) {
+#ifndef _WIN32
   char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
+#else
+  char* which_cmd=cat("where \"",cmd,"\"",NULL);
+#endif
   char* p=system_(which_cmd);
   char* p2=remove_char("\r\n",p);
   s(p),s(which_cmd);
