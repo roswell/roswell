@@ -81,7 +81,6 @@ char* s_cat(char* first,...)
     ret=s_cat2(ret,i);
   }
   va_end(list);
-	
   return ret;
 }
 
@@ -96,7 +95,6 @@ char* cat(char* first,...)
     ret=s_cat2(ret,q_(i));
   }
   va_end(list);
-	
   return ret;
 }
 
@@ -135,9 +133,9 @@ char* remove_char(char* items,char* orig)
   /* count removed*/
   for(j=0;orig[j]!='\0';++j) {
     for(i=0;items[i]!='\0';++i) {
-      if(items[i]==orig[j]){
-	++found;
-	break;
+      if(items[i]==orig[j]) {
+        ++found;
+        break;
       }
     }
   }
@@ -145,9 +143,9 @@ char* remove_char(char* items,char* orig)
   for(j=0,k=0;orig[j]!='\0';++j,++k) {
     for(i=0;items[i]!='\0';++i) {
       ret[k]=orig[j];
-      if(items[i]==orig[j]){
-	--k;
-	break;
+      if(items[i]==orig[j]) {
+        --k;
+        break;
       }
     }
   }
@@ -160,7 +158,7 @@ int position_char(char* items,char* seq) {
   for(i=0;seq[i]!='\0';++i) {
     for(j=0;items[j]!='\0';++j) {
       if(seq[i]==items[j])
-	return i;
+        return i;
     }
   }
   return -1;
@@ -170,8 +168,8 @@ int position_char_not(char* items,char* seq) {
   for(i=0,stop=1;seq[i]!='\0';++i,stop=1) {
     for(j=0;items[j]!='\0';++j) {
       if(seq[i]==items[j]){
-	stop=0;
-	break;
+        stop=0;
+        break;
       }
     }
     if(stop) {
@@ -468,21 +466,21 @@ char* s_decode(char* str) {
   for(write=0;write<2;++write) {
     for(i=0,count=0;str[i]!='\0';++i,++count) {
       if(!escape && str[i]=='\\' && str[i+1]!='\0')
-	escape=1,--count;
+        escape=1,--count;
       else {
-	if(write) {
-	  ret[count]=str[i];
-	  if(escape) {
-	    switch(str[i]) {
-	    case 'n':
-	      ret[count]='\n';
-	      break;
-	    case 'r':
-	      ret[count]='\r';
-	    }
-	  }
-	}
-	escape=0;
+        if(write) {
+          ret[count]=str[i];
+          if(escape) {
+            switch(str[i]) {
+            case 'n':
+              ret[count]='\n';
+              break;
+            case 'r':
+              ret[count]='\r';
+            }
+          }
+        }
+        escape=0;
       }
     }
     if(!write) {
@@ -503,33 +501,33 @@ char** parse_cmdline(char* cmdline,int *argc)
     last=0,mode=0,count=0;
     for(i=0;cmdline[i]!='\0';++i) {
       if(cmdline[i]==' '||cmdline[i]=='\t') {
-	if(i!=0) {
-	  if(write) {
-	    ret[count]=subseq(cmdline,last,i-mode);
-	    if(mode) {
-	      ret[count]=s_decode(ret[count]);
-	      mode=0;
-	    }
-	  }
-	  ++count;
-	}
-	for(;cmdline[i]==' '||cmdline[i]=='\t'||cmdline[i]=='\0';++i);
-	last=i--;
+        if(i!=0) {
+          if(write) {
+            ret[count]=subseq(cmdline,last,i-mode);
+            if(mode) {
+              ret[count]=s_decode(ret[count]);
+              mode=0;
+            }
+          }
+          ++count;
+        }
+        for(;cmdline[i]==' '||cmdline[i]=='\t'||cmdline[i]=='\0';++i);
+        last=i--;
       }else if(cmdline[i]=='"') {
-	last=++i;
-	mode=1;
-	for(;cmdline[i]!='"'&&cmdline[i]!='\0';++i)
-	  if(cmdline[i]=='\\'&&cmdline[i+1]!='\0')
-	    ++i;
+        last=++i;
+        mode=1;
+        for(;cmdline[i]!='"'&&cmdline[i]!='\0';++i)
+          if(cmdline[i]=='\\'&&cmdline[i+1]!='\0')
+            ++i;
       }
     }
     if(last+1!=i) {
       if(write) {
-	ret[count]=subseq(cmdline,last,i-mode);
-	if(mode) {
-	  ret[count]=s_decode(ret[count]);
-	  mode=0;
-	}
+        ret[count]=subseq(cmdline,last,i-mode);
+        if(mode) {
+          ret[count]=s_decode(ret[count]);
+          mode=0;
+        }
       }
       ++count;
     }
@@ -580,14 +578,14 @@ int system_redirect(const char* cmd,char* filename)
     close(fd[1]);
     if((out=fopen(filename,"a"))!=NULL) {
       if((in=fdopen(fd[0], "r"))!=NULL) {
-	while((c = fgetc(in)) != EOF) {
-	  if (fputc(c, out) == EOF) {
-	    fclose(in);
-	    fclose(out);
-	    return 0;
-	  }
-	}
-	fclose(in);
+        while((c = fgetc(in)) != EOF) {
+          if (fputc(c, out) == EOF) {
+            fclose(in);
+            fclose(out);
+            return 0;
+          }
+        }
+        fclose(in);
       }
       fclose(out);
     }
@@ -759,9 +757,9 @@ LVal remove_if_not1(Function1 f,LVal v)
     fret=f(v);
     if(fret) {
       if(NumberP(first(v))) {
-	ret=consi(firsti(v),ret);
+        ret=consi(firsti(v),ret);
       }else if(StringP(first(v))) {
-	ret=conss(q(firsts(v)),ret);
+        ret=conss(q(firsts(v)),ret);
       }
     }
     sL(fret);
@@ -857,9 +855,9 @@ LVal split_string(char* string,char* by) {
   for(i=0,pos=-1,ret=0;string[i]!='\0';i++) {
     for(j=0;by[j]!='\0';++j) {
       if(string[i]==by[j]) {
-	ret=conss(subseq(string,pos+1,i),V(ret));
-	pos=i;
-	break;
+        ret=conss(subseq(string,pos+1,i),V(ret));
+        pos=i;
+        break;
       }
     }
   }
