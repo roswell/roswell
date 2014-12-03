@@ -241,7 +241,7 @@ char* escape_string(char* str) {
   return ret;
 }
 #ifdef _WIN32
-setenv(const char* name,const char* value,int overwrite){
+setenv(const char* name,const char* value,int overwrite) {
 }
 #endif
 
@@ -456,7 +456,45 @@ char* system_(char* cmd) {
   (void)pclose(fp);
   return s;
 #else
+  HANDLE hOutputReadTmp,hOutputRead,hOutputWrite;
+  HANDLE hInputWriteTmp,hInputRead,hInputWrite;
+  HANDLE hStdIn = NULL;
+  HANDLE hErrorWrite;
+  HANDLE hThread;
+  DWORD ThreadId;
+  SECURITY_ATTRIBUTES sa;
+
+  // Set up the security attributes struct.
+  sa.nLength= sizeof(SECURITY_ATTRIBUTES);
+  sa.lpSecurityDescriptor = NULL;
+  sa.bInheritHandle = TRUE;
+
+  // Create the child output pipe.
+  if (!CreatePipe(&hOutputReadTmp,&hOutputWrite,&sa,0)) {
+    fprintf(stderr,"CreatePipe error\n");
+    exit(EXIT_FAILURE);
+  }
+  if (!DuplicateHandle(GetCurrentProcess(),hOutputWrite,
+                       GetCurrentProcess(),&hErrorWrite,0,
+                       TRUE,DUPLICATE_SAME_ACCESS)) {
+    fprintf(stderr,"DuplicateHandle error\n");
+    exit(EXIT_FAILURE);
+  }
+  if (!CloseHandle(hOutputReadTmp)) {fprintf(stderr,"CloseHandle\n");exit(EXIT_FAILURE);}
+  if (!CloseHandle(hInputWriteTmp)) {fprintf(stderr,"CloseHandle\n");exit(EXIT_FAILURE);}
   
+  if ( (hStdIn = GetStdHandle(STD_INPUT_HANDLE)) ==
+       INVALID_HANDLE_VALUE ) {
+    fprintf(stderr,"GetStdHandle\n");
+    exit(EXIT_FAILURE);
+  }
+
+  //PrepAndLaunchRedirectedChild(hOutputWrite,hInputRead,hErrorWrite);
+
+  if (!CloseHandle(hOutputWrite)){ fprintf(stderr,"CloseHandle"); }
+  if (!CloseHandle(hInputRead )) { fprintf(stderr,"CloseHandle"); }
+  if (!CloseHandle(hErrorWrite)) { fprintf(stderr,"CloseHandle"); }
+
 #endif
 }
 
