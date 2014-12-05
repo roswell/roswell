@@ -15,9 +15,4 @@ ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
 	cmds/help/cmd.c \
 	cmds/config/cmd.c \
 	cmds/setup/cmd.c
-CLEAN_FILES= generated.h
-
-generated.h:
-	echo '#define GIT_COMMIT "'`git log |head -n 1`'"'> generated.h
-	echo '#define CC_VERSION "'`$(CC) --version |head -n 1`'"'>> generated.h
-noinst_HEADERS = util.h opt.h cmds/install/ros_install.h generated.h
+noinst_HEADERS = util.h opt.h cmds/install/ros_install.h
