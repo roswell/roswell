@@ -277,7 +277,6 @@ char* homedir(void) {
 }
 
 char* lispdir(void) {
-    fprintf(stderr,"/%s5-\n",which(argv_orig[0]));
     char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
     char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
     char* lisp_path;
@@ -441,6 +440,53 @@ void touch(char* path) {
   s(cmd);
 }
 
+#ifdef _WIN32
+void PrepAndLaunchRedirectedChild(LPSTR cmd,
+                                  HANDLE hChildStdOut,
+                                  HANDLE hChildStdIn,
+                                  HANDLE hChildStdErr) {
+  PROCESS_INFORMATION pi;
+  STARTUPINFO si;
+
+  ZeroMemory(&si,sizeof(STARTUPINFO));
+  si.cb = sizeof(STARTUPINFO);
+  si.dwFlags = STARTF_USESTDHANDLES;
+  si.hStdOutput = hChildStdOut;
+  si.hStdInput  = hChildStdIn;
+  si.hStdError  = hChildStdErr;
+  fprintf(stderr,"hoge:%s\n",cmd);
+  if (!CreateProcess(NULL,cmd,NULL,NULL,TRUE,
+                     CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi))
+    fprintf(stderr,"CreateProcess\n");
+  if (!CloseHandle(pi.hThread))
+    fprintf(stderr,"CloseHandle\n");
+}
+
+void ReadAndHandleOutput(HANDLE hPipeRead) {
+  CHAR lpBuffer[256];
+  DWORD nBytesRead;
+  DWORD nCharsWritten;
+  while(TRUE) {
+    if (!ReadFile(hPipeRead,lpBuffer,sizeof(lpBuffer),
+                  &nBytesRead,NULL) || !nBytesRead) {
+      if (GetLastError() == ERROR_BROKEN_PIPE)
+        break;
+      else {
+        fprintf(stderr,"ReadFile%d\n",GetLastError());
+        exit(EXIT_FAILURE);
+      }
+    }
+    fprintf(stderr,"sReadFile\n");
+    if (!WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),lpBuffer,
+                      nBytesRead,&nCharsWritten,NULL)) {
+      fprintf(stderr,"WriteConsole\n");
+      exit(EXIT_FAILURE);
+    }
+  }
+}
+
+#endif
+
 char* system_(char* cmd) {
 #ifndef _WIN32
   FILE *fp;
@@ -464,12 +510,10 @@ char* system_(char* cmd) {
   DWORD ThreadId;
   SECURITY_ATTRIBUTES sa;
 
-  // Set up the security attributes struct.
   sa.nLength= sizeof(SECURITY_ATTRIBUTES);
   sa.lpSecurityDescriptor = NULL;
   sa.bInheritHandle = TRUE;
 
-  // Create the child output pipe.
   if (!CreatePipe(&hOutputReadTmp,&hOutputWrite,&sa,0)) {
     fprintf(stderr,"CreatePipe error\n");
     exit(EXIT_FAILURE);
@@ -480,8 +524,10 @@ char* system_(char* cmd) {
     fprintf(stderr,"DuplicateHandle error\n");
     exit(EXIT_FAILURE);
   }
-  if (!CloseHandle(hOutputReadTmp)) {fprintf(stderr,"CloseHandle\n");exit(EXIT_FAILURE);}
-  if (!CloseHandle(hInputWriteTmp)) {fprintf(stderr,"CloseHandle\n");exit(EXIT_FAILURE);}
+  if (!CreatePipe(&hInputRead,&hInputWriteTmp,&sa,0))
+    fprintf(stderr,"CreatePipe\n");
+  if (!CloseHandle(hOutputReadTmp)) {fprintf(stderr,"CloseHandle-\n");exit(EXIT_FAILURE);}
+  if (!CloseHandle(hInputWriteTmp)) {fprintf(stderr,"CloseHandle--\n");exit(EXIT_FAILURE);}
   
   if ( (hStdIn = GetStdHandle(STD_INPUT_HANDLE)) ==
        INVALID_HANDLE_VALUE ) {
@@ -489,11 +535,13 @@ char* system_(char* cmd) {
     exit(EXIT_FAILURE);
   }
 
-  //PrepAndLaunchRedirectedChild(hOutputWrite,hInputRead,hErrorWrite);
+  PrepAndLaunchRedirectedChild(cmd,hOutputWrite,hInputRead,hErrorWrite);
 
   if (!CloseHandle(hOutputWrite)){ fprintf(stderr,"CloseHandle"); }
   if (!CloseHandle(hInputRead )) { fprintf(stderr,"CloseHandle"); }
   if (!CloseHandle(hErrorWrite)) { fprintf(stderr,"CloseHandle"); }
+
+  ReadAndHandleOutput(hOutputRead);
 
 #endif
 }
@@ -697,6 +745,11 @@ char* which(char* cmd) {
 #ifndef _WIN32
   char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
 #else
+  if(position_char("\\:",cmd)!=-1) {
+    char tmp[MAX_PATH];
+    GetFullPathName(cmd,MAX_PATH,tmp,NULL);
+    return q(tmp);
+  }
   char* which_cmd=cat("where \"",cmd,"\"",NULL);
 #endif
   char* p=system_(which_cmd);
