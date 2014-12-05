@@ -29,8 +29,8 @@ int cmd_version(int argc,char **argv,struct sub_command* cmd)
     fprintf(stderr,"\n%s",ARCHIVE_VERSION_STRING);
 #endif
     fprintf(stderr,"\n");
-    return 1;
+    return 0;
   }
   fprintf(stderr,"\n");
-  return 1;
+  return 0;
 }
