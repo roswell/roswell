@@ -92,7 +92,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1;
   char* impl;
-  char* version;
+  char* version=NULL;
   int pos;
   char* home=homedir();
   set_opt(&local_opt,"quicklisp",cat(home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp",NULL),0);
