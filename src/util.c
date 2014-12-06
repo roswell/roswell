@@ -285,7 +285,11 @@ char* lispdir(void) {
       lisp_path=ros_bin_lisp;
     }else {
       s(ros_bin_lisp);
-      lisp_path=append_trail_slash(q(LISP_PATH));
+      lisp_path=q(LISP_PATH);
+#ifdef _WIN32
+      substitute_char('\\','/',lisp_path);
+#endif
+      lisp_path=append_trail_slash(lisp_path);
     }
     return lisp_path;
 }
@@ -364,7 +368,7 @@ int file_exist_p (char* path) {
   }
   return ret;
 #else
-#  error not imprement file_exist_p
+  return 1;
 #endif
 }
 
@@ -426,7 +430,7 @@ int rename_file(char* file,char* new_name) {
   s(cmd);
   return ret==0;
 #else
-  MoveFile(file,new_name);
+  return MoveFileEx(file,new_name,MOVEFILE_REPLACE_EXISTING);
 #endif
 }
 
