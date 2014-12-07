@@ -764,8 +764,8 @@ char* which(char* cmd) {
 
 LVal directory(char* path)
 {
-#ifndef _WIN32
   LVal ret=0;
+#ifndef _WIN32
   DIR* dir=opendir(path);
   struct dirent *dirent;
 
@@ -779,10 +779,27 @@ LVal directory(char* path)
     ret=conss(str,ret);
   }
   closedir(dir);
-  return ret;
+#else
+  WIN32_FIND_DATA fd;
+  char *p=cat(path,"*.*",NULL);
+  HANDLE dir=FindFirstFile(p,&fd);
+  if(dir==INVALID_HANDLE_VALUE)
+    return 0;
+  do {
+    if(!(strcmp(fd.cFileName,".")==0 ||
+         strcmp(fd.cFileName,"..")==0)) {
+      char* str=cat(fd.cFileName,NULL);
+      if(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
+        str=s_cat2(str,q(SLASH));
+      }
+      ret=conss(str,ret);
+    }
+  }while(FindNextFile(dir,&fd)!=0);
+  s(p);
+  FindClose(dir);
 #endif
+  return ret;
 }
-
 
 void signal_callback_handler(int signum)
 {
