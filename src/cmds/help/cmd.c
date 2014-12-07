@@ -96,17 +96,27 @@ int cmd_help(int argc, const char **argv)
             if (len>0 && strcmp(f+len,".ros")==0) {
               FILE* in;
               char buf[800];
-              char* fname=cat(subcmds,SLASH,f);
-              if((in=fopen(fname,"r"))!=NULL) {
-                fgets(buf,800,in);
-                fgets(buf,800,in);
+              char* fname=cat(subcmds,SLASH,f,NULL);
+              if((in=fopen(fname,"rb"))!=NULL) {
+                int i=0,c;
+                while((c=fgetc(in))!=EOF) {
+                  if(c=='\n')
+                    break;
+                }
+                while((c=fgetc(in))!=EOF) {
+                  if(c=='\r'||c=='\n'||i==799) {
+                    break;
+                  }
+                  buf[i++]=c;
+                }
+                buf[i]='\0';
                 fclose(in);
               }else{
                 strcpy(buf,"");
               }
               s(fname);
               f[len]='\0';
-              buf[strlen(buf)-2]='\0';
+              buf[strlen(buf)-1]='\0';
               fprintf(stderr,fmt,f,buf+1);
             }
           }
