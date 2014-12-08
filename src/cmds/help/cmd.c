@@ -99,25 +99,20 @@ int cmd_help(int argc, const char **argv)
               char* fname=cat(subcmds,SLASH,f,NULL);
               if((in=fopen(fname,"rb"))!=NULL) {
                 int i=0,c;
-                while((c=fgetc(in))!=EOF) {
-                  if(c=='\n')
+                for(;i<2;++i)
+                  while((c=fgetc(in))!=EOF && c!='\n');
+                i=0;
+                for(;(c=fgetc(in))!=EOF;buf[i++]=c)
+                  if(c=='\r'||c=='\n'||i==799)
                     break;
-                }
-                while((c=fgetc(in))!=EOF) {
-                  if(c=='\r'||c=='\n'||i==799) {
-                    break;
-                  }
-                  buf[i++]=c;
-                }
                 buf[i]='\0';
                 fclose(in);
-              }else{
-                strcpy(buf,"");
-              }
+              }else
+                buf[0]='\0';
               s(fname);
               f[len]='\0';
-              buf[strlen(buf)-1]='\0';
-              fprintf(stderr,fmt,f,buf+1);
+              if(buf[0]='#' && buf[1]=='|')
+                fprintf(stderr,fmt,f,buf+2);
             }
           }
         }

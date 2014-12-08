@@ -1,5 +1,8 @@
-#!/usr/bin/env ros
-
+#!/bin/sh
+#|-*- mode: lisp -*-|#
+#|Docstring like 1 line comment that are accepted if it installed
+exec ros -- $0 "$@"
+|#
 (defun main (&rest argv)
   (format t "Hello World!~%")
   (format t "argv=~S~%" argv))

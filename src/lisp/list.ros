@@ -1,5 +1,8 @@
-#!/bin/env ros
-"List Information"
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|List Information
+exec ros -- $0 "$@"
+|#
 
 (defpackage :ros.list
   (:use :cl))

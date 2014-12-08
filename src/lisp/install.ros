@@ -1,4 +1,9 @@
-#!/usr/bin/env ros
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|install roswell
+exec ros -- $0 "$@"
+|#
+
 (cl:in-package :cl-user)
 
 (require :asdf)

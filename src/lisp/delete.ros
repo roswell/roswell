@@ -1,5 +1,8 @@
-#!/bin/env ros
-"Delete installed implementations."
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Delete installed implementations
+exec ros -- $0 "$@"
+|#
 
 (defpackage :ros.delete
   (:use :cl))
@@ -38,5 +41,3 @@
         ((or (equal subcmd "help") (not r))
          (format t "Usage: ~A [OPTIONS] ~A impl/version ~%"
                  (second (assoc "argv0" *opts* :test 'equal)) cmd))))
-
-

@@ -1,5 +1,8 @@
-#!/bin/env ros
-"Dump image for faster startup or Make Executable"
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Dump image for faster startup or Make Executable
+exec ros -- $0 "$@"
+|#
 
 (defpackage :ros.dump
   (:use :cl))
