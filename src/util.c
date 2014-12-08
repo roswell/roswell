@@ -329,33 +329,46 @@ char* file_namestring(char* path) {
 
 char* ensure_directories_exist (char* path) {
   int len = strlen(path);
-  if(len) {
-    for(--len;(path[len]!=SLASH[0]||len==-1);--len);
-    path=subseq(path,0,len+1);
+  if(!directory_exist_p(path)) {
+    if(len) {
+      for(--len;(path[len]!=SLASH[0]||len==-1);--len);
+      path=subseq(path,0,len+1);
+    }
+#ifndef _WIN32
+    char* cmd=s_cat2(q("mkdir -p "),path);
+#else
+    char* cmd=s_cat(q("mkdir "),path,q(" 2>NUL"),NULL);
+#endif
+    if(system(cmd)!=0) {
+      fprintf(stderr,"failed:%s\n",cmd);
+      return NULL;
+    };
+    s(cmd);
   }
-  #ifndef _WIN32
-  char* cmd=s_cat2(q("mkdir -p "),path);
-  #else
-  char* cmd=s_cat(q("mkdir "),path,q(" 2>NUL"),NULL);
-  #endif
-  if(system(cmd)!=0) {
-    fprintf(stderr,"failed:%s\n",cmd);
-    return NULL;
-  };
-  s(cmd);
   return path;
 }
 
 int directory_exist_p (char* path) {
-#ifdef HAVE_SYS_STAT_H
+#ifndef _WIN32
+# ifdef HAVE_SYS_STAT_H
   struct stat sb;
   int ret=0;
   if (stat(path, &sb) == 0 && S_ISDIR(sb.st_mode)) {
     ret=1;
   }
   return ret;
-#else
+# else
 #  error not imprement directory_exist_p
+# endif
+#else
+  WIN32_FIND_DATA fd;
+  char *p=cat(path,"*.*",NULL);
+  HANDLE dir=FindFirstFile(p,&fd);
+  s(p);
+  if(dir==INVALID_HANDLE_VALUE)
+    return 0;
+  FindClose(dir);
+  return 1;
 #endif
 }
 

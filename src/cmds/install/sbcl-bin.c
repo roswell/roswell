@@ -24,7 +24,7 @@ int sbcl_version_bin(struct install_options* param)
     if(ret==0)
       printf("done\n");
     else {
-      printf("download error\n");
+      printf("download error %d\n",ret);
       return 0;
     }
 
@@ -125,21 +125,21 @@ int sbcl_bin_install(struct install_options* param) {
   char* version_num= q(version);
   int ret;
   str=cat("echo f|xcopy \"",
-          home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe\" \"",
-          home,"impls\\sbcl-",version,"-",arch,"\\bin\\sbcl.exe\" >NUL",NULL);
+          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe\" \"",
+          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\bin\\sbcl.exe\" >NUL",NULL);
   ret=system(str);s(str);
-  if(!ret) return 0;
+  if(ret) return 0;
   str=cat("echo f|xcopy \"",
-          home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core\" \"",
-          home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\sbcl.core\" >NUL",NULL);
+          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core\" \"",
+          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core\" >NUL",NULL);
   ret=system(str);s(str);
-  if(!ret) return 0;
+  if(ret) return 0;
   str=cat("echo d|xcopy \"",
-          home,"src\\sbcl-",version,"-",arch,"\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
-          home,"impls\\sbcl-",version,"-",arch,"\\lib\\sbcl\\contrib\" >NUL",NULL);
+          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
+          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib\" >NUL",NULL);
   ret=system(str);
   s(str),s(home);
-  if(!ret) return 0;
+  if(ret) return 0;
   return 1;
 #else
   int ret=1;
