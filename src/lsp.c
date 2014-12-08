@@ -263,7 +263,7 @@ int main (int argc,char **argv) {
   char* _help;
   /*options*/
   /* toplevel */
-  top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"load lisp FILE while building","CODE");
+  top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"shell wrapper CODE to run in roswell","CODE");
   top_options=add_command(top_options,"image","-m",opt_top,1,0,"build from Lisp image IMAGE","IMAGE");
   top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"try use these LISP implementation","NAME");
   top_options=register_runtime_options(top_options);
