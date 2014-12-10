@@ -14,14 +14,18 @@ exec ros -- $0 "$@"
 (in-package :t.roswell)
 
 (setf *default-reporter* :list)
-(plan 1)
+(plan nil)
 (mapc (lambda (x) 
         (diag (format nil "testing ~a" (pathname-name x)))
         (load x))
      (sort (directory (make-pathname :defaults *load-pathname* :name :wild :type "lisp"))
              #'string< :key #'pathname-name))
 
+#+:ros.script
 (defun main (&rest r)
   "roswell require main function"
   (declare (ignore r))
   (finalize))
+
+#-:ros.script
+(finalize)

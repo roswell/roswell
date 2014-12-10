@@ -82,6 +82,7 @@
   (if (probe-file arg)
       (with-open-file (in arg)
         (let ((line(read-line in)))
+          (push :ros.script *features*)
           (cl:load (make-concatenated-stream
                     (make-string-input-stream
                      (format nil "(cl:setf cl:*load-pathname* #P~S)(cl:setf cl:*load-truename* (truename cl:*load-pathname*))~A" arg
@@ -91,7 +92,8 @@
                     (make-string-input-stream
                      (if (eql cmd :script)
                          "(cl:apply 'main ros:*argv*)"
-                         ""))))))
+                         ""))))
+          (setf *features* (remove :ros.script *features*))))
       (format t "script ~S is not exist~%" arg)))
 
 (defun load (x file)
