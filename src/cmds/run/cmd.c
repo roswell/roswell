@@ -159,8 +159,13 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       char* cmd;
       char* opts=sexp_opts(local_opt);
       setenv("ROS_OPTS",opts,1);
-      if(verbose>0) {
-        fprintf(stderr,"ROS_OPTS=%s\n",getenv("ROS_OPTS"));
+      if(verbose>0 ||testing) {
+        fprintf(stderr,"args ");
+        for(i=0;arg[i]!=NULL;++i)
+          fprintf(stderr,"%s ",arg[i]);
+        fprintf(stderr,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
+        if(testing)
+          exit(EXIT_SUCCESS);
       }
       s(opts);
 #ifdef _WIN32

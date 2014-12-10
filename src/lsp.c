@@ -24,6 +24,7 @@ extern void register_cmd_install(void);
 extern void register_cmd_internal(void);
 
 int verbose=0;
+int testing=0;
 int rc=1;
 int quicklisp=0;
 
@@ -158,6 +159,13 @@ int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
   return 1;
 }
 
+int opt_top_testing(int argc,char** argv,struct sub_command* cmd) {
+  ++testing;
+  if(verbose>0)
+    fprintf(stderr,"opt_testing:%s %d\n",cmd->name,testing);
+  return 1;
+}
+
 int opt_top_rc(int argc,char** argv,struct sub_command* cmd) {
   if(strcmp(cmd->name,"rc")==0) {
     rc=1;
@@ -253,6 +261,7 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0,"do not use quicklisp (default)",NULL);
   opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
   opt=add_command(opt,"quiet",NULL,opt_top_verbose,1,0,"be quite quiet while building (default)",NULL);
+  opt=add_command(opt,"test",NULL,opt_top_testing,1,0,"for test purpose",NULL);
   return opt;
 }
 

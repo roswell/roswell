@@ -129,9 +129,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
 
   arg[paramc]=NULL;
   if(verbose>0) {
-    fprintf(stderr,"args=");
-    for(i=0;arg[i]!=NULL;++i)
-      fprintf(stderr,"%s ",arg[i]);
     fprintf(stderr,"\nhelp=%s ",help?"t":"nil");
     fprintf(stderr,"script=%s\n",script?script:"nil");
   }
