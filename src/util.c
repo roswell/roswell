@@ -751,6 +751,10 @@ char* uname_m(void) {
   char *p2;
   p2=remove_char("\r\n",p);
   s(p);
+  if(strcmp(p2,"i686")==0) {
+    s(p2);
+    return q("x86");
+  }
   return substitute_char('-','_',p2);
 #else
   /*TBD check x86 or x86-64 */
