@@ -20,7 +20,7 @@ int cmd_version(int argc,char **argv,struct sub_command* cmd)
 #ifdef HAVE_LIBCURL
     fprintf(stderr,"\nlibcurl %s",LIBCURL_VERSION);
 #endif
-#ifdef HAVE_ARCHIVE_H
+#if defined(HAVE_ARCHIVE_H) && defined(_WIN32)
     fprintf(stderr,"\n%s",ARCHIVE_VERSION_STRING);
 #endif
     fprintf(stderr,"\n");

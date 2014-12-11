@@ -1,9 +1,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-#ifdef HAVE_CONFIG_H
+#if defined (HAVE_ARCHIVE_H) && defined(_WIN32)
 #  include "config.h"
 #endif
-#ifdef HAVE_ARCHIVE_H
+#if defined (HAVE_ARCHIVE_H) && defined(_WIN32)
 #include <archive.h>
 #include <archive_entry.h>
 #endif
@@ -17,7 +17,7 @@
 
 static void errmsg(const char *);
 int extract(const char *filename, int do_extract, int flags,const char* outputpath);
-#ifdef HAVE_ARCHIVE_H
+#if defined (HAVE_ARCHIVE_H) && defined(_WIN32)
 static int copy_data(struct archive *, struct archive *);
 #endif
 static void msg(const char *);
@@ -30,7 +30,7 @@ int cmd_tar(int argc, const char **argv)
 
   mode = 'x';
   compress = '\0';
-#ifdef HAVE_ARCHIVE_H
+#if defined(HAVE_ARCHIVE_H) && defined(_WIN32)
   flags = ARCHIVE_EXTRACT_TIME;
 #endif
   /* Among other sins, getopt(3) pulls in printf(3). */
@@ -53,7 +53,7 @@ int cmd_tar(int argc, const char **argv)
         p += strlen(p);
         break;
       case 'p':
-#ifdef HAVE_ARCHIVE_H
+#if defined(HAVE_ARCHIVE_H) && defined(_WIN32)
         flags |= ARCHIVE_EXTRACT_PERM;
         flags |= ARCHIVE_EXTRACT_ACL;
         flags |= ARCHIVE_EXTRACT_FFLAGS;
@@ -86,7 +86,7 @@ int cmd_tar(int argc, const char **argv)
 
 int extract(const char *filename, int do_extract, int flags,const char* outputpath)
 {
-#ifndef HAVE_ARCHIVE_H
+#if !(defined(HAVE_ARCHIVE_H) && defined(_WIN32))
   char* str;
   int len=strlen(filename);
   int type=0; /*gz*/
@@ -172,7 +172,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 #endif
 }
 
-#ifdef HAVE_ARCHIVE_H
+#if defined(HAVE_ARCHIVE_H) && defined(_WIN32)
 static int
 copy_data(struct archive *ar, struct archive *aw)
 {
