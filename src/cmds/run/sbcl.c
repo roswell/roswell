@@ -96,11 +96,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     char *tmp,*tmp2;
     arg[paramc++]=q("--eval");
     tmp=cat("#-quicklisp(cl:load \"",home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp\")",NULL);
-#ifdef _WIN32
-    tmp2=escape_string(tmp);
-    s(tmp);
-    tmp=s_cat(q("\""),tmp2,q("\""),NULL);
-#endif
     arg[paramc++]=tmp;
   }
 
@@ -109,19 +104,9 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     char *tmp,*tmp2;
     arg[paramc++]=q("--eval");
     tmp=s_cat(q("(progn #-ros.init(cl:load \""),lisp_path,q("init.lisp"),q("\"))"),NULL);
-#ifdef _WIN32
-    tmp2=escape_string(tmp);
-    s(tmp);
-    tmp=s_cat(q("\""),tmp2,q("\""),NULL);
-#endif
     arg[paramc++]=tmp;
     arg[paramc++]=q("--eval");
     tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
-#ifdef _WIN32
-    tmp2=escape_string(tmp);
-    s(tmp);
-    tmp=s_cat(q("\""),tmp2,q("\""),NULL);
-#endif
     arg[paramc++]=tmp;
   }
 
