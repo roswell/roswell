@@ -174,7 +174,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
         cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
       }
       SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-      system(cmd);
+      exit(system(cmd));
       s(cmd);
 #else
       execvp(arg[0],arg);
