@@ -242,6 +242,9 @@ char* escape_string(char* str) {
 }
 #ifdef _WIN32
 setenv(const char* name,const char* value,int overwrite) {
+  char* s=cat((char*)name,"=",(char*)value,NULL);
+  _putenv(s);
+  s(name);
 }
 #endif
 
