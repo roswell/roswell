@@ -1,6 +1,6 @@
 #include <sys/types.h>
 #include <sys/stat.h>
-#if defined (HAVE_ARCHIVE_H) && defined(_WIN32)
+#ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
 #if defined (HAVE_ARCHIVE_H) && defined(_WIN32)
@@ -86,17 +86,17 @@ int cmd_tar(int argc, const char **argv)
 
 int extract(const char *filename, int do_extract, int flags,const char* outputpath)
 {
-#if !(defined(HAVE_ARCHIVE_H) && defined(_WIN32))
+#if !defined(_WIN32)
   char* str;
   int len=strlen(filename);
-  int type=0; /*gz*/
+  char* type="gzip"; /*for gz*/
   if(len>4) {
     int i;
     for(i=len-4;filename[i]!='\0';++i)
       if(filename[i]=='b'||filename[i]=='B')
-        type=1; /*bz*/
+        type="bzip2"; /*bz*/
   }
-  str=cat(type?"bzip2":"gzip"," -dc ",filename," | tar -",extract?"x":"t",
+  str=cat(type," -dc ",filename," | tar -",extract?"x":"t",
     flags?"p":"","f - -C ",outputpath,NULL);
   if(verbose>0)
     fprintf(stderr,"extractcmd=%s\n",str);
@@ -117,6 +117,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 #else
   archive_read_support_filter_bzip2(a);
   archive_read_support_filter_gzip(a);
+  archive_read_support_filter_xz(a);
 #endif
   archive_read_support_format_tar(a);
 
