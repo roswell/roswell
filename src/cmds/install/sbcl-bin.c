@@ -41,11 +41,7 @@ int sbcl_version_bin(struct install_options* param)
 
 char* sbcl_bin_extention(struct install_options* param)
 {
-#ifdef _WIN32
-  return "msi";
-#else
-  return "tar.bz2";
-#endif
+  return SBCL_BIN_EXTENTION;
 }
 
 char* sbcl_uri_bin(struct install_options* param)
@@ -54,7 +50,7 @@ char* sbcl_uri_bin(struct install_options* param)
   char* arch=arch_(param);
   char* ret=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
                 "-",arch,
-                "-binary.",
+                "-binary",
                 sbcl_bin_extention(param)
                 ,NULL);
   s(arch);

@@ -25,6 +25,19 @@ struct Cons {
 #define SLASH "/"
 #endif
 
+#ifdef _WIN32
+#define EXE_EXTENTION ".exe"
+#else
+#define EXE_EXTENTION ""
+#endif
+
+#ifdef _WIN32
+#define SBCL_BIN_EXTENTION ".msi"
+#else
+#define EXE_EXTENTION ".tar.bz2"
+#endif
+
+
 typedef LVal (*Function1)(LVal v);
 typedef LVal (*Function2)(LVal v1,LVal v2);
 typedef LVal (*Compare2)(LVal v1,LVal v2);

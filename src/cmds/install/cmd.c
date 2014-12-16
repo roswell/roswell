@@ -79,9 +79,9 @@ char* download_archive_name(struct install_options* param)
 {
   char* ret=cat(param->impl,param->version?"-":"",param->version?param->version:"",NULL);
   if(param->arch_in_archive_name==0) {
-    ret=s_cat(ret,q("."),q((*(install_impl->extention))(param)),NULL);
+    ret=s_cat(ret,q((*(install_impl->extention))(param)),NULL);
   }else {
-    ret=s_cat(ret,cat("-",param->arch,"-",param->os,".",q((*(install_impl->extention))(param)),NULL),NULL);
+    ret=s_cat(ret,cat("-",param->arch,"-",param->os,q((*(install_impl->extention))(param)),NULL),NULL);
   }
   return ret;
 }
@@ -99,11 +99,11 @@ int download(struct install_options* param)
     if(url) {
       ensure_directories_exist(impl_archive);
       if(download_simple(url,impl_archive,0)) {
-	printf("Failed to Download.\n");
-	return 0;
-	/* fail */
+        printf("Failed to Download.\n");
+        return 0;
+        /* fail */
       }else{
-	printf("\ndone\n");
+        printf("\ndone\n");
       }
       s(url);
     }
@@ -132,18 +132,18 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
       param.impl=argv[k];
       pos=position_char("/",param.impl);
       if(pos!=-1) {
-	param.version=subseq(param.impl,pos+1,0);
-	param.impl=subseq(param.impl,0,pos);
+        param.version=subseq(param.impl,pos+1,0);
+        param.impl=subseq(param.impl,0,pos);
       }else {
         param.version=NULL;
-	param.impl=q(param.impl);
+        param.impl=q(param.impl);
       }
 
       for(install_impl=NULL,i=0;i<sizeof(impls_to_install)/sizeof(struct install_impls*);++i) {
-	struct install_impls* j=impls_to_install[i];
-	if(strcmp(param.impl,j->name)==0) {
-	  install_impl=j;
-	}
+        struct install_impls* j=impls_to_install[i];
+        if(strcmp(param.impl,j->name)==0) {
+          install_impl=j;
+        }
       }
       if(!install_impl) {
         char* lisp_path=lispdir();
@@ -176,7 +176,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
         return 0;
       }
       for(cmds=install_impl->call;*cmds&&ret;++cmds)
-	ret=(*cmds)(&param);
+        ret=(*cmds)(&param);
       if(ret) { // after install latest installed impl/version should be default for 'run'
         struct opts* opt=global_opt;
         struct opts** opts=&opt;
