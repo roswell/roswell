@@ -12,21 +12,31 @@
 (in-package :ros)
 (defvar *verbose* 0)
 (defvar *argv* nil)
+(defvar *ros-opts* nil)
 
 ;; small tools
 (defun getenv (x)
   #+sbcl(sb-posix:getenv x)
   #-sbcl(error "not implemented"))
 
+(defun ros-opts ()
+  (or *ros-opts*
+      (setf *ros-opts*
+            (let((*read-eval*))
+              (read-from-string (getenv "ROS_OPTS"))))))
+
 (defun quicklisp ()
   (unless (find :quicklisp *features*)
     (cl:load
-     (second (assoc "quicklisp"
-                    (let((*read-eval*))
-                      (read-from-string (getenv "ROS_OPTS")))
+     (second (assoc "quicklisp" (ros-opts)
                     :test 'equal)))))
 
-;;
+(defun impl ()
+  (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))
+    (subseq s (1+ (position #\/ s)))))
+
+(unless (equal (first (last asdf:*user-cache* 2)) (impl))
+  (setf asdf:*user-cache* (append (butlast asdf:*user-cache*) (list (impl)) (last asdf:*user-cache*))))
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))

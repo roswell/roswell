@@ -10,8 +10,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=7; /*[binpath for sbcl] --noinform --core param
-                  --no-sysinit --no-userinit [terminating NULL] that total 7 are default. */
+  int offset=9; /*[binpath for sbcl] --noinform --core param --eval init.lisp
+                  --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help");
@@ -44,7 +44,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     }
   }
   if(program||script)
-    offset+=4;
+    offset+=2;
 
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=bin;
@@ -80,6 +80,9 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   if(script)
     arg[paramc++]=q("--disable-debugger");
 
+  arg[paramc++]=q("--eval");
+  arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
+
   if(quicklisp) {
     char *tmp,*tmp2;
     arg[paramc++]=q("--eval");
@@ -88,11 +91,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   }
 
   if(program || script) {
-    char* lisp_path=lispdir();
     char *tmp,*tmp2;
-    arg[paramc++]=q("--eval");
-    tmp=s_cat(q("(progn #-ros.init(cl:load \""),lisp_path,q("init.lisp"),q("\"))"),NULL);
-    arg[paramc++]=tmp;
     arg[paramc++]=q("--eval");
     tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
     arg[paramc++]=tmp;
