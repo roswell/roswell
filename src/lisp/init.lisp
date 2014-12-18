@@ -35,8 +35,8 @@
   (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))
     (subseq s (1+ (position #\/ s)))))
 
-(unless (equal (first (last asdf:*user-cache* 2)) (impl))
-  (setf asdf:*user-cache* (append (butlast asdf:*user-cache*) (list (impl)) (last asdf:*user-cache*))))
+(unless (equal (first (last asdf:*user-cache*)) (impl))
+  (setf asdf:*user-cache* (append asdf:*user-cache* (list (impl)))))
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
