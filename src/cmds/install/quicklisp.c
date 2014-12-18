@@ -21,7 +21,7 @@ char* quicklisp_uri(struct install_options* param)
 
 char* quicklisp_extention(struct install_options* param)
 {
-  return "lisp";
+  return ".lisp";
 }
 
 int quicklisp_setup(struct install_options* param)
