@@ -28,6 +28,18 @@ After the installation type ros and you'll get some information by
 
     $ ros
 
+### install lisp
+If you want to install the newest released version of sbcl you can do it by
+
+    $ ros install sbcl
+
+and if you have specific version like "1.2.0" to install then
+
+    $ ros install sbcl/1.2.0
+
+will install that version.
+
+
 ## Author
 SANO Masatoshi (snmsts@gmail.com)
 
