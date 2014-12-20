@@ -1,0 +1,47 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|change default implementation
+exec ros -- $0 "$@"
+|#
+
+(cl:in-package :cl-user)
+
+(require :asdf)
+#+sbcl(require :sb-posix)
+
+(ignore-errors
+  #+quicklisp(with-output-to-string (*standard-output*)(ql:quickload :uiop))
+  #-quicklisp(require :uiop))
+
+(defpackage :ros.use
+  (:use :cl))
+
+(in-package :ros.use)
+
+(defvar *opts* (let ((*read-eval*))
+                 (read-from-string (uiop/os:getenv "ROS_OPTS"))))
+
+(defun opt (param)
+  (second (assoc param *opts* :test 'equal)))
+
+(defun roswell-internal (args output)
+  (uiop/run-program:run-program
+   (format nil "~A config ~{ ~A~}"
+           (opt "argv0") args) :output output))
+
+(defun config (&rest argv)
+  (remove #\Return (roswell-internal `(,@argv) :string)))
+
+(defun main (subcmd impl/version &rest argv)
+  (declare (ignore subcmd impl/version))
+  (if (not (zerop (length argv)))
+    (let* ((pos (position #\/ (first argv)))
+           (lisp (if pos
+                     (subseq (first argv) 0 pos)
+                     (first argv))))
+      (when pos
+        (config "default.lisp" lisp)
+        (config (format nil "~A.version" lisp)
+                (subseq (first argv) (1+ pos)))))
+    
+    ))

@@ -5,7 +5,7 @@ roslisp_DATA = lisp/init.lisp lisp/install.ros
 roslispinstalldir = $(roslispdir)/install
 roslispinstall_DATA = lisp/install/sbcl-bin.lisp lisp/install/sbcl.lisp lisp/install/quicklisp.lisp lisp/install/msys.lisp
 roslispsubcmddir = $(roslispdir)/subcmd
-roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros
+roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros lisp/use.ros
 
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
