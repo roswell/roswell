@@ -39,6 +39,20 @@ and if you have specific version like "1.2.0" to install then
 
 will install that version.
 
+### set default implementation used by roswell.
+
+    $ ros list installed sbcl
+
+will return which version of sbcl are installed.
+
+then
+
+    $ ros run -- --version
+
+will show you which version are used.You can change implementation by
+
+    $ ros use sbcl/1.2.3
+
 
 ## Author
 SANO Masatoshi (snmsts@gmail.com)
