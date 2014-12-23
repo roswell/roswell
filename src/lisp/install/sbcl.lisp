@@ -140,7 +140,7 @@
     (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run --" *ros-path* (get-opt "sbcl.compiler")))
-           (cmd (format nil "sh make.sh \"--xc-host=~A\" \"--prefix=~A\"" compiler (get-opt "prefix")))
+           (cmd (format nil "sh make.sh '--xc-host=~A' '--prefix=~A'" compiler (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (uiop/run-program:run-program cmd :output t)))
