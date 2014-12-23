@@ -340,7 +340,7 @@ char* ensure_directories_exist (char* path) {
 #ifndef _WIN32
     char* cmd=s_cat2(q("mkdir -p "),path);
 #else
-    char* cmd=s_cat(q("mkdir "),path,q(" 2>NUL"),NULL);
+    char* cmd=s_cat(q("cmd /C md "),path,q(" 2>NUL"),NULL);
 #endif
     if(system(cmd)!=0) {
       fprintf(stderr,"failed:%s\n",cmd);
@@ -461,54 +461,98 @@ void touch(char* path) {
 }
 
 #ifdef _WIN32
-void PrepAndLaunchRedirectedChild(LPSTR cmd,
-                                  HANDLE hChildStdOut,
-                                  HANDLE hChildStdIn,
-                                  HANDLE hChildStdErr) {
-  PROCESS_INFORMATION pi;
-  STARTUPINFO si;
+void DisplayError(char *pszAPI)
+{
+  LPVOID lpvMessageBuffer;
+  CHAR szPrintBuffer[512];
+  DWORD nCharsWritten;
+  FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM,
+                NULL, GetLastError(),
+                MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+                (LPTSTR)&lpvMessageBuffer, 0, NULL);
 
-  ZeroMemory(&si,sizeof(STARTUPINFO));
-  si.cb = sizeof(STARTUPINFO);
-  si.dwFlags = STARTF_USESTDHANDLES;
-  si.hStdOutput = hChildStdOut;
-  si.hStdInput  = hChildStdIn;
-  si.hStdError  = hChildStdErr;
-  fprintf(stderr,"hoge:%s\n",cmd);
-  if (!CreateProcess(NULL,cmd,NULL,NULL,TRUE,
-                     CREATE_NEW_CONSOLE,NULL,NULL,&si,&pi))
-    fprintf(stderr,"CreateProcess\n");
-  if (!CloseHandle(pi.hThread))
-    fprintf(stderr,"CloseHandle\n");
+  wsprintf(szPrintBuffer,
+           "ERROR: API    = %s.\n   error code = %d.\n   message    = %s.\n",
+           pszAPI, GetLastError(), (char *)lpvMessageBuffer);
+  fprintf(stderr,"%s",szPrintBuffer);
+  LocalFree(lpvMessageBuffer);
+  ExitProcess(GetLastError());
 }
 
-void ReadAndHandleOutput(HANDLE hPipeRead) {
+char* system_(char* cmd)
+{
+  HANDLE hOutputReadTmp,hOutputRead,hOutputWrite;
+  HANDLE hInputWriteTmp,hInputRead,hInputWrite;
+  HANDLE hErrorWrite;
+  HANDLE hThread;
+  DWORD ThreadId;
+  SECURITY_ATTRIBUTES sa;
   CHAR lpBuffer[256];
   DWORD nBytesRead;
   DWORD nCharsWritten;
-  while(TRUE) {
-    if (!ReadFile(hPipeRead,lpBuffer,sizeof(lpBuffer),
+  PROCESS_INFORMATION pi;
+  STARTUPINFO si;
+  char* ret=q("");
+  sa.nLength= sizeof(SECURITY_ATTRIBUTES);
+  sa.lpSecurityDescriptor = NULL;
+  sa.bInheritHandle = TRUE;
+  if (!CreatePipe(&hOutputReadTmp,&hOutputWrite,&sa,0))
+    DisplayError("CreatePipe");
+
+  if (!DuplicateHandle(GetCurrentProcess(),hOutputWrite,
+                       GetCurrentProcess(),&hErrorWrite,0,
+                       TRUE,DUPLICATE_SAME_ACCESS))
+    DisplayError("DuplicateHandle");
+
+  if (!CreatePipe(&hInputRead,&hInputWriteTmp,&sa,0))
+    DisplayError("CreatePipe");
+
+  if (!DuplicateHandle(GetCurrentProcess(),hOutputReadTmp,
+                       GetCurrentProcess(),
+                       &hOutputRead, // Address of new handle.
+                       0,FALSE, // Make it uninheritable.
+                       DUPLICATE_SAME_ACCESS))
+    DisplayError("DupliateHandle");
+
+  if (!DuplicateHandle(GetCurrentProcess(),hInputWriteTmp,
+                       GetCurrentProcess(),
+                       &hInputWrite, // Address of new handle.
+                       0,FALSE, // Make it uninheritable.
+                       DUPLICATE_SAME_ACCESS))
+    DisplayError("DupliateHandle");
+
+  if (!CloseHandle(hOutputReadTmp)) DisplayError("CloseHandle");
+  if (!CloseHandle(hInputWriteTmp)) DisplayError("CloseHandle");
+  ZeroMemory(&si,sizeof(STARTUPINFO));
+  si.cb = sizeof(STARTUPINFO);
+  si.dwFlags = STARTF_USESTDHANDLES;
+  si.hStdOutput = hOutputWrite;
+  si.hStdInput  = hInputRead;
+  si.hStdError  = hErrorWrite;
+  if (!CreateProcess(NULL,cmd,NULL,NULL,TRUE,CREATE_NO_WINDOW,NULL,NULL,&si,&pi))
+    DisplayError("CreateProcess");
+  if (!CloseHandle(pi.hThread)) DisplayError("CloseHandle");
+  if (!CloseHandle(hOutputWrite)) DisplayError("CloseHandle");
+  if (!CloseHandle(hInputRead )) DisplayError("CloseHandle");
+  if (!CloseHandle(hErrorWrite)) DisplayError("CloseHandle");
+  while(1) {
+    if (!ReadFile(hOutputRead,lpBuffer,sizeof(lpBuffer),
                   &nBytesRead,NULL) || !nBytesRead) {
       if (GetLastError() == ERROR_BROKEN_PIPE)
-        break;
-      else {
-        fprintf(stderr,"ReadFile%d\n",GetLastError());
-        exit(EXIT_FAILURE);
-      }
+        break; // pipe done - normal exit path.
+      else
+        DisplayError("ReadFile"); // Something bad happened.
     }
-    fprintf(stderr,"sReadFile\n");
-    if (!WriteConsole(GetStdHandle(STD_OUTPUT_HANDLE),lpBuffer,
-                      nBytesRead,&nCharsWritten,NULL)) {
-      fprintf(stderr,"WriteConsole\n");
-      exit(EXIT_FAILURE);
-    }
+    lpBuffer[nBytesRead]='\0';
+    ret=s_cat(ret,q(lpBuffer),NULL);
   }
+  if (!CloseHandle(hOutputRead)) DisplayError("CloseHandle");
+  if (!CloseHandle(hInputWrite)) DisplayError("CloseHandle");
+  return ret;
 }
-
-#endif
+#else
 
 char* system_(char* cmd) {
-#ifndef _WIN32
   FILE *fp;
   char buf[256];
   char* s=q("");
@@ -521,50 +565,8 @@ char* system_(char* cmd) {
   }
   (void)pclose(fp);
   return s;
-#else
-  HANDLE hOutputReadTmp,hOutputRead,hOutputWrite;
-  HANDLE hInputWriteTmp,hInputRead,hInputWrite;
-  HANDLE hStdIn = NULL;
-  HANDLE hErrorWrite;
-  HANDLE hThread;
-  DWORD ThreadId;
-  SECURITY_ATTRIBUTES sa;
-
-  sa.nLength= sizeof(SECURITY_ATTRIBUTES);
-  sa.lpSecurityDescriptor = NULL;
-  sa.bInheritHandle = TRUE;
-
-  if (!CreatePipe(&hOutputReadTmp,&hOutputWrite,&sa,0)) {
-    fprintf(stderr,"CreatePipe error\n");
-    exit(EXIT_FAILURE);
-  }
-  if (!DuplicateHandle(GetCurrentProcess(),hOutputWrite,
-                       GetCurrentProcess(),&hErrorWrite,0,
-                       TRUE,DUPLICATE_SAME_ACCESS)) {
-    fprintf(stderr,"DuplicateHandle error\n");
-    exit(EXIT_FAILURE);
-  }
-  if (!CreatePipe(&hInputRead,&hInputWriteTmp,&sa,0))
-    fprintf(stderr,"CreatePipe\n");
-  if (!CloseHandle(hOutputReadTmp)) {fprintf(stderr,"CloseHandle-\n");exit(EXIT_FAILURE);}
-  if (!CloseHandle(hInputWriteTmp)) {fprintf(stderr,"CloseHandle--\n");exit(EXIT_FAILURE);}
-  
-  if ( (hStdIn = GetStdHandle(STD_INPUT_HANDLE)) ==
-       INVALID_HANDLE_VALUE ) {
-    fprintf(stderr,"GetStdHandle\n");
-    exit(EXIT_FAILURE);
-  }
-
-  PrepAndLaunchRedirectedChild(cmd,hOutputWrite,hInputRead,hErrorWrite);
-
-  if (!CloseHandle(hOutputWrite)){ fprintf(stderr,"CloseHandle"); }
-  if (!CloseHandle(hInputRead )) { fprintf(stderr,"CloseHandle"); }
-  if (!CloseHandle(hErrorWrite)) { fprintf(stderr,"CloseHandle"); }
-
-  ReadAndHandleOutput(hOutputRead);
-
-#endif
 }
+#endif
 
 char* s_decode(char* str) {
   int count,i,write,escape=0;

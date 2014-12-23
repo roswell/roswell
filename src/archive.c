@@ -86,7 +86,7 @@ int cmd_tar(int argc, const char **argv)
 
 int extract(const char *filename, int do_extract, int flags,const char* outputpath)
 {
-#if !defined(_WIN32)
+#if !(defined (HAVE_ARCHIVE_H) && defined(_WIN32))
   char* str;
   int len=strlen(filename);
   char* type="gzip"; /*for gz*/
@@ -96,8 +96,18 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
       if(filename[i]=='b'||filename[i]=='B')
         type="bzip2"; /*bz*/
   }
+#ifndef _WIN32
   str=cat(type," -dc ",filename," | tar -",extract?"x":"t",
-    flags?"p":"","f - -C ",outputpath,NULL);
+          flags?"p":"","f - -C ",outputpath,NULL);
+#else
+  {
+    char *outputpath2=q(outputpath);
+    substitute_char('\\','/',outputpath2);
+    ensure_directories_exist(outputpath2);
+    str=cat("bsdtar -",extract?"x":"t",flags?"p":"","f ",filename," -C ",outputpath2,NULL);
+    s(outputpath2);
+  }
+#endif
   if(verbose>0)
     fprintf(stderr,"extractcmd=%s\n",str);
   int ret=system(str);
