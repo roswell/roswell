@@ -143,7 +143,11 @@
            (cmd (format nil "sh make.sh '--xc-host=~A' '--prefix=~A'" compiler (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
-      (uiop/run-program:run-program cmd :output t)))
+      (handler-bind ((uiop/run-program:subprocess-error
+                      #'(lambda (c)
+                          (declare (ignore c))
+                          (invoke-restart 'continue))))
+        (uiop/run-program:run-program cmd :output t))))
   (cons t argv))
 
 (defun sbcl-install (argv)
