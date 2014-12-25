@@ -60,14 +60,10 @@ exec ros -- $0 "$@"
   *home-path*)
 
 (defun setenv (name value)
-  (if (uiop:os-windows-p)
-      (error "tbd")
-      #+sbcl(sb-posix:setenv name value 1)))
+  #+sbcl(sb-posix:setenv name value 1))
 
 (defun unsetenv (name)
-  (if (uiop:os-windows-p)
-      (error "tbd")
-      #+sbcl(sb-posix:unsetenv name)))
+  #+sbcl(sb-posix:unsetenv name))
 
 ;;end here from util/opts.c
 
