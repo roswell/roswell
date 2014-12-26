@@ -10,7 +10,7 @@
 #include <signal.h>
 #else
 #include <windows.h>
-#include <Shellapi.h>
+#include <shellapi.h>
 #include <shlobj.h>
 #endif
 #ifdef HAVE_SYS_STAT_H
