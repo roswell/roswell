@@ -40,7 +40,7 @@ char* q_(const char* orig) {
 
 char* q_internal(const char* orig,char* file,int line) {
   if(verbose>1)
-    fprintf(stderr,"%s %d q(%s) %u \n",file,line,orig,(unsigned)orig);
+    fprintf(stderr,"%s %d q(%s) %lu \n",file,line,orig,(intptr_t)orig);
   char* ret= (char*)alloc(strlen(orig)+1);
   strcpy(ret,orig);
   return ret;
@@ -57,7 +57,7 @@ char* qsprintf(int bufsize,char* format,...) {
 
 void s_internal(char* f,char* name,char* file,int line) {
   if(verbose>1)
-    fprintf(stderr,"%s %d s(%s) %u \n",file,line,name,(unsigned)f);
+    fprintf(stderr,"%s %d s(%s) %lu \n",file,line,name,(intptr_t)f);
   dealloc(f);
 }
 
@@ -451,12 +451,13 @@ int rename_file(char* file,char* new_name) {
 }
 
 void touch(char* path) {
+  int ret;
 #ifndef _WIN32
   char* cmd=s_cat2(q("touch "),q(path));
 #else
   char* cmd=q("");
 #endif
-  system(cmd);
+  ret=system(cmd);
   s(cmd);
 }
 
