@@ -12,6 +12,7 @@ I felt making it easier to use Lisp for people is a kind of making opportunity f
 
 ## Installation
 
+    $ git clone -b release https://github.com/snmsts/roswell.git
     $ sh bootstrap
     $ ./configure
     $ make
