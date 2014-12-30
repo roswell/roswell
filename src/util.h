@@ -105,6 +105,8 @@ int delete_file(char* pathspec);
 int rename_file(char* file,char* new_name);
 void touch(char* path);
 char* system_(char* cmd);
+char** parse_cmdline(char* cmdline,int *argc);
+int free_cmdline(char** argv);
 int system_redirect(const char* cmd,char* filename);
 int system_redirect_function(const char* cmd,Function1 f);
 char* uname(void);

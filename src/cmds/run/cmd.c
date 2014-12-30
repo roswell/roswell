@@ -88,6 +88,44 @@ int cmd_script(int argc,char **argv,struct sub_command* cmd)
   return 0;
 }
 
+static int script_frontend_sentinel=0;
+
+int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd)
+{
+  FILE* in;
+  char buf[800];
+  int i,j,c;
+  int argc_;
+  char** argv_;
+  char** argv_gen;
+  if(script_frontend_sentinel)
+    return cmd_script(argc,argv,cmd);
+  script_frontend_sentinel=1;
+  if(verbose>0)
+    fprintf(stderr,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  if((in=fopen(argv[0],"rb"))!=NULL) {
+    for(i=0;i<3;++i)
+      while((c=fgetc(in))!=EOF && c!='\n');
+    i=0;
+    for(;(c=fgetc(in))!=EOF;buf[i++]=c)
+      if(c=='\r'||c=='\n'||i==799)
+        break;
+    buf[i]='\0';
+    fclose(in);
+  }
+  if(verbose>0)
+    fprintf(stderr,"ros_script_cmd=%s\n",buf);
+  argv_=parse_cmdline(buf,&argc_);
+  argv_gen=alloc(sizeof(char**)*(argc+argc_-2));
+  for(i=0;i<argc_-2&&strcmp(argv_[i+2],"$0")!=0;++i)
+    argv_gen[i]=argv_[i+2];
+  for(j=i;i<j+argc;++i)
+    argv_gen[i]=argv[i-j];
+  j=i;
+  for(i=0;i<j;i+=proccmd(j-i,&argv_gen[i],top_options,top_commands));
+  return 0;
+}
+
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1;
@@ -199,10 +237,10 @@ void register_cmd_run(void)
   //run_commands=add_command(run_commands,"*",NULL,cmd_run_star,OPT_SHOW_NONE,1,NULL,NULL);
 
   /*commands*/
-  top_options=add_command(top_options,""         ,NULL,cmd_script,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
+  top_options=add_command(top_options,""         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
   //  top_commands=add_command(top_commands,"output"     ,NULL,cmd_run,1,1,"Generate an executable script or binary from the software specification",NULL);
   top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1,"Run repl",NULL);
-  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
+  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
 
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] "ROS_RUN_REPL" [OPTIONS] [-- implementation-native-options...]\n\n",NULL);
   top_helps=add_help(top_helps,ROS_RUN_REPL,_help,run_commands,run_options,NULL,NULL,NULL);
