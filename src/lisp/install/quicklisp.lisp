@@ -20,7 +20,10 @@
 
 (defun main (exec path &rest r)
   (declare (ignorable exec r))
-  (if (find-package :quicklisp-quickstart)
-      (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path)
-      (error "something wrong")))
-
+  (cond
+    ((probe-file path)
+     (format t "Quicklisp is already setup.~%"))
+    ((find-package :quicklisp-quickstart)
+     (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))
+    (t
+     (error "something wrong"))))
