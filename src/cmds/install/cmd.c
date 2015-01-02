@@ -170,6 +170,12 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
         tmp[i++]=truename(argv_orig[0]);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
+        if(verbose>0) {
+          int j;
+          fprintf(stderr,"argc_=%d",argc_);
+          for(j=0;j<argc_;++j)
+            fprintf(stderr,"argv[%d]=%s,",j,tmp[j]);
+        }
         for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
         for(j=0;j<argc_;s(tmp[j++]));
         dealloc(tmp);

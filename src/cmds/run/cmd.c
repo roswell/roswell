@@ -101,6 +101,8 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd)
   if(script_frontend_sentinel)
     return cmd_script(argc,argv,cmd);
   script_frontend_sentinel=1;
+  if(strcmp(argv[0],"--")==0)
+    ++argv,--argc;
   if(verbose>0)
     fprintf(stderr,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if((in=fopen(argv[0],"rb"))!=NULL) {
