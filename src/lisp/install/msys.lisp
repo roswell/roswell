@@ -10,7 +10,7 @@
 ;; -> zip:unzip -> 7za.exe -> mingw-get
 ;; reference for mingw-get : https://chocolatey.org/packages/mingw-get ?
 
-(defvar *7za-archive* "http://jaist.dl.sourceforge.net/project/sevenzip/7-Zip/9.20/7za920.zip")
+(defvar *7za-archive* "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
 (defvar *mingw-get-files* '("mingw-get-0.6.2-mingw32-beta-20131004-1-bin.tar.xz"
                             "mingw-get-0.6.2-mingw32-beta-20131004-1-lic.tar.xz"
                             "mingw-get-setup-0.6.2-mingw32-beta-20131004-1-dll.tar.xz"
@@ -21,15 +21,24 @@
    path
    output-path))
 
-(defun msys-setup-7za (argv)
-  (format t "setting up 7zip...~%")
+(defun 7za ()
   (let* ((pos (position #\/ *7za-archive* :from-end t))
-         (archive (when pos
-                    (merge-pathnames (format nil "archives/~A" (subseq *7za-archive* (1+ pos))) (homedir))))
          (pos2 (when pos
                  (position #\/ *7za-archive* :from-end t :end pos)))
          (version (when pos2 (subseq *7za-archive* (1+ pos2) pos)))
          (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
+    (values (merge-pathnames "7za.exe" prefix) version)))
+
+(defun un7za (path output-path)
+  (format nil "7za x ~A -so |7za x -ttar -si -y -o ~A"
+          path
+          output-path))
+
+(defun msys-setup-7za (argv)
+  (format t "setting up 7zip...~%")
+  (let* ((archive (7za))
+         (prefix (make-pathname :defaults archive
+                                :name nil :type nil)))
     (if (probe-file (merge-pathnames "7za.exe" prefix))
         (format t "7zip already setup~%")
         (progn
@@ -41,11 +50,13 @@
   (loop :for file :in *mingw-get-files*
      :for path := (merge-pathnames (format nil "archives/~A" file) (homedir))
      :do
-     (unless (probe-file path)
-       (format t "Download ~a" file)
-       (ros.install::download (format nil "~@{~A~}" "http://prdownloads.sourceforge.net/mingw/" file "?download")
-                              path)
-       (format t " done.~%")))
+     (format t "Download ~a" file)
+     (if (probe-file path)
+         (format t " skip.~%")
+         (progn
+           (ros.install::download (format nil "~@{~A~}" "http://prdownloads.sourceforge.net/mingw/" file "?download")
+                                  path)
+           (format t " done.~%"))))
   (cons t argv))
 
 (setq *install-cmds*
