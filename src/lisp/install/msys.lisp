@@ -8,7 +8,14 @@
 ;; strategy to obtain toolchain for windows
 ;; sbcl-bin -> quicklisp(until here should be finished when this file is loaded)
 ;; -> zip:unzip -> 7za.exe -> mingw-get
-;; reference for mingw-get : https://chocolatey.org/packages/mingw-get ?
+;; memo
+;; bin/mingw-get.exe install msys-base
+;; bin/mingw-get.exe install mingw32-gcc
+;; bin/mingw-get.exe install mingw32-autoconf (is needed?)
+
+;; write /etc/fstab C:/Users/Vagrant/.roswell/impls/x86/windows/msys/-/     /mingw
+;; ensure ros's path in  env PATH
+;; instead of "sh" "sh -l" to use for WIN32.
 
 (defvar *7za-archive* "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
 (defvar *mingw-get-files* '("mingw-get-0.6.2-mingw32-beta-20131004-1-bin.tar.xz"
@@ -25,14 +32,19 @@
   (let* ((pos (position #\/ *7za-archive* :from-end t))
          (pos2 (when pos
                  (position #\/ *7za-archive* :from-end t :end pos)))
-         (version (when pos2 (subseq *7za-archive* (1+ pos2) pos)))
+         (pos3 (when pos2
+                 (position #\/ *7za-archive* :from-end t :end pos2)))
+         (version (when pos2 (subseq *7za-archive* (1+ pos3) pos2)))
          (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
     (values (merge-pathnames "7za.exe" prefix) version)))
 
 (defun un7za (path output-path)
-  (format nil "7za x ~A -so |7za x -ttar -si -y -o ~A"
-          path
-          output-path))
+  (uiop/run-program:run-program
+   (format nil "~A x ~A -so |~A x -ttar -si -y -o~A"
+           (uiop/filesystem:native-namestring (7za))
+           (uiop/filesystem:native-namestring path)
+           (uiop/filesystem:native-namestring (7za))
+           (uiop/filesystem:native-namestring output-path))))
 
 (defun msys-setup-7za (argv)
   (format t "setting up 7zip...~%")
@@ -56,8 +68,14 @@
          (progn
            (ros.install::download (format nil "~@{~A~}" "http://prdownloads.sourceforge.net/mingw/" file "?download")
                                   path)
-           (format t " done.~%"))))
+           (format t " done.~%")))
+     (format t "extract")
+     (un7za path (ensure-directories-exist
+                  (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "msys" "-") (homedir))))
+     (format t " done ~%"))
   (cons t argv))
+
+;;(msys-setup-msys t)
 
 (setq *install-cmds*
       (list
