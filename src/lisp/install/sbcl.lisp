@@ -1,5 +1,9 @@
 (in-package :ros.install)
 
+(defun sh ()
+  (or #+win32
+      (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh -l" (uname-m) (uname) "msys" "-") (homedir))
+      "sh"))
 #+sbcl
 (defclass count-line-stream (sb-gray:fundamental-character-output-stream)
   ((base :initarg :base 
@@ -140,7 +144,7 @@
     (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run --" *ros-path* (get-opt "sbcl.compiler")))
-           (cmd (format nil "sh make.sh '--xc-host=~A' '--prefix=~A'" compiler (get-opt "prefix")))
+           (cmd (format nil "~A make.sh '--xc-host=~A' '--prefix=~A'" (sh) compiler (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (handler-bind ((uiop/run-program:subprocess-error
@@ -168,7 +172,7 @@
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program "sh install.sh" :output t)))
+        (uiop/run-program:run-program (format nil "~A install.sh" (sh)) :output t)))
     (format t"done.~%"))
   (cons t argv))
 
@@ -180,7 +184,7 @@
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program "sh clean.sh" :output t))
+        (uiop/run-program:run-program (format nil "~A clean.sh" (sh)) :output t))
     (format t "done.~%"))
   (cons t argv))
 

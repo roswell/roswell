@@ -32,8 +32,9 @@
   (let* ((pos (position #\/ *7za-archive* :from-end t))
          (pos2 (when pos
                  (position #\/ *7za-archive* :from-end t :end pos)))
-         (pos3 (when pos2
-                 (position #\/ *7za-archive* :from-end t :end pos2)))
+         (pos3 (if pos2
+                   (position #\/ *7za-archive* :from-end t :end pos2)
+                   0))
          (version (when pos2 (subseq *7za-archive* (1+ pos3) pos2)))
          (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
     (values (merge-pathnames "7za.exe" prefix) version)))
@@ -58,6 +59,16 @@
           (unzip archive (ensure-directories-exist prefix)))))
   (cons t argv))
 
+(defun msys-setup-fstab (argv)
+  (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "msys" "-") (homedir))))
+    (with-open-file (o (merge-pathnames "msys/1.0/etc/fstab" path)
+                       :direction :output
+                       :if-exists :overwrite
+                       :if-does-not-exist :create)
+      (format o "~A    /mingw~%" path)))
+  (cons t argv))
+;;(msys-setup-fstab t)
+
 (defun msys-setup-msys (argv)
   (loop :for file :in *mingw-get-files*
      :for path := (merge-pathnames (format nil "archives/~A" file) (homedir))
@@ -75,15 +86,14 @@
      (format t " done ~%"))
   (cons t argv))
 
-;;(msys-setup-msys t)
-
 (setq *install-cmds*
       (list
        'msys-setup-7za
-       'msys-setup-msys))
+       'msys-setup-msys
+       'msys-setup-fstab))
 
 (defun msys-help (argv)
-  (format t "hoge~%")
+  (format t "~%")
   (cons t argv))
 
 (setq *help-cmds*
