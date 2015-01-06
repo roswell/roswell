@@ -67,7 +67,9 @@
                        :if-does-not-exist :create)
       (format o "~A    /mingw~%" path)))
   (cons t argv))
-;;(msys-setup-fstab t)
+
+(defun msys-setup-profile (argv)
+  (cons t argv))
 
 (defun msys-setup-msys (argv)
   (loop :for file :in *mingw-get-files*
@@ -90,7 +92,8 @@
       (list
        'msys-setup-7za
        'msys-setup-msys
-       'msys-setup-fstab))
+       'msys-setup-fstab
+       'msys-setup-profile))
 
 (defun msys-help (argv)
   (format t "~%")
