@@ -1,6 +1,7 @@
 # Roswell - Common Lisp environment setup Utility.
 
-This software is alpha-quality. Nothing stable, reliable.
+This software is now beta.Basic interfaces are fixed.I beleive it works well on some platform,
+but some part are not implemented,not stable on other os yet.
 
 ## Description
 Installing Common Lisp and setting up everything just work is still difficult and you have to learn some tips.
