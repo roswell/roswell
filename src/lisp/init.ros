@@ -1,0 +1,33 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|create new ros script
+exec ros -Q -L sbcl-bin -- $0 "$@"
+|#
+
+(defvar *opts* (let ((*read-eval*))
+                 (read-from-string (uiop/os:getenv "ROS_OPTS"))))
+
+(defun main (subcmd cmd &rest r)
+  (declare (ignorable cmd))
+  (cond ((and (equal subcmd "main") r)
+         (ql:quickload :uiop)
+         (unless (with-open-file (out (make-pathname :defaults (uiop/os:getcwd)
+                                                            :name (first r)
+                                                            :type "ros")
+                                             :direction :output
+                                             :if-exists nil
+                                             :if-does-not-exist :create)
+                          (when out
+                            (format out "~@{~A~%~}"
+                                    "#!/bin/sh"
+                                    "#|-*- mode:lisp -*-|#"
+                                    "#|" "exec ros -Q -- $0 \"$@\"" "|#"
+                                    "(defun main (&rest argv)"
+                                    "  (declare (ignorable argv)))")
+                            t))
+           (format t "file already exists~%")))
+        ((or (equal subcmd "help") (not r))
+         (format t "Usage: ~A [OPTIONS] ~A script-name~%"
+                 (second (assoc "argv0" *opts* :test 'equal)) (first r)))))
+
+

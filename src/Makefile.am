@@ -8,7 +8,7 @@ if COND_WINDOWS
 roslispinstall_DATA += lisp/install/msys.lisp
 endif
 roslispsubcmddir = $(roslispdir)/subcmd
-roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros lisp/use.ros
+roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros lisp/use.ros lisp/init.ros
 
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
