@@ -31,7 +31,7 @@ struct Cons {
 #define EXE_EXTENTION ""
 #endif
 
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
 #define SBCL_BIN_EXTENTION ".msi"
 #else
 #define SBCL_BIN_EXTENTION ".tar.bz2"

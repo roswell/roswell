@@ -59,7 +59,7 @@ char* sbcl_uri_bin(struct install_options* param)
 
 int sbcl_bin_expand(struct install_options* param)
 {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
   char* impl=param->impl;
   char* version=q(param->version);
   int ret;
@@ -80,7 +80,11 @@ int sbcl_bin_expand(struct install_options* param)
   ensure_directories_exist(dist_path);
   ensure_directories_exist(log_path);
 
-  char* cmd=cat("start /wait msiexec.exe /a \"",
+  char* cmd=cat(
+#ifdef _WIN32
+		"start /wait ",
+#endif
+		"msiexec.exe /a \"",
                 archive,
                 "\" targetdir=\"",
                 dist_path,
@@ -112,7 +116,7 @@ int sbcl_bin_expand(struct install_options* param)
 }
 
 int sbcl_bin_install(struct install_options* param) {
-#ifdef _WIN32
+#if defined(_WIN32) || defined(__CYGWIN__)
   char* impl=param->impl;
   char* version=param->version;
   char* arch=param->arch;

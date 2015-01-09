@@ -740,6 +740,9 @@ int system_redirect_function(const char* cmd,Function1 f)
 }
 
 char* uname(void) {
+#ifdef __CYGWIN__
+  return q("windows");
+#endif
 #ifndef _WIN32
   char *p=system_("uname");
   char *p2;
@@ -752,6 +755,9 @@ char* uname(void) {
 }
 
 char* uname_m(void) {
+#ifdef __CYGWIN__
+  return q("x86");
+#endif
 #ifndef _WIN32
   char *p=system_("uname -m");
   char *p2;
