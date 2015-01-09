@@ -15,14 +15,6 @@ struct Cons* attralloc(void) {
   return toPointer(cons(ret,(LVal)NULL));
 }
 
-void print_attr(LVal i) {
-  for(;i;i=((struct Cons*)i)->next) {
-    struct attr* p=(struct attr*)firstp(i);
-    printf("<%s=%s>",p->name,p->value);
-  }
-  printf("\n");
-}
-
 void attrsfree(struct Cons* a) {
   struct Cons* next;
   for(;a;) {
