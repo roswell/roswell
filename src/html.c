@@ -3,6 +3,8 @@
 #include <string.h>
 #include "util.h"
 
+extern int verbose;
+
 struct attr {
   char* name;
   char* value;
@@ -307,6 +309,8 @@ LVal atag_list(char* filename)
 {
   FILE* fp;
   LVal ret=(LVal)NULL;
+  if(verbose>0)
+    fprintf(stderr,"open %s\n",filename);
   fp=fopen(filename,"r");
   if(fp!=NULL) {
     LVal tags=parse_tags(fp,(LVal)NULL,0);
@@ -371,6 +375,12 @@ char* sbcl_bin(char* file)
 {
   char* str;
   LVal ret3,ret2,ret;
+  if(verbose>0) {
+    char* u=uname();
+    char* m=uname_m();
+    fprintf(stderr,"uname=%s uname-m=%s\n",u,m);
+  }
+
   ret=atag_list(file);
   ret2=remove_if_not1(filter_sbcl_uri,ret);
   ret3= split_string(firsts(ret2),"-");
