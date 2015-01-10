@@ -255,8 +255,8 @@ LVal register_runtime_options(LVal opt) {
 
   /* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
   /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
-  opt=add_command(opt,"rc","-R",opt_top_rc,1,0,"try read /etc/rosrc, ~/.rosrc",NULL);
-  opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.rosrc",NULL);
+  opt=add_command(opt,"rc","-R",opt_top_rc,1,0,"try read /etc/rosrc, ~/.roswell/init.lisp",NULL);
+  opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.roswell/init.lisp",NULL);
   opt=add_command(opt,"quicklisp","-Q",opt_top_ql,1,0,"use quicklisp",NULL);
   opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0,"do not use quicklisp (default)",NULL);
   opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0,"be quite noisy while building",NULL);
