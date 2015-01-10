@@ -4,7 +4,7 @@
 
 int cmd_config(int argc, const char **argv)
 {
-  char* home=homedir();
+  char* home=configdir();
   char* path=cat(home,"config",NULL);
   int ret;
   if(argc==1) {

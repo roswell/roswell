@@ -6,7 +6,7 @@
 
 int quicklisp_start(struct install_options* param)
 {
-  char* home= homedir();
+  char* home=configdir();
   param->version=NULL;
   param->arch_in_archive_name=0;
   //param->expand_path=cat(home,"src",SLASH,param->impl,SLASH,NULL);
@@ -26,7 +26,7 @@ char* quicklisp_extention(struct install_options* param)
 
 int quicklisp_setup(struct install_options* param)
 {
-  char* home= homedir();
+  char* home=configdir();
   char* lisp_path=s_cat(lispdir(),q("install"),q(SLASH),q("quicklisp.lisp"),NULL);
   char* archive=s_cat(q(home),q("archives"),q(SLASH),q("quicklisp.lisp"),NULL);
   char* exe_path=truename(argv_orig[0]);

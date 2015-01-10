@@ -92,6 +92,7 @@ int position_char_not(char* items,char* seq);
 char* upcase(char* orig);
 char* escape_string(char* str);
 char* homedir(void);
+char* configdir(void);
 char* lispdir(void);
 char* truename(const char* path);
 char* pathname_directory (char* path);

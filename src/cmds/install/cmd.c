@@ -33,7 +33,7 @@ int installed_p(struct install_options* param)
 
   impl=q(param->impl);
   //TBD for util.
-  i=s_cat(homedir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
+  i=s_cat(configdir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
           q(impl),q(param->version?SLASH:""),q(param->version?param->version:""),q(SLASH),NULL);
   ret=directory_exist_p(i);
   if(verbose>0) {
@@ -51,7 +51,7 @@ int install_running_p(struct install_options* param)
 
 int start(struct install_options* param)
 {
-  char* home= homedir();
+  char* home=configdir();
   char* p;
   ensure_directories_exist(home);
   if(installed_p(param)) {
@@ -88,7 +88,7 @@ char* download_archive_name(struct install_options* param)
 
 int download(struct install_options* param)
 {
-  char* home= homedir();
+  char* home=configdir();
   char* url=(*(install_impl->uri))(param);
   char* archive_name=download_archive_name(param);
   char* impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
@@ -166,7 +166,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
         tmp[i++]=q(argv[1]);
         tmp[i++]=sexp_opts(local_opt);
         tmp[i++]=sexp_opts(global_opt);
-        tmp[i++]=homedir();
+        tmp[i++]=configdir();
         tmp[i++]=truename(argv_orig[0]);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
@@ -187,7 +187,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
         struct opts* opt=global_opt;
         struct opts** opts=&opt;
         int i;
-        char* home=homedir();
+        char* home=configdir();
         char* path=cat(home,"config",NULL);
         char* v=cat(param.impl,".version",NULL);
         char* version=param.version;
@@ -251,7 +251,7 @@ int install_help(int argc,char **argv,struct sub_command* cmd)
         tmp[i++]=q(argv[1]);
         tmp[i++]=sexp_opts(local_opt);
         tmp[i++]=sexp_opts(global_opt);
-        tmp[i++]=homedir();
+        tmp[i++]=configdir();
         tmp[i++]=truename(argv_orig[0]);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;

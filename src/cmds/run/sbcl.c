@@ -5,7 +5,7 @@
 char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
 {
   char** arg=NULL;
-  char* home=homedir();
+  char* home=configdir();
   char* arch=uname_m();
   char* os=uname();
   char* impl=(char*)cmd->name;

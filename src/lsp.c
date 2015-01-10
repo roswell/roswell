@@ -111,7 +111,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     LVal p;
     if(command==top_commands && position_char(".",argv[0])==-1) {
       /* local commands*/
-      char* home=homedir();
+      char* home=configdir();
       char* lisp_path=lispdir();
       char* cmddir=cat(home,"subcmd",SLASH,NULL);
       char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
@@ -302,7 +302,7 @@ int main (int argc,char **argv) {
   top_helps=add_help(top_helps,NULL,_help,top_commands,top_options,NULL,NULL,NULL);
   s(_help);
 
-  char* path=s_cat(homedir(),q("config"),NULL);
+  char* path=s_cat(configdir(),q("config"),NULL);
   global_opt=load_opts(path);
   struct opts** opts=&global_opt;
   unset_opt(opts,"program");

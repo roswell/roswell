@@ -134,12 +134,12 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   char* impl;
   char* version=NULL;
   int pos;
-  char* home=homedir();
-  set_opt(&local_opt,"quicklisp",cat(home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp",NULL),0);
+  char* config=configdir();
+  set_opt(&local_opt,"quicklisp",cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp",NULL),0);
   set_opt(&local_opt,"argv0",argv_orig[0],0);
-  set_opt(&local_opt,"homedir",home,0);
+  set_opt(&local_opt,"homedir",config,0);
   if(rc) {
-    char* init=s_cat(homedir(),q("init.lisp"),NULL);
+    char* init=s_cat(configdir(),q("init.lisp"),NULL);
 #ifdef _WIN32
     char* etc="";
 #else
@@ -225,7 +225,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   }else {
     fprintf(stderr,"lisp doesn't specified stop\n");
   }
-  s(home),s(impl),s(version);
+  s(config),s(impl),s(version);
   return ret;
 }
 

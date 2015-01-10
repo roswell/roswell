@@ -12,7 +12,7 @@ char* sbcl_bin(char* file);
 
 int sbcl_version_bin(struct install_options* param)
 {
-  char* home= homedir();
+  char* home=configdir();
   char* ret;
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
   ensure_directories_exist(platforms_html);
@@ -63,7 +63,7 @@ int sbcl_bin_expand(struct install_options* param)
   char* impl=param->impl;
   char* version=q(param->version);
   int ret;
-  char* home= homedir();
+  char* home=configdir();
   char* arch= arch_(param);
   char* archive=cat(impl,"-",version,"-",arch,".msi",NULL);
   char* log_path=cat(home,"impls",SLASH,"log",SLASH,impl,"-",version,"-",arch,SLASH,"install.log",NULL);
@@ -105,7 +105,7 @@ int sbcl_bin_expand(struct install_options* param)
   char* archive=download_archive_name(param);
   char* version=q(param->version);
   char* dist_path=param->expand_path;
-  char* home= homedir();
+  char* home=configdir();
   printf("Extracting archive. %s to %s\n",archive,dist_path);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
@@ -120,7 +120,7 @@ int sbcl_bin_install(struct install_options* param) {
   char* impl=param->impl;
   char* version=param->version;
   char* arch=param->arch;
-  char* home= homedir();
+  char* home=configdir();
   char* str;
   char* version_num= q(version);
   int ret;
@@ -143,7 +143,7 @@ int sbcl_bin_install(struct install_options* param) {
   return 1;
 #else
   int ret=1;
-  char* home= homedir();
+  char* home=configdir();
   char* impl=param->impl;
   char* version=param->version;
   char* impl_path= cat(home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);

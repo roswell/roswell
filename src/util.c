@@ -276,7 +276,15 @@ char* homedir(void) {
     /* error? */
     return NULL;
   }
-  return s_cat(append_trail_slash(c),q_("."),q(PACKAGE),q(SLASH),NULL);
+  return s_cat(append_trail_slash(c),NULL);
+}
+
+char* configdir(void) {
+  char* home=homedir();
+  if(home) {
+    return s_cat(home,q_("."),q(PACKAGE),q(SLASH),NULL);
+  }
+  return NULL;
 }
 
 char* lispdir(void) {
