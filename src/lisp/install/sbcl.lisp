@@ -4,35 +4,6 @@
   (or #+win32
       (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh -l" (uname-m) (uname) "msys" "-") (homedir))
       "sh"))
-#+sbcl
-(defclass count-line-stream (sb-gray:fundamental-character-output-stream)
-  ((base :initarg :base 
-         :initform *standard-output*
-         :reader count-line-stream-base)
-   (print-char :initarg :print-char
-               :initform `((900 . line-number)(10 . #\.))
-               :accessor count-line-stream-print-char)
-   (count-char :initarg :count-char
-                :initform #\NewLine
-                :reader count-line-stream-count-char)
-   (count :initform -1
-          :accessor count-line-stream-count)))
-#+sbcl
-(defmethod sb-gray:stream-write-char ((stream count-line-stream) character)
-  (when (char= character (count-line-stream-count-char stream))
-    (loop
-       :with count := (incf (count-line-stream-count stream))
-       :with stream- := (count-line-stream-base stream)
-       :for (mod . char) :in (count-line-stream-print-char stream)
-       :when (zerop (mod count mod))
-       :do (if (characterp char)
-               (write-char char stream-)
-               (funcall char stream))
-       (force-output stream-))))
-
-#+sbcl
-(defun line-number (stream)
-  (format (count-line-stream-base stream) "~&~8d " (count-line-stream-count stream)))
 
 (defun sbcl-get-version ()
   (let (result
@@ -144,7 +115,7 @@
     (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run --" *ros-path* (get-opt "sbcl.compiler")))
-           (cmd (format nil "~A make.sh '--xc-host=~A' '--prefix=~A'" (sh) compiler (get-opt "prefix")))
+           (cmd (format nil "~A ~A '--xc-host=~A' '--prefix=~A'" (sh) (merge-pathnames "make.sh" src) compiler (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (handler-bind ((uiop/run-program:subprocess-error
