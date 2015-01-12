@@ -2,7 +2,7 @@
 
 (defun sh ()
   (or #+win32
-      (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh -l" (uname-m) (uname) "msys" "-") (homedir))
+      (format nil "~A -l" (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh" (uname-m) (uname) "msys" "-") (homedir)))
       "sh"))
 
 (defun sbcl-get-version ()
@@ -118,11 +118,7 @@
            (cmd (format nil "~A ~A '--xc-host=~A' '--prefix=~A'" (sh) (merge-pathnames "make.sh" src) compiler (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
-      (handler-bind ((uiop/run-program:subprocess-error
-                      #'(lambda (c)
-                          (declare (ignore c))
-                          (invoke-restart 'continue))))
-        (uiop/run-program:run-program cmd :output t))))
+      (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
 (defun sbcl-install (argv)
