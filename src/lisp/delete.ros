@@ -1,13 +1,12 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Delete installed implementations
-exec ros -- $0 "$@"
+exec ros -L sbcl-bin -- $0 "$@"
 |#
 
 (defpackage :ros.delete
   (:use :cl))
 (in-package :ros.delete)
-
 
 (defvar *opts* (let ((*read-eval*))
                  (read-from-string (uiop/os:getenv "ROS_OPTS"))))
@@ -17,7 +16,6 @@ exec ros -- $0 "$@"
 
 (defun homedir ()
   (opt "homedir"))
-
 
 (defun roswell-internal (args output)
   (uiop/run-program:run-program
