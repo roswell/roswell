@@ -79,6 +79,10 @@ to load with `.sbclrc`
 ## Author
 SANO Masatoshi (snmsts@gmail.com)
 
+## Contributors
+ * Eitaro Fukamachi (e.arrows@gmail.com)
+ * Tomoya KAWANISHI (chopsticks.tk.ppfm@gmail.com)
+
 ## Special Thanks to
  * Eitaro Fukamachi (e.arrows@gmail.com) for naming this project.
 
