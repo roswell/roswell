@@ -106,8 +106,10 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd)
   if(verbose>0)
     fprintf(stderr,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if((in=fopen(argv[0],"rb"))!=NULL) {
-    if(fgetc(in)!='#'||fgetc(in)!='!')
+    if(fgetc(in)!='#'||fgetc(in)!='!') {
+      fclose(in);
       cmd_script(argc,argv,cmd);
+    }
     for(i=0;i<3;++i)
       while((c=fgetc(in))!=EOF && c!='\n');
     i=0;
