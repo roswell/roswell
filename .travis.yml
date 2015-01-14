@@ -12,4 +12,4 @@ script:
   - ros --version
   - ros setup
   - ros run -- --version
-  - ros install sbcl
+  - ros install sbcl || $(cat ~/.roswell/impls/log/sbcl-1.2.7/make.log && exit -1)
