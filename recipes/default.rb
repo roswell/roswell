@@ -1,16 +1,10 @@
 # encoding: utf-8
 branch = "release"
 
-remote_file "/tmp/#{branch}.tar.gz" do
-  source "https://github.com/snmsts/roswell/archive/#{branch}.tar.gz"
-  mode "0644"
-  not_if { File.exists?("/tmp/#{branch}.tar.gz") }
-end
-
-bash "tar xvf #{branch}.tar.gz" do
+bash "download and unzip roswell" do
   user "root"
   cwd "/tmp"
-  code %(tar xvf #{branch}.tar.gz)
+  code %(wget -O - 'https://github.com/snmsts/roswell/archive/#{branch}.tar.gz' | tar zxvf -)
   not_if { File.exists?("/tmp/roswell-#{branch}") }
 end
 
