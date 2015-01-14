@@ -9,6 +9,6 @@ script:
   - ./configure
   - make
   - sudo make install
-  - ros --version
-  - ros setup
-  - ros run -- --version
+  - ros version
+  - ros -v setup
+  - ros -v run -- --version
