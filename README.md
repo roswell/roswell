@@ -1,5 +1,7 @@
 # Roswell - Common Lisp environment setup Utility.
 
+[![Build Status](https://travis-ci.org/snmsts/roswell.svg?branch=master)](https://travis-ci.org/snmsts/roswell)
+
 This software is now beta.Basic interfaces are fixed.I beleive it works well on some platform,
 but some part are not implemented,not stable on other os yet.
 

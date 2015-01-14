@@ -1,0 +1,14 @@
+language: c
+
+compiler:
+  - gcc
+  - clang
+
+script:
+  - sh bootstrap
+  - ./configure
+  - make
+  - sudo make install
+  - ros --version
+  - ros setup
+  - ros run -- --version
