@@ -12,3 +12,4 @@ script:
   - ros --version
   - ros setup
   - ros run -- --version
+  - ros install sbcl
