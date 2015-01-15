@@ -75,6 +75,12 @@ to load with `.sbclrc`
 (setq inferior-lisp-program "ros -L sbcl -Q -l ~/.sbclrc run")
 ```
 
+## Chef recipe for roswell
+
+[@Rudolph-Miller](https://github.com/Rudolph-Miller) is providing a Chef recipe for setting roswell up.
+
+- [Rudolph-Miller/chef-roswell](https://github.com/Rudolph-Miller/chef-roswell)
+
 ## See Also
 + [keens/cim](https://github.com/keens/cim) : similar project that is implemented in shellscript.I motivated to implement roswell by seeing this project.
 
