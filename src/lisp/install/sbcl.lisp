@@ -13,7 +13,7 @@
              (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
         (format t "download sbcl.html every one hour. skip.~%")
         (download "https://github.com/sbcl/sbcl/releases" file))
-    (with-open-file (in file)
+    (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
       (ros:quicklisp)
       (with-output-to-string (*standard-output*)
         (funcall (intern (string :quickload) :ql)
