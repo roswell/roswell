@@ -132,6 +132,17 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd)
   return 0;
 }
 
+char* ql_path(void) {
+  char* env_ql=getenv("QUICKLISP_HOME");
+  if(env_ql){
+    env_ql=q(env_ql);
+  }else {
+    env_ql=q(get_opt("quicklisp"));
+  }
+  env_ql=append_trail_slash(env_ql);
+  return env_ql;
+}
+
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
 {
   int ret=1;
@@ -139,7 +150,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   char* version=NULL;
   int pos;
   char* config=configdir();
-  set_opt(&local_opt,"quicklisp",cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp",NULL),0);
+  set_opt(&local_opt,"quicklisp",cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL),0);
   set_opt(&local_opt,"argv0",argv_orig[0],0);
   set_opt(&local_opt,"homedir",config,0);
   if(rc) {

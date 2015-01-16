@@ -25,11 +25,16 @@
             (let((*read-eval*))
               (read-from-string (getenv "ROS_OPTS"))))))
 
-(defun quicklisp ()
+(defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)
     (cl:load
-     (second (assoc "quicklisp" (ros-opts)
-                    :test 'equal)))))
+     (make-pathname
+      :name "setup"
+      :type "lisp"
+      :defaults (or path
+                    (and environment (getenv environment))
+                    (second (assoc "quicklisp" (ros-opts)
+                                   :test 'equal)))))))
 
 (defun impl ()
   (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))

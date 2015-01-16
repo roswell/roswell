@@ -2,6 +2,8 @@
 #include "util.h"
 #include "opt.h"
 
+char* ql_path(void);
+
 char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
 {
   char** arg=NULL;
@@ -36,12 +38,13 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   if(script)
     offset+=1;
   if(quicklisp) {
-    char* setup_file=get_opt("quicklisp");
+    char* setup_file=s_cat(ql_path(),q("setup.lisp"),NULL);
     if(file_exist_p(setup_file)) {
       offset+=2;
     }else {
       quicklisp=0;
     }
+    s(setup_file);
   }
   if(program||script)
     offset+=2;
@@ -86,7 +89,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   if(quicklisp) {
     char *tmp,*tmp2;
     arg[paramc++]=q("--eval");
-    tmp=cat("#-quicklisp(cl:load \"",home,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,"setup.lisp\")",NULL);
+    tmp=s_cat(q("#-quicklisp(cl:load \""),ql_path(),q("setup.lisp\")"),NULL);
     arg[paramc++]=tmp;
   }
 
