@@ -11,9 +11,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defvar *opts* (let ((*read-eval*))
                  (read-from-string (uiop/os:getenv "ROS_OPTS"))))
 
-(defun help (path)
-  (format t "Usage: ~A [OPTIONS]~:[~;~:* ~A~] script-name~%"
-          (second (assoc "argv0" *opts* :test 'equal)) path))
+(defun help (name)
+  (format t "Usage: ~A init [OPTIONS]~:[ script-name~;~:* ~A~]~%"
+          (second (assoc "argv0" *opts* :test 'equal)) name))
 
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd r))
