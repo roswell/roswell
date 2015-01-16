@@ -11,26 +11,31 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defvar *opts* (let ((*read-eval*))
                  (read-from-string (uiop/os:getenv "ROS_OPTS"))))
 
+(defun help (path)
+  (format t "Usage: ~A [OPTIONS] ~A script-name~%"
+          (second (assoc "argv0" *opts* :test 'equal)) path))
+
 (defun main (subcmd cmd &optional path &rest r)
   (declare (ignore cmd r))
   (cond ((and (equal subcmd "main") path)
-         (unless (with-open-file (out (make-pathname :defaults (uiop/os:getcwd)
-                                                     :name path
-                                                     :type "ros")
-                                      :direction :output
-                                      :if-exists nil
-                                      :if-does-not-exist :create)
-                   (when out
-                     (format out "~@{~A~%~}"
-                             "#!/bin/sh"
-                             "#|-*- mode:lisp -*-|#"
-                             "#|" "exec ros -Q -- $0 \"$@\"" "|#"
-                             "(defun main (&rest argv)"
-                             "  (declare (ignorable argv)))")
-                     t))
-           (format t "file already exists~%")))
+         (handler-case
+             (unless (with-open-file (out (make-pathname :defaults (uiop/os:getcwd)
+                                                         :name path
+                                                         :type "ros")
+                                          :direction :output
+                                          :if-exists nil
+                                          :if-does-not-exist :create)
+                       (when out
+                         (format out "~@{~A~%~}"
+                                 "#!/bin/sh"
+                                 "#|-*- mode:lisp -*-|#"
+                                 "#|" "exec ros -Q -- $0 \"$@\"" "|#"
+                                 "(defun main (&rest argv)"
+                                 "  (declare (ignorable argv)))")
+                         t))
+               (format t "file already exists~%"))
+           (error (e)
+             (format *error-output* "~&~A~%" e)
+             (help path))))
         ((or (equal subcmd "help") (not path))
-         (format t "Usage: ~A [OPTIONS] ~A script-name~%"
-                 (second (assoc "argv0" *opts* :test 'equal)) path))))
-
-
+         (help path))))
