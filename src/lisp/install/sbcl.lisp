@@ -14,7 +14,7 @@
         (format t "download sbcl.html every one hour. skip.~%")
         (download "https://github.com/sbcl/sbcl/releases" file))
     (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
-      (ros:quicklisp)
+      (ros:quicklisp :environment nil)
       (with-output-to-string (*standard-output*)
         (funcall (intern (string :quickload) :ql)
                :cl-html-parse))

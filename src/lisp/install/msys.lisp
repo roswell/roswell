@@ -1,5 +1,6 @@
 (in-package :ros.install)
-(ql:quickload :zip)
+(ros:quicklisp :environment nil)
+(ql:quickload :zip :silent t)
 
 ;; experiments... on repl
 ;;(setq *ros-path* "C:/MinGW/msys/1.0/local/bin/ros")

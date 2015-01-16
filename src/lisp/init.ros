@@ -1,9 +1,9 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|create new ros script
-exec ros -Q -L sbcl-bin -- $0 "$@"
+exec ros +Q -L sbcl-bin -- $0 "$@"
 |#
-
+(ros:quicklisp :environment nil)
 ;; sbcl-bin is old enough not to include UIOP on some OSes like Mac OS X.
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
