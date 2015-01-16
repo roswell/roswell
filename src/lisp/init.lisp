@@ -104,7 +104,7 @@
                          "(cl:apply 'main ros:*argv*)"
                          ""))))
           (setf *features* (remove :ros.script *features*))))
-      (format t "script ~S is not exist~%" arg)))
+      (format t "script ~S does not exist~%" arg)))
 
 (defun load (x file)
   (declare (ignore x))
