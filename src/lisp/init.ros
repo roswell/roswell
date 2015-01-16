@@ -15,11 +15,11 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (format t "Usage: ~A [OPTIONS]~:[~;~:* ~A~] script-name~%"
           (second (assoc "argv0" *opts* :test 'equal)) path))
 
-(defun main (subcmd cmd &optional path &rest r)
+(defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd r))
-  (cond ((and (equal subcmd "main") path)
+  (cond ((and (equal subcmd "main") name)
          (let ((script-path (make-pathname :defaults (uiop/os:getcwd)
-                                           :name path
+                                           :name name
                                            :type "ros")))
            (handler-case
                (unless (with-open-file (out script-path
@@ -39,8 +39,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                  (uiop:quit -1))
              (error (e)
                (format *error-output* "~&~A~%" e)
-               (help path)
+               (help name)
                (uiop:quit -1)))))
-        ((or (equal subcmd "help") (not path))
-         (help path)
+        ((or (equal subcmd "help") (not name))
+         (help name)
          (uiop:quit -1))))
