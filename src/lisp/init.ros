@@ -33,6 +33,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                    "#|" "exec ros -Q -- $0 \"$@\"" "|#"
                                    "(defun main (&rest argv)"
                                    "  (declare (ignorable argv)))")
+                           (format t "~&Successfully generated: ~A~%" script-path)
                            t))
                  (format *error-output* "~&File already exists: ~A~%" script-path)
                  (uiop:quit -1))
