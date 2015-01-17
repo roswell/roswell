@@ -26,6 +26,7 @@ LVal run_commands=(LVal)NULL;
 LVal run_options =(LVal)NULL;
 
 extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
+extern char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd);
 extern LVal register_runtime_options(LVal opt);
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
@@ -203,14 +204,18 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
     char** arg=NULL;
     int i;
     set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
-    if(strcmp(impl,"sbcl")==0 ||
-       strcmp(impl,"sbcl-bin")==0) {
+    {
       struct sub_command cmd;
       cmd.name=impl;
       cmd.short_name=version;
-      arg=cmd_run_sbcl(argc,argv,&cmd);
+      if(strcmp(impl,"sbcl")==0 ||
+         strcmp(impl,"sbcl-bin")==0) {
+        arg=cmd_run_sbcl(argc,argv,&cmd);
+      }else if(strcmp(impl,"ccl-bin")==0) {
+        arg=cmd_run_ccl(argc,argv,&cmd);
+      }
     }
-    if(file_exist_p(arg[0])) {
+    if(arg && file_exist_p(arg[0])) {
       char* cmd;
       char* opts=sexp_opts(local_opt);
       setenv("ROS_OPTS",opts,1);

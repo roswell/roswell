@@ -17,7 +17,8 @@
 ;; small tools
 (defun getenv (x)
   #+sbcl(sb-posix:getenv x)
-  #-sbcl(error "not implemented"))
+  #+ccl(ccl:getenv x)
+  #-(or ccl sbcl)(error "not implemented"))
 
 (defun ros-opts ()
   (or *ros-opts*
