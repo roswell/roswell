@@ -5,6 +5,7 @@ compiler:
   - clang
 
 script:
+  - which time
   - sh bootstrap
   - ./configure
   - make
