@@ -4,6 +4,9 @@ compiler:
   - gcc
   - clang
 
+before_script:
+  - sudo apt-get install -qq time
+
 script:
   - sh bootstrap
   - ./configure
