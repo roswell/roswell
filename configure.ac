@@ -22,9 +22,15 @@ case "$host_os" in
   *mingw* ) inc_windows=yes ;;
 esac
 
+wwwlib=no
 AM_CONDITIONAL([COND_WINDOWS], [test "$inc_windows" = yes])
-AC_CHECK_LIB([curl], [curl_global_init],[],[AC_MSG_ERROR([libcurl development files required])])
+AC_CHECK_LIB([wininet], [main],[LIBS="-lwininet $LIBS";wwwlib=yes],[])
+AC_CHECK_LIB([curl], [curl_global_init],[LIBS="-lcurl $LIBS";wwwlib=yes],[])
 AC_CHECK_LIB([archive], [archive_read_open_filename],[],[])
+
+if test "x$wwwlib" = xno; then
+  AC_MSG_ERROR([libcurl development files required]);
+fi
 
 # Checks for header files.
 AC_HEADER_STDC
