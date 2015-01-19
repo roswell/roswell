@@ -34,8 +34,24 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   int paramc=0;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* bin= cat(impl_path,SLASH,NULL);
+  char* script=get_opt("script");
   char* image=get_opt("image");
+  char* program=get_opt("program");
   bin=s_cat(bin,ccl_binname(),q(EXE_EXTENTION),NULL);
+
+  if(script)
+    offset+=1;
+  if(quicklisp) {
+    char* setup_file=s_cat(ql_path(),q("setup.lisp"),NULL);
+    if(file_exist_p(setup_file)) {
+      offset+=2;
+    }else {
+      quicklisp=0;
+    }
+    s(setup_file);
+  }
+  if(program||script)
+    offset+=2;
 
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=bin;
@@ -52,6 +68,20 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   }
   arg[paramc++]=q("--eval");
   arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
+
+  if(quicklisp) {
+    char *tmp,*tmp2;
+    arg[paramc++]=q("--eval");
+    tmp=s_cat(q("(progn #-quicklisp(cl:load \""),ql_path(),q("setup.lisp\"))"),NULL);
+    arg[paramc++]=tmp;
+  }
+
+  if(program || script) {
+    char *tmp,*tmp2;
+    arg[paramc++]=q("--eval");
+    tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
+    arg[paramc++]=tmp;
+  }
 
   for(i=1;i<argc;++i) {
     arg[paramc++]=argv[i];
