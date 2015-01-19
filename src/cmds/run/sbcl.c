@@ -89,7 +89,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   if(quicklisp) {
     char *tmp,*tmp2;
     arg[paramc++]=q("--eval");
-    tmp=s_cat(q("#-quicklisp(cl:load \""),ql_path(),q("setup.lisp\")"),NULL);
+    tmp=s_cat(q("(progn #-quicklisp(cl:load \""),ql_path(),q("setup.lisp\"))"),NULL);
     arg[paramc++]=tmp;
   }
 
