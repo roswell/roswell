@@ -779,6 +779,19 @@ char* uname_m(void) {
     s(p2);
     return q("x86-64");
   }
+  if(strcmp(p2,"armv6l")==0 ||
+     strcmp(p2,"rmv7l")==0) {
+    char* result=system_("readelf -A /proc/self/exe |grep Tag_ABI_VFP_args|wc -l");
+    char* result2=remove_char("\r\n",result);
+    s(result);
+    if(strcmp(result2,"0")!=0) {
+      s(result2);
+      return q("armel");
+    }else {
+      s(result2);
+      return q("armhf");
+    }
+  }
   return substitute_char('-','_',p2);
 #else
   /*TBD check x86 or x86-64 */
