@@ -383,6 +383,10 @@ char* sbcl_bin(char* file)
 
   ret=atag_list(file);
   ret2=remove_if_not1(filter_sbcl_uri,ret);
+  if(ret2==(LVal)NULL) {
+    fprintf(stderr,"this architecture is not supported.stop\n");
+    exit(1);
+  }
   ret3= split_string(firsts(ret2),"-");
   str=q(firsts(nthcdr(1,ret3)));
   sL(ret),sL(ret2),sL(ret3);
