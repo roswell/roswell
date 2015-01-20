@@ -8,19 +8,13 @@ exec ros -L sbcl-bin -- $0 "$@"
   (:use :cl))
 (in-package :ros.delete)
 
-(defvar *opts* (let ((*read-eval*))
-                 (read-from-string (uiop/os:getenv "ROS_OPTS"))))
-
-(defun opt(param)
-  (second (assoc param *opts* :test 'equal)))
-
 (defun homedir ()
-  (opt "homedir"))
+  (ros:opt "homedir"))
 
 (defun roswell-internal (args output)
   (uiop/run-program:run-program
    (format nil "~A roswell-internal-use~{ ~A~}"
-           (opt "argv0") args) :output output))
+           (ros:opt "argv0") args) :output output))
 
 (defun uname ()
   (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
@@ -38,4 +32,4 @@ exec ros -L sbcl-bin -- $0 "$@"
                (uiop/filesystem:delete-directory-tree path :validate t))))
         ((or (equal subcmd "help") (not r))
          (format t "Usage: ~A [OPTIONS] ~A impl/version ~%"
-                 (second (assoc "argv0" *opts* :test 'equal)) cmd))))
+                 (ros:opt "argv0") cmd))))

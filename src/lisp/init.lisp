@@ -7,7 +7,7 @@
 (defpackage :ros
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :script :quicklisp :getenv))
+  (:export :run :*argv* :script :quicklisp :getenv :opt))
 
 (in-package :ros)
 (defvar *verbose* 0)
@@ -25,6 +25,9 @@
       (setf *ros-opts*
             (let((*read-eval*))
               (read-from-string (getenv "ROS_OPTS"))))))
+
+(defun opt (param)
+  (second (assoc param (ros-opts) :test 'equal)))
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)

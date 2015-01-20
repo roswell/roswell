@@ -8,19 +8,13 @@ exec ros -- $0 "$@"
   (:use :cl))
 (in-package :ros.dump)
 
-(defvar *opts* (let ((*read-eval*))
-                 (read-from-string (uiop/os:getenv "ROS_OPTS"))))
-
-(defun opt(param)
-  (second (assoc param *opts* :test 'equal)))
-
 (defun homedir ()
-  (opt "homedir"))
+  (ros:opt "homedir"))
 
 (defun roswell-internal (args output)
   (uiop/run-program:run-program
    (format nil "~A roswell-internal-use~{ ~A~}"
-           (opt "argv0") args) :output output))
+           (ros:opt "argv0") args) :output output))
 
 (defun uname ()
   (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
@@ -30,7 +24,7 @@ exec ros -- $0 "$@"
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                           (uname-m) (uname) (opt "impl"))
+                           (uname-m) (uname) (ros:opt "impl"))
                    (homedir)))
 
 (defun dump-output (params &optional force)
@@ -46,7 +40,7 @@ exec ros -- $0 "$@"
     (cond
       ((null params)
        (format t "Usage: ~A [OPTIONS] dump output [-f] [-o] name~%"
-               (second (assoc "argv0" *opts* :test 'equal))))
+               (ros:opt "argv0")))
       ((equal "-f" (first params))
        (dump-output (rest params) t))
       ((equal "-o" (first params))
@@ -60,7 +54,7 @@ exec ros -- $0 "$@"
 
 (defun dump-list (params)
   (declare (ignorable params)) ;; tbd list images not only for current image
-  (format t "preserved dump lists for ~A:~%" (opt "impl"))
+  (format t "preserved dump lists for ~A:~%" (ros:opt "impl"))
   (format t "~{  ~A~%~}" (mapcar #'pathname-name
                                (directory (make-pathname :name :wild
                                                          :type :wild
@@ -82,8 +76,7 @@ exec ros -- $0 "$@"
       (let ((cmds (let ((*read-eval*))
                     (read-from-string
                      (format nil "(~A)"
-                             (second (assoc "restart" *opts*
-                                            :test #'equal)))))))
+                             (ros:opt "restart"))))))
         #+sbcl
         (sb-ext:save-lisp-and-die
          (first params)
@@ -105,7 +98,7 @@ exec ros -- $0 "$@"
          (funcall (third (assoc (first r) *subcmds* :test 'equal)) (rest r)))
         ((or (equal subcmd "help") (not r))
          (format t "Usage: ~A [OPTIONS] ~A subcmd [ARGS]~%"
-                 (second (assoc "argv0" *opts* :test 'equal)) cmd)
+                 (ros:opt "argv0") cmd)
          (loop :with len := (1+ (loop :for (cmd . nil) :in *subcmds* :maximize (length cmd)))
             :for (cmd desc symbol) :in *subcmds*
             :do (format t "  ~VA ~A~%" len cmd desc)))))
