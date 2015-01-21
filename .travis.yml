@@ -5,10 +5,12 @@ compiler:
   - clang
 
 script:
+  - find . \( -name \*.c -o -name \*.h -o -name \*.lisp -o -name \*.ros \) -type f|xargs cat |wc -l
   - sh bootstrap
   - ./configure
   - make
   - sudo make install
   - ros version
   - ros -v setup
+  - ros install ccl-bin
   - ros -v run -- --version
