@@ -1,48 +1,20 @@
 (in-package :ros.install)
+#-win32
+(error "msys is only required on windows")
+
 (ros:quicklisp :environment nil)
-(ql:quickload :zip :silent t)
 
 ;; experiments... on repl
 ;;(setq *ros-path* "C:/MinGW/msys/1.0/local/bin/ros")
 ;;(setq *home-path* #p"c:/Users/Vagrant/.roswell/")
 
-;; strategy to obtain toolchain for windows
-;; sbcl-bin -> quicklisp(until here should be finished when this file is loaded)
-;; -> zip:unzip -> 7za.exe -> mingw-get
-;; memo
-;; bin/mingw-get.exe install msys-base
-;; bin/mingw-get install mingw32-gcc=4.6.2-1
-;; bin/mingw-get install mpc=0.8.1-1
-;; bin/mingw-get install mpfr=2.4.1-1
-;; bin/mingw-get install mingwrt=4.03-1
-;; bin/mingw-get install libgcc=4.7.2-1
-;; bin/mingw-get upgrade mingw32-w32api=3.17-2
-
-;; write /etc/fstab C:/Users/Vagrant/.roswell/impls/x86/windows/msys/-/     /mingw
 ;; ensure ros's path in  env PATH
 ;; instead of "sh" "sh -l" to use for WIN32.
 
-(defvar *7za-archive* "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
 (defvar *mingw-get-files* '("mingw-get-0.6.2-mingw32-beta-20131004-1-bin.tar.xz"
                             "mingw-get-0.6.2-mingw32-beta-20131004-1-lic.tar.xz"
                             "mingw-get-setup-0.6.2-mingw32-beta-20131004-1-dll.tar.xz"
                             "mingw-get-setup-0.6.2-mingw32-beta-20131004-1-xml.tar.xz"))
-
-(defun unzip (path output-path)
-  (zip:unzip
-   path
-   output-path))
-
-(defun 7za ()
-  (let* ((pos (position #\/ *7za-archive* :from-end t))
-         (pos2 (when pos
-                 (position #\/ *7za-archive* :from-end t :end pos)))
-         (pos3 (if pos2
-                   (position #\/ *7za-archive* :from-end t :end pos2)
-                   0))
-         (version (when pos2 (subseq *7za-archive* (1+ pos3) pos2)))
-         (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
-    (values (merge-pathnames "7za.exe" prefix) version)))
 
 (defun un7za (path output-path)
   (uiop/run-program:run-program
@@ -51,20 +23,6 @@
            (uiop/filesystem:native-namestring path)
            (uiop/filesystem:native-namestring (7za))
            (uiop/filesystem:native-namestring output-path))))
-
-(defun msys-setup-7za (argv)
-  (format t "setting up 7zip...~%")
-  (multiple-value-bind (exec version) (7za)
-    (let* ((prefix (make-pathname :defaults exec
-                                  :name nil :type nil))
-           (archive (merge-pathnames (format nil "archives/~A-~A.zip" "7za" version) (homedir))))
-      (if (probe-file (merge-pathnames "7za.exe" prefix))
-          (format t "7zip already setup~%")
-        (progn
-          (format t "archive=~A extract ~A~%" archive *7za-archive*)
-          (ros.install::download *7za-archive* (ensure-directories-exist archive))
-          (unzip archive (ensure-directories-exist prefix)))))
-  (cons t argv)))
 
 (defun msys-setup-fstab (argv)
   (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "msys" "-") (homedir))))
@@ -121,7 +79,6 @@
 
 (setq *install-cmds*
       (list
-       'msys-setup-7za
        'msys-setup-msys
        'msys-setup-fstab
        'msys-setup-profile))

@@ -19,5 +19,11 @@ int cmd_setup(int argc, const char **argv)
   fprintf(stderr,"setting up quicklisp\n");
   system(sys);
   s(sys);
+#ifdef _WIN32
+  sys=cat(argv_orig[0]," ",v,"install 7zip",NULL);
+  fprintf(stderr,"setting up 7zip\n");
+  system(sys);
+  s(sys);
+#endif
   return 0;
 }
