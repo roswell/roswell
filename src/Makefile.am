@@ -9,10 +9,10 @@ roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros lisp/use.ros li
 
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c util.c archive.c html.c internal.c \
-	cmds/version/cmd.c \
-	cmds/run/cmd.c cmds/run/sbcl.c cmds/run/ccl.c \
-	cmds/install/cmd.c cmds/install/sbcl-bin.c cmds/install/quicklisp.c \
-	cmds/help/cmd.c \
-	cmds/config/cmd.c \
-	cmds/setup/cmd.c
-noinst_HEADERS = util.h opt.h cmds/install/ros_install.h
+	cmd-version.c \
+	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c \
+	cmd-install.c cmd-install-sbcl-bin.c cmd-install-quicklisp.c \
+	cmd-help.c \
+	cmd-config.c \
+	cmd-setup.c
+noinst_HEADERS = util.h opt.h cmd-install.h

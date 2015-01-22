@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
-#include "ros_install.h"
+#include "cmd-install.h"
 #include "opt.h"
 char* download_archive_name(struct install_options* param);
 char* arch_(struct install_options* param) {

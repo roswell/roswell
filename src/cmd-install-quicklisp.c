@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "util.h"
-#include "ros_install.h"
+#include "cmd-install.h"
 #include "opt.h"
 
 int quicklisp_start(struct install_options* param)
