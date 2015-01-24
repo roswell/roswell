@@ -1,4 +1,8 @@
 (in-package :ros.install)
+(ros:quicklisp :environment nil)
+
+#+win32
+(ql:quickload :zip :silent t)
 
 (defun ccl-bin-get-version ()
   (let (result
@@ -23,7 +27,7 @@
                                              (char= (aref href (1- len)) #\/))
                                     (push (string-right-trim "/" href) result))))))
                :callback-only t))
-    (format t "ccl-bin ~s to install~%" (first result))
+    (format t "~%ccl-bin ~s to install~%" (first result))
     result))
 
 (defun ccl-bin-version (argv)
@@ -69,8 +73,9 @@
 
 (defun ccl-bin-expand (argv)
   (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
-  (expand (get-opt "download.archive")
-          (ensure-directories-exist (merge-pathnames (format nil "impls/~A/~A/ccl-bin/" (uname-m) (uname%)) (homedir))))
+  (#-win32 expand #+win32 zip:unzip
+           (get-opt "download.archive")
+           (ensure-directories-exist (merge-pathnames (format nil "impls/~A/~A/ccl-bin/" (uname-m) (uname%)) (homedir))))
   (let ((path (merge-pathnames (format nil "impls/~A/~A/ccl-bin/~A/" (uname-m) (uname%) (get-opt "as")) (homedir))))
     (and (probe-file path)
          (uiop/filesystem:delete-directory-tree 
