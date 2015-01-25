@@ -54,7 +54,7 @@
 (defun system (cmd arg &rest rest)
   (declare (ignorable cmd rest))
   #-quicklisp(asdf:operate 'asdf:load-op arg)
-  #+quicklisp(ql:quickload arg))
+  #+quicklisp(ql:quickload arg :silent t))
 
 (setf (fdefinition 'load-systm)
       #'system)
