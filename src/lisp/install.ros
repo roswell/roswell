@@ -9,7 +9,7 @@ exec ros -- $0 "$@"
 (require :asdf)
 #+sbcl(require :sb-posix)
 (ignore-errors
-  #+quicklisp(with-output-to-string (*standard-output*)(ql:quickload :uiop))
+  #+quicklisp(ql:quickload :uiop :silent t)
   #-quicklisp(require :uiop))
 
 (defpackage :ros.install
