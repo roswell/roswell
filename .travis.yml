@@ -12,5 +12,6 @@ script:
   - sudo make install
   - ros version
   - ros -v setup
+  - ros -v run -- --version
   - ros install ccl-bin
   - ros -v run -- --version
