@@ -24,7 +24,14 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   char* dynamic_stack_size=get_opt("dynamic-stack-size");
   char* sbcl_version=get_opt("version");
   int paramc=0;
-  char *bin= cat(impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
+  char *bin;
+  int issystem=(strcmp("system",version)==0);
+  if(issystem){
+    bin=truename(which("sbcl"));
+  }else {
+    bin=cat(impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
+  }
+
   s(arch),s(os);
   if(help) {
     offset++;
@@ -52,9 +59,11 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=bin;
   /* runtime options from here */
-  arg[paramc++]=q("--core");
+  if(image||!issystem)
+    arg[paramc++]=q("--core");
   if(!image) {
-    arg[paramc++]=cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL);
+    if(!issystem)
+      arg[paramc++]=cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL);
   }else {
     arg[paramc++]=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
   }
