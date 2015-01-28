@@ -33,11 +33,16 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   int i;
   int paramc=0;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
-  char* bin= cat(impl_path,SLASH,NULL);
+  char* bin;
   char* script=get_opt("script");
   char* image=get_opt("image");
   char* program=get_opt("program");
-  bin=s_cat(bin,ccl_binname(),q(EXE_EXTENTION),NULL);
+  int issystem=(strcmp("system",version)==0);
+  if(issystem){
+    bin=truename(which("ccl"));
+  }else {
+    bin=s_cat(impl_path,SLASH,ccl_binname(),q(EXE_EXTENTION),NULL);
+  }
 
   if(script)
     offset+=1;
@@ -58,11 +63,14 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   arg[paramc++]=q("--no-init");
   arg[paramc++]=q("--quiet");
   arg[paramc++]=q("--batch");
-  arg[paramc++]=q("--image-name");
+  if(image||!issystem)
+    arg[paramc++]=q("--image-name");
   if(!image) {
-    char* binname=ccl_binname();
-    arg[paramc++]=cat(impl_path,SLASH,binname,".image",NULL);
-    s(binname);
+    if(!issystem) {
+      char* binname=ccl_binname();
+      arg[paramc++]=cat(impl_path,SLASH,binname,".image",NULL);
+      s(binname);
+    }
   }else {
     arg[paramc++]=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
   }
