@@ -15,8 +15,7 @@ exec ros +Q -L sbcl-bin -- $0 "$@"
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd r))
   (cond ((and (equal subcmd "main") name)
-         (let ((script-path (make-pathname :defaults (uiop/os:getcwd)
-                                           :name name
+         (let ((script-path (make-pathname :defaults name
                                            :type "ros")))
            (handler-case
                (unless (with-open-file (out script-path
