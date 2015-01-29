@@ -41,7 +41,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   if(issystem){
     bin=truename(which("ccl"));
   }else {
-    bin=s_cat(impl_path,SLASH,ccl_binname(),q(EXE_EXTENTION),NULL);
+    bin=s_cat(q(impl_path),q(SLASH),ccl_binname(),q(EXE_EXTENTION),NULL);
   }
 
   if(script)
