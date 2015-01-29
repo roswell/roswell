@@ -203,6 +203,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   if(impl) {
     char** arg=NULL;
     int i;
+    char* wrap=get_opt("wrap");
     set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
     {
       struct sub_command cmd;
@@ -215,7 +216,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
         arg=cmd_run_ccl(argc,argv,&cmd);
       }
     }
-    if(arg && file_exist_p(arg[0])) {
+    if(wrap)
+      arg[0]=q(wrap);
+    if(arg && file_exist_p(arg[1])) {
       char* cmd;
       char* opts=sexp_opts(local_opt);
       setenv("ROS_OPTS",opts,1);
@@ -229,7 +232,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       }
       s(opts);
 #ifdef _WIN32
-      cmd=q(arg[0]);
+      cmd=q("");
       for(i=1;arg[i]!=NULL;++i) {
         cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
       }
@@ -237,7 +240,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       exit(system(cmd));
       s(cmd);
 #else
-      execvp(arg[0],arg);
+      execvp(arg[wrap?0:1],&(arg[wrap?0:1]));
 #endif
     }else{
       fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);

@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include "util.h"
 #include "opt.h"
+char* ql_path(void);
+
 char* ccl_binname(void) {
   char* ret=q("");
   char* _uname_m=uname_m();
@@ -28,7 +30,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=8;  /*[binpath for ccl] --no-init --quiet --batch --image-name param --eval init.lisp
+  int offset=9;  /*[binpath for ccl] --no-init --quiet --batch --image-name param --eval init.lisp
                    [terminating NULL] that total 9 are default. */
   int i;
   int paramc=0;
@@ -59,6 +61,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
     offset+=2;
 
   arg=alloc(sizeof(char*)*(offset+argc));
+  arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   arg[paramc++]=q("--no-init");
   arg[paramc++]=q("--quiet");

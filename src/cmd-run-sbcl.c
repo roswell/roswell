@@ -12,7 +12,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=9; /*[binpath for sbcl] --noinform --core param --eval init.lisp
+  int offset=10; /*[binpath for sbcl] --noinform --core param --eval init.lisp
                   --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
@@ -57,6 +57,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     offset+=2;
 
   arg=alloc(sizeof(char*)*(offset+argc));
+  arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   /* runtime options from here */
   if(image||!issystem)
