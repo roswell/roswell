@@ -184,4 +184,9 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
               for i = (funcall call `(:target ,imp :version ,version
                                               :argv ,argv)) then (funcall call (rest i))
               while (first i)))
+          ((and (probe-file (setf sub (make-pathname :defaults impl/version :type "ros"))))
+           (uiop/stream:copy-file sub (make-pathname
+                                       :defaults (merge-pathnames "subcmd/" *home-path*)
+                                       :name (pathname-name sub)
+                                       :type (pathname-type sub))))
           (t (format *error-output* "not supported software ~A" imp)))))
