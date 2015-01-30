@@ -151,8 +151,6 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
         }
         tmp=(char**)alloc(sizeof(char*)*(argc+9));
         i=0;
-        tmp[i++]=q("--no-rc");
-        tmp[i++]=q("lisp=sbcl-bin");
         tmp[i++]=q("--");
         tmp[i++]=install_ros;
         tmp[i++]=q("install");
@@ -236,8 +234,6 @@ int install_help(int argc,char **argv,struct sub_command* cmd)
         char* install_ros=s_cat2(lisp_path,q("install.ros"));
         tmp=(char**)alloc(sizeof(char*)*(argc+9));
         i=0;
-        tmp[i++]=q("--no-rc");
-        tmp[i++]=q("lisp=sbcl-bin");
         tmp[i++]=q("--");
         tmp[i++]=install_ros;
         tmp[i++]=q("help");

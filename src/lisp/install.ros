@@ -1,16 +1,14 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|install roswell
-exec ros -- $0 "$@"
+exec ros -Q +R -L sbcl-bin -- $0 "$@"
 |#
 
 (cl:in-package :cl-user)
 
 (require :asdf)
 #+sbcl(require :sb-posix)
-(ignore-errors
-  #+quicklisp(ql:quickload :uiop :silent t)
-  #-quicklisp(require :uiop))
+(ql:quickload :uiop :silent t)
 
 (defpackage :ros.install
   (:use :cl))
@@ -161,30 +159,29 @@ exec ros -- $0 "$@"
          version
          (seq impl/version)
          (pos (position #\/ impl/version))
-         sub)
+         (*home-path* (make-pathname :defaults (third argv)))
+         (*ros-path* (make-pathname :defaults (fourth argv)))
+         sub cmds)
     (if pos
         (setq imp (subseq seq 0 pos)
               version (subseq seq (1+ pos)))
         (setq imp seq))
-
-    (setf sub (merge-pathnames
-               (format nil "install/~A.lisp" imp)
-               (make-pathname :name nil :type nil :defaults *load-pathname*)))
-    (when (probe-file sub)
-      (load sub))
-    (let (*read-eval*)
-      (setf *opts* (append (read-from-string (first argv))
-                           (read-from-string (second argv)))
-            *home-path* (make-pathname :defaults (third argv))
-            *ros-path* (make-pathname :defaults (fourth argv))
-            argv (nthcdr 4 argv)))
-    (let ((cmds (cond
-                  ((equal subcmd "install") *install-cmds*)
-                  ((equal subcmd "help") *help-cmds*))))
-      (if cmds
-          (loop
-             for call in cmds
-             for i = (funcall call `(:target ,imp :version ,version
-                                             :argv ,argv)) then (funcall call (rest i))
-             while (first i))
-          (format t "not supported software ~A" imp)))))
+    (cond ((and
+            (progn (setf sub (merge-pathnames
+                              (format nil "install/~A.lisp" imp)
+                              (make-pathname :name nil :type nil
+                                             :defaults *load-pathname*)))
+                   (probe-file sub))
+            (progn (load sub)
+                   (let (*read-eval*)
+                     (setf *opts* (append (read-from-string (first argv))
+                                          (read-from-string (second argv)))
+                           argv (nthcdr 4 argv)
+                           cmds (cond
+                                  ((equal subcmd "install") *install-cmds*)
+                                  ((equal subcmd "help") *help-cmds*))))))
+           (loop for call in cmds
+              for i = (funcall call `(:target ,imp :version ,version
+                                              :argv ,argv)) then (funcall call (rest i))
+              while (first i)))
+          (t (format *error-output* "not supported software ~A" imp)))))
