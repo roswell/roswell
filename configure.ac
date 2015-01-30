@@ -33,7 +33,7 @@ fi
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(stdlib.h stdio.h sys/stat.h)
+AC_CHECK_HEADERS(stdlib.h stdio.h sys/stat.h curl/curl.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 

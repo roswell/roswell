@@ -3,13 +3,6 @@
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
-#ifdef HAVE_ARCHIVE_H
-#include <archive.h>
-#include <archive_entry.h>
-#endif
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
 
 #include "opt.h"
 #include "util.h"
