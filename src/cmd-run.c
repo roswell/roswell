@@ -232,8 +232,8 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       }
       s(opts);
 #ifdef _WIN32
-      cmd=q("");
-      for(i=1;arg[i]!=NULL;++i) {
+      cmd=q(arg[wrap?0:1]);
+      for(i=wrap?1:2;arg[i]!=NULL;++i) {
         cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
       }
       SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
