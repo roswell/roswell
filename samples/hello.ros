@@ -1,8 +1,8 @@
 #!/bin/sh
 #|-*- mode: lisp -*-|#
 #|Docstring like 1 line comment that are accepted if it installed
-exec ros -- $0 "$@"
+exec ros -L sbcl-bin -- $0 "$@"
 |#
 (defun main (&rest argv)
-  (format t "Hello World!~%")
+  (format t "Hello World! ~A ~%" (lisp-implementation-version))
   (format t "argv=~S~%" argv))
