@@ -1,17 +1,15 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|change default implementation
-exec ros +Q -L sbcl-bin -- $0 "$@"
+exec ros +R -Q -L sbcl-bin -- $0 "$@"
 |#
 
 (cl:in-package :cl-user)
 
 (require :asdf)
-#+sbcl(require :sb-posix)
+(require :sb-posix)
 
-(ignore-errors
-  #+quicklisp(ql:quickload :uiop :silent t)
-  #-quicklisp(require :uiop))
+(ql:quickload :uiop :silent t)
 
 (defpackage :ros.use
   (:use :cl))
