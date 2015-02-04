@@ -161,12 +161,22 @@ char* _get_opt(struct opts* opt,const char* name)
   return NULL;
 }
 
-char* get_opt(const char* name)
+char* _getenv(const char* name)
+{
+  char* name_=substitute_char('_','.',q(name));
+  char* ret=getenv(name_);
+  s(name_);
+  return ret;
+}
+
+char* get_opt(const char* name,int env)
 {
   char* ret=NULL;
-  ret=_get_opt(local_opt,name);
+  if(env)ret=_getenv(name);
   if(!ret) {
-    ret=_get_opt(global_opt,name);
+    ret=_get_opt(local_opt,name);
+    if(!ret)
+      ret=_get_opt(global_opt,name);
   }
   return ret;
 }

@@ -16,13 +16,13 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
                   --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
-  char* help=get_opt("help");
-  char* script=get_opt("script");
-  char* image=get_opt("image");
-  char* program=get_opt("program");
-  char* dynamic_space_size=get_opt("dynamic-space-size");
-  char* dynamic_stack_size=get_opt("dynamic-stack-size");
-  char* sbcl_version=get_opt("version");
+  char* help=get_opt("help",0);
+  char* script=get_opt("script",0);
+  char* image=get_opt("image",0);
+  char* program=get_opt("program",0);
+  char* dynamic_space_size=get_opt("dynamic-space-size",0);
+  char* dynamic_stack_size=get_opt("dynamic-stack-size",0);
+  char* sbcl_version=get_opt("version",0);
   int paramc=0;
   char *bin;
   int issystem=(strcmp("system",version)==0);

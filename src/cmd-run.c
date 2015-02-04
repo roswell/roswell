@@ -33,7 +33,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
 
 int cmd_run(int argc,char **argv,struct sub_command* cmd)
 {
-  char* current=get_opt("program");
+  char* current=get_opt("program",0);
   if(verbose>0)
     fprintf(stderr,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current) {
@@ -42,7 +42,7 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd)
   }else {
     int i;
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],run_options,run_commands));
-    current=get_opt("program");
+    current=get_opt("program",0);
     if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
       char* tmp[]={"--"};
       proccmd(1,tmp,run_options,run_commands);
@@ -60,7 +60,7 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd)
 
 int cmd_script(int argc,char **argv,struct sub_command* cmd)
 {
-  char* current=get_opt("program");
+  char* current=get_opt("program",0);
   if(verbose>0)
     fprintf(stderr,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current &&
@@ -138,7 +138,7 @@ char* ql_path(void) {
   if(env_ql){
     env_ql=q(env_ql);
   }else {
-    env_ql=q(get_opt("quicklisp"));
+    env_ql=q(get_opt("quicklisp",0));
   }
   env_ql=append_trail_slash(env_ql);
   return env_ql;
@@ -161,7 +161,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
 #else
     char* etc="/etc/rosrc";
 #endif
-    char* current=get_opt("program");
+    char* current=get_opt("program",0);
     char *path,*would;
     if(file_exist_p(init)) {
       path=cat("(:load \"",init,"\")",NULL);
@@ -171,7 +171,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       s(path);
     }
     s(init);
-    current=get_opt("program");
+    current=get_opt("program",0);
     if(file_exist_p(etc)) {
       path=cat("(:load \"",etc,"\")",NULL);
       would=cat(path,current?current:"",NULL);
@@ -182,16 +182,16 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
     fprintf(stderr,"cmd_run_star:%s argc=%d argv[0]=%s \n",cmd->name,argc,argv[0]);
     fprintf(stderr,"localopt:%s\n",sexp_opts(local_opt));
   }
-  impl=get_opt("lisp");
+  impl=get_opt("lisp",1);
   if(impl && (pos=position_char("/",impl))!=-1) {
     version=subseq(impl,pos+1,0);
     impl=subseq(impl,0,pos);
   }else {
     if(!impl)
-      impl=get_opt("default.lisp");
+      impl=get_opt("default.lisp",1);
     if(impl) {
       char* opt=s_cat(q(impl),q("."),q("version"),NULL);
-      version=get_opt(opt);
+      version=get_opt(opt,1);
       s(opt);
     }
     if(impl) 
@@ -203,7 +203,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   if(impl) {
     char** arg=NULL;
     int i;
-    char* wrap=get_opt("wrap");
+    char* wrap=get_opt("wrap",1);
     set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
     {
       struct sub_command cmd;

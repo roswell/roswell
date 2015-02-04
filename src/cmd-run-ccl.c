@@ -36,9 +36,9 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
   int paramc=0;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* bin;
-  char* script=get_opt("script");
-  char* image=get_opt("image");
-  char* program=get_opt("program");
+  char* script=get_opt("script",0);
+  char* image=get_opt("image",0);
+  char* program=get_opt("program",0);
   int issystem=(strcmp("system",version)==0);
   if(issystem){
     bin=truename(which("ccl"));

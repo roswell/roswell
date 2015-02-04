@@ -190,7 +190,7 @@ int opt_top_ql(int argc,char** argv,struct sub_command* cmd) {
 
 int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name) {
-    char* current=get_opt("program");
+    char* current=get_opt("program",0);
     current=cat(current?current:"","(:",cmd->name,")",NULL);
     set_opt(&local_opt,"program",current,0);
   }
@@ -199,7 +199,7 @@ int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
 
 int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
-    char* current=get_opt("program");
+    char* current=get_opt("program",0);
     char* escaped=escape_string(argv[1]);
     int len=strlen(escaped)+strlen(cmd->name)+7;
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
@@ -211,7 +211,7 @@ int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
 
 int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
-    char* current=get_opt("restart");
+    char* current=get_opt("restart",0);
     char* escaped=escape_string(argv[1]);
     int len=strlen(escaped)+strlen(cmd->name)+7;
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
@@ -223,7 +223,7 @@ int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
 
 int opt_final(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
-    char* current=get_opt("final");
+    char* current=get_opt("final",0);
     char* escaped=escape_string(argv[1]);
     int len=strlen(escaped)+strlen(cmd->name)+7;
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
@@ -312,7 +312,7 @@ int main (int argc,char **argv) {
     proccmd(1,tmp,top_options,top_commands);
   }else
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
-  if(get_opt("program")) {
+  if(get_opt("program",0)) {
     char* tmp[]={"run","-q","--"};
     proccmd(3,tmp,top_options,top_commands);
   }

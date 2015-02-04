@@ -89,6 +89,7 @@ char* subseq(char* base,int beg,int end);
 char* remove_char(char* items,char* orig);
 int position_char(char* items,char* seq);
 int position_char_not(char* items,char* seq);
+char* substitute_char(char new,char old,char* seq);
 char* upcase(char* orig);
 char* downcase(char* orig);
 char* append_trail_slash(char* str);
