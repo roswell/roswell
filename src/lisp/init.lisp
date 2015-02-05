@@ -7,7 +7,7 @@
 (defpackage :ros
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :script :quicklisp :getenv :opt))
+  (:export :run :*argv* :quit :script :quicklisp :getenv :opt :ignore-shebang))
 
 (in-package :ros)
 (defvar *verbose* 0)
@@ -16,9 +16,7 @@
 
 ;; small tools
 (defun getenv (x)
-  #+sbcl(sb-posix:getenv x)
-  #+ccl(ccl:getenv x)
-  #-(or ccl sbcl)(error "not implemented"))
+  (asdf::getenv x))
 
 (defun ros-opts ()
   (or *ros-opts*
@@ -39,6 +37,15 @@
                     (and environment (getenv environment))
                     (second (assoc "quicklisp" (ros-opts)
                                    :test 'equal)))))))
+
+(defun shebang-reader (stream sub-character infix-parameter)
+  (declare (ignore sub-character infix-parameter))
+  (loop for x = (read-char stream nil nil)
+     until (or (not x) (eq x #\newline))))
+
+(compile 'shebang-reader)
+(defun ignore-shebang ()
+  (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
 (defun impl ()
   (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))
@@ -74,8 +81,7 @@
 
 (defun quit (cmd &rest rest)
   (declare (ignorable cmd rest))
-  #+sbcl
-  (sb-ext:exit))
+  (asdf::quit (or (first rest) 0)))
 
 (defun restart (cmd arg &rest rest)
   (declare (ignorable cmd rest))
@@ -96,7 +102,7 @@
   (cl:write (cl:eval (read-from-string arg))))
 
 (defun script (cmd arg &rest rest)
-  (declare (ignorable cmd arg))
+  (declare (ignorable cmd))
   (setf *argv* rest)
   (if (probe-file arg)
       (with-open-file (in arg)
@@ -104,7 +110,7 @@
           (push :ros.script *features*)
           (cl:load (make-concatenated-stream
                     (make-string-input-stream
-                     (format nil "(cl:setf cl:*load-pathname* #P~S)(cl:setf cl:*load-truename* (truename cl:*load-pathname*))~A" arg
+                     (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (truename cl:*load-pathname*))~A" (merge-pathnames (make-pathname :defaults arg))
                              (if (equal (subseq line 0 (min (length line) 2)) "#!")
                                  "" line)))
                     in
