@@ -11,19 +11,18 @@
 (progn
   (in-package :ros.install)
   (defun quicklisp-help (argv)
-    (format t "no options for quicklisp~%")
+    (format *error-output* "no options for quicklisp~%")
     (cons t argv))
   (setq ros.install::*help-cmds*
         (list 'quicklisp-help)))
 
 (in-package #:cl-user)
 
-(defun main (exec path &rest r)
+(defun main (exec archive path &rest r)
   (declare (ignorable exec r))
   (cond
     ((probe-file path)
-     (format t "Quicklisp is already setup.~%"))
-    ((find-package :quicklisp-quickstart)
-     (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))
+     (format *error-output* "Quicklisp is already setup.~%"))
     (t
-     (error "something wrong"))))
+     (load archive)
+     (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))))
