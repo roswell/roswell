@@ -1,0 +1,5 @@
+roswell (0.0.2.22-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Masatoshi SANO <snmsts@gmail.com>  Thu, 05 Feb 2015 07:16:40 +0900

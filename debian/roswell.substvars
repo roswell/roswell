@@ -1,0 +1,2 @@
+shlibs:Depends=libc6 (>= 2.14), libcurl3 (>= 7.16.2)
+misc:Depends=

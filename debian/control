@@ -1,0 +1,14 @@
+Source: roswell
+Section: lisp
+Priority: optional
+Maintainer: Masatoshi SANO <snmsts@gmail.com>
+Build-Depends: debhelper (>= 9)
+Standards-Version: 3.9.5
+Homepage: https://github.com/snmsts/roswell
+Vcs-Git: https://github.com/snmsts/roswell.git
+
+Package: roswell
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}
+Description: <insert up to 60 chars description>
+ <insert long description, indented with spaces>
