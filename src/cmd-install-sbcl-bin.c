@@ -151,13 +151,18 @@ int sbcl_bin_install(struct install_options* param) {
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   char* install_root=q(impl_path);
   char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
-  printf("installing %s/%s ",impl,version);
+  fprintf(stderr,"installing %s/%s ",impl,version);
   ensure_directories_exist(impl_path);
   ensure_directories_exist(log_path);
   change_directory(src);
   setenv("SBCL_HOME",sbcl_home,1);
   setenv("INSTALL_ROOT",install_root,1);
-
+  ret=system("(cat find-gnumake.sh; echo find_gnumake)|sh");
+  if(ret!=0) {
+    fprintf(stderr,"make does not exists.\n");
+    return 0;
+  }
+  ret=1;
   if(system_redirect("sh install.sh",log_path)==-1) {
     ret=0;
   }

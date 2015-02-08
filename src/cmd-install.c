@@ -195,11 +195,14 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
       if(param.version)s(param.version);
       s(param.impl),s(param.arch),s(param.os);
       s(param.expand_path);
+      if(!ret) {
+        exit(EXIT_FAILURE);
+      }
     }
   }else {
     char* tmp[]={"help","install"};
     proccmd(2,tmp,top_options,top_commands);
-    exit(EXIT_FAILURE);
+    exit(EXIT_SUCCESS);
   }
   return ret;
 }
