@@ -1,3 +1,5 @@
 *.o
 *.dirstamp
 .deps
+src/ros
+src/ros.exe
