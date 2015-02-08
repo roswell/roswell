@@ -17,7 +17,7 @@ int cmd_setup(int argc, const char **argv)
   fprintf(stderr,"setting up sbcl-bin\n");
   if(!sbcl_bin_version)
     ret=system(sys);
-  else fprintf(stderr,"already have sbcl-bin\n");
+  else fprintf(stderr,"already have sbcl-bin\n"),ret=0;
   s(sys);
   if(ret)
     return ret;

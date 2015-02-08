@@ -204,7 +204,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
     proccmd(2,tmp,top_options,top_commands);
     exit(EXIT_SUCCESS);
   }
-  return ret;
+  return 0;
 }
 
 int install_help(int argc,char **argv,struct sub_command* cmd)
