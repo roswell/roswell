@@ -1,0 +1,96 @@
+#!/bin/sh
+#|-*- mode: lisp -*-|#
+#|
+exec ros -Q -L sbcl-bin -- $0 "$@"
+|#
+
+(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad :uiop) :silent t)
+
+(defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
+(defvar *package-name* "roswell")
+
+(defun get-newest-url (base)
+  (block nil
+    (multiple-value-bind (body res)
+	(drakma:http-request
+	 (format nil "https://github.com/~A/releases/" base))
+      (when (= res 200)
+	(net.html.parser:parse-html
+	 body
+	 :callbacks
+	 (list (cons :a (lambda (arg)
+			  (let ((href (getf (cdr (car arg)) :href)))
+			    (when (and (> (length href) 6)
+				       (equal (subseq href (-(length href) 6))
+					      "tar.gz"))
+			      (return-from nil (format nil "https://github.com~A" href)))))))
+	 :callback-only t)))))
+
+(defun download (uri path)
+  (with-open-file (out path :direction :output 
+                    :if-does-not-exist :create
+                    :if-exists :supersede
+                    :element-type '(unsigned-byte 8))
+    
+      (multiple-value-bind (in status)
+          (drakma:http-request uri :want-stream t :force-binary t)
+        (unwind-protect
+             (when (= status 200)
+               (loop :with seq := (make-array 4096 :element-type '(unsigned-byte 8))
+                  :for read := (read-sequence seq in)
+                  :until (= read 0)
+                  :do (write-sequence seq out :end read)))
+          (when in
+            (close in))))))
+
+(defun fetch-upstream ()
+  (let* ((url (get-newest-url "snmsts/roswell"))
+         (path (merge-pathnames (subseq url (1+ (position #\/ url :from-end t))) *pwd*)))
+    (download url path)
+    path))
+
+(defun rename-upstream (path &optional (package-name *package-name*))
+  (let* ((name (pathname-name path))
+         (version (subseq name (position-if #'digit-char-p name)
+                          (1+ (position-if #'digit-char-p name :from-end t))))
+         (new (make-pathname :name (format nil "~A_~A.orig.tar" package-name version)
+                             :defaults path)))
+    (when (probe-file new)
+      (delete-file new))
+    (uiop/os:chdir *pwd*)
+    (uiop/run-program:run-program (format nil "tar xf ~A" (namestring path)))
+    (rename-file path new)
+    new))
+
+(defun cp-debian ()
+  (let ((path (namestring
+               (first ;; should be sort.
+                (remove-if-not 
+                 #'(lambda (x)
+                     (and (not (pathname-name x))
+                          (string-equal "roswell" 
+                                        (first (last (pathname-directory x)))
+                                        :end2 (min 7 (length (first (last 
+                                                                     (pathname-directory x))))))))
+                 (directory (merge-pathnames "*.*" *pwd*)))))))
+    (uiop/run-program:run-program
+     (format nil "cp -r ../debian ~A" path))
+    path))
+
+(defun dpkg-buildpackage (path)
+  (uiop/os:chdir path)
+  (uiop/run-program:run-program "dpkg-buildpackage -us -uc"))
+
+(defun main (&optional (arg0 "all") &rest argv)
+  (declare (ignore argv))
+  (cond ((equal arg0 "all")
+         (let* ((upstream (fetch-upstream)))
+           (rename-upstream upstream))
+         (dpkg-buildpackage (cp-debian)))
+        ((equal arg0 "clean")
+         (format *error-output* "hoge~%"))))
+
+;;(sb-posix:setenv "DEBFULLNAME" "Masatoshi SANO" 1)
+;;(sb-posix:setenv "DEBEMAIL" "snmsts@gmail.com" 1)
+;;"dh_make --yes -c mit -C=m --f ../roswell-0.0.2.22.tar.gz"
+;;"dpkg-buildpackage -us -uc"
