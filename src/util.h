@@ -1,10 +1,26 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+#ifdef HAVE_SYS_STAT_H
+#include <sys/stat.h>
+#endif
+#include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
 #ifndef _WIN32
+#include <pwd.h>
+#include <unistd.h>
+#include <signal.h>
 #include <dirent.h>
+#else
+#include <windows.h>
+#include <shellapi.h>
+#include <shlobj.h>
 #endif
+
 extern char** argv_orig;
 extern int argc_orig;
 extern int verbose;
@@ -79,6 +95,7 @@ void sL(LVal l);
 
 void* alloc(size_t bytes);
 void dealloc(void* f);
+char* q_(const char* orig);
 char* q_internal(const char* orig,char* file,int line);
 char* qsprintf(int bufsize,char* format,...);
 void s_internal(char* f,char* name,char* file,int line);

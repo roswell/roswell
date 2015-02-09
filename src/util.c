@@ -1,26 +1,4 @@
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#ifndef _WIN32
-#include <pwd.h>
-#include <unistd.h>
-#include <signal.h>
-#else
-#include <windows.h>
-#include <shellapi.h>
-#include <shlobj.h>
-#endif
-#ifdef HAVE_SYS_STAT_H
-#include <sys/stat.h>
-#endif
-
-#include <stdarg.h>
 #include "util.h"
-
-extern int verbose;
 
 void* alloc(size_t bytes) {
   void* p=malloc(bytes);
@@ -46,200 +24,12 @@ char* q_internal(const char* orig,char* file,int line) {
   return ret;
 }
 
-char* qsprintf(int bufsize,char* format,...) {
-  char* result=alloc(bufsize+1);
-  va_list list;
-  va_start(list,format);
-  vsnprintf(result,bufsize+1,format,list);
-  va_end(list);
-  return result;
-}
-
 void s_internal(char* f,char* name,char* file,int line) {
   if(verbose>1)
     fprintf(stderr,"%s %d s(%s) %lu \n",file,line,name,(intptr_t)f);
   dealloc(f);
 }
 
-char* s_cat2(char* a,char* b) {
-  char* ret= (char*)alloc(strlen(a)+strlen(b)+1);
-  strcpy(ret,a);
-  strcat(ret,b);
-  dealloc(a);
-  dealloc(b);
-  return ret;
-}
-
-char* s_cat(char* first,...)
-{
-  char* ret=first;
-  char* i;
-  va_list list;
-  va_start(list,first);
-
-  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*)) {
-    ret=s_cat2(ret,i);
-  }
-  va_end(list);
-  return ret;
-}
-
-char* cat(char* first,...)
-{
-  char* ret=q_(first);
-  char* i;
-  va_list list;
-  va_start(list,first);
-
-  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*)) {
-    ret=s_cat2(ret,q_(i));
-  }
-  va_end(list);
-  return ret;
-}
-
-char* subseq(char* base,int beg,int end)
-{
-  int len=-1;
-  int i;
-  char* ret;
-  if(0>beg) {
-    if(0>len) {
-      len=strlen(base);
-    }
-    beg=len+beg;
-  }
-  if(0>=end) {
-    if(0>len) {
-      len=strlen(base);
-    }
-    end=len+end;
-  }
-  if(end<=beg)
-    return NULL;
-  ret=alloc(end-beg+1);
-  for(i=0;i<end-beg;++i) {
-    ret[i]=base[i+beg];
-  }
-  ret[i]='\0';
-  return ret;
-}
-
-char* remove_char(char* items,char* orig)
-{
-  int i,j,k;
-  int found=0;
-  char* ret;
-  /* count removed*/
-  for(j=0;orig[j]!='\0';++j) {
-    for(i=0;items[i]!='\0';++i) {
-      if(items[i]==orig[j]) {
-        ++found;
-        break;
-      }
-    }
-  }
-  ret=alloc(j+1-found);
-  for(j=0,k=0;orig[j]!='\0';++j,++k) {
-    for(i=0;items[i]!='\0';++i) {
-      ret[k]=orig[j];
-      if(items[i]==orig[j]) {
-        --k;
-        break;
-      }
-    }
-  }
-  ret[k]='\0';
-  return ret;
-}
-
-int position_char(char* items,char* seq) {
-  int i,j;
-  for(i=0;seq[i]!='\0';++i) {
-    for(j=0;items[j]!='\0';++j) {
-      if(seq[i]==items[j])
-        return i;
-    }
-  }
-  return -1;
-}
-int position_char_not(char* items,char* seq) {
-  int i,j,stop;
-  for(i=0,stop=1;seq[i]!='\0';++i,stop=1) {
-    for(j=0;items[j]!='\0';++j) {
-      if(seq[i]==items[j]){
-        stop=0;
-        break;
-      }
-    }
-    if(stop) {
-      return i;
-    }
-  }
-  return -1;
-}
-
-
-char* substitute_char(char new,char old,char* seq) {
-  int i;
-  for(i=0;seq[i]!='\0';++i) {
-    if(seq[i]==old)
-      seq[i]=new;
-  }
-  return seq;
-}
-
-char* upcase(char* orig) {
-  int i;
-  for(i=0;orig[i]!='\0';++i) {
-    if('a'<=orig[i] && orig[i]<='z')
-      orig[i]=orig[i]-'a'+'A';
-  }
-  return orig;
-}
-
-char* downcase(char* orig) {
-  int i;
-  for(i=0;orig[i]!='\0';++i) {
-    if('A'<=orig[i] && orig[i]<='Z')
-      orig[i]=orig[i]-'A'+'a';
-  }
-  return orig;
-}
-
-char* append_trail_slash(char* str) {
-  char* ret;
-  if(str[strlen(str)-1]!=SLASH[0]) {
-    ret=s_cat2(q(str),q(SLASH));
-  }else {
-    ret=q(str);
-  }
-  s(str);
-  return ret;
-}
-
-char* escape_string(char* str) {
-  //character code might bi problem.
-  char* ret;
-  int i,j;
-  for(i=0,j=0;str[i]!='\0';++i,++j) {
-    if(str[i]=='\\' ||
-       str[i]=='"') {
-      ++j;
-    }
-  }
-  ret=alloc(1+j);
-  for(i=0,j=0;str[i]!='\0';++i,++j) {
-    if(str[i]=='\\' ||
-       str[i]=='"') {
-      ret[j]='\\';
-      ++j;
-    }
-    ret[j]=str[i];
-  }
-  ret[j]='\0';
-  return ret;
-}
 #ifdef _WIN32
 setenv(const char* name,const char* value,int overwrite) {
   char* s=cat((char*)name,"=",(char*)value,NULL);
@@ -470,8 +260,7 @@ void touch(char* path) {
 }
 
 #ifdef _WIN32
-void DisplayError(char *pszAPI)
-{
+void DisplayError(char *pszAPI) {
   LPVOID lpvMessageBuffer;
   CHAR szPrintBuffer[512];
   DWORD nCharsWritten;
@@ -488,8 +277,7 @@ void DisplayError(char *pszAPI)
   ExitProcess(GetLastError());
 }
 
-char* system_(char* cmd)
-{
+char* system_(char* cmd) {
   HANDLE hOutputReadTmp,hOutputRead,hOutputWrite;
   HANDLE hInputWriteTmp,hInputRead,hInputWrite;
   HANDLE hErrorWrite;
@@ -609,8 +397,7 @@ char* s_decode(char* str) {
   return ret;
 }
 
-char** parse_cmdline(char* cmdline,int *argc)
-{
+char** parse_cmdline(char* cmdline,int *argc) {
   int i,write,mode=0;
   int count,last;
   char** ret;
@@ -656,8 +443,7 @@ char** parse_cmdline(char* cmdline,int *argc)
   return ret;
 }
 
-int free_cmdline(char** argv)
-{
+int free_cmdline(char** argv) {
   char** p;
   for(p=argv;*p!=NULL;++p) {
     dealloc(*p);
@@ -666,8 +452,7 @@ int free_cmdline(char** argv)
   return 1;
 }
 
-int system_redirect(const char* cmd,char* filename)
-{
+int system_redirect(const char* cmd,char* filename) {
 #ifndef _WIN32
   pid_t pid;
   int fd[2];
@@ -711,8 +496,7 @@ int system_redirect(const char* cmd,char* filename)
 #endif
 }
 
-int system_redirect_function(const char* cmd,Function1 f)
-{
+int system_redirect_function(const char* cmd,Function1 f) {
 #ifndef _WIN32
   pid_t pid;
   int fd[2];
@@ -816,8 +600,7 @@ char* which(char* cmd) {
   return p2;
 }
 
-LVal directory(char* path)
-{
+LVal directory(char* path) {
   LVal ret=0;
 #ifndef _WIN32
   DIR* dir=opendir(path);
@@ -855,8 +638,7 @@ LVal directory(char* path)
   return ret;
 }
 
-void signal_callback_handler(int signum)
-{
+void signal_callback_handler(int signum) {
   printf("Caught signal %d\n",signum);
   exit(1);
 }
@@ -869,8 +651,7 @@ void atexit_handler(void) {
   s(atexit_delete);
 }
 
-void setup_signal_handler (char* file_to_delete)
-{
+void setup_signal_handler (char* file_to_delete) {
 #ifndef _WIN32
   atexit_delete=q(file_to_delete);
   signal(SIGHUP,  signal_callback_handler);
@@ -880,176 +661,4 @@ void setup_signal_handler (char* file_to_delete)
   signal(SIGTERM, signal_callback_handler);
   atexit(atexit_handler);
 #endif
-}
-
-/*list*/
-
-LVal cons(void* v,LVal l)
-{
-  struct Cons* ret=alloc(sizeof(struct Cons));
-  ret->val=(LVal)v;
-  ret->type=0;
-  ret->next=l;
-  return (LVal)toList(ret);
-}
-
-LVal consi(int v,LVal l)
-{
-  return cons((void*)((LVal)toNumber(v)),l);
-}
-
-LVal conss(char* v,LVal l)
-{
-  return cons((void*)((LVal)toString(v)|2),l);
-}
-
-LVal nreverse(LVal v)
-{
-  LVal next;
-  LVal before;
-  for(before=0;v;v=next) {
-    next=Next(v);
-    ((struct Cons*)v)->next=before;
-    before=v;
-  }
-  return (LVal)before;
-}
-
-LVal remove_if_not1(Function1 f,LVal v)
-{
-  LVal ret;
-  LVal fret;
-  for(ret=0;v;v=Next(v)) {
-    fret=f(v);
-    if(fret) {
-      if(NumberP(first(v))) {
-        ret=consi(firsti(v),ret);
-      }else if(StringP(first(v))) {
-        ret=conss(q(firsts(v)),ret);
-      }
-    }
-    sL(fret);
-  }
-  return nreverse(ret);
-}
-LVal mapcar1(Function1 f,LVal v)
-{
-  LVal ret;
-  for(ret=0;v;v=Next(v)) {
-    ret=cons((void*)f(first(v)),ret);
-  }
-  return nreverse(ret);
-}
-LVal string_equal(LVal v1,LVal v2) {
-  return strcmp(toString(v1),toString(v2))==0;
-}
-
-LVal find(LVal v,LVal l,Compare2 c)
-{
-  for(;l;l=Next(l)) {
-    if(c(v,first(l)))
-      return first(l);
-  }
-  return 0;
-}
-
-int firsti(LVal v)
-{
-  struct Cons* l=(struct Cons*)v;
-  return (l->val>>2);
-}
-
-char* firsts(LVal v)
-{
-  struct Cons* l=(struct Cons*)v;
-  return (char*)(l->val&(~3));
-}
-
-void* firstp(LVal v)
-{
-  struct Cons* l=(struct Cons*)v;
-  return (void*)(l->val&(~3));
-}
-LVal first(LVal v)
-{
-  struct Cons* l=(struct Cons*)v;
-  return l->val;
-}
-LVal rest(LVal v)
-{
-  struct Cons* l=(struct Cons*)v;
-  return l->next;
- }
-
-LVal nthcdr(int n,LVal v)
-{
-  for(;n>0;--n) {
-    v=rest(v);
-  }
-  return v;
-}
-LVal length(LVal l) {
-  int c;
-  for(c=0;l;++c,l=Next(l));
-  return toNumber(c);
-}
-
-void print_list(LVal v)
-{
-  printf("(");
-  for(;v;v=Next(v)) {
-    switch(first(v)&3) {
-    case 1:
-      printf("%d",firsti(v));
-      break;
-    case 2:
-      printf("\"%s\"",firsts(v));
-      break;
-    case 0:
-      print_list(first(v));
-      break;
-    }
-    if(Next(v))
-      printf(" ");
-  }
-  printf(")\n");
-}
-
-LVal split_string(char* string,char* by) {
-  LVal ret;
-  int pos,j,i;
-  for(i=0,pos=-1,ret=0;string[i]!='\0';i++) {
-    for(j=0;by[j]!='\0';++j) {
-      if(string[i]==by[j]) {
-        ret=conss(subseq(string,pos+1,i),V(ret));
-        pos=i;
-        break;
-      }
-    }
-  }
-  if(i!=pos+1)
-    ret=conss(subseq(string,pos+1,i),V(ret));
-  else 
-    ret=conss(q(""),V(ret));
-  return nreverse(ret);
-}
-
-void sL(LVal v)
-{
-  struct Cons* next;
-  struct Cons* l;
-  switch(v&3) {
-  case 1: //number
-    break;
-  case 2: //string pointer
-    s(toString(v));
-    break;
-  case 0: //builtin structure
-    for(l=toList(v);l;l=next) {
-      next=(struct Cons*)Next((LVal)l);
-      sL(l->val);
-      dealloc(l);
-    }
-    break;
-  }
 }
