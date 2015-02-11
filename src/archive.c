@@ -82,7 +82,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 #else
   char* _uname_m=uname_m();
   char* _uname=uname();
-  char* _homedir=homedir();
+  char* _homedir=configdir();
   char* exe=cat(_homedir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL);
   char *outputpath2=q(outputpath);
   substitute_char('\\','/',outputpath2);
