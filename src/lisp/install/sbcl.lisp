@@ -2,7 +2,7 @@
 
 (defun sh ()
   (or #+win32
-      (format nil "~A -l" (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh" (uname-m) (uname) "msys" "-") (homedir)))
+      (format nil "~A -l" (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh" (uname-m) (uname) "msys" "mingw32") (homedir)))
       "sh"))
 
 (defun sbcl-get-version ()
@@ -140,7 +140,7 @@
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
         (uiop/run-program:run-program (format nil "~A install.sh" (sh)) :output t)))
-    (format t"done.~%"))
+    (format *error-output* "done.~%"))
   (cons t argv))
 
 (defun sbcl-backup-features (argv)
