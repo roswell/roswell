@@ -9,7 +9,7 @@ roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros lisp/use.ros li
 
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
-	util_list.c util.c util_string.c \
+	util_list.c util.c util_string.c util_dir.c \
 	cmd-version.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c \
 	cmd-install.c cmd-install-sbcl-bin.c cmd-install-quicklisp.c \
