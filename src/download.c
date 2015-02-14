@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <curl/curl.h>
 #include "util.h"
 
 static int count=0;
@@ -23,8 +20,8 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
   return written;
 }
 
-int download_simple (char* uri,char* path,int verbose)
-{
+int download_simple (char* uri,char* path,int verbose) {
+#ifndef _WIN32
   CURL *curl;
   CURLcode res;
   FILE *bodyfile;
@@ -53,11 +50,65 @@ int download_simple (char* uri,char* path,int verbose)
   fclose(bodyfile);
   if(res != CURLE_OK) {
     return -2;
-  }else {
-    int ret=rename_file(path_partial,path);
+  }
+#else
+  URL_COMPONENTS u;
+  TCHAR szHostName[4096];
+  TCHAR szUrlPath[4096];
+  FILE *bodyfile;
+  char* path_partial=cat(path,".partial",NULL);
+  bodyfile = fopen(path_partial,"wb");
+  if (bodyfile == NULL) {
     s(path_partial);
-    if(ret)
-      return 0;
+    return -1;
+  }
+  u.dwStructSize = sizeof( u );
+
+  u.dwSchemeLength    = 1;
+  u.dwHostNameLength  = 4096;
+  u.dwUserNameLength  = 1;
+  u.dwPasswordLength  = 1;
+  u.dwUrlPathLength   = 4096;
+  u.dwExtraInfoLength = 1;
+
+  u.lpszScheme     = NULL;
+  u.lpszHostName   = szHostName;
+  u.lpszUserName   = NULL;
+  u.lpszPassword   = NULL;
+  u.lpszUrlPath    = szUrlPath;
+  u.lpszExtraInfo  = NULL;
+  if(!InternetCrackUrl( uri, (DWORD)strlen(uri), 0, &u ))
+    return -2;
+  HINTERNET hSession = InternetOpen("WinInet",INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,0);
+  HINTERNET hConnection = InternetConnect(hSession,szHostName,u.nPort,NULL,NULL,INTERNET_SERVICE_HTTP,0,0);
+  DWORD dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE;
+  if(INTERNET_SCHEME_HTTP == u.nScheme) {
+  }else if( INTERNET_SCHEME_HTTPS == u.nScheme ) {
+    dwFlags = dwFlags | INTERNET_FLAG_SECURE| INTERNET_FLAG_IGNORE_CERT_DATE_INVALID| INTERNET_FLAG_IGNORE_CERT_CN_INVALID;
+  }else return -2;
+  HINTERNET hRequest = HttpOpenRequest(hConnection,"GET",szUrlPath,NULL,NULL,NULL,dwFlags,0);
+
+  HttpSendRequest(hRequest,NULL,0,NULL,0);
+  DWORD dwStatusCode;
+  DWORD dwLength = sizeof(DWORD);
+  if( !HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0 ) ){
+    return -4;
+  }
+  if( HTTP_STATUS_OK != dwStatusCode ) {
     return -3;
   }
+  DWORD dwContentLen;
+  DWORD dwBufLen = sizeof(dwContentLen);
+  char pData[10000];
+  DWORD dwBytesRead = 1;
+  while (dwBytesRead) {
+    InternetReadFile(hRequest, pData, 99, &dwBytesRead);
+    pData[dwBytesRead] = 0;
+    write_data(pData,dwBytesRead,1,bodyfile);
+  }
+  fclose(bodyfile);
+#endif
+  int ret=rename_file(path_partial,path);
+  s(path_partial);
+  return ret?0:-3;
 }

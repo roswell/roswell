@@ -19,6 +19,10 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
+#include<wininet.h>
+#endif
+#ifdef HAVE_CURL_CURL_H
+#include <curl/curl.h>
 #endif
 
 extern char** argv_orig;
