@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
 #include <pwd.h>
 #include <unistd.h>
 #include <signal.h>
@@ -19,7 +19,7 @@
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
-#include<wininet.h>
+#include <wininet.h>
 #endif
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>

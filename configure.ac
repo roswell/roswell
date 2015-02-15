@@ -25,7 +25,10 @@ esac
 wwwlib=no
 AM_CONDITIONAL([COND_WINDOWS], [test "$inc_windows" = yes])
 AC_CHECK_LIB([wininet], [main],[LIBS="-lwininet $LIBS";wwwlib=yes],[])
-AC_CHECK_LIB([curl], [curl_global_init],[LIBS="-lcurl $LIBS";wwwlib=yes],[])
+if test "x$wwwlib" = xno; then
+  AC_CHECK_LIB([curl], [curl_global_init],[LIBS="-lcurl $LIBS";wwwlib=yes],[])
+  AC_CHECK_HEADERS(curl/curl.h)
+fi
 
 if test "x$wwwlib" = xno; then
   AC_MSG_ERROR([libcurl development files required]);
@@ -33,7 +36,7 @@ fi
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS(stdlib.h stdio.h sys/stat.h curl/curl.h)
+AC_CHECK_HEADERS(sys/stat.h windows.h)
 
 # Checks for typedefs, structures, and compiler characteristics.
 

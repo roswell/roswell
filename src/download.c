@@ -21,7 +21,7 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
 }
 
 int download_simple (char* uri,char* path,int verbose) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   CURL *curl;
   CURLcode res;
   FILE *bodyfile;

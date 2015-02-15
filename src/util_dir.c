@@ -13,7 +13,7 @@ char* homedir(void) {
   if(env) {
     return append_trail_slash(env);
   }
-#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
   TCHAR szAppData[MAX_PATH];
   if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData))) {
     c=q_(szAppData);
@@ -112,7 +112,7 @@ char* ensure_directories_exist (char* path) {
 }
 
 int directory_exist_p (char* path) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
 # ifdef HAVE_SYS_STAT_H
   struct stat sb;
   int ret=0;

@@ -363,6 +363,9 @@ char* uname(void) {
 }
 
 char* uname_m(void) {
+#if defined(_WIN64)
+  return q("x86-64");
+#endif
 #ifdef __CYGWIN__
   return q("x86");
 #endif
@@ -418,7 +421,7 @@ char* which(char* cmd) {
 
 LVal directory(char* path) {
   LVal ret=0;
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   DIR* dir=opendir(path);
   struct dirent *dirent;
 
@@ -468,7 +471,7 @@ void atexit_handler(void) {
 }
 
 void setup_signal_handler (char* file_to_delete) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   atexit_delete=q(file_to_delete);
   signal(SIGHUP,  signal_callback_handler);
   signal(SIGINT,  signal_callback_handler);
