@@ -39,19 +39,19 @@ struct Cons {
   LVal next;
 };
 
-#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
 #define SLASH "\\"
 #else
 #define SLASH "/"
 #endif
 
-#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
 #define EXE_EXTENTION ".exe"
 #else
 #define EXE_EXTENTION ""
 #endif
 
-#if defined(_WIN32) || defined(__CYGWIN__)
+#if defined(HAVE_WINDOWS_H)
 #define SBCL_BIN_EXTENTION ".msi"
 #else
 #define SBCL_BIN_EXTENTION ".tar.bz2"

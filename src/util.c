@@ -39,7 +39,7 @@ setenv(const char* name,const char* value,int overwrite) {
 #endif
 
 int delete_file(char* pathspec) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char* cmd;
   int ret;
   cmd=s_cat2(q("rm -f "),q(pathspec));
@@ -52,7 +52,7 @@ int delete_file(char* pathspec) {
 }
 
 int rename_file(char* file,char* new_name) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char* cmd;
   int ret;
   cmd=s_cat(q("mv "),q(file),q(" "),q(new_name),NULL);
@@ -66,7 +66,7 @@ int rename_file(char* file,char* new_name) {
 
 void touch(char* path) {
   int ret;
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char* cmd=s_cat2(q("touch "),q(path));
 #else
   char* cmd=q("");
@@ -75,7 +75,7 @@ void touch(char* path) {
   s(cmd);
 }
 
-#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
 void DisplayError(char *pszAPI) {
   LPVOID lpvMessageBuffer;
   CHAR szPrintBuffer[512];
@@ -269,7 +269,7 @@ int free_cmdline(char** argv) {
 }
 
 int system_redirect(const char* cmd,char* filename) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   pid_t pid;
   int fd[2];
   char c;
@@ -313,7 +313,7 @@ int system_redirect(const char* cmd,char* filename) {
 }
 
 int system_redirect_function(const char* cmd,Function1 f) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   pid_t pid;
   int fd[2];
   char c;
@@ -351,7 +351,7 @@ char* uname(void) {
 #ifdef __CYGWIN__
   return q("windows");
 #endif
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char *p=system_("uname");
   char *p2;
   p2=remove_char("\r\n",p);
@@ -369,7 +369,7 @@ char* uname_m(void) {
 #ifdef __CYGWIN__
   return q("x86");
 #endif
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char *p=system_("uname -m");
   char *p2;
   p2=remove_char("\r\n",p);
@@ -403,7 +403,7 @@ char* uname_m(void) {
 }
 
 char* which(char* cmd) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
 #else
   if(position_char("\\:",cmd)!=-1) {
