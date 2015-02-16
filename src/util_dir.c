@@ -95,20 +95,20 @@ int ensure_directories_exist (char* path) {
   if(len) {
     for(--len;(path[len]!=SLASH[0]||len==-1);--len);
     path=subseq(path,0,len+1);
-  }
+  }else path=q(path);
   if(!directory_exist_p(path)) {
 #ifndef HAVE_WINDOWS_H
-    char* cmd=s_cat2(q("mkdir -p "),path);
+    char* cmd=cat("mkdir -p ",path,NULL);
     if(system(cmd)!=0) {
       fprintf(stderr,"failed:%s\n",cmd);
-      return NULL;
+      return 0;
     };
     s(cmd);
 #else
     SHCreateDirectoryEx(NULL,path,NULL);
 #endif
+    s(path);
   }
-  s(path);
   return 1;
 }
 
