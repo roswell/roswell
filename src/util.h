@@ -121,7 +121,7 @@ char* lispdir(void);
 char* truename(const char* path);
 char* pathname_directory (char* path);
 char* file_namestring (char* path);
-char* ensure_directories_exist (char* path);
+int ensure_directories_exist (char* path);
 int directory_exist_p (char* path);
 int file_exist_p (char* path);
 int change_directory(const char* path);

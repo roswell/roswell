@@ -90,25 +90,26 @@ char* file_namestring(char* path) {
   return ret;
 }
 
-char* ensure_directories_exist (char* path) {
+int ensure_directories_exist (char* path) {
   int len = strlen(path);
+  if(len) {
+    for(--len;(path[len]!=SLASH[0]||len==-1);--len);
+    path=subseq(path,0,len+1);
+  }
   if(!directory_exist_p(path)) {
-    if(len) {
-      for(--len;(path[len]!=SLASH[0]||len==-1);--len);
-      path=subseq(path,0,len+1);
-    }
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
     char* cmd=s_cat2(q("mkdir -p "),path);
-#else
-    char* cmd=s_cat(q("cmd /C md "),path,q(" 2>NUL"),NULL);
-#endif
     if(system(cmd)!=0) {
       fprintf(stderr,"failed:%s\n",cmd);
       return NULL;
     };
     s(cmd);
+#else
+    SHCreateDirectoryEx(NULL,path,NULL);
+#endif
   }
-  return path;
+  s(path);
+  return 1;
 }
 
 int directory_exist_p (char* path) {
@@ -157,7 +158,7 @@ int change_directory(const char* path) {
 }
 
 int delete_directory(char* pathspec,int recursive) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char* cmd;
   int ret;
   if(recursive) {
