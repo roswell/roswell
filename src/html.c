@@ -1,13 +1,16 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include "util.h"
-
-extern int verbose;
 
 struct attr {
   char* name;
   char* value;
+};
+
+struct tag {
+  int type; /* 0 for not tag
+	       1 for open tag
+	       2 for close tag*/
+  char* name;
+  struct Cons* attr;
 };
 
 struct Cons* attralloc(void) {
@@ -105,14 +108,6 @@ LVal parse_attr(char* str) {
   }
   return (LVal)ret->next;
 }
-
-struct tag {
-  int type; /* 0 for not tag 
-	       1 for open tag 
-	       2 for close tag*/ 
-  char* name;
-  struct Cons* attr;
-};
 
 LVal tagalloc(void) {
   struct tag* t=alloc(sizeof(struct tag));
@@ -357,22 +352,7 @@ LVal filter_sbcl_uri(LVal v) {
   return 0;
 }
 
-/*
-int main(int argc,char** argv) 
-{
-  struct Cons *ret,*ret2;
-  ret=atag_list(argv[1]);
-  ret2=remove_if_not1(filter_sbcl_uri,ret);
-  //ret3=mapcar1(separate_sbcl_uri,ret2);
-  
-  print_list(ret2);
-  sL(ret),sL(ret2); 
-
-}
-*/
-
-char* sbcl_bin(char* file)
-{
+char* sbcl_bin(char* file) {
   char* str;
   LVal ret3,ret2,ret;
   if(verbose>0) {
@@ -387,8 +367,20 @@ char* sbcl_bin(char* file)
     fprintf(stderr,"this architecture is not supported.stop\n");
     exit(1);
   }
+  if(verbose>1)
+    print_list(ret2);
   ret3= split_string(firsts(ret2),"-");
   str=q(firsts(nthcdr(1,ret3)));
   sL(ret),sL(ret2),sL(ret3);
   return str;
 }
+
+/*gcc html.c -DROSWELL_HTML_TEST util.c util_list.c util_dir.c util_string.c*/
+#ifdef ROSWELL_HTML_TEST
+char** argv_orig;
+int verbose=0;
+int main(int argc,char** argv) {
+  verbose=2;
+  sbcl_bin(argv[1]);
+}
+#endif

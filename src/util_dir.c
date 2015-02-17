@@ -48,7 +48,11 @@ char* lispdir(void) {
       lisp_path=ros_bin_lisp;
     }else {
       s(ros_bin_lisp);
+#ifdef LISP_PATH
       lisp_path=q(LISP_PATH);
+#else
+      lisp_path=cat(".",SLASH,NULL);
+#endif
 #ifdef _WIN32
       substitute_char('\\','/',lisp_path);
 #endif
@@ -114,16 +118,12 @@ int ensure_directories_exist (char* path) {
 
 int directory_exist_p (char* path) {
 #ifndef HAVE_WINDOWS_H
-# ifdef HAVE_SYS_STAT_H
   struct stat sb;
   int ret=0;
   if (stat(path, &sb) == 0 && S_ISDIR(sb.st_mode)) {
     ret=1;
   }
   return ret;
-# else
-#  error not imprement directory_exist_p
-# endif
 #else
   WIN32_FIND_DATA fd;
   char *p=cat(path,"*.*",NULL);
