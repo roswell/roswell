@@ -7,6 +7,12 @@ roslispinstall_DATA = lisp/install/sbcl-bin.lisp lisp/install/sbcl.lisp lisp/ins
 roslispsubcmddir = $(roslispdir)/subcmd
 roslispsubcmd_DATA = lisp/dump.ros lisp/list.ros lisp/delete.ros lisp/use.ros lisp/init.ros
 
+noinst_PROGRAMS = gen
+gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c
+
+gend.h: gen$(EXEEXT) FORCE
+	./gen$(EXEEXT) $(CC) > $@.tmp;cmp -s $@.tmp $@||cp $@.tmp $@
+	rm $@.tmp
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
 	util_list.c util.c util_string.c util_dir.c \
@@ -16,4 +22,8 @@ ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
 	cmd-help.c \
 	cmd-config.c \
 	cmd-setup.c
-noinst_HEADERS = util.h opt.h cmd-install.h
+noinst_HEADERS = util.h opt.h cmd-install.h gend.h
+CLEANFILES = gend.h
+
+FORCE:
+.PHONY: FORCE
