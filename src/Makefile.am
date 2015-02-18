@@ -13,6 +13,7 @@ gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c
 gend.h: gen$(EXEEXT) FORCE
 	./gen$(EXEEXT) $(CC) > $@.tmp;cmp -s $@.tmp $@||cp $@.tmp $@
 	rm $@.tmp
+cmd-version.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
 	util_list.c util.c util_string.c util_dir.c \
