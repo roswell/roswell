@@ -111,7 +111,7 @@ int cmd_help(int argc, const char **argv)
                 buf[0]='\0';
               s(fname);
               f[len]='\0';
-              if(buf[0]='#' && buf[1]=='|')
+              if(buf[0]=='#' && buf[1]=='|')
                 fprintf(stderr,fmt,f,buf+2);
             }
           }
