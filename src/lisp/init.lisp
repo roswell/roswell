@@ -91,7 +91,10 @@
 
 (defun quit (cmd &rest rest)
   (declare (ignorable cmd rest))
-  (asdf::quit (or (first rest) 0)))
+  (let ((ret (or (first rest) 0)))
+    (ignore-errors
+      (asdf::quit ret))
+    #+sbcl(cl-user::quit :unix-status ret)))
 
 (defun restart (cmd arg &rest rest)
   (declare (ignorable cmd rest))
