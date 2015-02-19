@@ -66,7 +66,7 @@
                         while pos))))
     (if (zerop (length dir))
         (warn "Source-registry ~S isn't valid. Ignored." arg)
-        (asdf:initialize-source-registry arg))))
+        (asdf:initialize-source-registry dir))))
 
 (defun system (cmd arg &rest rest)
   (declare (ignorable cmd rest))
