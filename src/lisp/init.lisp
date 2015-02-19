@@ -56,7 +56,10 @@
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
-  (asdf:initialize-source-registry arg))
+  (let ((dir (probe-file arg)))
+    (if dir
+        (asdf:initialize-source-registry dir)
+        (warn "Directory ~S doesn't exist. Ignored." arg))))
 
 (defun system (cmd arg &rest rest)
   (declare (ignorable cmd rest))
