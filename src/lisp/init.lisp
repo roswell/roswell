@@ -56,7 +56,17 @@
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
-  (asdf:initialize-source-registry arg))
+  (let ((dir (format nil "~{~A~^:~}"
+                     (loop for i = arg then (subseq i (1+ pos))
+                        for pos = (position #\: i)
+                        for part = (if pos (subseq i 0 pos) i)
+                        when (and (not (zerop (length part)))
+                                  (probe-file part))
+                        collect (namestring (probe-file part))
+                        while pos))))
+    (if (zerop (length dir))
+        (warn "Source-registry ~S isn't valid. Ignored." arg)
+        (asdf:initialize-source-registry arg))))
 
 (defun system (cmd arg &rest rest)
   (declare (ignorable cmd rest))
