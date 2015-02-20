@@ -4,7 +4,7 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad :uiop) :silent t)
+(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad :uiop))
 
 (defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
 (defvar *package-name* "roswell")
@@ -27,21 +27,25 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 	 :callback-only t)))))
 
 (defun download (uri path)
-  (with-open-file (out path :direction :output 
-                    :if-does-not-exist :create
-                    :if-exists :supersede
-                    :element-type '(unsigned-byte 8))
-    
-      (multiple-value-bind (in status)
-          (drakma:http-request uri :want-stream t :force-binary t)
-        (unwind-protect
-             (when (= status 200)
-               (loop :with seq := (make-array 4096 :element-type '(unsigned-byte 8))
-                  :for read := (read-sequence seq in)
+  (if (probe-file path)
+      (format t "skip downloading ~a~%" uri)
+      (with-open-file (out path :direction :output
+                           :if-does-not-exist :create
+                           :if-exists :supersede
+                           :element-type '(unsigned-byte 8))
+        (format t "downloading ~a" uri)
+        (force-output)
+        (multiple-value-bind (in status)
+            (drakma:http-request uri :want-stream t :force-binary t)
+          (unwind-protect
+               (when (= status 200)
+                 (loop :with seq := (make-array 4096 :element-type '(unsigned-byte 8))
+                    :for read := (read-sequence seq in)
                   :until (= read 0)
                   :do (write-sequence seq out :end read)))
-          (when in
-            (close in))))))
+            (when in
+              (close in))))
+        (format t "done ~%"))))
 
 (defun fetch-upstream ()
   (let* ((url (get-newest-url "snmsts/roswell"))
@@ -79,7 +83,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun dpkg-buildpackage (path)
   (uiop/os:chdir path)
-  (uiop/run-program:run-program "dpkg-buildpackage -us -uc"))
+  (uiop/run-program:run-program "dpkg-buildpackage -us -uc" :output :interactive))
 
 (defun main (&optional (arg0 "all") &rest argv)
   (declare (ignore argv))
