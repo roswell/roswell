@@ -89,12 +89,11 @@
   (declare (ignorable cmd rest))
   (cl:eval (read-from-string arg)))
 
-(defun quit (cmd &rest rest)
-  (declare (ignorable cmd rest))
-  (let ((ret (or (first rest) 0)))
-    (ignore-errors
-      (asdf::quit ret))
-    #+sbcl(cl-user::quit :unix-status ret)))
+(defun quit (return-code &rest rest)
+  (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
+    (ignore-errors(funcall 'asdf::quit ret))
+    #+sbcl(ignore-errors(cl-user::exit :code ret))
+    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))))
 
 (defun restart (cmd arg &rest rest)
   (declare (ignorable cmd rest))
