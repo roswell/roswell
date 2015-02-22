@@ -59,7 +59,7 @@ char* sbcl_uri_bin(struct install_options* param)
 
 int sbcl_bin_expand(struct install_options* param)
 {
-#if defined(_WIN32) || defined(__CYGWIN__)
+#ifdef HAVE_WINDOWS_H
   char* impl=param->impl;
   char* version=q(param->version);
   int ret;
@@ -74,17 +74,15 @@ int sbcl_bin_expand(struct install_options* param)
   }else
     impl=q(impl);
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
-  printf("Extracting archive. %s to %s\n",archive,dist_path);
+  printf("Extracting archive by msi. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
   ensure_directories_exist(log_path);
+  if(dist_path[strlen(dist_path)-1]=='\\')
+    dist_path[strlen(dist_path)-1]='\0';
 
-  char* cmd=cat(
-#ifdef _WIN32
-		"start /wait ",
-#endif
-		"msiexec.exe /a \"",
+  char* cmd=cat("msiexec.exe /a \"",
                 archive,
                 "\" targetdir=\"",
                 dist_path,
@@ -93,6 +91,10 @@ int sbcl_bin_expand(struct install_options* param)
                 log_path,
                 "\"",
                 NULL);
+  char* cmd2=escape_string(cmd);
+  s(cmd);cmd=cat("cmd /c \"",cmd2,"\"",NULL);s(cmd2);
+  if(verbose)
+    fprintf(stderr,"msiexeccmd:%s\n",cmd);
   ret=system(cmd);
   s(impl);
   s(dist_path);
@@ -106,7 +108,7 @@ int sbcl_bin_expand(struct install_options* param)
   char* version=q(param->version);
   char* dist_path=param->expand_path;
   char* home=configdir();
-  printf("Extracting archive. %s to %s\n",archive,dist_path);
+  printf("Extracting archive tar. %s to %s\n",archive,dist_path);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
   argv[2]=cat(home,"archives",SLASH,archive,NULL);
@@ -116,27 +118,38 @@ int sbcl_bin_expand(struct install_options* param)
 }
 
 int sbcl_bin_install(struct install_options* param) {
-#if defined(_WIN32) || defined(__CYGWIN__)
+#ifdef HAVE_WINDOWS_H
   char* impl=param->impl;
   char* version=param->version;
   char* arch=param->arch;
   char* home=configdir();
-  char* str;
+  char *str,*str2,*str3,*str4;
   char* version_num= q(version);
   int ret;
-  str=cat("echo f|xcopy \"",
-          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe\" \"",
-          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\bin\\sbcl.exe\" >NUL",NULL);
+  str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe",NULL);
+  str2=escape_string(str4);s(str4);
+  str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\bin\\sbcl.exe",NULL);
+  str3=escape_string(str4);s(str4);
+  str=cat("cmd /c \"echo f|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
+  s(str2),s(str3);
   ret=system(str);s(str);
   if(ret) return 0;
-  str=cat("echo f|xcopy \"",
-          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core\" \"",
-          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core\" >NUL",NULL);
+  str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core",NULL);
+  str2=escape_string(str4);s(str4);
+  str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core",NULL);
+  str3=escape_string(str4);s(str4);
+  str=cat("cmd /c \"echo f|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
   ret=system(str);s(str);
   if(ret) return 0;
   str=cat("echo d|xcopy \"",
           home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
           home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib\" >NUL",NULL);
+
+  str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib",NULL);
+  str2=escape_string(str4);s(str4);
+  str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib",NULL);
+  str3=escape_string(str4);s(str4);
+  str=cat("cmd /c \"echo d|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
   ret=system(str);
   s(str),s(home);
   if(ret) return 0;
