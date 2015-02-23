@@ -3,3 +3,16 @@
 .deps
 src/ros
 src/ros.exe
+src/gend.h
+src/gen
+src/gen.exe
+Makefile
+Makefile.in
+configure
+config.status
+compile
+aclocal.m4
+autom4te.cache
+stamp-h1
+depcomp
+config.log
