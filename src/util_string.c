@@ -185,6 +185,10 @@ char* escape_string(char* str) {
   ret[j]='\0';
   return ret;
 }
+char* s_escape_string(char* str) {
+  char* r=escape_string(str);
+  s(str);return r;
+}
 
 LVal split_string(char* string,char* by) {
   LVal ret;

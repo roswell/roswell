@@ -116,6 +116,7 @@ char* upcase(char* orig);
 char* downcase(char* orig);
 char* append_trail_slash(char* str);
 char* escape_string(char* str);
+char* s_escape_string(char* str);
 char* homedir(void);
 char* configdir(void);
 char* lispdir(void);
