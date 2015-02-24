@@ -20,7 +20,12 @@ int main(int argc,char **argv) {
   }
   cmd=cat("sh -c 'cd ",LISP_PATH,"; pwd -W'",NULL);
   result=system_(cmd);
-  if(result[0]!='\0')
-    printf("#define WIN_LISP_PATH %s\n",result);
+  if(result[0]!='\0') {
+    pos=position_char("\r\n",result);
+    result[pos]='\0';
+    substitute_char('\\','/',result);
+    result=escape_string(result);
+    printf("#define WIN_LISP_PATH \"%s\\\\\"\n",result);
+  }
   exit(EXIT_SUCCESS);
 }
