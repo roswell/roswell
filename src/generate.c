@@ -18,5 +18,9 @@ int main(int argc,char **argv) {
   }else {
     printf("#define ROS_REVISION \"\"\n");
   }
+  cmd=cat("sh -c 'cd ",LISP_PATH,"; pwd -W'",NULL);
+  result=system_(cmd);
+  if(result[0]!='\0')
+    printf("#define WIN_LISP_PATH %s\n",result);
   exit(EXIT_SUCCESS);
 }
