@@ -1,6 +1,8 @@
 (in-package :ros.install)
 #-win32
-(error "msys is only required on windows")
+(progn
+  (warn "msys is only required on windows")
+  (ros:quit 0))
 
 (ros:quicklisp :environment nil)
 

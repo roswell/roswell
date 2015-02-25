@@ -1,6 +1,8 @@
 (in-package :ros.install)
 #-win32
-(error "7zip is only required on windows")
+(progn
+  (warn "7zip is only required on windows")
+  (ros:quit 0))
 
 (ros:quicklisp :environment nil)
 (ql:quickload :zip :silent t)
