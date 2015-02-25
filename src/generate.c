@@ -18,7 +18,7 @@ int main(int argc,char **argv) {
   }else {
     printf("#define ROS_REVISION \"\"\n");
   }
-  cmd=cat("sh -c 'cd ",LISP_PATH,"; pwd -W'",NULL);
+  cmd=cat("sh -c 'cd ",LISP_PATH,"; pwd -W 2>/dev/null'",NULL);
   result=system_(cmd);
   if(result[0]!='\0') {
     pos=position_char("\r\n",result);
