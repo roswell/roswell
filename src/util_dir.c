@@ -39,28 +39,6 @@ char* configdir(void) {
   return NULL;
 }
 
-char* lispdir(void) {
-    char *ros_bin=pathname_directory(truename(which(argv_orig[0])));
-    char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
-    char* lisp_path;
-    s(ros_bin);
-    if(directory_exist_p(ros_bin_lisp)) {
-      lisp_path=ros_bin_lisp;
-    }else {
-      s(ros_bin_lisp);
-#ifdef LISP_PATH
-      lisp_path=q(LISP_PATH);
-#else
-      lisp_path=cat(".",SLASH,NULL);
-#endif
-#ifdef _WIN32
-      substitute_char('\\','/',lisp_path);
-#endif
-      lisp_path=append_trail_slash(lisp_path);
-    }
-    return lisp_path;
-}
-
 char* truename(const char* path) {
 #ifndef _WIN32
   char* ret=realpath(path,NULL);
@@ -96,6 +74,8 @@ char* file_namestring(char* path) {
 
 int ensure_directories_exist (char* path) {
   int len = strlen(path);
+  if(verbose)
+    fprintf(stderr,"ensure_directories_exist:%s\n",path);
   if(len) {
     for(--len;(path[len]!=SLASH[0]||len==-1);--len);
     path=subseq(path,0,len+1);
@@ -137,7 +117,7 @@ int directory_exist_p (char* path) {
 }
 
 int file_exist_p (char* path) {
-#ifdef HAVE_SYS_STAT_H
+#ifndef HAVE_WINDOWS_H
   struct stat sb;
   int ret=0;
   if (stat(path, &sb) == 0 && S_ISREG(sb.st_mode)) {
@@ -145,6 +125,11 @@ int file_exist_p (char* path) {
   }
   return ret;
 #else
+  WIN32_FIND_DATA fd;
+  HANDLE dir=FindFirstFile(path,&fd);
+  if(dir==INVALID_HANDLE_VALUE)
+    return 0;
+  FindClose(dir);
   return 1;
 #endif
 }
