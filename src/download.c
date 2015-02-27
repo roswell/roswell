@@ -10,7 +10,7 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
   int current = count/block;
   int dots;
   int i;
-  count+=written;
+  count+=written*size;
   for(i=current;i<count/block;++i){
     printf(".");
     fflush(stdout);
