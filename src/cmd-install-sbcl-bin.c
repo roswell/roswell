@@ -4,6 +4,7 @@
 #include "cmd-install.h"
 #include "opt.h"
 char* download_archive_name(struct install_options* param);
+int cmd_tar(int argc, const char **argv);
 char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
@@ -113,7 +114,7 @@ int sbcl_bin_expand(struct install_options* param)
   ensure_directories_exist(dist_path);
   argv[2]=cat(home,"archives",SLASH,archive,NULL);
   argv[4]=cat(home,"src",SLASH,NULL);
-  return !cmd_tar(5,argv);
+  return !cmd_tar(5,(const char**)argv);
 #endif
 }
 
