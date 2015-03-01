@@ -94,7 +94,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd)
     arg[paramc++]=q("--disable-debugger");
 
   arg[paramc++]=q("--eval");
-  arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
+  arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL);
 
   if(quicklisp) {
     char *tmp,*tmp2;
