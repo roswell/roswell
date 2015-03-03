@@ -22,8 +22,15 @@ int cmd_config(int argc, const char **argv)
       save_opts(path,opt);
       ret= 2;
     }else if(argc>2) {
-      set_opt(opts, argv[1],(char*)argv[2],0);
-      save_opts(path,opt);
+      if(strcmp(argv[1],"set")==0) {
+        set_opt(opts, argv[2],(char*)argv[3],0);
+        save_opts(path,opt);
+      }else if (strcmp(argv[1],"show")==0) {
+        printf("%s\n",_get_opt(opt,argv[2]));
+      }else {
+        set_opt(opts, argv[1],(char*)argv[2],0);
+        save_opts(path,opt);
+      }
       ret= 3;
     }
   }

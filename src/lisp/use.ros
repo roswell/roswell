@@ -19,7 +19,7 @@ exec ros +R -Q -L sbcl-bin -- $0 "$@"
 
 (defun roswell-internal (args output)
   (uiop/run-program:run-program
-   (format nil "~A config ~{ ~A~}"
+   (format nil "~A config set ~{ ~A~}"
            (ros:opt "argv0") args) :output output))
 
 (defun config (&rest argv)
