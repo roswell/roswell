@@ -15,16 +15,11 @@ exec ros -- $0 "$@"
 (defun homedir ()
   (ros:opt "homedir"))
 
-(defun roswell-internal (args output)
-  (uiop/run-program:run-program
-   (format nil "~A roswell-internal-use~{ ~A~}"
-           (ros:opt "argv0") args) :output output))
-
 (defun uname ()
-  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
+  (ros:roswell '("roswell-internal-use uname") :string t))
 
 (defun uname-m ()
-  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
+  (ros:roswell '("roswell-internal-use uname -m") :string t))
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"

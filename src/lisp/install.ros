@@ -49,20 +49,15 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (defun line-number (stream)
   (format (count-line-stream-base stream) "~&~8d " (count-line-stream-count stream)))
 
-(defun roswell-internal (args output)
-  (uiop/run-program:run-program
-   (format nil "~A roswell-internal-use~{ ~A~}"
-           *ros-path* args) :output output))
-
 (defun system- (cmd)
   (with-output-to-string (*standard-output*)
     (uiop/run-program:run-program cmd :output t)))
 
 (defun uname ()
-  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
+  (ros:roswell '("roswell-internal-use uname") :string t))
 
 (defun uname-m ()
-  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
+  (ros:roswell '("roswell-internal-use uname -m") :string t))
 
 (defun date (&optional (universal-time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year day daylight time-zone)

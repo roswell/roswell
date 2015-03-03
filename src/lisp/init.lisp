@@ -7,7 +7,7 @@
 (defpackage :ros
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :quit :script :quicklisp :getenv :opt :ignore-shebang))
+  (:export :run :*argv* :quit :script :quicklisp :getenv :opt :ignore-shebang :roswell))
 
 (in-package :ros)
 (defvar *verbose* 0)
@@ -46,6 +46,14 @@
 (compile 'shebang-reader)
 (defun ignore-shebang ()
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
+
+(defun roswell (args output trim)
+  (let ((ret (funcall (read-from-string "uiop/run-program:run-program")
+                      (format nil "~A~{ ~A~}"
+                              (ros:opt "argv0") args) :output output)))
+    (if trim
+        (remove #\Newline (remove #\Return ret))
+        ret)))
 
 (defun impl ()
   (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))

@@ -16,16 +16,11 @@ exec ros +Q -L sbcl-bin -- $0 "$@"
 (defun homedir ()
   (ros:opt "homedir"))
 
-(defun roswell-internal (args output)
-  (uiop/run-program:run-program
-   (format nil "~A roswell-internal-use~{ ~A~}"
-           (ros:opt "argv0") args) :output output))
-
 (defun uname ()
-  (remove #\Newline (remove #\Return (roswell-internal `("uname") :string))))
+  (ros:roswell '("roswell-internal-use uname") :string t))
 
 (defun uname-m ()
-  (remove #\Newline (remove #\Return (roswell-internal `("uname" "-m") :string))))
+  (ros:roswell '("roswell-internal-use uname -m") :string t))
 
 (defun list-impls (impl &key function params)
   (declare (ignorable params))
