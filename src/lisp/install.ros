@@ -139,10 +139,10 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (defun download (uri file &key proxy)
   (declare (ignorable proxy))
-  (roswell-internal `("download" ,uri ,file) :interactive))
+  (ros:roswell `("download" ,uri ,file) :interactive nil))
 
 (defun expand (archive dest &key verbose)
-  (roswell-internal `("tar" ,(if verbose "-xvf" "-xf") ,archive "-C" ,dest) :interactive))
+  (ros:roswell  `("tar" ,(if verbose "-xvf" "-xf") ,archive "-C" ,dest) :interactive nil))
 
 (defun setup (argv)
   (save-opt "default.lisp" (getf argv :target))
