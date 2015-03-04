@@ -1,15 +1,35 @@
-#include <sys/types.h>
-#include <sys/stat.h>
-
-#include <fcntl.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
 #include "util.h"
 
-int extract(const char *filename, int do_extract, int flags,const char* outputpath);
+int extract(const char *filename, int do_extract, int flags,const char* outputpath) {
+  char* str;
+#ifndef HAVE_WINDOWS_H
+  int len=strlen(filename);
+  char* type="gzip"; /*for gz*/
+  if(len>4) {
+    int i;
+    for(i=len-4;filename[i]!='\0';++i)
+      if(filename[i]=='b'||filename[i]=='B')
+        type="bzip2"; /*bz*/
+  }
+
+  str=cat(type," -dc ",filename," | tar -",extract?"x":"t",
+          flags?"p":"","f - -C ",outputpath,NULL);
+#else
+  char* _uname_m=uname_m();
+  char* _uname=uname();
+  char* _homedir=configdir();
+  char* exe=s_escape_string(cat(_homedir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL));
+  char *outputpath2=q(outputpath);
+  substitute_char('\\','/',outputpath2);
+  ensure_directories_exist(outputpath2);
+  str=cat(exe," ",extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
+  s(outputpath2),s(_homedir),s(_uname),s(_uname_m);
+#endif
+  if(verbose>0)
+    fprintf(stderr,"extractcmd=%s\n",str);
+  int ret=system(str);
+  s(str);
+}
 
 int cmd_tar(int argc, const char **argv)
 {
@@ -64,34 +84,3 @@ int cmd_tar(int argc, const char **argv)
   return (0);
 }
 
-int extract(const char *filename, int do_extract, int flags,const char* outputpath)
-{
-  char* str;
-#ifndef _WIN32
-  int len=strlen(filename);
-  char* type="gzip"; /*for gz*/
-  if(len>4) {
-    int i;
-    for(i=len-4;filename[i]!='\0';++i)
-      if(filename[i]=='b'||filename[i]=='B')
-        type="bzip2"; /*bz*/
-  }
-
-  str=cat(type," -dc ",filename," | tar -",extract?"x":"t",
-          flags?"p":"","f - -C ",outputpath,NULL);
-#else
-  char* _uname_m=uname_m();
-  char* _uname=uname();
-  char* _homedir=configdir();
-  char* exe=cat(_homedir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL);
-  char *outputpath2=q(outputpath);
-  substitute_char('\\','/',outputpath2);
-  ensure_directories_exist(outputpath2);
-  str=cat(exe," ",extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
-  s(outputpath2),s(_homedir),s(_uname),s(_uname_m);
-#endif
-  if(verbose>0)
-    fprintf(stderr,"extractcmd=%s\n",str);
-  int ret=system(str);
-  s(str);
-}
