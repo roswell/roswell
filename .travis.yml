@@ -15,3 +15,4 @@ script:
   - ros -v run -- --version
   - ros install ccl-bin
   - ros -v run -- --version
+  - ros config
