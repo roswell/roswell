@@ -21,6 +21,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   char* exe=s_escape_string(cat(_homedir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL));
   char *outputpath2=q(outputpath);
   substitute_char('\\','/',outputpath2);
+  outputpath2=s_escape_string(outputpath2);
   ensure_directories_exist(outputpath2);
   str=cat(exe," ",extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
   s(outputpath2),s(_homedir),s(_uname),s(_uname_m);
