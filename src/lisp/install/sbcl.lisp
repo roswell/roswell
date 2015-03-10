@@ -3,6 +3,7 @@
 (defun sh ()
   (or #+win32
       (format nil "~A -l" (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh" (uname-m) (uname) "msys" "mingw32") (homedir)))
+      (which "bash")
       "sh"))
 
 (defun sbcl-get-version ()

@@ -59,6 +59,11 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (defun uname-m ()
   (ros:roswell '("roswell-internal-use uname -m") :string t))
 
+(defun which (cmd)
+  (let ((result (ros:roswell (list "roswell-internal-use which" cmd) :string t)))
+    (unless (zerop (length result))
+      result)))
+
 (defun date (&optional (universal-time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year day daylight time-zone)
       (decode-universal-time universal-time)
