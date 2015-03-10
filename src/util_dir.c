@@ -19,15 +19,7 @@ char* homedir(void) {
     c=q_(szAppData);
   }
 #else
-  env=getenv("USER");
-  if(env)
-    pwd= getpwnam(env);
-  else {
-    env=getenv("UID");
-    if(env) {
-      pwd= getpwuid(atoi(env));
-    }
-  }
+  pwd= getpwuid(getuid());
   if(pwd) {
     c=q_(pwd->pw_dir);
   }
