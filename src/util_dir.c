@@ -3,7 +3,7 @@
 char* homedir(void) {
   char *c;
   char *postfix="_HOME";
-  struct passwd * pwd;
+  struct passwd * pwd=NULL;
   char *env=NULL;
   int i;
 
@@ -19,7 +19,15 @@ char* homedir(void) {
     c=q_(szAppData);
   }
 #else
-  pwd= getpwnam(getenv("USER"));
+  env=getenv("USER");
+  if(env)
+    pwd= getpwnam(env);
+  else {
+    env=getenv("UID");
+    if(env) {
+      pwd= getpwuid(atoi(env));
+    }
+  }
   if(pwd) {
     c=q_(pwd->pw_dir);
   }
