@@ -40,7 +40,7 @@ char* configdir(void) {
 }
 
 char* truename(const char* path) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   char* ret=realpath(path,NULL);
   if(ret)
     return ret;
