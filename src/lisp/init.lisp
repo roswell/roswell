@@ -76,10 +76,15 @@
         (warn "Source-registry ~S isn't valid. Ignored." arg)
         (asdf:initialize-source-registry dir))))
 
-(defun system (cmd arg &rest rest)
+(defun system (cmd args &rest rest)
   (declare (ignorable cmd rest))
-  #-quicklisp(asdf:operate 'asdf:load-op arg)
-  #+quicklisp(ql:quickload arg :silent t))
+  (loop for ar = args then (subseq ar (1+ p))
+     for p = (position #\, ar)
+     for arg = (if p (subseq ar 0 p) ar)
+     do (if (find :quicklisp *features*)
+            (funcall (read-from-string "ql:quickload") arg :silent t)
+            (asdf:operate 'asdf:load-op arg))
+     while p))
 
 (setf (fdefinition 'load-systm)
       #'system)
