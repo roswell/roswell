@@ -133,7 +133,9 @@
       (with-open-file (in arg)
         (let ((line(read-line in)))
           (push :ros.script *features*)
-          (cl:load (make-concatenated-stream
+          (funcall #+sbcl 'cl:load
+                   #-sbcl 'asdf::eval-input
+                   (make-concatenated-stream
                     (make-string-input-stream
                      (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (truename cl:*load-pathname*))~A" (merge-pathnames (make-pathname :defaults arg))
                              (if (equal (subseq line 0 (min (length line) 2)) "#!")
