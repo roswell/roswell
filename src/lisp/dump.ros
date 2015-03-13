@@ -35,7 +35,9 @@ exec ros -- $0 "$@"
                    (format t "file ~s already exists~%" path))
                (progn
                  #+sbcl
-                 (sb-ext:save-lisp-and-die path)))))
+                 (sb-ext:save-lisp-and-die path)
+                 #+ccl
+                 (ccl:save-application path)))))
     (cond
       ((null params)
        (format t "Usage: ~A [OPTIONS] dump output [-f] [-o] name~%"
