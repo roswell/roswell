@@ -78,6 +78,8 @@ exec ros -- $0 "$@"
                     (read-from-string
                      (format nil "(~A)"
                              (ros:opt "restart"))))))
+        (unless cmds
+          (warn "dumping executable without specifing initial behaviour."))
         #+sbcl
         (sb-ext:save-lisp-and-die
          (first params)
@@ -109,5 +111,5 @@ exec ros -- $0 "$@"
          (format t "Usage: ~A [OPTIONS] ~A subcmd [ARGS]~%"
                  (ros:opt "argv0") cmd)
          (loop :with len := (1+ (loop :for (cmd . nil) :in *subcmds* :maximize (length cmd)))
-            :for (cmd desc symbol) :in *subcmds*
+            :for (cmd desc nil) :in *subcmds*
             :do (format t "  ~VA ~A~%" len cmd desc)))))
