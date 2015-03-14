@@ -22,8 +22,7 @@ char* ccl_binname(void) {
   return ret;
 }
 
-char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd)
-{
+char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   char** arg=NULL;
   char* home=configdir();
   char* arch=uname_m();

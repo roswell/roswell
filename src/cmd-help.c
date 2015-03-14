@@ -5,8 +5,7 @@
 extern char** argv_orig;
 int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command);
 
-int cmd_help(int argc, const char **argv)
-{
+int cmd_help(int argc, const char **argv) {
   LVal help=(LVal)NULL;
   int i;int cmdmax,optmax;
   char *fmt;
@@ -135,6 +134,5 @@ int cmd_help(int argc, const char **argv)
   }
   sL(dir);
   s(subcmds);
-
   return 0;
 }

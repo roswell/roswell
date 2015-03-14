@@ -2,8 +2,7 @@
 #include "util.h"
 #include "opt.h"
 
-int cmd_config(int argc, const char **argv)
-{
+int cmd_config(int argc, const char **argv) {
   char* home=configdir();
   char* path=cat(home,"config",NULL);
   int ret;

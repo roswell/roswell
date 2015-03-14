@@ -32,8 +32,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   s(str);
 }
 
-int cmd_tar(int argc, const char **argv)
-{
+int cmd_tar(int argc, const char **argv) {
   const char *filename = NULL;
   const char *outputpath = NULL;
   int compress, flags=0, mode, opt;

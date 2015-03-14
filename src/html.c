@@ -172,8 +172,7 @@ LVal delete_not_tags(char* tags,LVal tag) {
   return (LVal)ret;
 }
 
-LVal filter_href(LVal t)
-{
+LVal filter_href(LVal t) {
   LVal tags=t;
   LVal ret=(LVal)NULL;
   char* href;
@@ -300,8 +299,7 @@ LVal parse_tags(FILE* fp,LVal before,int mode) {
   return current;
 }
 
-LVal atag_list(char* filename)
-{
+LVal atag_list(char* filename) {
   FILE* fp;
   LVal ret=(LVal)NULL;
   if(verbose>0)

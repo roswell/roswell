@@ -4,8 +4,7 @@ static int count=0;
 static int block=10240;
 static int fold=90;
 
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream)
-{
+static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   int current = count/block;
   int dots;
