@@ -200,7 +200,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       version=q(version);
   }
 
-  if(impl) {
+  if(impl && version) {
     char** arg=NULL;
     int i;
     char* wrap=get_opt("wrap",1);
@@ -246,7 +246,10 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
       fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);
     }
   }else {
-    fprintf(stderr,"lisp doesn't specified stop\n");
+    if(!impl)
+      fprintf(stderr,"lisp doesn't specified stop\n");
+    else
+      fprintf(stderr,"lisp version doesn't specified stop\n");
   }
   s(config),s(impl),s(version);
   return ret;
