@@ -4,8 +4,7 @@
 #include "cmd-install.h"
 #include "opt.h"
 
-int quicklisp_start(struct install_options* param)
-{
+int quicklisp_start(struct install_options* param) {
   char* home=configdir();
   param->version=NULL;
   param->arch_in_archive_name=0;
@@ -14,18 +13,15 @@ int quicklisp_start(struct install_options* param)
   return 1;
 }
 
-char* quicklisp_uri(struct install_options* param)
-{
+char* quicklisp_uri(struct install_options* param) {
   return q("http://beta.quicklisp.org/quicklisp.lisp");
 }
 
-char* quicklisp_extention(struct install_options* param)
-{
+char* quicklisp_extention(struct install_options* param) {
   return ".lisp";
 }
 
-int quicklisp_setup(struct install_options* param)
-{
+int quicklisp_setup(struct install_options* param) {
   char* home=configdir();
   char* lisp_path=s_cat(lispdir(),q("install"),q(SLASH),q("quicklisp.lisp"),NULL);
   char* archive=s_cat(q(home),q("archives"),q(SLASH),q("quicklisp.lisp"),NULL);

@@ -1,8 +1,7 @@
 #ifndef __PULL_H__
 #define __PULL_H__
 
-struct install_options
-{
+struct install_options {
   char* impl;
   char* version;
   char* os;
@@ -21,8 +20,7 @@ int expand(struct install_options* param);
 
 extern install_cmds install_sbcl_bin_full[];
 
-struct install_impls
-{
+struct install_impls {
   const char* name;
   install_cmds *call;
   install_cmd_string uri;

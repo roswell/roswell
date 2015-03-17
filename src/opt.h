@@ -4,8 +4,7 @@
 struct sub_command;
 typedef int (*sub_command_fnc)(int argc,char **argv,struct sub_command* cmd);
 
-struct opts
-{
+struct opts {
   const char* name;
   int type;
   const char* value;
@@ -19,8 +18,7 @@ enum opt_type {
   OPT_BOOL
 };
 
-struct sub_command
-{
+struct sub_command {
   const char* name;
   const char* short_name;
   sub_command_fnc call;
@@ -29,11 +27,11 @@ struct sub_command
   char* description;
   char* arg_example;
 };
+
 #define OPT_SHOW_NONE (0)
 #define OPT_SHOW_HELP (1)
 //#define OPT_SHOW_
-struct command_help
-{
+struct command_help {
   const char* name;
   const char* usage;
   LVal commands;

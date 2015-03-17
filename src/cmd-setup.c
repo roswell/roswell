@@ -4,8 +4,7 @@
 #include "util.h"
 
 extern char** argv_orig;
-int cmd_setup(int argc, const char **argv)
-{
+int cmd_setup(int argc, const char **argv) {
   char* v="";
   int ret=1;
   if(verbose==1)

@@ -31,8 +31,7 @@ extern LVal register_runtime_options(LVal opt);
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
 
-int cmd_run(int argc,char **argv,struct sub_command* cmd)
-{
+int cmd_run(int argc,char **argv,struct sub_command* cmd) {
   char* current=get_opt("program",0);
   if(verbose>0)
     fprintf(stderr,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
@@ -58,8 +57,7 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd)
   }
 }
 
-int cmd_script(int argc,char **argv,struct sub_command* cmd)
-{
+int cmd_script(int argc,char **argv,struct sub_command* cmd) {
   char* current=get_opt("program",0);
   if(verbose>0)
     fprintf(stderr,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
@@ -91,8 +89,7 @@ int cmd_script(int argc,char **argv,struct sub_command* cmd)
 
 static int script_frontend_sentinel=0;
 
-int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd)
-{
+int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   FILE* in;
   char buf[800];
   int i,j,c;
@@ -144,8 +141,7 @@ char* ql_path(void) {
   return env_ql;
 }
 
-int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
-{
+int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   int ret=1;
   char* impl;
   char* version=NULL;
@@ -255,8 +251,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd)
   return ret;
 }
 
-void register_cmd_run(void)
-{
+void register_cmd_run(void) {
   char* _help;
   /*options*/
   run_options=register_runtime_options(run_options);

@@ -2,8 +2,7 @@
 #include "opt.h"
 #include "util.h"
 
-int cmd_version(int argc,char **argv,struct sub_command* cmd)
-{
+int cmd_version(int argc,char **argv,struct sub_command* cmd) {
   fprintf(stderr,"%s",PACKAGE_STRING);
   if(strlen(ROS_REVISION)>0)
     fprintf(stderr,"(%s)",ROS_REVISION);

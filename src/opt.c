@@ -3,8 +3,7 @@
 #include "opt.h"
 #include "util.h"
 
-void free_opts(struct opts* opt)
-{
+void free_opts(struct opts* opt) {
   void* tmp;
   while(opt) {
     if(opt->value) {
@@ -23,8 +22,7 @@ void free_opts(struct opts* opt)
   }
 }
 
-void print_opts(struct opts* opt)
-{
+void print_opts(struct opts* opt) {
   char* typestr;
   while(opt) {
     switch(opt->type) {
@@ -45,8 +43,7 @@ void print_opts(struct opts* opt)
   }
 }
 
-char* sexp_opts(struct opts* opt)
-{
+char* sexp_opts(struct opts* opt) {
   void* ret=q("(");
   while(opt) {
     ret=s_cat(ret,q("(\""),q(opt->name),q("\"\""),escape_string((char*)opt->value),q("\")"),NULL);
@@ -112,8 +109,7 @@ int save_opts(const char* path,struct opts* opt) {
   return 1;
 }
 
-int set_opt(struct opts** opts,const char* name,char* value,int type)
-{
+int set_opt(struct opts** opts,const char* name,char* value,int type) {
   int found=0;
   struct opts* opt=*opts;
 
@@ -139,8 +135,7 @@ int set_opt(struct opts** opts,const char* name,char* value,int type)
   return 1;
 }
 
-int get_opt_type(struct opts* opt,const char* name)
-{
+int get_opt_type(struct opts* opt,const char* name) {
   while(opt) {
     if(strcmp(opt->name,name)==0) {
       return opt->type;
@@ -150,8 +145,7 @@ int get_opt_type(struct opts* opt,const char* name)
   return 0;
 }
 
-char* _get_opt(struct opts* opt,const char* name)
-{
+char* _get_opt(struct opts* opt,const char* name) {
   while(opt) {
     if(strcmp(opt->name,name)==0) {
       return (char*)opt->value;
@@ -161,16 +155,14 @@ char* _get_opt(struct opts* opt,const char* name)
   return NULL;
 }
 
-char* _getenv(const char* name)
-{
+char* _getenv(const char* name) {
   char* name_=substitute_char('_','.',q(name));
   char* ret=getenv(name_);
   s(name_);
   return ret;
 }
 
-char* get_opt(const char* name,int env)
-{
+char* get_opt(const char* name,int env) {
   char* ret=NULL;
   if(env)ret=_getenv(name);
   if(!ret) {
@@ -181,8 +173,7 @@ char* get_opt(const char* name,int env)
   return ret;
 }
 
-int unset_opt(struct opts** opts,const char* name)
-{
+int unset_opt(struct opts** opts,const char* name) {
   struct opts *opt=*opts;
   struct opts dummy;
   struct opts *before=&dummy;
@@ -205,8 +196,7 @@ int set_opts_int(struct opts* opts,const char* name,int value) {
   return 0;
 }
 
-LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer,sub_command_fnc call)
-{
+LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer,sub_command_fnc call) {
   struct command_help* p=alloc(sizeof(struct command_help));
   help=cons(p,help);
   p->name=name?q(name):NULL;
@@ -219,8 +209,7 @@ LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal op
   return help;
 }
 
-LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating,char* description,char* arg_example)
-{
+LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating,char* description,char* arg_example) {
   struct sub_command* p=alloc(sizeof(struct sub_command));
   p->name=name?q(name):NULL;
   p->short_name=short_name?q(short_name):NULL;

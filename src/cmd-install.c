@@ -18,8 +18,7 @@ struct install_impls *impls_to_install[]={
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
 
-int installed_p(struct install_options* param)
-{
+int installed_p(struct install_options* param) {
   int ret;
   char* i;
   char *impl;
@@ -36,14 +35,12 @@ int installed_p(struct install_options* param)
   return ret;
 }
 
-int install_running_p(struct install_options* param)
-{
+int install_running_p(struct install_options* param) {
   /* TBD */
   return 0;
 }
 
-int start(struct install_options* param)
-{
+int start(struct install_options* param) {
   char* home=configdir();
   char* p;
   ensure_directories_exist(home);
@@ -68,8 +65,7 @@ int start(struct install_options* param)
   return 1;
 }
 
-char* download_archive_name(struct install_options* param)
-{
+char* download_archive_name(struct install_options* param) {
   char* ret=cat(param->impl,param->version?"-":"",param->version?param->version:"",NULL);
   if(param->arch_in_archive_name==0) {
     ret=s_cat(ret,q((*(install_impl->extention))(param)),NULL);
@@ -79,8 +75,7 @@ char* download_archive_name(struct install_options* param)
   return ret;
 }
 
-int download(struct install_options* param)
-{
+int download(struct install_options* param) {
   char* home=configdir();
   char* url=(*(install_impl->uri))(param);
   char* archive_name=download_archive_name(param);
@@ -108,8 +103,7 @@ int download(struct install_options* param)
   return 1;
 }
 
-int cmd_install(int argc,char **argv,struct sub_command* cmd)
-{
+int cmd_install(int argc,char **argv,struct sub_command* cmd) {
   int ret=1,k;
   install_cmds *cmds=NULL;
   struct install_options param;
@@ -207,8 +201,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd)
   return 0;
 }
 
-int install_help(int argc,char **argv,struct sub_command* cmd)
-{
+int install_help(int argc,char **argv,struct sub_command* cmd) {
   int i;
   if(argc==1) {
     char* lisp_path=lispdir();
@@ -255,8 +248,7 @@ int install_help(int argc,char **argv,struct sub_command* cmd)
   return 0;
 }
 
-void register_cmd_install(void)
-{
+void register_cmd_install(void) {
   top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install archive and build it for "PACKAGE" environment",NULL);
   top_helps=add_help(top_helps,"install",q(""),(LVal)NULL,(LVal)NULL,NULL,NULL,install_help);
 }

@@ -11,8 +11,7 @@ char* arch_(struct install_options* param) {
 
 char* sbcl_bin(char* file);
 
-int sbcl_version_bin(struct install_options* param)
-{
+int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
   char* ret;
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
@@ -40,13 +39,11 @@ int sbcl_version_bin(struct install_options* param)
   return 1;
 }
 
-char* sbcl_bin_extention(struct install_options* param)
-{
+char* sbcl_bin_extention(struct install_options* param) {
   return SBCL_BIN_EXTENTION;
 }
 
-char* sbcl_uri_bin(struct install_options* param)
-{
+char* sbcl_uri_bin(struct install_options* param) {
   /*should I care about it's existance? */
   char* arch=arch_(param);
   char* ret=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
@@ -58,8 +55,7 @@ char* sbcl_uri_bin(struct install_options* param)
   return ret;
 }
 
-int sbcl_bin_expand(struct install_options* param)
-{
+int sbcl_bin_expand(struct install_options* param) {
 #ifdef HAVE_WINDOWS_H
   char* impl=param->impl;
   char* version=q(param->version);
