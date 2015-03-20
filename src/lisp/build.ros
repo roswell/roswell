@@ -1,0 +1,8 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q +R -L sbcl-bin -- $0 "$@"
+|#
+
+(defun main (&rest argv)
+  (declare (ignorable argv)))
