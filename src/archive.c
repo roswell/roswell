@@ -30,6 +30,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
     fprintf(stderr,"extractcmd=%s\n",str);
   int ret=system(str);
   s(str);
+  return ret;
 }
 
 int cmd_tar(int argc, const char **argv) {
