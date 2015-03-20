@@ -77,12 +77,23 @@ exec ros -- $0 "$@"
       (let ((cmds (let ((*read-eval*))
                     (read-from-string
                      (format nil "(~A)"
-                             (ros:opt "restart"))))))
+                             (ros:opt "restart")))))
+            (out (first params)))
         (unless cmds
           (warn "dumping executable without specifing initial behaviour."))
+        (when (equalp (pathname-type out) "ros")
+          (let ((*package* (find-package :cl-user))
+                main-list)
+            (ros:script nil out)
+            (setf main-list (let ((*package* (find-package :keyword)))
+                              `((:entry ,(format nil "~S" ros:*main*))))
+                  out (make-pathname :type nil :defaults out)
+                  cmds (if (first cmds)
+                           (append cmds main-list)
+                           main-list))))
         #+sbcl
         (sb-ext:save-lisp-and-die
-         (first params)
+         out
          :toplevel
          #'(lambda ()
              (setf ros:*argv* (rest sb-ext:*posix-argv*))
@@ -90,7 +101,7 @@ exec ros -- $0 "$@"
          :executable t)
         #+ccl
         (ccl:save-application
-         (first params)
+         out
          :toplevel-function
          #'(lambda ()
              (setf ros:*argv* (rest (ccl::command-line-arguments)))

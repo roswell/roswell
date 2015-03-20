@@ -7,12 +7,13 @@
 (defpackage :ros
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :quit :script :quicklisp :getenv :opt :ignore-shebang :roswell))
+  (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt :ignore-shebang :roswell))
 
 (in-package :ros)
 (defvar *verbose* 0)
 (defvar *argv* nil)
 (defvar *ros-opts* nil)
+(defvar *main* nil)
 
 ;; small tools
 (defun getenv (x)
@@ -144,7 +145,7 @@
                     (make-string-input-stream
                      (if (eql cmd :script)
                          "(cl:apply 'main ros:*argv*)"
-                         ""))))
+                         "(setf ros:*main* 'main)"))))
           (setf *features* (remove :ros.script *features*))))
       (format t "script ~S does not exist~%" arg)))
 
