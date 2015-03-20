@@ -9,7 +9,6 @@
 #include "opt.h"
 
 #define ROS_RUN_REPL "run"
-#define ROS_RUN_COMPILE "output"
 
 #ifdef _WIN32
 BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar){
@@ -257,11 +256,9 @@ void register_cmd_run(void) {
   run_options=register_runtime_options(run_options);
   run_options=add_command(run_options,"",NULL,cmd_run_star,OPT_SHOW_NONE,1,NULL,NULL);
   run_options=nreverse(run_options);
-  //run_commands=add_command(run_commands,"*",NULL,cmd_run_star,OPT_SHOW_NONE,1,NULL,NULL);
 
   /*commands*/
   top_options=add_command(top_options,""         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
-  //  top_commands=add_command(top_commands,"output"     ,NULL,cmd_run,1,1,"Generate an executable script or binary from the software specification",NULL);
   top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1,"Run repl",NULL);
   top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
 
@@ -270,6 +267,5 @@ void register_cmd_run(void) {
   s(_help);
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [--] script-file arguments...\n\n",
             NULL);
-  top_helps=add_help(top_helps,"--",_help,run_commands,run_options,NULL,NULL,NULL);
   s(_help);
 }
