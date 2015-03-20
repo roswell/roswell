@@ -1,6 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include "util.h"
 #include "cmd-install.h"
 #include "opt.h"
 

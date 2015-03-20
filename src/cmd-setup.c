@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "opt.h"
-#include "util.h"
 
 extern char** argv_orig;
 int cmd_setup(int argc, const char **argv) {

@@ -1,5 +1,4 @@
 #include "opt.h"
-#include "util.h"
 
 LVal internal_commands=(LVal)NULL;
 extern int cmd_tar(int argc,char **argv,struct sub_command* cmd);

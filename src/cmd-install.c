@@ -5,7 +5,6 @@
 #endif
 
 #include "opt.h"
-#include "util.h"
 #include "cmd-install.h"
 static int in_resume=0;
 static char *flags =NULL;

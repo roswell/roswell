@@ -1,11 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#ifdef _WIN32
-#include <windows.h>
-#else
-#include <unistd.h>
-#endif
-#include "util.h"
 #include "opt.h"
 
 #define ROS_RUN_REPL "run"

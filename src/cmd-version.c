@@ -1,6 +1,5 @@
 #include "gend.h"
 #include "opt.h"
-#include "util.h"
 
 int cmd_version(int argc,char **argv,struct sub_command* cmd) {
   fprintf(stderr,"%s",PACKAGE_STRING);

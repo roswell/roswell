@@ -1,5 +1,3 @@
-#include <stdio.h>
-#include "util.h"
 #include "opt.h"
 
 int cmd_config(int argc, const char **argv) {

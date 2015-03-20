@@ -1,12 +1,8 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #ifdef HAVE_CONFIG_H
 #  include "config.h"
 #endif
 #include "opt.h"
-#include "util.h"
+
 char** argv_orig;
 int argc_orig;
 struct opts* global_opt;

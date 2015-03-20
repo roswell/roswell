@@ -1,7 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
 #include "opt.h"
-#include "util.h"
 
 void free_opts(struct opts* opt) {
   void* tmp;

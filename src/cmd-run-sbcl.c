@@ -1,4 +1,3 @@
-#include "util.h"
 #include "opt.h"
 
 char* ql_path(void);
