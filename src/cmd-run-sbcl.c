@@ -20,7 +20,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
-  char* dynamic_stack_size=get_opt("dynamic-stack-size",0);
+  char* control_stack_size=get_opt("control-stack-size",0);
   char* sbcl_version=get_opt("version",0);
   int paramc=0;
   char *bin;
@@ -37,7 +37,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   }
   if(dynamic_space_size)
     offset+=2;
-  if(dynamic_stack_size)
+  if(control_stack_size)
     offset+=2;
   if(sbcl_version)
     offset+=1;
@@ -76,9 +76,9 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=q("--dynamic-space-size");
     arg[paramc++]=q(dynamic_space_size);
   }
-  if(dynamic_stack_size) {
-    arg[paramc++]=q("--dynamic-stack-size");
-    arg[paramc++]=q(dynamic_stack_size);
+  if(control_stack_size) {
+    arg[paramc++]=q("--control-stack-size");
+    arg[paramc++]=q(control_stack_size);
   }
   if(sbcl_version) {
     arg[paramc++]=q("--version");
@@ -116,6 +116,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     fprintf(stderr,"\nhelp=%s ",help?"t":"nil");
     fprintf(stderr,"script=%s\n",script?script:"nil");
   }
-  s(help),s(dynamic_space_size),s(dynamic_stack_size);
+  s(help),s(dynamic_space_size),s(control_stack_size);
   return arg;
 }
