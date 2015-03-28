@@ -3,6 +3,27 @@
 #|
 exec ros -Q +R -L sbcl-bin -- $0 "$@"
 |#
+(defun parse-argv (argv)
+  (let* ((header "exec ros")
+         (hl (length header)))
+    (and (equal header (subseq argv 0 (length header)))
+         (loop :for last := nil :then c
+            :for i :from 0
+            :for c :across argv
+            :when (and (equal #\- last)
+                       (equal #\- c))
+            :do (return (subseq argv hl (1- i)))))))
+
+(defun main- (argv)
+  (ros:roswell (list (with-open-file (in (third argv))
+                       (read-line in)
+                       (read-line in)
+                       (read-line in)
+                       (parse-argv (read-line in)))
+                     "dump executable" (third argv))
+               :interactive nil))
 
 (defun main (&rest argv)
-  (declare (ignorable argv)))
+  (main- argv))
+
+;;(defun test (&rest argv) (with-open-file (in (car argv))))
