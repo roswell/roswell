@@ -23,7 +23,7 @@ int cmd_setup(int argc, const char **argv) {
   s(sys);
   if(ret)
     return ret;
-#ifdef _WIN32
+#ifdef HAVE_WINDOWS_H
   sys=cat(argv_orig[0]," ",v,"install 7zip",NULL);
   fprintf(stderr,"setting up 7zip\n");
   ret=system(sys);
