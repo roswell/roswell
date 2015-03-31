@@ -35,6 +35,10 @@
     (format t "sbcl ~s to install~%" (first result))
     result))
 
+(defun sbcl-msys (argv)
+  (ros:roswell '("install msys") :interactive nil)
+  (cons t argv))
+
 (defun sbcl-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
@@ -196,7 +200,8 @@
   (cons t argv))
 
 (setq *install-cmds*
-      (list 'sbcl-version
+      (list #+win32 'sbcl-msys
+            'sbcl-version
             'sbcl-argv-parse
             'sbcl-start
             'start
