@@ -8,7 +8,10 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
     int i,c;
     for(c=0,i=len;filename[i]!='.' && c<5;--i,++c) {
       if(filename[i]=='b'||filename[i]=='B') {
-        type="bzip2"; /*bz*/
+        type="bzip2";
+        break;
+      }else if(filename[i]=='x'||filename[i]=='X'){
+        type="xz";
         break;
       }else if(filename[i]=='7') {
         type="7za";
@@ -19,7 +22,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   if(verbose>0)
     fprintf(stderr,"extracttype=%s\n",type);
 #ifndef HAVE_WINDOWS_H
-  if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0) {
+  if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0 || strcmp(type,"xz")==0) {
     str=cat(type," -dc ",filename," | tar -",do_extract?"x":"t",
             flags?"p":"","f - -C ",outputpath,NULL);
   }else if(strcmp(type,"7za")==0) {
@@ -35,7 +38,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   substitute_char('\\','/',outputpath2);
   outputpath2=s_escape_string(outputpath2);
   ensure_directories_exist(outputpath2);
-  if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0) {
+  if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0 || strcmp(type,"xz")==0) {
     str=cat(exe," ",do_extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
   }else if(strcmp(type,"7za")==0) {
     ensure_directories_exist(outputpath2);
@@ -103,4 +106,3 @@ int cmd_tar(int argc, const char **argv) {
   }
   return (0);
 }
-
