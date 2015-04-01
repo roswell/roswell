@@ -1,19 +1,31 @@
 #include "util.h"
 
 int extract(const char *filename, int do_extract, int flags,const char* outputpath) {
-  char* str;
-#ifndef HAVE_WINDOWS_H
-  int len=strlen(filename);
+  char* str=NULL;
+  int len=strlen(filename),ret=-1;
   char* type="gzip"; /*for gz*/
   if(len>4) {
-    int i;
-    for(i=len-4;filename[i]!='\0';++i)
-      if(filename[i]=='b'||filename[i]=='B')
+    int i,c;
+    for(c=0,i=len;filename[i]!='.' && c<5;--i,++c) {
+      if(filename[i]=='b'||filename[i]=='B') {
         type="bzip2"; /*bz*/
+        break;
+      }else if(filename[i]=='7') {
+        type="7za";
+        break;
+      }
+    }
   }
-
-  str=cat(type," -dc ",filename," | tar -",extract?"x":"t",
-          flags?"p":"","f - -C ",outputpath,NULL);
+  if(verbose>0)
+    fprintf(stderr,"extracttype=%s\n",type);
+#ifndef HAVE_WINDOWS_H
+  if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0) {
+    str=cat(type," -dc ",filename," | tar -",do_extract?"x":"t",
+            flags?"p":"","f - -C ",outputpath,NULL);
+  }else if(strcmp(type,"7za")==0) {
+    ensure_directories_exist((char*)outputpath);
+    str=cat("7za ",do_extract?"x":"t"," -o",outputpath," ",filename,NULL);
+  }
 #else
   char* _uname_m=uname_m();
   char* _uname=uname();
@@ -23,13 +35,20 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   substitute_char('\\','/',outputpath2);
   outputpath2=s_escape_string(outputpath2);
   ensure_directories_exist(outputpath2);
-  str=cat(exe," ",extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
+  if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0) {
+    str=cat(exe," ",do_extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
+  }else if(strcmp(type,"7za")==0) {
+    ensure_directories_exist(outputpath2);
+    str=cat("7za ",do_extract?"x":"t"," -o",outputpath2," ",filename,NULL);
+  }
   s(outputpath2),s(_homedir),s(_uname),s(_uname_m);
 #endif
   if(verbose>0)
     fprintf(stderr,"extractcmd=%s\n",str);
-  int ret=system(str);
-  s(str);
+  if(str) {
+    ret=system(str);
+    s(str);
+  }
   return ret;
 }
 
