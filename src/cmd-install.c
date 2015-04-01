@@ -151,7 +151,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         tmp[i++]=sexp_opts(local_opt);
         tmp[i++]=sexp_opts(global_opt);
         tmp[i++]=configdir();
-        tmp[i++]=truename(argv_orig[0]);
+        tmp[i++]=(argv_orig[0]);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
         if(verbose>0) {
