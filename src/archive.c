@@ -42,7 +42,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
     str=cat(exe," ",do_extract?"x ":"l ",filename," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
   }else if(strcmp(type,"7za")==0) {
     ensure_directories_exist(outputpath2);
-    str=cat("7za ",do_extract?"x":"t"," -o",outputpath2," ",filename,NULL);
+    str=cat(exe," ",do_extract?"x":"t"," -o",outputpath2," ",filename,NULL);
   }
   s(outputpath2),s(_homedir),s(_uname),s(_uname_m);
 #endif
