@@ -18,18 +18,16 @@
                             "mingw-get-setup-0.6.2-mingw32-beta-20131004-1-dll.tar.xz"
                             "mingw-get-setup-0.6.2-mingw32-beta-20131004-1-xml.tar.xz"))
 
-(defvar *mingw-w64-files* '("http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.9.2/threads-win32/dwarf/i686-4.9.2-release-win32-dwarf-rt_v3-rev1.7z/download"))
+(defvar *mingw* #-x86-64 "mingw32" #+x86-64 "mingw64")
 
-(defun un7za (path output-path)
-  (uiop/run-program:run-program
-   (format nil "~A x ~A -so |~A x -ttar -si -y -o~A"
-           (uiop/filesystem:native-namestring (7za))
-           (uiop/filesystem:native-namestring path)
-           (uiop/filesystem:native-namestring (7za))
-           (uiop/filesystem:native-namestring output-path))))
+(defvar *mingw-w64-files*
+  #-x86-64 '("http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win32/Personal%20Builds/mingw-builds/4.9.2/threads-win32/dwarf/i686-4.9.2-release-win32-dwarf-rt_v3-rev1.7z/download")
+  #+x86-64 '("http://sourceforge.net/projects/mingw-w64/files/Toolchains%20targetting%20Win64/Personal%20Builds/mingw-builds/4.9.2/threads-win32/seh/x86_64-4.9.2-release-win32-seh-rt_v3-rev1.7z/download"))
 
 (defun msys-setup-fstab (argv)
-  (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/~A/~A/" (uname-m) (uname) "msys" "mingw32" "i686-w64-mingw32") (homedir))))
+  (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/~A/~A" (uname-m) (uname) "msys" *mingw* (format nil "~A-w64-mingw32"
+                                                                                                            #-x86-64 "i686"
+                                                                                                            #+x86-64"x86_64")) (homedir))))
     (with-open-file (o (ensure-directories-exist (merge-pathnames "msys/1.0/etc/fstab" path))
                        :direction :output
                        :if-exists :overwrite
@@ -41,8 +39,8 @@
   ;;"sed -i -e 's/^cd/#cd/g' /etc/profile"
   (uiop/run-program:run-program
    (format nil "~A -i -e 's/^cd/#cd/g' ~A"
-           (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sed" (uname-m) (uname) "msys" "mingw32") (homedir))
-           (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/etc/profile" (uname-m) (uname) "msys" "mingw32") (homedir))))
+           (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sed" (uname-m) (uname) "msys" *mingw*) (homedir))
+           (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/etc/profile" (uname-m) (uname) "msys" *mingw*) (homedir))))
   (cons t argv))
 
 (defun msys-setup-msys (argv)
@@ -57,10 +55,10 @@
                                   path)
            (format t " done.~%")))
      (format t "extract")
-     (un7za path (ensure-directories-exist
-                  (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "msys" "mingw32") (homedir))))
+     (expand path (ensure-directories-exist
+                  (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "msys" *mingw*) (homedir))))
      (format t " done ~%"))
-  (let ((mingw-get (merge-pathnames (format nil "impls/~A/~A/msys/mingw32/bin/mingw-get" (uname-m) (uname))
+  (let ((mingw-get (merge-pathnames (format nil "impls/~A/~A/msys/~A/bin/mingw-get" (uname-m) (uname) *mingw*)
                                     (homedir))))
     (flet ((install (package &key upgrade)
              (let* ((method (if upgrade "upgrade" "install"))
@@ -85,14 +83,12 @@
      do (format *error-output* "Download ~a" file)
        (if (probe-file path)
            (format *error-output* " skip.~%")
-           (ros.install::download url path))
-       (uiop/run-program:run-program
-        (format nil "~A x ~A -y -o~A"
-               (uiop/filesystem:native-namestring (7za))
-               (uiop/filesystem:native-namestring path)
-               (uiop/filesystem:native-namestring
-                (ensure-directories-exist
-                 (merge-pathnames (format nil "impls/~A/~A/~A/" (uname-m) (uname) "msys") (homedir)))))))
+         (ros.install::download url path))
+       (expand
+        (uiop/filesystem:native-namestring path)
+        (uiop/filesystem:native-namestring
+         (ensure-directories-exist
+          (merge-pathnames (format nil "impls/~A/~A/~A/" (uname-m) (uname) "mingw") (homedir))))))
   (cons t argv))
 
 (setq *install-cmds*
