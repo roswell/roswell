@@ -11,6 +11,8 @@ char* ccl_binname(void) {
     ret=s_cat(ret,q("l"),NULL);
   }else if(strcmp(_uname,"windows")==0) {
     ret=s_cat(ret,q("w"),NULL);
+  }else if(strcmp(_uname,"darwin")==0) {
+    ret=s_cat(ret,q("d"),NULL);
   }
   if(strcmp(_uname_m,"x86-64")==0 ||
      strcmp(_uname_m,"x86")==0) {
@@ -29,7 +31,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=9;  /*[binpath for ccl] --no-init --quiet --batch --image-name param --eval init.lisp
+  int offset=8;  /*[binpath for ccl] --no-init --quiet --batch --image-name param --eval init.lisp
                    [terminating NULL] that total 9 are default. */
   int i;
   int paramc=0;
@@ -64,7 +66,6 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc++]=bin;
   arg[paramc++]=q("--no-init");
   arg[paramc++]=q("--quiet");
-  arg[paramc++]=q("--batch");
   if(image||!issystem)
     arg[paramc++]=q("--image-name");
   if(!image) {
