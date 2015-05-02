@@ -175,4 +175,16 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                                        :defaults (merge-pathnames "subcmd/" *home-path*)
                                        :name (pathname-name sub)
                                        :type (pathname-type sub))))
+	  ((ql-dist:find-system impl/version)
+	   (format *error-output* "found system ~A.~%Attempting install scripts...~%" impl/version)
+	   (ql:quickload impl/version :silent t)
+	   (loop for sub in (directory (merge-pathnames "bin/*.*" (ql:where-is-system impl/version)))
+	      for to = (ensure-directories-exist
+			(make-pathname
+			 :defaults (merge-pathnames "bin/" *home-path*)
+			 :name (pathname-name sub)
+			 :type (pathname-type sub)))
+	      do (format *error-output* "~&~A~%" to)
+		(uiop/stream:copy-file sub to)
+		#+sbcl(sb-posix:chmod to #o700)))
           (t (format *error-output* "not supported software ~A" imp)))))
