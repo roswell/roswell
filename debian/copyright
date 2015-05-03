@@ -1,14 +1,10 @@
 Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 Upstream-Name: roswell
-Source: <url://example.com>
+Source: https://github.com/snmsts/roswell
 
 Files: *
-Copyright: <years> <put author's name and email here>
-           <years> <likewise for another author>
-License: MIT
+Copyright: 2014-2015 SANO Masatoshi
 
-Files: debian/*
-Copyright: 2015 Masatoshi SANO <snmsts@gmail.com>
 License: MIT
 
 License: MIT
@@ -29,8 +25,3 @@ License: MIT
  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, 
  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-# Please also look if there are files or directories which have a
-# different copyright/license attached and list them here.
-# Please avoid to pick license terms that are more restrictive than the
-# packaged work, as it may make Debian's contributions unacceptable upstream.

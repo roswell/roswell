@@ -1,0 +1,17 @@
+roswell (0.0.2.26-1) unstable; urgency=low
+
+  * New upstream version
+
+ -- Masatoshi SANO <snmsts@gmail.com>  Sun, 03 May 2015 08:40:27 +0900
+
+roswell (0.0.2.23-1) unstable; urgency=low
+
+  * New upstream version
+
+  -- Masatoshi SANO <snmsts@gmail.com>  Thu, 19 Feb 2015 07:48:27 +0900
+
+roswell (0.0.2.22-1) unstable; urgency=low
+
+  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+
+ -- Masatoshi SANO <snmsts@gmail.com>  Thu, 05 Feb 2015 07:16:40 +0900
