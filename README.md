@@ -24,7 +24,13 @@ If you're on Mac OS X and wanna use Homebrew, use the custom tap:
     $ brew tap snmsts/roswell
     $ brew install roswell
 
-#### From source code
+#### For Arch linux users
+
+You can install Roswell via AUR:
+
+    $ yaourt -S roswell
+
+#### others can build from source
 
     $ git clone -b release https://github.com/snmsts/roswell.git
     $ cd roswell
