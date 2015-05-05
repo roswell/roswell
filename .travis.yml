@@ -16,3 +16,4 @@ script:
   - ros install ccl-bin
   - ros -v run -- --version
   - ros config
+  - man -Pcat ros
