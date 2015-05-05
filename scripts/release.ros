@@ -1,0 +1,51 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -s cl-ppcre -Q -- $0 "$@"
+|#
+(defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
+(defvar *new-version* nil)
+
+(defun find-version ()
+  (with-open-file (in (merge-pathnames "configure.ac" *project-path*))
+    (loop for line = (read-line in nil nil)
+       while line
+       for match = (nth-value 1 (cl-ppcre:scan-to-strings "^AC_INIT\\([^,]*,\\[([^,]*)\\]" line))
+       when match
+       do (return-from find-version (aref match 0)))))
+
+(defun edit-configure-ac ()
+  )
+
+(defun edit-change-log ()
+  )
+
+(defun show-how-to-release ()
+  (format t "~{~A~%~}~%" 
+          `("To release"
+            "1. Review changes and complete Changelog"
+            "2. Type git commands"
+            "git add Changelog configure.ac"
+            ,(format nil "git commit -m \"bump version to ~A\"" *new-version*)
+            "git checkout release"
+            "git merge master"
+            ,(format nil "git tag -a ~S -m ~S" *new-version* *new-version*)
+            "git push --all"
+            "3. don't forget to release homeberew-roswell as well(TBD)"
+            )))
+
+(defun prepare ()
+  (uiop/run-program:run-program "git checkout master" :output t)
+  (format t "~&current version is ~s.How about new one's:~%" (find-version))
+  (force-output)
+  (setq *new-version* (read-line))
+  (format t "~&new version name is~A~%" *new-version*)
+  (force-output)
+  (edit-change-log)
+  (edit-configure-ac)
+  (show-how-to-release))
+
+(defun main (subcmd &rest argv)
+  (declare (ignorable argv))
+  (cond ((equalp subcmd "prepare")
+         (prepare))))
