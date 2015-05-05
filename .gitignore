@@ -16,3 +16,5 @@ autom4te.cache
 stamp-h1
 depcomp
 config.log
+scripts/roswell*
+documents/*.1
