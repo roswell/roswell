@@ -85,7 +85,7 @@ int download(struct install_options* param) {
     /*TBD proxy support... etc*/
     if(url) {
       ensure_directories_exist(impl_archive);
-      if(download_simple(url,impl_archive,0)) {
+      if(download_simple(url,impl_archive,verbose)) {
         printf("Failed to Download.\n");
         return 0;
         /* fail */
