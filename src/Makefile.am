@@ -25,5 +25,11 @@ ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
 noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 CLEANFILES = gend.h
 
+../documents/ros.1: ../documents/ros.txt all-am
+	./ros setup
+	./ros ../scripts/man.ros ../documents/ros.html 1
+
+man1_MANS = ../documents/ros.1
+
 FORCE:
 .PHONY: FORCE

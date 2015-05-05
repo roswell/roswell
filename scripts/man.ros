@@ -1,0 +1,71 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+;; ref:http://alpha.mixi.co.jp/entry/2007/10635/
+(ql:quickload '(:cl-ppcre) :silent t)
+
+(defvar *matchlines* '())
+(defvar *category* nil)
+(defvar *tp* '(":" #\lf))
+
+(defmacro $ (&body form)
+  (labels ((f (x)
+             (when x
+               (if (eql (first x) '$)
+                   (list (f (rest x)))
+                   (cons (first x) (f (rest x)))))))
+    (f form)))
+
+(defmacro ? (regexp &body body)
+  `(push (cons ,regexp (lambda (_) (declare (ignorable _)) (format t ,@body))) *matchlines*))
+
+(defun gsub (regex replacement target)
+  (cl-ppcre:regex-replace-all regex target (string replacement)))
+
+(defun sub (regex replacement target)
+  (cl-ppcre:regex-replace regex target (string replacement)))
+
+(defun strip (text)
+  ($ gsub "</[a-zA-Z0-9]*> *$" "" $
+     gsub "^ *<[a-zA-Z0-9]*[^>]*>" "" text))
+
+(defun unescape (text)
+  ($ gsub "-" "\\\\-" $
+     gsub "&amp;" "\\\\&" $
+     gsub "&quot;" "\\\"" $
+     gsub "&gt;"  ">" $
+     gsub "&lt;" "<" text))
+
+(defun tag (text)
+  (cl-ppcre:regex-replace-all "<[^>]*>" text ""))
+
+(defun b (opt text)
+  (cl-ppcre:regex-replace-all "<b *[^>]*>([^<]*)</b>" text (if opt "\\\\fB\\1\\\\fR" "((\\\\fB\\1\\\\fR))")))
+
+(defun u (opt text)
+  (cl-ppcre:regex-replace-all "<u *[^>]*>([^<]*)</u>" text (if opt "\\\\fI\\1\\\\fR" "[[\\\\fI\\1\\\\fR]]")))
+
+(?" *<body> *$" ".TH \"~A\" ~D \"~A\" \"~A\" \"~A\"~%~%" (pathname-name *load-pathname*) *category*
+  (let ((time (or (uiop/filesystem:safe-file-write-date *load-pathname*) (get-universal-time))))
+    (format nil "~4,'0d-~2,'0d-~2,'0d" (nth-value 5 #1=(decode-universal-time time)) (nth-value 4 #1#) (nth-value 3 #1#)))
+  "Man Page" "")
+(?" *<h[1-3] *[^>]*>.*<\\/h[1-3]> *$" "~%.SH ~A~%" (string-upcase (unescape (strip _))))
+(?" *<p *class=\"pp[ \"][^>]*>.*<\\/p> *$" ".PP~%~A~%" (unescape (tag (u t (b t (strip _))))))
+(?" *<p *class=\"ss[ \"][^>]*>.*<\\/p> *$" ".SS~%~A~%" (unescape (tag (u t (b t (strip _))))))
+(?" *<p *class=\"tp[ \"][^>]*>.*<\\/p> *$" ".TP~%~A~%" (unescape (tag (u t (b t (sub (first *tp*) (second *tp*) (strip _)))))))
+(?" *<p *[^>]*>.*<\\/p> *$" "~A~%" (unescape (tag (u t (b t (strip _))))))
+(?" *<b *[^>]*>([^<]*)</b>" ".B ~A~%" (unescape (tag (u t (b t (strip _))))))
+
+(defun main (filename *category* &rest argv)
+  (declare (ignorable argv))
+  (with-open-file (in (setf *load-pathname* (make-pathname :defaults filename)))
+    (with-open-file (*standard-output* (make-pathname :type *category* :defaults filename)
+                                       :direction :output :if-exists :supersede)
+      (loop for line = (read-line in nil nil)
+         while line do (loop for (regex . func) in (reverse *matchlines*)
+                          for match = (cl-ppcre:scan-to-strings regex line)
+                          when match
+                          do (funcall func match)
+                            (return t))))))
