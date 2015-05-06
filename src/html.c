@@ -27,17 +27,13 @@ void attrsfree(struct Cons* a) {
 }
 
 LVal parse_attr(char* str) {
-  int i,j;
-  int pos;
-  char* name;
-  char* val;
-  struct Cons tmp;
-  struct Cons *ret=&tmp,*cur=ret;
+  int i,j,pos;
+  char *name,*val;
+  struct Cons tmp,*ret=&tmp,*cur=ret;
   struct opts* p;
   tmp.next=(LVal)NULL;
   for(i=0;str[i]!='\0';++i) {
-    name=NULL;
-    val=NULL;
+    name=NULL,val=NULL;
     /*skip space*/
     pos=position_char_not(" \t\r\n",&str[i]);
     if(pos!=-1) {

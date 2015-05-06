@@ -465,7 +465,6 @@ void signal_callback_handler(int signum) {
 char* atexit_delete=NULL;
 
 void atexit_handler(void) {
-  printf("exit handler\n");
   delete_file(atexit_delete);
   s(atexit_delete);
 }
