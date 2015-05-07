@@ -1,4 +1,4 @@
-#include "util.h"
+#include "opt.h"
 
 static int count=0;
 static int block=10240;
@@ -43,6 +43,26 @@ int download_simple (char* uri,char* path,int verbose) {
 
   curl = curl_easy_init();
   if(curl) {
+    char* current=get_opt("ros.proxy",1);
+    if(current) {
+      /*<[protocol://][user:password@]proxyhost[:port]>*/
+      char *reserve=current,*protocol=NULL,*userpwd=NULL,*port=NULL,*uri=NULL;
+      int pos=position_char("/",current);
+      if(pos>0 && current[pos-1]==':' && current[pos+1]=='/')
+        protocol=current,current[pos-1]='\0',current=current+pos+2;
+      pos=position_char("@",current);
+      if(pos!=-1)
+        userpwd=current,current[pos]='\0',current=current+pos+1;
+      pos=position_char(":",current);
+      if(pos!=-1)
+        current[pos]='\0',port=current+pos+1,uri=current;
+      curl_easy_setopt(curl, CURLOPT_PROXY, uri);
+      if(port)
+        curl_easy_setopt(curl, CURLOPT_PROXYPORT,atoi(port));
+      if(userpwd)
+        curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, userpwd);
+      s(reserve);
+    }
     curl_easy_setopt(curl, CURLOPT_URL, uri);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
