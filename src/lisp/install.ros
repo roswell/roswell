@@ -184,8 +184,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                           (make-pathname
                            :defaults (merge-pathnames "bin/" *home-path*)
                            :name (pathname-name sub)
-                           :type (if (and #+unix t
-                                          (equalp (pathname-type sub) "ros"))
+                           :type (if (or #+unix(equalp (pathname-type sub) "ros"))
                                      nil
                                      (pathname-type sub))))
 	      do (format *error-output* "~&~A~%" to)
