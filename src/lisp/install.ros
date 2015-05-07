@@ -140,6 +140,17 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (save-opt (format nil "~A.version" (getf argv :target)) (get-opt "as"))
   (cons t argv))
 
+(defun install-script (from)
+  (let ((to (ensure-directories-exist
+             (make-pathname
+              :defaults (merge-pathnames "bin/" *home-path*)
+              :name (pathname-name from)
+              :type (unless (or #+unix (equalp (pathname-type from) "ros"))
+                      (pathname-type from))))))
+    (format *error-output* "~&~A~%" to)
+    (uiop/stream:copy-file from to)
+    #+sbcl(sb-posix:chmod to #o700)))
+
 (defun main (subcmd impl/version &rest argv)
   (let* (imp
          version
@@ -153,11 +164,10 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
               version (subseq seq (1+ pos)))
         (setq imp seq))
     (cond ((and
-            (progn (setf sub (merge-pathnames
-                              (format nil "install/~A.lisp" imp)
-                              (make-pathname :name nil :type nil
-                                             :defaults *load-pathname*)))
-                   (probe-file sub))
+            (probe-file (setf sub (merge-pathnames
+                                   (format nil "install/~A.lisp" imp)
+                                   (make-pathname :name nil :type nil
+                                                  :defaults *load-pathname*))))
             (progn (load sub)
                    (let (*read-eval*)
                      (setf *opts* (append (read-from-string (first argv))
@@ -170,24 +180,16 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
               for i = (funcall call `(:target ,imp :version ,version
                                               :argv ,argv)) then (funcall call (rest i))
               while (first i)))
-          ((and (probe-file (setf sub (make-pathname :defaults impl/version :type "ros"))))
-           (uiop/stream:copy-file sub (make-pathname
+          ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
+           #+nil(uiop/stream:copy-file sub (make-pathname
                                        :defaults (merge-pathnames "subcmd/" *home-path*)
                                        :name (pathname-name sub)
-                                       :type (pathname-type sub))))
+                                       :type (pathname-type sub)))
+           (install-script sub))
 	  ((ql-dist:find-system impl/version)
 	   (format *error-output* "found system ~A.~%Attempting install scripts...~%" impl/version)
 	   (ql:quickload impl/version :silent t)
-	   (dolist (from '("bin/*.*" "roswell/*.*"))
-             (loop for sub in (directory (merge-pathnames from (ql:where-is-system impl/version)))
-                for to = (ensure-directories-exist
-                          (make-pathname
-                           :defaults (merge-pathnames "bin/" *home-path*)
-                           :name (pathname-name sub)
-                           :type (if (or #+unix(equalp (pathname-type sub) "ros"))
-                                     nil
-                                     (pathname-type sub))))
-	      do (format *error-output* "~&~A~%" to)
-		(uiop/stream:copy-file sub to)
-		#+sbcl(sb-posix:chmod to #o700))))
+	   (dolist (dir '("roswell/*.*" "bin/*.*"))
+             (dolist (from (directory (merge-pathnames dir (ql:where-is-system impl/version))))
+               (install-script from))))
           (t (format *error-output* "not supported software ~A" imp)))))
