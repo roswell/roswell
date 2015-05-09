@@ -24,9 +24,11 @@ int quicklisp_setup(struct install_options* param) {
   char* archive=s_cat(q(home),q("archives"),q(SLASH),q("quicklisp.lisp"),NULL);
   char* exe_path=truename(argv_orig[0]);
   char* install_path=cat(q(home),"impls",SLASH,"ALL",SLASH,"ALL",SLASH,param->impl,SLASH,NULL);
+  char* init=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
   {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+  {char* p[]={"--eval",init};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
   {char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-  s(archive),s(lisp_path),s(exe_path),s(home),s(install_path);
+  s(archive),s(lisp_path),s(exe_path),s(home),s(install_path),s(init);
   return 1;
 }
 
