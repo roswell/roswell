@@ -24,9 +24,13 @@ int quicklisp_setup(struct install_options* param) {
   char* archive=s_cat(q(home),q("archives"),q(SLASH),q("quicklisp.lisp"),NULL);
   char* exe_path=truename(argv_orig[0]);
   char* install_path=cat(q(home),"impls",SLASH,"ALL",SLASH,"ALL",SLASH,param->impl,SLASH,NULL);
+  char* installed=cat(install_path,"setup.lisp",NULL);
   {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-  {char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-  s(archive),s(lisp_path),s(exe_path),s(home),s(install_path);
+  if(!file_exist_p(installed)){
+    char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);
+  }else
+    fprintf(stderr,"already have quicklisp.\n");
+  s(archive),s(lisp_path),s(exe_path),s(home),s(install_path),s(installed);
   return 1;
 }
 
