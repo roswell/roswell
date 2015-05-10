@@ -25,12 +25,15 @@ int quicklisp_setup(struct install_options* param) {
   char* exe_path=truename(argv_orig[0]);
   char* install_path=cat(q(home),"impls",SLASH,"ALL",SLASH,"ALL",SLASH,param->impl,SLASH,NULL);
   char* installed=cat(install_path,"setup.lisp",NULL);
-  {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+  char* init=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
+
   if(!file_exist_p(installed)){
-    char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);
+    {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+    {char* p[]={"--eval",init};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+    {char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
   }else
     fprintf(stderr,"already have quicklisp.\n");
-  s(archive),s(lisp_path),s(exe_path),s(home),s(install_path),s(installed);
+  s(archive),s(lisp_path),s(exe_path),s(home),s(install_path),s(installed),s(init);
   return 1;
 }
 
