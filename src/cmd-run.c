@@ -41,31 +41,26 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd) {
       proccmd(1,tmp,run_options,run_commands);
       //return proccmd(1,tmp,top_options,top_commands);
     }
-    if(verbose>0) {
+    if(verbose>0)
       fprintf(stderr,"cmd_%s ends here %d\n",cmd->name,i);
-    }
     return i;
   }
 }
 
 int cmd_script(int argc,char **argv,struct sub_command* cmd) {
   char* current=get_opt("program",0);
-  if(verbose>0)
+  if(verbose>0) {
     fprintf(stderr,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+    fprintf(stderr,"current=%s\n",current);
+  }
   if(argc==1 && !current &&
      strcmp(argv[0],"--")==0) {
     char* tmp[]={"help","--"};
-    if(verbose>0)
-      fprintf(stderr,"current=%s\n",current);
     return proccmd(2,tmp,top_options,top_commands);
   }else {
-    int i;
     char* result=q("");
     char* tmp[]={"script"};
-    if(strcmp(argv[0],"--")==0)
-      i=1;
-    else
-      i=0;
+    int i=strcmp(argv[0],"--")==0?1:0;
     for (;i<argc;++i) {
       char* val=escape_string(argv[i]);
       result=cat(result,"\"",val,"\"",NULL);
@@ -153,17 +148,15 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     if(file_exist_p(init)) {
       path=cat("(:load \"",init,"\")",NULL);
       would=cat(path,current?current:"",NULL);
-      s(current);
       set_opt(&local_opt,"program",would,0);
       s(path);
     }
-    s(init);
-    current=get_opt("program",0);
     if(file_exist_p(etc)) {
       path=cat("(:load \"",etc,"\")",NULL);
       would=cat(path,current?current:"",NULL);
       set_opt(&local_opt,"program",would,0);
     }
+    s(current),s(init);
   }
   if(verbose>0) {
     fprintf(stderr,"cmd_run_star:%s argc=%d argv[0]=%s \n",cmd->name,argc,argv[0]);
