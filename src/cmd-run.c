@@ -180,57 +180,59 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       version=q(version);
   }
 
-  if(impl && version) {
-    char** arg=NULL;
-    int i;
-    char* wrap=get_opt("wrap",1);
-    set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
-    {
-      struct sub_command cmd;
-      cmd.name=impl;
-      cmd.short_name=version;
-      if(strcmp(impl,"sbcl")==0 ||
-         strcmp(impl,"sbcl-bin")==0) {
-        arg=cmd_run_sbcl(argc,argv,&cmd);
-      }else if(strcmp(impl,"ccl-bin")==0) {
-        arg=cmd_run_ccl(argc,argv,&cmd);
-      }
-    }
-    if(wrap)
-      arg[0]=q(wrap);
-    if(arg && file_exist_p(arg[1])) {
-      char* cmd;
-      char* opts=sexp_opts(local_opt);
-      setenv("ROS_OPTS",opts,1);
-      if(verbose>0 ||testing) {
-        fprintf(stderr,"args ");
-        for(i=0;arg[i]!=NULL;++i)
-          fprintf(stderr,"%s ",arg[i]);
-        fprintf(stderr,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
-        if(testing)
-          exit(EXIT_SUCCESS);
-      }
-      s(opts);
-#ifdef _WIN32
-      cmd=q(arg[wrap?0:1]);
-      for(i=wrap?1:2;arg[i]!=NULL;++i) {
-        cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
-      }
-      SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-      exit(system(cmd));
-      s(cmd);
-#else
-      execvp(arg[wrap?0:1],&(arg[wrap?0:1]));
-#endif
-    }else{
-      fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);
-    }
-  }else {
-    if(!impl)
-      fprintf(stderr,"lisp doesn't specified stop\n");
-    else
-      fprintf(stderr,"lisp version doesn't specified stop\n");
+  if(!(impl && version)) {
+    char* cmd=cat(truename(argv_orig[0])," setup",NULL);
+    if(impl) s(impl);
+    impl=q("sbcl-bin");
+    system_(cmd);
+    char* path=s_cat(configdir(),q("config"),NULL);
+    global_opt=load_opts(path),s(path);;
+    version=get_opt("sbcl-bin.version",0);
   }
+  char** arg=NULL;
+  int i;
+  char* wrap=get_opt("wrap",1);
+  set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
+  {
+    struct sub_command cmd;
+    cmd.name=impl;
+    cmd.short_name=version;
+    if(strcmp(impl,"sbcl")==0 ||
+       strcmp(impl,"sbcl-bin")==0) {
+      arg=cmd_run_sbcl(argc,argv,&cmd);
+    }else if(strcmp(impl,"ccl-bin")==0) {
+      arg=cmd_run_ccl(argc,argv,&cmd);
+    }
+  }
+  if(wrap)
+    arg[0]=q(wrap);
+  if(arg && file_exist_p(arg[1])) {
+    char* cmd;
+    char* opts=sexp_opts(local_opt);
+    setenv("ROS_OPTS",opts,1);
+    if(verbose>0 ||testing) {
+      fprintf(stderr,"args ");
+      for(i=0;arg[i]!=NULL;++i)
+        fprintf(stderr,"%s ",arg[i]);
+      fprintf(stderr,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
+      if(testing)
+        exit(EXIT_SUCCESS);
+    }
+    s(opts);
+#ifdef _WIN32
+    cmd=q(arg[wrap?0:1]);
+    for(i=wrap?1:2;arg[i]!=NULL;++i) {
+      cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
+    }
+    SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+    exit(system(cmd));
+    s(cmd);
+#else
+    execvp(arg[wrap?0:1],&(arg[wrap?0:1]));
+#endif
+  }else
+    fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);
+
   s(config),s(impl),s(version);
   return ret;
 }
