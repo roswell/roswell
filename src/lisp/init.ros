@@ -8,35 +8,47 @@ exec ros +Q -L sbcl-bin -- $0 "$@"
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
 
-(defun help (name)
-  (format t "Usage: ~A init [OPTIONS]~:[ script-name~;~:* ~A~]~%"
-          (ros:opt "argv0") name))
+(defun help ()
+  (format t "Usage: ~A init [template] name [options...]~%"
+          (ros:opt "argv0")))
 
 (defun main (subcmd cmd &optional name &rest r)
-  (declare (ignore cmd r))
+  (declare (ignore cmd))
   (cond ((and (equal subcmd "main") name)
-         (let ((script-path (make-pathname :defaults name
-                                           :type "ros")))
-           (handler-case
-               (unless (with-open-file (out script-path
-                                            :direction :output
-                                            :if-exists nil
-                                            :if-does-not-exist :create)
-                         (when out
-                           (format out "~@{~A~%~}"
-                                   "#!/bin/sh"
-                                   "#|-*- mode:lisp -*-|#"
-                                   "#|" "exec ros -Q -- $0 \"$@\"" "|#"
-                                   "(defun main (&rest argv)"
-                                   "  (declare (ignorable argv)))")
-                           (format t "~&Successfully generated: ~A~%" script-path)
-                           t))
-                 (format *error-output* "~&File already exists: ~A~%" script-path)
-                 (uiop:quit -1))
-             (error (e)
-               (format *error-output* "~&~A~%" e)
-               (help name)
-               (uiop:quit -1)))))
+         (let (script-path template tmpl-path)
+           (when r (setq template name
+                         name (first r)
+                         r (cdr r)))
+           (setq script-path (make-pathname :defaults name :type "ros"))
+           (if template
+               (if (setq tmpl-path
+                         (probe-file
+                          (merge-pathnames
+                           (format nil "tmpl/~A.ros" template) (ros:opt "homedir"))))
+                   (ros:roswell `(,(namestring tmpl-path)
+                                   ,(namestring (merge-pathnames script-path *default-pathname-defaults*))
+                                   ,@r) :interactive nil)
+                   (format *error-output* "template ~S isn't installed.~%" template))
+               (handler-case
+                   (unless (with-open-file (out script-path
+                                                :direction :output
+                                                :if-exists nil
+                                                :if-does-not-exist :create)
+                             (when out
+                               (format out "~@{~A~%~}"
+                                       "#!/bin/sh"
+                                       "#|-*- mode:lisp -*-|#"
+                                       "#|" "exec ros -Q -- $0 \"$@\"" "|#"
+                                       "(defun main (&rest argv)"
+                                       "  (declare (ignorable argv)))")
+                               (format t "~&Successfully generated: ~A~%" script-path)
+                               t))
+                     (format *error-output* "~&File already exists: ~A~%" script-path)
+                     (uiop:quit -1))
+                 (error (e)
+                   (format *error-output* "~&~A~%" e)
+                   (help)
+                   (uiop:quit -1))))))
         ((or (equal subcmd "help") (not name))
-         (help name)
+         (help)
          (uiop:quit -1))))
