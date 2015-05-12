@@ -1,0 +1,52 @@
+#!/bin/sh
+#|-*- mode: lisp -*-|#
+#|
+exec ros -Q -L sbcl-bin -- $0 "$@"
+|#
+
+(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad))
+
+(defun get-newest-url (base)
+  (block nil
+    (multiple-value-bind (body res)
+        (drakma:http-request
+         (format nil "https://github.com/~A/releases/" base))
+      (when (= res 200)
+        (net.html.parser:parse-html
+         body
+         :callbacks
+         (list (cons :a (lambda (arg)
+                          (let ((href (getf (cdr (car arg)) :href)))
+                            (when (and (> (length href) 6)
+                                       (equal (subseq href (-(length href) 6))
+                                              "tar.gz"))
+                              (return-from nil (format nil "https://github.com~A" href)))))))
+         :callback-only t)))))
+
+(defun sha256-from-url (url)
+  (multiple-value-bind (body res)
+      (drakma:http-request url :force-binary t)
+    (when (= res 200)
+      (ironclad:byte-array-to-hex-string
+       (ironclad:digest-sequence
+        :sha256
+        body)))))
+
+(defun main (&rest argv)
+  (declare (ignore argv))
+  (let* ((url (get-newest-url "snmsts/roswell"))
+         (sha256 (sha256-from-url url)))
+    (format t "url:~A~%sha256:~A~%" url sha256)
+    (with-open-file (o (ensure-directories-exist
+                        (merge-pathnames "homebrew/roswell.rb"
+                                         (make-pathname :defaults *load-pathname*
+                                                        :name nil :type nil)))
+                       ;;"roswell" "rb"
+                       :direction :output
+                       :if-exists :supersede
+                       :if-does-not-exist :create)
+      (format o (cl-emb:execute-emb
+                 (merge-pathnames "res/roswell.rb.emb"
+                                  (make-pathname :defaults *load-pathname*
+                                                 :name nil :type nil))
+                 :env `(:url ,url :sha256 ,sha256))))))
