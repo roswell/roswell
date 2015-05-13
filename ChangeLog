@@ -1,3 +1,15 @@
+roswell (0.0.2.27-1) unstable; urgency=low
+
+  * New Support 'man ros'.
+  * Improve Start checking http response code.
+  * Improve Don't download Quicklisp if it is setup.
+  * Improve 'ros setup' are automatically called.You might less opportunity to typo 'ros setup' from now on.
+  * Improve 'ros install blabla.ros' will install blabla.ros if exists.
+  * Experimental quicklisp's http fetch functionality are overridden by roswell's http client.
+  * Experimental 'ros init' will be changed (Not yet)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 13 May 2015 16:26:52 +0900
+
 roswell (0.0.2.26-1) unstable; urgency=low
 
   * New support install system to install bin. see "ros install qlot"
