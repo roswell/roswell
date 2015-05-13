@@ -38,18 +38,22 @@ exec ros -s cl-ppcre -Q -- $0 "$@"
       (dolist (line file)
         (format out "~A~%" line)))))
 
+(defun x (cmd)
+  (string-right-trim
+   (format nil "~A" #\newline)
+   (with-output-to-string (o)
+     (uiop/run-program:run-program cmd :output o))))
+
 (defun edit-change-log ()
   (with-open-file (out (merge-pathnames "ChangeLog--" *project-path*)
                        :direction :output :if-exists :supersede)
     (format out "~{~A~%~}"
             (list (format nil "roswell (~A-1) unstable; urgency=low" *new-version*)
                   "" "  *" ""
-                  (format nil " -- Masatoshi SANO <snmsts@gmail.com>  ~A"
-                          (string-right-trim
-                           (format nil "~A" #\newline)
-                           (with-output-to-string (o)
-                             (uiop/run-program:run-program "LANG=C date -R" :output o))))
-                  "")))
+                  (format nil " -- ~A <~A>  ~A"
+                          (x "git config --get user.name")
+                          (x "git config --get user.email")
+                          (x "LANG=C date -R")) "")))
   (with-open-file (out (merge-pathnames "ChangeLog---" *project-path*)
                        :direction :output :if-exists :supersede)
     (uiop/run-program:run-program
