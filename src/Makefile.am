@@ -25,7 +25,7 @@ ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
 noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 CLEANFILES = gend.h
 
-.html.1:
+.html.1: bin_PROGRAMS
 	./ros setup;./ros ../scripts/man.ros $< $@
 
 man1_MANS = ../documents/ros.1
