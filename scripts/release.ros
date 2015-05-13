@@ -14,14 +14,60 @@ exec ros -s cl-ppcre -Q -- $0 "$@"
        when match
        do (return-from find-version (aref match 0)))))
 
+(defun inc-version (v)
+  (let ((pos (position-if (complement #'digit-char-p) v :from-end t)))
+    (if pos
+        (format nil "~A~A"
+                (subseq v 0 (1+ pos))
+                (1+ (parse-integer (subseq v (1+ pos)))))
+        v)))
+
 (defun edit-configure-ac ()
-  )
+  (let ((file (with-open-file (in (merge-pathnames "configure.ac" *project-path*)
+                                  :direction :input)
+                (loop for line = (read-line in nil nil)
+                   while line
+       for match = (nth-value 1 (cl-ppcre:scan-to-strings "^AC_INIT\\([^,]*,\\[([^,]*)\\]" line))
+       collect (if match
+                   (cl-ppcre:regex-replace "^(AC_INIT\\([^,]*,\\[)([^,]*)(\\].*)$" line
+                                           (format nil "\\{1}~A\\{3}" *new-version*))
+                   line))
+                )))
+    (with-open-file (out (merge-pathnames "configure.ac" *project-path*)
+                         :direction :output :if-exists :supersede)
+      (dolist (line file)
+        (format out "~A~%" line)))))
 
 (defun edit-change-log ()
-  )
+  (with-open-file (out (merge-pathnames "ChangeLog--" *project-path*)
+                       :direction :output :if-exists :supersede)
+    (format out "~{~A~%~}"
+            (list (format nil "roswell (~A-1) unstable; urgency=low" *new-version*)
+                  "" "  *" ""
+                  (format nil " -- Masatoshi SANO <snmsts@gmail.com>  ~A"
+                          (string-right-trim
+                           (format nil "~A" #\newline)
+                           (with-output-to-string (o)
+                             (uiop/run-program:run-program "LANG=C date -R" :output o))))
+                  "")))
+  (with-open-file (out (merge-pathnames "ChangeLog---" *project-path*)
+                       :direction :output :if-exists :supersede)
+    (uiop/run-program:run-program
+     (format nil "cat ~A ~A"
+             (merge-pathnames "ChangeLog--" *project-path*)
+             (merge-pathnames "ChangeLog" *project-path*))
+     :output out))
+  (uiop/run-program:run-program
+   (format nil "mv ~A ~A"
+           (merge-pathnames "ChangeLog---" *project-path*)
+           (merge-pathnames "ChangeLog" *project-path*)))
+  (uiop/run-program:run-program
+   (format nil "rm -f ~A ~A"
+           (merge-pathnames "ChangeLog--" *project-path*)
+           (merge-pathnames "ChangeLog---" *project-path*))))
 
 (defun show-how-to-release ()
-  (format t "~{~A~%~}~%" 
+  (format t "~{~A~%~}~%"
           `("To release"
             "1. Review changes and complete Changelog"
             "2. Type git commands"
@@ -31,15 +77,16 @@ exec ros -s cl-ppcre -Q -- $0 "$@"
             "git merge master"
             ,(format nil "git tag -a ~S -m ~S" *new-version* *new-version*)
             "git push --all"
-            "3. don't forget to release homeberew-roswell as well(TBD)"
-            )))
+            "3. don't forget to release homeberew-roswell as well(TBD)")))
 
 (defun prepare ()
   (uiop/run-program:run-program "git checkout master" :output t)
   (format t "~&current version is ~s.How about new one's:~%" (find-version))
   (force-output)
   (setq *new-version* (read-line))
-  (format t "~&new version name is~A~%" *new-version*)
+  (when (zerop (length *new-version*))
+    (setf *new-version* (inc-version (find-version))))
+  (format t "~&new version name is ~S~%" *new-version*)
   (force-output)
   (edit-change-log)
   (edit-configure-ac)
