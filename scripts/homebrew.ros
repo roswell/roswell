@@ -4,24 +4,26 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad))
+(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad) :silent t)
 
-(defun get-newest-url (base)
+(defun get-newest-url (base &key master)
   (block nil
-    (multiple-value-bind (body res)
-        (drakma:http-request
-         (format nil "https://github.com/~A/releases/" base))
-      (when (= res 200)
-        (net.html.parser:parse-html
-         body
-         :callbacks
-         (list (cons :a (lambda (arg)
-                          (let ((href (getf (cdr (car arg)) :href)))
-                            (when (and (> (length href) 6)
-                                       (equal (subseq href (-(length href) 6))
-                                              "tar.gz"))
-                              (return-from nil (format nil "https://github.com~A" href)))))))
-         :callback-only t)))))
+    (if master
+        (format nil "https://github.com/~A/archive/master.tar.gz" base)
+        (multiple-value-bind (body res)
+            (drakma:http-request
+             (format nil "https://github.com/~A/releases/" base))
+          (when (= res 200)
+            (net.html.parser:parse-html
+             body
+             :callbacks
+             (list (cons :a (lambda (arg)
+                              (let ((href (getf (cdr (car arg)) :href)))
+                                (when (and (> (length href) 6)
+                                           (equal (subseq href (-(length href) 6))
+                                                  "tar.gz"))
+                                  (return-from nil (format nil "https://github.com~A" href)))))))
+             :callback-only t))))))
 
 (defun sha256-from-url (url)
   (multiple-value-bind (body res)
@@ -33,12 +35,11 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         body)))))
 
 (defun main (&rest argv)
-  (declare (ignore argv))
-  (let* ((url (get-newest-url "snmsts/roswell"))
+  (let* ((url (get-newest-url "snmsts/roswell" :master (equal (first argv) "master")))
          (sha256 (sha256-from-url url)))
     (format t "url:~A~%sha256:~A~%" url sha256)
     (with-open-file (o (ensure-directories-exist
-                        (merge-pathnames "homebrew/roswell.rb"
+                        (merge-pathnames (format nil "homebrew~A/roswell.rb" (if (first argv) (format nil "-~A" (first argv)) ""))
                                          (make-pathname :defaults *load-pathname*
                                                         :name nil :type nil)))
                        ;;"roswell" "rb"
