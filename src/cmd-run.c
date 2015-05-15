@@ -148,15 +148,17 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     if(file_exist_p(init)) {
       path=cat("(:load \"",init,"\")",NULL);
       would=cat(path,current?current:"",NULL);
+      s(current);
       set_opt(&local_opt,"program",would,0);
       s(path);
     }
+    s(init);
+    current=get_opt("program",0);
     if(file_exist_p(etc)) {
       path=cat("(:load \"",etc,"\")",NULL);
       would=cat(path,current?current:"",NULL);
       set_opt(&local_opt,"program",would,0);
     }
-    s(current),s(init);
   }
   if(verbose>0) {
     fprintf(stderr,"cmd_run_star:%s argc=%d argv[0]=%s \n",cmd->name,argc,argv[0]);
