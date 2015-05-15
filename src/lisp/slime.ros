@@ -1,0 +1,15 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|launch emacs with slime
+exec ros -L sbcl-bin -- $0 "$@"
+|#
+
+(defun main (&rest argv)
+  (let ((path (merge-pathnames "impls/ALL/ALL/quicklisp/slime-helper.el" (ros:opt "homedir"))))
+    (unless (probe-file path)
+      (ros:roswell '("install quicklisp-slime-helper") :interactive nil))
+    (uiop/run-program:run-program
+     (format nil "~A~{ ~A~}"
+             "emacs" `("-l" ,path "--eval '(setq inferior-lisp-program \"ros -Q run\")'" ,@(cddr argv)))
+     :output :interactive)))
+
