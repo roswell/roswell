@@ -1,3 +1,9 @@
+roswell (0.0.2.28-1) unstable; urgency=low
+
+  * Experimental: 'ros slime' invoke emacs with slime setting.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 15 May 2015 22:40:30 +0900
+
 roswell (0.0.2.27-1) unstable; urgency=low
 
   * New Support 'man ros'.
