@@ -1,8 +1,9 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
-exec ros -s cl-ppcre -Q -- $0 "$@"
+exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
+(ql:quickload :cl-ppcre)
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)
 
@@ -73,9 +74,9 @@ exec ros -s cl-ppcre -Q -- $0 "$@"
 (defun show-how-to-release ()
   (format t "~{~A~%~}~%"
           `("To release"
-            "1. Review changes and complete Changelog"
+            "1. Review changes and complete ChangeLog"
             "2. Type git commands"
-            "git add Changelog configure.ac"
+            "git add ChangeLog configure.ac"
             ,(format nil "git commit -m \"bump version to ~A\"" *new-version*)
             "git checkout release"
             "git merge master"
