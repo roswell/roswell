@@ -8,7 +8,7 @@ script:
   - find . \( -name \*.c -o -name \*.h -o -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l
   - sh bootstrap
   - ./configure
-  - make
+  - make -j4
   - sudo make install
   - ros version
   - ros -v setup
