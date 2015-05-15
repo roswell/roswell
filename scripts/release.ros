@@ -80,8 +80,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
             ,(format nil "git commit -m \"bump version to ~A\"" *new-version*)
             "git checkout release"
             "git merge master"
-            ,(format nil "git tag -a ~S -m ~S" *new-version* *new-version*)
-            "git push --all"
+            ,(format nil "git tag -a \"v~A\" -m \"v~A\"" *new-version* *new-version*)
+            "git push --tags"
             "3. don't forget to release homeberew-roswell as well(TBD)")))
 
 (defun prepare ()
