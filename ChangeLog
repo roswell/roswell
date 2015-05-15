@@ -1,3 +1,9 @@
+roswell (0.0.2.28-2) unstable; urgency=low
+
+  * Bugfix: fix command line parser easyly went wrong.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 16 May 2015 00:46:25 +0900
+
 roswell (0.0.2.28-1) unstable; urgency=low
 
   * Experimental: 'ros slime' invoke emacs with slime setting.
