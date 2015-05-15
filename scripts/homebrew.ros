@@ -36,13 +36,13 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun main (&rest argv)
   (let* ((url (get-newest-url "snmsts/roswell" :master (equal (first argv) "master")))
-         (sha256 (sha256-from-url url)))
+         (sha256 (sha256-from-url url))
+         (version (if (first argv) "version \"9.9.9.9\"" "")))
     (format t "url:~A~%sha256:~A~%" url sha256)
     (with-open-file (o (ensure-directories-exist
-                        (merge-pathnames (format nil "homebrew~A/roswell.rb" (if (first argv) (format nil "-~A" (first argv)) ""))
+                        (merge-pathnames "homebrew/roswell.rb"
                                          (make-pathname :defaults *load-pathname*
                                                         :name nil :type nil)))
-                       ;;"roswell" "rb"
                        :direction :output
                        :if-exists :supersede
                        :if-does-not-exist :create)
@@ -50,4 +50,4 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                  (merge-pathnames "res/roswell.rb.emb"
                                   (make-pathname :defaults *load-pathname*
                                                  :name nil :type nil))
-                 :env `(:url ,url :sha256 ,sha256))))))
+                 :env `(:url ,url :sha256 ,sha256 :version ,version))))))
