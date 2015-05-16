@@ -1,3 +1,9 @@
+roswell (0.0.2.29-1) unstable; urgency=low
+
+  * New 'ros:exec' available from ros script.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 17 May 2015 08:48:41 +0900
+
 roswell (0.0.2.28-2) unstable; urgency=low
 
   * Bugfix: fix command line parser easyly went wrong.
