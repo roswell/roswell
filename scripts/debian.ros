@@ -4,7 +4,7 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad :uiop))
+(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad :uiop) :silent t)
 
 (defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
 (defvar *package-name* "roswell")
@@ -47,26 +47,28 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (close in))))
         (format t "done ~%"))))
 
-(defun fetch-upstream ()
+(defun fetch-upstream (&optional (output *pwd*))
   (let* ((url (get-newest-url "snmsts/roswell"))
-         (path (merge-pathnames (subseq url (1+ (position #\/ url :from-end t))) *pwd*)))
+         (path (merge-pathnames (subseq url (1+ (position #\/ url :from-end t))) output)))
     (download url path)
     path))
 
-(defun rename-upstream (path &optional (package-name *package-name*))
+(defun rename-upstream (path &optional (package-name *package-name*) (output *pwd*))
   (let* ((name (pathname-name path))
          (version (subseq name (position-if #'digit-char-p name)
                           (1+ (position-if #'digit-char-p name :from-end t))))
-         (new (make-pathname :name (format nil "~A_~A.orig.tar" package-name version)
-                             :defaults path)))
+         (new (make-pathname :name (format nil "~A_~A.orig.tar" package-name
+                                           (subseq version 0
+                                                   (position #\- version)))
+                             :defaults output)))
     (when (probe-file new)
       (delete-file new))
-    (uiop/os:chdir *pwd*)
+    (uiop/os:chdir output)
     (uiop/run-program:run-program (format nil "tar xf ~A" (namestring path)))
     (rename-file path new)
     new))
 
-(defun cp-debian ()
+(defun cp-debian (output)
   (let ((path (namestring
                (first ;; should be sort.
                 (remove-if-not 
@@ -76,9 +78,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                         (first (last (pathname-directory x)))
                                         :end2 (min 7 (length (first (last 
                                                                      (pathname-directory x))))))))
-                 (directory (merge-pathnames "*.*" *pwd*)))))))
-    (uiop/run-program:run-program
-     (format nil "cp -r ~A../debian ~A" *pwd* path))
+                 (directory (merge-pathnames "*.*" output)))))))
     (uiop/run-program:run-program
      (format nil "cp -r ~A../ChangeLog ~Adebian/changelog" *pwd* path))
     path))
@@ -89,12 +89,13 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun main (&optional (arg0 "all") &rest argv)
   (declare (ignore argv))
-  (cond ((equal arg0 "all")
-         (let* ((upstream (fetch-upstream)))
-           (rename-upstream upstream))
-         (dpkg-buildpackage (cp-debian)))
-        ((equal arg0 "clean")
-         (format *error-output* "hoge~%"))))
+  (let ((output (ensure-directories-exist (merge-pathnames "debian/" *pwd*))))
+    (cond ((equal arg0 "all")
+           (let* ((upstream (fetch-upstream output)))
+             (rename-upstream upstream "roswell" output))
+           (dpkg-buildpackage (cp-debian output)))
+          ((equal arg0 "clean")
+           (format *error-output* "hoge~%")))))
 
 ;;(sb-posix:setenv "DEBFULLNAME" "Masatoshi SANO" 1)
 ;;(sb-posix:setenv "DEBEMAIL" "snmsts@gmail.com" 1)
