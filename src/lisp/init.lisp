@@ -7,7 +7,8 @@
 (defpackage :ros
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt :ignore-shebang :roswell))
+  (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
+           :ignore-shebang :roswell :exec))
 
 (in-package :ros)
 (defvar *verbose* 0)
@@ -55,6 +56,33 @@
     (if trim
         (remove #\Newline (remove #\Return ret))
         ret)))
+
+#+(and unix sbcl) ;; from swank
+(progn
+  (sb-alien:define-alien-routine ("execvp" %execvp) sb-alien:int
+    (program sb-alien:c-string)
+    (argv (* sb-alien:c-string)))
+
+  (defun execvp (program args)
+    "Replace current executable with another one."
+    (let ((a-args (sb-alien:make-alien sb-alien:c-string
+                                       (+ 1 (length args)))))
+      (unwind-protect
+           (progn
+             (loop for index from 0 by 1
+                and item in (append args '(nil))
+                do (setf (sb-alien:deref a-args index)
+                         item))
+             (when (minusp
+                    (%execvp program a-args))
+               (error "execvp(3) returned.")))
+        (sb-alien:free-alien a-args)))))
+
+(defun exec (args)
+  #+(and unix sbcl)
+  (execvp (first args) args)
+  (uiop/run-program:run-program (format nil "~{~A~^ ~}" args))
+  (uiop:quit -1))
 
 (defun impl ()
   (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))
