@@ -17,3 +17,4 @@ script:
   - ros -v run -- --version
   - ros config
   - man -Pcat ros
+  - make test
