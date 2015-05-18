@@ -5,20 +5,24 @@ exec ros -- $0 "$@"
 |#
 (in-package :cl-user)
 (ros:quicklisp)
-(with-output-to-string (*standard-output*)
-  (ql:quickload :prove))
+(ql:quickload '(:prove :trivial-shell) :silent t)
 
 (defpackage t.roswell
-  (:use :cl
-        :prove))
+  (:use :cl :prove))
+
 (in-package :t.roswell)
+
+(defun ! (r &optional expected)
+  (if expected
+      (is (string-trim (format nil " ~%") (trivial-shell:shell-command r)) expected)
+      (ok (multiple-value-list (trivial-shell:shell-command r)) r)))
 
 (setf *default-reporter* :list)
 (plan nil)
 (mapc (lambda (x) 
         (diag (format nil "testing ~a" (pathname-name x)))
         (load x))
-     (sort (directory (make-pathname :defaults *load-pathname* :name :wild :type "lisp"))
+     (sort (directory (make-pathname :defaults *load-pathname* :name :wild :type "test"))
              #'string< :key #'pathname-name))
 
 #+:ros.script

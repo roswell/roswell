@@ -3,4 +3,6 @@ debian:
 	ros scripts/debian.ros
 prepare-release:
 	ros scripts/release.ros prepare
-.PHONY: debian prepare-release
+test:
+	ros t/roswell.ros
+.PHONY: debian prepare-release test

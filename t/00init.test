@@ -1,0 +1,5 @@
+#|-*- mode:lisp -*-|#
+(! "ros version")
+(! "ros -v run -- --version")
+(! "ros config")
+(! "ros -e \"(defvar *a* 1)\" -e \"(setq *a* (* *a* 2))\" -e \"(print *a*)\"" "2")
