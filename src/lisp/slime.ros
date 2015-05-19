@@ -8,5 +8,5 @@ exec ros -L sbcl-bin -- $0 "$@"
   (let ((path (merge-pathnames "impls/ALL/ALL/quicklisp/slime-helper.el" (ros:opt "homedir"))))
     (unless (probe-file path)
       (ros:roswell '("-s quicklisp-slime-helper -q") :interactive nil))
-    (ros:exec `("emacs" "-l" ,(namestring path) "--eval" "'(setq inferior-lisp-program \"ros -Q run\")"
+    (ros:exec `("emacs" "-l" ,(namestring path) "--eval" "(setq inferior-lisp-program \"ros -Q run\")"
                         ,@(cddr argv)))))
