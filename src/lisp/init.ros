@@ -15,34 +15,32 @@ exec ros +Q -L sbcl-bin -- $0 "$@"
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd))
   (cond ((and (equal subcmd "main") name)
-         (let (script-path template tmpl-path)
+         (let (script-path template)
            (when r (setq template name
                          name (first r)
                          r (cdr r)))
            (setq script-path (make-pathname :defaults name :type "ros"))
            (if template
-               (if (setq tmpl-path
-                         (probe-file
-                          (merge-pathnames
-                           (format nil "tmpl/~A.ros" template) (ros:opt "homedir"))))
-                   (ros:roswell `(,(namestring tmpl-path)
-                                   ,(namestring (merge-pathnames script-path *default-pathname-defaults*))
-                                   ,@r) :interactive nil)
-                   (format *error-output* "template ~S isn't installed.~%" template))
+               (progn
+                 (ql:quickload template :silent t)
+                 (when ros:*main*
+                   (apply ros:*main* r)))
                (handler-case
-                   (unless (with-open-file (out script-path
-                                                :direction :output
-                                                :if-exists nil
-                                                :if-does-not-exist :create)
-                             (when out
-                               (format out "~@{~A~%~}"
-                                       "#!/bin/sh"
-                                       "#|-*- mode:lisp -*-|#"
-                                       "#|" "exec ros -Q -- $0 \"$@\"" "|#"
-                                       "(defun main (&rest argv)"
-                                       "  (declare (ignorable argv)))")
-                               (format t "~&Successfully generated: ~A~%" script-path)
-                               t))
+                   (unless (prog1
+                               (with-open-file (out script-path
+                                                    :direction :output
+                                                    :if-exists nil
+                                                    :if-does-not-exist :create)
+                                 (when out
+                                   (format out "~@{~A~%~}"
+                                           "#!/bin/sh"
+                                           "#|-*- mode:lisp -*-|#"
+                                           "#|" "exec ros -Q -- $0 \"$@\"" "|#"
+                                           "(defun main (&rest argv)"
+                                           "  (declare (ignorable argv)))")
+                                   (format t "~&Successfully generated: ~A~%" script-path)
+                                   t))
+                             #+sbcl (sb-posix:chmod script-path #o700))
                      (format *error-output* "~&File already exists: ~A~%" script-path)
                      (uiop:quit -1))
                  (error (e)
