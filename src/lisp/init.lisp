@@ -42,9 +42,11 @@
         (sb-alien:free-alien a-args)))))
 
 (defun setenv (name value)
+  (declare (ignorable name value))
   #+sbcl(sb-posix:setenv name value 1))
 
 (defun unsetenv (name)
+  (declare (ignorable name))
   #+sbcl(sb-posix:unsetenv name))
 
 (defun exec (args)

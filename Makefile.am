@@ -4,5 +4,6 @@ debian:
 prepare-release:
 	ros scripts/release.ros prepare
 test:
-	ros t/roswell.ros
+	ros -L sbcl-bin t/roswell.ros
+	ros -L ccl-bin t/roswell.ros
 .PHONY: debian prepare-release test
