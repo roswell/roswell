@@ -91,12 +91,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (defun homedir ()
   *home-path*)
 
-(defun setenv (name value)
-  #+sbcl(sb-posix:setenv name value 1))
-
-(defun unsetenv (name)
-  #+sbcl(sb-posix:unsetenv name))
-
 ;;end here from util/opts.c
 
 (defvar *install-cmds* nil)
