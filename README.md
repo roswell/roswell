@@ -10,8 +10,7 @@ Roswell is a command line tool to install and manage Common Lisp implementations
 ## Limitations
 There's a lot of works should be done.
 
-- [SBCL](http://sbcl.org/) is the only one we supports currently ([#9](https://github.com/snmsts/roswell/issues/9))
-- Not supports Windows (working on at [#1](https://github.com/snmsts/roswell/issues/1))
+checkout [issue lists](https://github.com/snmsts/roswell/issues) if you have interest in what's lacking.
 
 ## Installation
 
@@ -39,17 +38,11 @@ You can install Roswell via AUR:
     $ make
     $ sudo make install
 
-### Setup
+## How to use
 
-First of all, you have to install Lisp environment. You can install a binary version of SBCL and Quicklisp from internet by this command:
-
-    $ ros setup
-
-After the installation, you can get sub-commands and command line options by this command:
+First of all, you can get sub-commands and command line options by this command:
 
     $ ros
-
-## How to use
 
 ### Installing Lisps
 
@@ -66,6 +59,14 @@ will install that version.
 You can get which version of SBCL are installed by this command:
 
     $ ros list installed sbcl
+
+#### Supported Implementations and compile options.
+
+So far, `sbcl`,`sbcl-bin`,`ccl-bin` can be parameter for `ros install`.
+
+You can see compile option by
+
+    $ ros help install sbcl
 
 ### Setting the default implementation used by ros
 
@@ -95,6 +96,8 @@ to load with `.sbclrc`
 ```lisp
 (setq inferior-lisp-program "ros -L sbcl -Q -l ~/.sbclrc run")
 ```
+
+Or, Just simply `ros slime` would launch emacs with slime setup.
 
 ## Chef recipe for roswell
 
