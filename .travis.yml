@@ -5,7 +5,8 @@ compiler:
   - clang
 
 script:
-  - find . \( -name \*.c -o -name \*.h -o -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l
+  - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l
+  - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l
   - sh bootstrap
   - ./configure
   - make -j4
