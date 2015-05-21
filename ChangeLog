@@ -1,3 +1,11 @@
+roswell (0.0.2.30-1) unstable; urgency=low
+
+  * New: 'ros:getenv and 'ros:setenv' are available from ros script.
+  * Improve: 'git init filename' make 'filename.ros' with permission 700 on unix.
+  * Bugfix: 'ros slime' couldn't take parameter for Emacs.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 21 May 2015 10:07:18 +0900
+
 roswell (0.0.2.29-1) unstable; urgency=low
 
   * New 'ros:exec' available from ros script.
