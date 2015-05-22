@@ -43,11 +43,13 @@
 
 (defun setenv (name value)
   (declare (ignorable name value))
-  #+sbcl(sb-posix:setenv name value 1))
+  #+sbcl(sb-posix:setenv name value 1)
+  #+ccl(ccl:setenv name value t))
 
 (defun unsetenv (name)
   (declare (ignorable name))
-  #+sbcl(sb-posix:unsetenv name))
+  #+sbcl(sb-posix:unsetenv name)
+  #+ccl(ccl:unsetenv name))
 
 (defun exec (args)
   #+(and unix sbcl)
