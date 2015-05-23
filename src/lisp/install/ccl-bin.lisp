@@ -85,6 +85,10 @@
    (merge-pathnames (format nil "impls/~A/~A/ccl-bin/~A/" (uname-m) (uname%) (get-opt "as")) (homedir)))
   (cons t argv))
 
+(defun ccl-bin-help (argv)
+  (format t "no options for ccl-bin~%")
+  (cons t argv))
+
 (setq *install-cmds*
       (list 'ccl-bin-version
             'ccl-bin-argv-parse
