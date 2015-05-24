@@ -89,7 +89,10 @@
 (defun roswell (args output trim)
   (let ((ret (funcall (read-from-string "uiop/run-program:run-program")
                       (format nil "~A~{ ~A~}"
-                              (ros:opt "argv0") args) :output output)))
+                              (let ((a0 (opt "argv0")))
+                                #+win32(setq a0 (substitute #\\ #\/ a0))
+                                a0)
+                              args) :output output)))
     (if trim
         (remove #\Newline (remove #\Return ret))
         ret)))
