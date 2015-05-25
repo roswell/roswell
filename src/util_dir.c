@@ -45,7 +45,11 @@ char* truename(const char* path) {
   if(ret)
     return ret;
 #else
-  /* TBD */
+  char ret[MAX_PATH];
+  DWORD dwret;
+  dwret=GetFullPathName(path,sizeof(ret)/sizeof(ret[0]),ret,NULL);
+  if(!dwret)
+    return q(ret);
 #endif
   return which((char*)path);
 }
