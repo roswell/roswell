@@ -18,7 +18,7 @@
 
 ;; small tools
 (defun getenv (x)
-  (asdf::getenv x))
+  (funcall (read-from-string "asdf::getenv") x))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -43,19 +43,28 @@
 
 (defun setenv (name value)
   (declare (ignorable name value))
-  #+sbcl(sb-posix:setenv name value 1)
+  #+sbcl(funcall (read-from-string "sb-posix:setenv") name value 1)
   #+ccl(ccl:setenv name value t))
 
 (defun unsetenv (name)
   (declare (ignorable name))
-  #+sbcl(sb-posix:unsetenv name)
+  #+sbcl(funcall (read-from-string "sb-posix:unsetenv") name)
   #+ccl(ccl:unsetenv name))
+
+(defun quit (&optional (return-code 0) &rest rest)
+  (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
+    (ignore-errors(funcall 'asdf::quit ret))
+    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::exit") :code ret))
+    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))))
 
 (defun exec (args)
   #+(and unix sbcl)
   (execvp (first args) args)
-  (uiop/run-program:run-program (format nil "~{~A~^ ~}" args))
-  (uiop:quit -1))
+  #+(and unix ccl)
+  (ccl::%execvp args)
+  (funcall (read-from-string "uiop/run-program:run-program")
+           (format nil "~{~A~^ ~}" args))
+  (quit -1))
 
 (defun ros-opts ()
   (or *ros-opts*
@@ -87,7 +96,8 @@
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
 (defun roswell (args output trim)
-  (let ((ret (funcall (read-from-string "uiop/run-program:run-program")
+  (let ((ret (funcall (or (ignore-errors (read-from-string "uiop/run-program:run-program"))
+                          (read-from-string "sb-ext:run-program"))
                       (format nil "~A~{ ~A~}"
                               (let ((a0 (opt "argv0")))
                                 #+win32(setq a0 (substitute #\\ #\/ a0))
@@ -101,8 +111,10 @@
   (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))
     (subseq s (1+ (position #\/ s)))))
 
-(unless (equal (first (last asdf::*user-cache*)) (impl))
-  (setf asdf::*user-cache* (append asdf::*user-cache* (list (impl)))))
+(let ((symbol (read-from-string "asdf::*user-cache*")))
+  (when (boundp symbol)
+    (unless (equal (first (last (symbol-value symbol))) (impl))
+      (set symbol (append (symbol-value symbol) (list (impl)))))))
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
@@ -116,7 +128,7 @@
                         while pos))))
     (if (zerop (length dir))
         (warn "Source-registry ~S isn't valid. Ignored." arg)
-        (asdf:initialize-source-registry dir))))
+        (funcall (read-from-string "asdf:initialize-source-registry") dir))))
 
 (defun system (cmd args &rest rest)
   (declare (ignorable cmd rest))
@@ -143,12 +155,6 @@
 (defun eval (cmd arg &rest rest)
   (declare (ignorable cmd rest))
   (cl:eval (read-from-string arg)))
-
-(defun quit (&optional (return-code 0) &rest rest)
-  (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
-    (ignore-errors(funcall 'asdf::quit ret))
-    #+sbcl(ignore-errors(cl-user::exit :code ret))
-    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))))
 
 (defun restart (cmd arg &rest rest)
   (declare (ignorable cmd rest))
