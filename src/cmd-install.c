@@ -1,9 +1,3 @@
-#include <stdio.h>
-#include <stdlib.h>
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-
 #include "opt.h"
 #include "cmd-install.h"
 static int in_resume=0;
@@ -19,8 +13,7 @@ extern int extract(const char *filename, int do_extract, int flags,const char* o
 
 int installed_p(struct install_options* param) {
   int ret;
-  char* i;
-  char *impl;
+  char *i,*impl;
 
   impl=q(param->impl);
   //TBD for util.
@@ -40,8 +33,7 @@ int install_running_p(struct install_options* param) {
 }
 
 int start(struct install_options* param) {
-  char* home=configdir();
-  char* p;
+  char *home=configdir(),*p;
   ensure_directories_exist(home);
   if(installed_p(param)) {
     printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",param->impl,param->version?param->version:"");
@@ -59,18 +51,14 @@ int start(struct install_options* param) {
   setup_signal_handler(p);
   touch(p);
 
-  s(p);
-  s(home);
+  s(p),s(home);
   return 1;
 }
 
 char* download_archive_name(struct install_options* param) {
   char* ret=cat(param->impl,param->version?"-":"",param->version?param->version:"",NULL);
-  if(param->arch_in_archive_name==0) {
-    ret=s_cat(ret,q((*(install_impl->extention))(param)),NULL);
-  }else {
-    ret=s_cat(ret,cat("-",param->arch,"-",param->os,q((*(install_impl->extention))(param)),NULL),NULL);
-  }
+  ret= param->arch_in_archive_name==0?s_cat(ret,q((*(install_impl->extention))(param)),NULL):
+    s_cat(ret,cat("-",param->arch,"-",param->os,q((*(install_impl->extention))(param)),NULL),NULL);
   return ret;
 }
 
@@ -89,16 +77,11 @@ int download(struct install_options* param) {
         printf("Failed to Download.\n");
         return 0;
         /* fail */
-      }else{
-        printf("\ndone\n");
-      }
+      }else printf("\ndone\n");
       s(url);
     }
-  } else {
-    printf("Skip downloading %s\n",url);
-  }
-  s(impl_archive);
-  s(home);
+  } else printf("Skip downloading %s\n",url);
+  s(impl_archive),s(home);
   return 1;
 }
 
@@ -175,7 +158,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         char* path=cat(home,"config",NULL);
         char* v=cat(param.impl,".version",NULL);
         char* version=param.version;
-        if(!install_impl->util){
+        if(!install_impl->util) {
           for(i=0;version[i]!='\0';++i)
             if(version[i]=='-')
               version[i]='\0';
@@ -188,9 +171,8 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
       if(param.version)s(param.version);
       s(param.impl),s(param.arch),s(param.os);
       s(param.expand_path);
-      if(!ret) {
+      if(!ret)
         exit(EXIT_FAILURE);
-      }
     }
   }else {
     char* tmp[]={"help","install"};
@@ -201,32 +183,26 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
 }
 
 int install_help(int argc,char **argv,struct sub_command* cmd) {
-  int i;
   if(argc==1) {
-    char* lisp_path=lispdir();
     fprintf(stderr,"Candidates to install are:\n");
-    char* install=s_cat2(lisp_path,q("install/"));
-    LVal d=directory(install);
-    {
-      LVal v=d;
-      for(;v;v=Next(v)) {
-        char* str=firsts(v);
-        if(str[strlen(str)-1]!='/') {
-          int p=position_char(".",str);
-          if(p!=-1) {
-            char *sub=subseq(str,0,p);
-            printf("%s\n",sub);
-            s(sub);
-          }
+    char* install=s_cat2(lispdir(),q("install/"));
+    LVal d=directory(install),v=d;
+    for(;v;v=Next(v)) {
+      char* str=firsts(v);
+      if(str[strlen(str)-1]!='/') {
+        int p=position_char(".",str);
+        if(p!=-1) {
+          char *sub=subseq(str,0,p);
+          printf("%s\n",sub);
+          s(sub);
         }
       }
     }
     sL(d);
   }else if(argc==2) {
-    char* lisp_path=lispdir();
     int i,j,argc_;
     char** tmp;
-    char* install_ros=s_cat2(lisp_path,q("install.lisp"));
+    char* install_ros=s_cat2(lispdir(),q("install.lisp"));
     tmp=(char**)alloc(sizeof(char*)*(argc+9));
     i=0;
     tmp[i++]=q("--");
@@ -242,7 +218,6 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
     for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
     for(j=0;j<argc_;s(tmp[j++]));
     dealloc(tmp);
-    return 0;
   }
   return 0;
 }
