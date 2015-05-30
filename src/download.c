@@ -7,13 +7,12 @@ static int fold=90;
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   int current = count/block;
-  int dots;
-  int i;
+  int dots,i;
   count+=written*size;
-  for(i=current;i<count/block;++i){
+  for(i=current;i<count/block;++i) {
     printf(".");
     fflush(stdout);
-    if(i%fold==0)
+    if(i%fold==0 && i)
       printf("\n");
   }
   return written;
@@ -63,6 +62,7 @@ int download_simple (char* uri,char* path,int verbose) {
         curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, userpwd);
       s(reserve);
     }
+    count=0;
     curl_easy_setopt(curl, CURLOPT_URL, uri);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
@@ -83,9 +83,8 @@ int download_simple (char* uri,char* path,int verbose) {
     curl_easy_cleanup(curl);
   }
   fclose(bodyfile);
-  if(res != CURLE_OK) {
+  if(res != CURLE_OK)
     return -2;
-  }
 #else
   URL_COMPONENTS u;
   TCHAR szHostName[4096];
@@ -126,16 +125,15 @@ int download_simple (char* uri,char* path,int verbose) {
   HttpSendRequest(hRequest,NULL,0,NULL,0);
   DWORD dwStatusCode;
   DWORD dwLength = sizeof(DWORD);
-  if( !HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0 ) ){
+  if( !HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0 ) ) 
     return -4;
-  }
-  if( HTTP_STATUS_OK != dwStatusCode ) {
+  if(HTTP_STATUS_OK != dwStatusCode)
     return -3;
-  }
   DWORD dwContentLen;
   DWORD dwBufLen = sizeof(dwContentLen);
   char pData[10000];
   DWORD dwBytesRead = 1;
+  count=0;
   while (dwBytesRead) {
     InternetReadFile(hRequest, pData, 99, &dwBytesRead);
     pData[dwBytesRead] = 0;
