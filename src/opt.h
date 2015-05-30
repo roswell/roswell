@@ -61,4 +61,5 @@ char* _get_opt(struct opts* opt,const char* name);
 void print_opts(struct opts* opt);
 char* sexp_opts(struct opts* opt);
 void free_opts(struct opts* opt);
+int cmd_tar(int argc,char **argv,struct sub_command* cmd);
 #endif

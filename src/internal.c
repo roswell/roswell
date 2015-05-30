@@ -1,7 +1,6 @@
 #include "opt.h"
 
 LVal internal_commands=(LVal)NULL;
-extern int cmd_tar(int argc,char **argv,struct sub_command* cmd);
 
 int cmd_download (int argc,char **argv,struct sub_command* cmd) {
   if(argc>=2) {
@@ -15,9 +14,8 @@ int cmd_uname (int argc,char **argv,struct sub_command* cmd) {
   if(argc==1) {
     printf("%s\n",uname());
   }else if(argc==2) {
-    if(strcmp(argv[1],"-m")==0) {
+    if(strcmp(argv[1],"-m")==0)
       printf("%s\n",uname_m());
-    }
   }
   return 0;
 }
