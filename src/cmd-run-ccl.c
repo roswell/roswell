@@ -1,6 +1,5 @@
-#include <stdio.h>
-#include "util.h"
 #include "opt.h"
+
 char* ql_path(void);
 
 char* ccl_binname(void) {
