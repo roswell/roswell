@@ -1,11 +1,9 @@
 #include "cmd-install.h"
 #include "opt.h"
-char* download_archive_name(struct install_options* param);
+
 char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
-
-char* sbcl_bin(char* file);
 
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
@@ -26,9 +24,8 @@ int sbcl_version_bin(struct install_options* param) {
 
     param->version=sbcl_bin(platforms_html);
     printf("version to install would be '%s'\n",param->version);
-  }else {
+  }else
     param->version=q(param->version);
-  }
   param->arch_in_archive_name=1;
   param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch_(param),SLASH,NULL);
   s(platforms_html),s(home);
@@ -43,10 +40,7 @@ char* sbcl_uri_bin(struct install_options* param) {
   /*should I care about it's existance? */
   char* arch=arch_(param);
   char* ret=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
-                "-",arch,
-                "-binary",
-                sbcl_bin_extention(param)
-                ,NULL);
+                "-",arch,"-binary",sbcl_bin_extention(param),NULL);
   s(arch);
   return ret;
 }
@@ -169,9 +163,8 @@ int sbcl_bin_install(struct install_options* param) {
     return 0;
   }
   ret=1;
-  if(system_redirect("sh install.sh",log_path)==-1) {
+  if(system_redirect("sh install.sh",log_path)==-1)
     ret=0;
-  }
   s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
   printf("done.\n");
   return ret;

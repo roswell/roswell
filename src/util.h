@@ -144,4 +144,6 @@ void setup_signal_handler (char* file_to_delete);
 
 int proccmd(int argc,char** argv,LVal option,LVal command);
 int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command);
+
+char* sbcl_bin(char* file);
 #endif
