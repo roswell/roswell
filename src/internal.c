@@ -5,8 +5,8 @@ extern int cmd_tar(int argc,char **argv,struct sub_command* cmd);
 
 int cmd_download (int argc,char **argv,struct sub_command* cmd) {
   if(argc>=2) {
-    fprintf(stderr,"download %s %s",argv[1],argv[2]);
-    return download_simple(argv[1],argv[2],1);
+    fprintf(stderr,"download %s\n",argv[1]);
+    return download_simple(argv[1],argv[2],0);
   }
   return 0;
 }
