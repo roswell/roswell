@@ -87,7 +87,7 @@ exec ros -- $0 "$@"
             (ros:script nil out)
             (setf main-list (let ((*package* (find-package :keyword)))
                               `((:entry ,(format nil "~S" ros:*main*))))
-                  out (make-pathname :type nil :defaults out)
+                  out (make-pathname :type #-win32 nil #+win32 "exe" :defaults out)
                   cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))
