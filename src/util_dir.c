@@ -6,36 +6,29 @@ char* homedir(void) {
   struct passwd * pwd=NULL;
   char *env=NULL;
   int i;
-
   c=s_cat2(upcase(q_(PACKAGE)),q_(postfix));
   env=getenv(c);
   s(c);
-  if(env) {
+  if(env)
     return append_trail_slash(env);
-  }
 #ifdef HAVE_WINDOWS_H
   TCHAR szAppData[MAX_PATH];
-  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData))) {
+  if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData)))
     c=q_(szAppData);
-  }
 #else
   pwd= getpwuid(getuid());
-  if(pwd) {
+  if(pwd)
     c=q_(pwd->pw_dir);
-  }
 #endif
-  else {
-    /* error? */
-    return NULL;
-  }
+  else
+    return NULL; /* error? */
   return s_cat(append_trail_slash(c),NULL);
 }
 
 char* configdir(void) {
   char* home=homedir();
-  if(home) {
+  if(home)
     return s_cat(home,q_("."),q(PACKAGE),q(SLASH),NULL);
-  }
   return NULL;
 }
 
@@ -70,9 +63,8 @@ char* file_namestring(char* path) {
   if(path[i]=='/') {
     ret=subseq(path,i+1,0);
     s(path);
-  }else {
+  }else
     ret=path;
-  }
   return ret;
 }
 
@@ -139,7 +131,7 @@ int file_exist_p (char* path) {
 }
 
 int change_directory(const char* path) {
-#ifndef _WIN32
+#ifndef HAVE_WINDOWS_H
   return chdir(path);
 #else
   return _chdir(path);

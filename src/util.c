@@ -432,9 +432,8 @@ LVal directory(char* path) {
     return 0;
   while((dirent=readdir(dir))!=0) {
     char* str=q(dirent->d_name);
-    if(dirent->d_type&DT_DIR) {
+    if(dirent->d_type&DT_DIR)
       str=s_cat2(str,q("/"));
-    }
     ret=conss(str,ret);
   }
   closedir(dir);
@@ -448,9 +447,8 @@ LVal directory(char* path) {
     if(!(strcmp(fd.cFileName,".")==0 ||
          strcmp(fd.cFileName,"..")==0)) {
       char* str=cat(fd.cFileName,NULL);
-      if(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY) {
+      if(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
         str=s_cat2(str,q(SLASH));
-      }
       ret=conss(str,ret);
     }
   }while(FindNextFile(dir,&fd)!=0);
