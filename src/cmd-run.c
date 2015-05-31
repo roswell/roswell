@@ -176,9 +176,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       version=get_opt(opt,1);
       s(opt);
     }
-    if(impl) 
+    if(impl)
       impl=q(impl);
-    if(version) 
+    if(version)
       version=q(version);
   }
 

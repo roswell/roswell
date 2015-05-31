@@ -1,8 +1,8 @@
 (cl:in-package :cl-user)
-#-asdf
-(require :asdf)
-#+sbcl
-(require :sb-posix)
+#-asdf (require :asdf)
+
+(let ((*standard-output* (make-broadcast-stream)))
+  #+sbcl (require :sb-posix))
 
 (defpackage :ros
   (:use :cl)
@@ -96,13 +96,13 @@
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
 (defun roswell (args output trim)
-  (let ((ret (funcall (or (ignore-errors (read-from-string "uiop/run-program:run-program"))
-                          (read-from-string "sb-ext:run-program"))
-                      (format nil "~A~{ ~A~}"
-                              (let ((a0 (opt "argv0")))
-                                #+win32(setq a0 (substitute #\\ #\/ a0))
-                                a0)
-                              args) :output output)))
+  (let* ((a0 (funcall (or #+win32(lambda (x) (substitute #\\ #\/ x)) #'identity) (opt "argv0")))
+         (ret  (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
+                   (funcall #1# (format nil "~A~{ ~A~}" a0 args) :output output)
+                   (with-output-to-string (out)
+                     (funcall (read-from-string "sb-ext:run-program")
+                              a0 (mapcar #'princ-to-string args)
+                              :output out)))))
     (if trim
         (remove #\Newline (remove #\Return ret))
         ret)))

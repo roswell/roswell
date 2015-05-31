@@ -6,28 +6,22 @@ exec ros +R -Q -L sbcl-bin -- $0 "$@"
 
 (cl:in-package :cl-user)
 
-(require :asdf)
-(require :sb-posix)
-
-(unless (find-package :uiop)
-  (ql:quickload :uiop :silent t))
-
 (defpackage :ros.use
   (:use :cl))
 
 (in-package :ros.use)
 
 (defun config (&rest argv)
-  (ros:roswell `("config set" ,@argv) :string t))
+  (ros:roswell `("config" "set" ,@argv) :string t))
 
 (defun main (subcmd impl/version &rest argv)
   (declare (ignore subcmd impl/version))
-  (if (not (zerop (length argv)))
-      (let* ((pos (position #\/ (first argv)))
-             (lisp (if pos
-                       (subseq (first argv) 0 pos)
-                       (first argv))))
-        (when pos
-          (config "default.lisp" lisp)
-          (config (format nil "~A.version" lisp)
-                  (subseq (first argv) (1+ pos)))))))
+  (when argv
+    (let* ((pos (position #\/ (first argv)))
+           (lisp (if pos
+                     (subseq (first argv) 0 pos)
+                     (first argv))))
+      (when pos
+        (config "default.lisp" lisp)
+        (config (format nil "~A.version" lisp)
+                (subseq (first argv) (1+ pos)))))))
