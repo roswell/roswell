@@ -407,13 +407,13 @@ char* which(char* cmd) {
   char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
 #else
   cmd=substitute_char('\\','/',q(cmd));
-  if(position_char("\\:",cmd)!=-1) {
-    char tmp[MAX_PATH];
-    GetFullPathName(cmd,MAX_PATH,tmp,NULL);
-    s(cmd);
-    return q(tmp);
-  }
-  char* which_cmd=cat("where \"",cmd,"\"",NULL);
+  /* if(position_char("\\:",cmd)!=-1) { */
+  /*   char tmp[MAX_PATH]; */
+  /*   GetFullPathName(cmd,MAX_PATH,tmp,NULL); */
+  /*   s(cmd); */
+  /*   return q(tmp); */
+  /* } */
+  char* which_cmd=cat("cmd /c where ",cmd,"",NULL);
   s(cmd);
 #endif
   char* p=system_(which_cmd);

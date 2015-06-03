@@ -41,7 +41,7 @@ char* truename(const char* path) {
   char ret[MAX_PATH];
   DWORD dwret;
   dwret=GetFullPathName(path,sizeof(ret)/sizeof(ret[0]),ret,NULL);
-  if(!dwret)
+  if(dwret)
     return q(ret);
 #endif
   return which((char*)path);
@@ -131,7 +131,7 @@ int file_exist_p (char* path) {
 }
 
 int change_directory(const char* path) {
-#ifndef HAVE_WINDOWS_H
+#ifndef _WIN32
   return chdir(path);
 #else
   return _chdir(path);

@@ -183,7 +183,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   }
 
   if(!(impl && version)) {
-    char* cmd=cat(truename(argv_orig[0])," setup",NULL);
+    char* cmd=cat(which(argv_orig[0])," setup",NULL);
     if(impl) s(impl);
     impl=q("sbcl-bin");
     system_(cmd);
