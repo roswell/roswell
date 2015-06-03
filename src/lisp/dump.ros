@@ -117,7 +117,10 @@ exec ros -- $0 "$@"
 
 (defun main (subcmd cmd &rest r)
   (cond ((and (equal subcmd "main") r)
-         (funcall (third (assoc (first r) *subcmds* :test 'equal)) (rest r)))
+         (let ((func (third (assoc (first r) *subcmds* :test 'equal))))
+           (if func
+               (funcall func (rest r))
+               (format t "~A is not supported for ~A subcommand~%" (first r) cmd))))
         ((or (equal subcmd "help") (not r))
          (format t "Usage: ~A [OPTIONS] ~A subcmd [ARGS]~%"
                  (ros:opt "argv0") cmd)
