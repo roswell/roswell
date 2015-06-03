@@ -82,7 +82,6 @@
           (get-opt "download.force"))
       (progn
         (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
-        ;;TBD proxy support... and other params progress bar?
         (download (get-opt "download.uri") (get-opt "download.archive")))
       (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
               (get-opt "download.uri")))
