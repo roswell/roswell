@@ -57,6 +57,19 @@
               (get-opt "download.uri")))
   (cons t argv))
 
+(defun clisp-ffcall (argv)
+  (let* ((uri "http://www.haible.de/bruno/gnu/ffcall-1.10.tar.gz")
+         (pos (position #\/ uri :from-end t))
+         (archive (merge-pathnames (format nil "archives/~A" (subseq uri (1+ pos))) (homedir))))
+    (if (or (not (probe-file archive))
+            (get-opt "download.force"))
+        (progn
+          (format t "~&Downloading archive.:~A~%" uri)
+          (download uri archive))
+        (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
+                uri)))
+  (cons t argv))
+
 (defun clisp-expand (argv)
   (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
@@ -116,6 +129,7 @@
       (list 'clisp-version
             'clisp-argv-parse
             'clisp-download
+            'clisp-ffcall
             'clisp-expand
             'clisp-config
             'clisp-make
