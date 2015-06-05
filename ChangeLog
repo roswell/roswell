@@ -1,3 +1,15 @@
+roswell (0.0.2.31-1) unstable; urgency=low
+
+  * New: Add an installer script for Travis CI.
+  * New: 'ros emacs' will invoke emacs with slime ready environment.
+  * Improve: Use more dump to faster user experience.User can renew dump by 'ros setup'
+  * Improve: `ros:setenv` and `ros:unsetenv` work on ccl.
+  * Experimental: Download clisp by 'ros intall clisp' but you can't invoke it by ros yet.
+  * Bugfix: Error when subcommand for dump command is invalid.
+  * Bugfix: Error when 'ros help install ccl-bin'.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 06 Jun 2015 08:18:09 +0900
+
 roswell (0.0.2.30-1) unstable; urgency=low
 
   * New: 'ros:getenv and 'ros:setenv' are available from ros script.
