@@ -1,19 +1,22 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|change default implementation
-exec ros +R -Q -L sbcl-bin -- $0 "$@"
+exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 |#
 
 (cl:in-package :cl-user)
+(when (cl:find-package :ros.use)
+  (push :ros.use *features*))
 
+#-ros.use
 (defpackage :ros.use
   (:use :cl))
 
 (in-package :ros.use)
-
+#-ros.use
 (defun config (&rest argv)
   (ros:roswell `("config" "set" ,@argv) :string t))
-
+#-ros.use
 (defun main (subcmd impl/version &rest argv)
   (declare (ignore subcmd impl/version))
   (when argv

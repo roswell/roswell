@@ -1,35 +1,38 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Delete installed implementations
-exec ros +Q -L sbcl-bin -- $0 "$@"
+exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
-(defpackage :ros.delete
+(when (cl:find-package :ros.sub.delete)
+  (push :ros.sub.delete *features*))
+#-ros.sub.delete
+(defpackage :ros.sub.delete
   (:use :cl))
-(in-package :ros.delete)
-
+(in-package :ros.sub.delete)
+#-ros.sub.delete
 (ros:quicklisp :environment nil)
 
-;; sbcl-bin is old enough not to include UIOP on some OSes like Mac OS X.
+#-ros.sub.delete
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
-
+#-ros.sub.delete
 (defun homedir ()
   (ros:opt "homedir"))
-
+#-ros.sub.delete
 (defun uname ()
   (ros:roswell '("roswell-internal-use uname") :string t))
-
+#-ros.sub.delete
 (defun uname-m ()
   (ros:roswell '("roswell-internal-use uname -m") :string t))
-
+#-ros.sub.delete
 (defun config (c)
   (ros:roswell (list "config show" c) :string t))
-
+#-ros.sub.delete
 (defun (setf config) (a b)
   (ros:roswell (list "config" b a) :string t)
   a)
-
+#-ros.sub.delete
 (defun main (subcmd cmd &rest r)
   (let* ((default (config "default.lisp"))
          (verstring (format nil "~A.version" default))

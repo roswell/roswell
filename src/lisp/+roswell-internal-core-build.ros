@@ -1,0 +1,13 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -L sbcl-bin -- $0 "$@"
+|#
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (ros:roswell `("-L sbcl-bin --eval '(ros:ignore-shebang)' "
+                 ,@(loop :for i :in (directory (make-pathname :defaults *load-pathname* :name :wild))
+                      :collect (format nil "--load ~A " i))
+                 "--eval '(cl:set-dispatch-macro-character #\\# #\\! cl:nil)' dump output -f roswell")
+               t nil))
+
