@@ -60,7 +60,7 @@ int cmd_help(int argc, const char **argv) {
         for(v=x;v;v=Next(v)) {
           char* s=firsts(v);
           int len=strlen(s)-4; /* ".ros" */
-          if (len>0 && strcmp(s+len,".ros")==0 && s[0]!='-' &&cmdmax<len)
+          if (len>0 && strcmp(s+len,".ros")==0 && s[0]!='+' &&cmdmax<len)
             cmdmax=len;
         }
       }
@@ -89,7 +89,7 @@ int cmd_help(int argc, const char **argv) {
           for(v=dir;v;v=Next(v)) {
             char* f=firsts(v);
             int len=strlen(f)-4; /* ".ros" */
-            if (len>0 && strcmp(f+len,".ros")==0 && f[0]!='-') {
+            if (len>0 && strcmp(f+len,".ros")==0 && f[0]!='+') {
               FILE* in;
               char buf[800];
               char* fname=cat(subcmds,SLASH,f,NULL);
@@ -121,7 +121,7 @@ int cmd_help(int argc, const char **argv) {
     for(v=dir;v;v=Next(v)) {
       char* f=firsts(v);
       int len=strlen(f)-4; /* ".ros" */
-      if (len>0 && strcmp(f+len,".ros")==0 && f[0]!='-') {
+      if (len>0 && strcmp(f+len,".ros")==0 && f[0]!='+') {
         FILE* in;
         char* fname=cat(subcmds,SLASH,f);
         if(strncmp(f,argv[1],strlen(argv[1]))==0)

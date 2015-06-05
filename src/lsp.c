@@ -120,7 +120,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
       if(directory_exist_p(cmddir)) {
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
-        s(cmdpath);cmdpath=cat(cmddir,"-",argv[0],".ros",NULL);
+        s(cmdpath);cmdpath=cat(cmddir,"+",argv[0],".ros",NULL);
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       }
