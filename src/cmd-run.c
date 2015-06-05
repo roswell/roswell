@@ -183,10 +183,16 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   }
 
   if(!(impl && version)) {
-    char* cmd=cat(which(argv_orig[0])," setup",NULL);
+    char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
+    char* ret;
     if(impl) s(impl);
     impl=q("sbcl-bin");
-    system_(cmd);
+    if(verbose>0)
+      fprintf(stderr,"cmd:%s\n",cmd);
+    ret=system_(cmd);
+    if(verbose>0)
+      fprintf(stderr,"ret:%s\n",ret);
+    s(ret);
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);;
     version=get_opt("sbcl-bin.version",0);
