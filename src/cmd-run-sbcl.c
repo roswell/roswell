@@ -63,7 +63,15 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     if(!issystem)
       arg[paramc++]=cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL);
   }else {
-    arg[paramc++]=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    if(file_exist_p(path))
+      arg[paramc++]=path;
+    else {
+      if(verbose>0)
+        fprintf(stderr,"core not found:%s\n",path);
+      arg[paramc++]=cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL);
+      s(path);
+    }
   }
   if(help) {
     arg[paramc++]=q("--help");
