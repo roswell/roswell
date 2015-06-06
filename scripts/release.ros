@@ -84,7 +84,13 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
             "git push --tags"
             "git push --all"
             "git checkout master"
-            "3. don't forget to release homeberew-roswell as well(TBD)")))
+            "3. don't forget to release homeberew-roswell as well followings are snmsts's"
+            "ros scripts/homebrew.ros"
+            "cp scripts/homebrew/roswell.rb ../homebrew-roswell/roswell.rb"
+            "cd ../homebrew-roswell/"
+            "git add roswell.rb"
+            ,(format nil "git commit -m \"v~A\"" *new-version*)
+            "git push")))
 
 (defun prepare ()
   (uiop/run-program:run-program "git checkout master" :output t)
