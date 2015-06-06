@@ -10,10 +10,10 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int dots,i;
   count+=written*size;
   for(i=current;i<count/block;++i) {
-    printf(".");
-    fflush(stdout);
     if(i%fold==0 && i)
       printf("\n");
+    printf(".");
+    fflush(stdout);
   }
   return written;
 }
@@ -141,6 +141,7 @@ int download_simple (char* uri,char* path,int verbose) {
   }
   fclose(bodyfile);
 #endif
+  printf("\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
   return ret?0:-3;

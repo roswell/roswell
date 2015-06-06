@@ -77,7 +77,7 @@ int download(struct install_options* param) {
         printf("Failed to Download.\n");
         return 0;
         /* fail */
-      }else printf("\ndone\n");
+      }else printf("done\n");
       s(url);
     }
   } else printf("Skip downloading %s\n",url);
