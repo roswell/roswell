@@ -18,7 +18,8 @@
 
 ;; small tools
 (defun getenv (x)
-  (funcall (read-from-string "asdf::getenv") x))
+  #+sbcl(sb-posix:getenv x)
+  #-sbcl(funcall (read-from-string "asdf::getenv") x))
 
 #+(and unix sbcl) ;; from swank
 (progn
