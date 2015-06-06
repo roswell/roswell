@@ -97,7 +97,10 @@
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
 (defun roswell (args output trim)
-  (let* ((a0 (funcall (or #+win32(lambda (x) (substitute #\\ #\/ x)) #'identity) (opt "argv0")))
+  (let* ((a0 (funcall (or #+win32(lambda (x) (substitute #\\ #\/ x)) #'identity)
+                      (if (zerop (length (opt "wargv0")))
+                          (opt "argv0")
+                          (opt "wargv0"))))
          (ret  (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
                    (funcall #1# (format nil "~A~{ ~A~}" a0 args) :output output)
                    (with-output-to-string (out)
