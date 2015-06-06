@@ -97,13 +97,19 @@ to load with `.sbclrc`
 (setq inferior-lisp-program "ros -L sbcl -Q -l ~/.sbclrc run")
 ```
 
-Or, Just simply `ros slime` would launch emacs with slime setup.
+Or, Just simply `ros emacs` would launch emacs with slime setup.
 
 ## Chef recipe for roswell
 
 [@Rudolph-Miller](https://github.com/Rudolph-Miller) is providing a Chef recipe for setting roswell up.
 
 - [Rudolph-Miller/chef-roswell](https://github.com/Rudolph-Miller/chef-roswell)
+
+## Roswell with Travis CI.
+
+[@fukamachi](https://github.com/fukamachi) use Roswell with Travis CI.
+
+- [fukamachi/legion/.travis.yml](https://github.com/fukamachi/legion/blob/master/.travis.yml)
 
 ## Why we named it 'roswell'?
 From &lsquo;[made with secret alien technology](http://www.lisperati.com/logo.html)&rsquo;.
