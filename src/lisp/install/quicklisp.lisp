@@ -33,8 +33,7 @@
                                        (maximum-redirects 10))
                      "Request URL and write the body of the response to FILE."
                      (declare (ignorable url follow-redirects quietly maximum-redirects))
-                     (ros:roswell `("roswell-internal-use"
-                                    "download"
+                     (ros:roswell `("roswell-internal-use download"
                                     ,(funcall (find-symbol (string :urlstring) :ql-http)
                                               (funcall (find-symbol (string :url) :ql-http) url)) ,file) :interactive nil)
                      (values (make-instance 'ql-http::header :status 200)
