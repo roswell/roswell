@@ -7,10 +7,11 @@ log () {
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/roswell
+ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 
 echo "Installing Roswell..."
 
-curl --no-progress-bar --retry 10 -o $ROSWELL_TARBALL_PATH -L https://github.com/snmsts/roswell/archive/release.tar.gz
+curl --no-progress-bar --retry 10 -o $ROSWELL_TARBALL_PATH -L https://github.com/snmsts/roswell/archive/$ROSWELL_BRANCH.tar.gz
 mkdir $ROSWELL_DIR
 tar -C $ROSWELL_DIR --strip-components 1 -xf $ROSWELL_TARBALL_PATH
 cd $ROSWELL_DIR
