@@ -88,6 +88,7 @@
            (cmd (format nil "./configure --ignore-absence-of-libsigsegv '--prefix=~A'" (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
+      (format t "~&chdir ~A~%" src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -103,6 +104,7 @@
            (cmd (format nil "make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
+      (format t "~&chdir ~A~%" src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -116,7 +118,7 @@
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
     (uiop/os:chdir src)
-    (format t "chdir ~A" src)
+    (format t "~&chdir ~A~%" src)
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
