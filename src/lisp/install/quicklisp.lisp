@@ -36,6 +36,6 @@
                      (ros:roswell `("roswell-internal-use download"
                                     ,(funcall (find-symbol (string :urlstring) :ql-http)
                                               (funcall (find-symbol (string :url) :ql-http) url)) ,file) :interactive nil)
-                     (values (make-instance 'ql-http::header :status 200)
+                     (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                              (probe-file file)))))))
      (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))))
