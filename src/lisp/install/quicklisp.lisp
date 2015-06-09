@@ -19,22 +19,23 @@
      ;; use roswell to download everithing.
      (progn
        (setf (fdefinition (find-symbol (string :fetch) :qlqs-http))
-	     (lambda (url file &key (follow-redirects t) quietly
-				 (maximum-redirects 10))
-	       "Request URL and write the body of the response to FILE."
-	       (declare (ignorable url file follow-redirects quietly
-				   maximum-redirects))
-	       (ros:roswell `("roswell-internal-use download" ,url ,file) :interactive nil)))
+             (lambda (url file &key (follow-redirects t) quietly
+                                 (maximum-redirects 10))
+               "Request URL and write the body of the response to FILE."
+               (declare (ignorable url file follow-redirects quietly
+                                   maximum-redirects))
+               (ros:roswell `("roswell-internal-use download" ,url ,file) :interactive nil)))
        (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))
-			    :direction :output :if-exists :supersede)
-	 (format out "~s"
-		 '(setf (fdefinition (find-symbol (string :fetch) :ql-http))
-		   (lambda (url file &key (follow-redirects t) quietly
-				       (maximum-redirects 10))
-		     "Request URL and write the body of the response to FILE."
-		     (declare (ignorable url file follow-redirects quietly
-					 maximum-redirects))
-		     (ros:roswell `("roswell-internal-use download"
-				    ,(funcall (find-symbol (string :urlstring) :ql-http)
-					      (funcall (find-symbol (string :url) :ql-http) url)) ,file) :interactive nil))))))
+                            :direction :output :if-exists :supersede)
+         (format out "~s"
+                 '(setf (fdefinition (find-symbol (string :fetch) :ql-http))
+                   (lambda (url file &key (follow-redirects t) quietly
+                                       (maximum-redirects 10))
+                     "Request URL and write the body of the response to FILE."
+                     (declare (ignorable url follow-redirects quietly maximum-redirects))
+                     (ros:roswell `("roswell-internal-use download"
+                                    ,(funcall (find-symbol (string :urlstring) :ql-http)
+                                              (funcall (find-symbol (string :url) :ql-http) url)) ,file) :interactive nil)
+                     (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
+                             (probe-file file)))))))
      (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))))

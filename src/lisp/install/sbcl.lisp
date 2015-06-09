@@ -122,6 +122,7 @@
            (cmd (format nil "~A ~A '--xc-host=~A' '--prefix=~A'" (sh) (merge-pathnames "make.sh" src) compiler (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
+      (format t "~&chdir ~A~%" src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -136,7 +137,7 @@
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
     (uiop/os:chdir src)
-    (format t "chdir ~A" src)
+    (format t "~&chdir ~A~%" src)
     (ros:unsetenv "SBCL_HOME")
     (ros:setenv "INSTALL_ROOT" (format nil "~A" install-root))
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
@@ -170,7 +171,7 @@
   (format t "~&Cleaning~%")
   (let ((src (get-opt "src")))
     (uiop/os:chdir src)
-    (format t "chdir ~A" src)
+    (format t "~&chdir ~A~%" src)
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
