@@ -5,7 +5,7 @@ int cmd_help(int argc, const char **argv) {
   LVal help=(LVal)NULL;
   int i;int cmdmax,optmax;
   char *fmt;
-  char* subcmds=s_cat(lispdir(),q("subcmd"),q(SLASH),NULL);
+  char* subcmds=subcmddir();
   LVal dir=directory(subcmds);
 
   quicklisp=1;

@@ -32,6 +32,10 @@ char* configdir(void) {
   return NULL;
 }
 
+char* subcmddir(void) {
+  return s_cat(configdir(),q_("subcmd"),q(SLASH),NULL);
+}
+
 char* truename(const char* path) {
 #ifndef HAVE_WINDOWS_H
   char* ret=realpath(path,NULL);

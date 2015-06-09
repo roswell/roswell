@@ -115,7 +115,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
         proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       s(home),s(cmddir),s(cmdpath);
       /* systemwide commands*/
-      cmddir=cat(lisp_path,"subcmd",SLASH,NULL);
+      cmddir=subcmddir();
       cmdpath=cat(cmddir,argv[0],".ros",NULL);
       if(directory_exist_p(cmddir)) {
         if(file_exist_p(cmdpath))
