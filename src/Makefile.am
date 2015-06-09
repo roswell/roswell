@@ -26,7 +26,7 @@ noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 CLEANFILES = gend.h
 
 %.1: %.html ros$(EXEEXT)
-	./ros$(EXEEXT) setup;./ros$(EXEEXT) ../scripts/man.ros $< $@
+	./ros$(EXEEXT) setup --no-core;./ros$(EXEEXT) ../scripts/man.ros $< $@
 
 man1_MANS = ../documents/ros.1
 CLEANFILES = $(man1_MANS)

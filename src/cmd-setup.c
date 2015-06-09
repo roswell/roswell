@@ -18,9 +18,10 @@ int cmd_setup(int argc, const char **argv) {
   }else
     fprintf(stderr,"already have sbcl-bin\n");
   CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install quicklisp",NULL),"setting up quicklisp\n");
-  CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"making core for roswell\n");
 #ifdef HAVE_WINDOWS_H
   CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install 7zip",NULL),"setting up 7zip\n");
 #endif
+  if(argc==1)
+    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"making core for roswell\n");
   return ret;
 }
