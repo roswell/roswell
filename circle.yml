@@ -1,0 +1,17 @@
+general:
+  build_dir: roswell
+
+test:
+  post:
+    - sh bootstrap
+    - ./configure
+    - make -j4
+    - sudo make install
+    - ros version
+    - ros -v setup
+    - ros -v run -- --version
+    - ros install ccl-bin
+    - ros -v run -- --version
+    - ros config
+    - man -Pcat ros
+    - make test
