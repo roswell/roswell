@@ -1,6 +1,7 @@
 #include "util.h"
 int verbose=0;
 char** argv_orig;
+char* lispdir(){}
 int main(int argc,char **argv) {
   char* cmd=cat(argv[1]," --version",NULL);
   char* result=system_(cmd);
