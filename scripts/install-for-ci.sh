@@ -41,10 +41,14 @@ ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
 
 # Setup ASDF source regisry
 ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
-ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/travis.conf"
+ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/ci.conf"
 LOCAL_LISP_TREE="$HOME/lisp"
 
 mkdir -p "$ASDF_SR_CONF_DIR"
 mkdir -p "$LOCAL_LISP_TREE"
-echo "(:tree \"$TRAVIS_BUILD_DIR/\")" > "$ASDF_SR_CONF_FILE"
+if [ "$TRAVIS" ]; then
+    echo "(:tree \"$TRAVIS_BUILD_DIR/\")" > "$ASDF_SR_CONF_FILE"
+elif [ "$CIRCLECI" ]; then
+    echo "(:tree \"$HOME/$CIRCLE_PROJECT_REPONAME/\")" > "$ASDF_SR_CONF_FILE"
+fi
 echo "(:tree \"$LOCAL_LISP_TREE/\")" >> "$ASDF_SR_CONF_FILE"
