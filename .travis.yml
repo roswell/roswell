@@ -1,8 +1,4 @@
-language: c
-
-compiler:
-  - gcc
-  - clang
+language: objective-c
 
 script:
   - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l
