@@ -1,5 +1,4 @@
 general:
-  build_dir: roswell
 
 test:
   post:
