@@ -1,3 +1,11 @@
+roswell (0.0.2.33-1) unstable; urgency=low
+
+  * Bugfix: 'ql-http:fetch' doesn't work well.(reported by Eitaro Fukamachi)
+  * Improve: scripts/install-for-ci.sh are introduced for CI.(by Eitaro Fukamachi)
+  * Improve: Messages are improved aestheticaly.(by Rudolph-Miller)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 10 Jun 2015 23:19:16 +0900
+
 roswell (0.0.2.32-1) unstable; urgency=low
 
   * Improve: fix ugly progress showed when downloading something.
