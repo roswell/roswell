@@ -8,6 +8,8 @@ test:
     - sudo make install
     - ros version
     - ros -v setup
+    - ros install sbcl
+    - ros -v run -- --version
     - ros -v run -- --version
     - ros install ccl-bin
     - ros -v run -- --version

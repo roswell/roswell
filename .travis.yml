@@ -10,6 +10,8 @@ script:
   - ros version
   - ros -v setup
   - ros -v run -- --version
+  - ros install sbcl
+  - ros -v run -- --version
   - ros install ccl-bin
   - ros -v run -- --version
   - ros config
