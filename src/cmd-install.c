@@ -185,7 +185,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
 int install_help(int argc,char **argv,struct sub_command* cmd) {
   if(argc==1) {
     fprintf(stderr,"Candidates to install are:\n");
-    char* install=s_cat2(lispdir(),q("install/"));
+    char* install=lispdir();
     LVal d=directory(install),v=d;
     for(;v;v=Next(v)) {
       char* str=firsts(v);
@@ -193,7 +193,8 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
         int p=position_char(".",str);
         if(p!=-1) {
           char *sub=subseq(str,0,p);
-          printf("%s\n",sub);
+	  if(p>=8/*strlen("install-")*/ && strncmp(str,"install-",8)==0)
+	    printf("%s\n",sub+8);
           s(sub);
         }
       }
