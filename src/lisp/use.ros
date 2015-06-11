@@ -24,7 +24,12 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
            (lisp (if pos
                      (subseq (first argv) 0 pos)
                      (first argv))))
-      (when pos
-        (config "default.lisp" lisp)
-        (config (format nil "~A.version" lisp)
-                (subseq (first argv) (1+ pos)))))))
+      (if pos
+          (progn
+            (config "default.lisp" lisp)
+            (config (format nil "~A.version" lisp)
+                    (subseq (first argv) (1+ pos))))
+          (config (if (digit-char-p (aref lisp 0))
+                      (format nil "~A.version" (ros:roswell `("config" "show" "default.lisp") :string t))
+                      "default.lisp")
+                  lisp)))))
