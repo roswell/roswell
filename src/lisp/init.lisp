@@ -29,6 +29,8 @@
 
   (defun execvp (program args)
     "Replace current executable with another one."
+    (unless (probe-file program)
+      (error "Cannot exec ~S: No such file or directory" program))
     (let ((a-args (sb-alien:make-alien sb-alien:c-string
                                        (+ 1 (length args)))))
       (unwind-protect
@@ -39,7 +41,8 @@
                          item))
              (when (minusp
                     (%execvp program a-args))
-               (error "execvp(3) returned.")))
+               (error "execvp(3) failed. (Code=~D)"
+                      (sb-impl::get-errno))))
         (sb-alien:free-alien a-args)))))
 
 (defun setenv (name value)
