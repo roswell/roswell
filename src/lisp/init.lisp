@@ -39,7 +39,11 @@
                          item))
              (when (minusp
                     (%execvp program a-args))
-               (error "execvp(3) returned.")))
+               (let ((errno (sb-impl::get-errno)))
+                 (case errno
+                   (2 (error "No such file or directory: ~S" program))
+                   (otherwise
+                    (error "execvp(3) failed. (Code=~D)" errno))))))
         (sb-alien:free-alien a-args)))))
 
 (defun setenv (name value)
