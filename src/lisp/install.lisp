@@ -163,7 +163,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
         (setq imp seq))
     (cond ((and
             (probe-file (setf sub (merge-pathnames
-                                   (format nil "install/~A.lisp" imp)
+                                   (format nil "install-~A.lisp" imp)
                                    (make-pathname :name nil :type nil
                                                   :defaults *load-pathname*))))
             (progn (load sub)
