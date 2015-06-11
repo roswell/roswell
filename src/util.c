@@ -103,6 +103,7 @@ char* system_(char* cmd) {
   CHAR lpBuffer[256];
   DWORD nBytesRead;
   DWORD nCharsWritten;
+  DWORD ExitCode;
   PROCESS_INFORMATION pi;
   STARTUPINFO si;
   char* ret=q("");
@@ -161,6 +162,10 @@ char* system_(char* cmd) {
   }
   if (!CloseHandle(hOutputRead)) DisplayError("CloseHandle");
   if (!CloseHandle(hInputWrite)) DisplayError("CloseHandle");
+  if (!GetExitCodeProcess(pi.hProcess,&ExitCode) || ExitCode) {
+    s(ret);
+    ret=NULL;
+  }
   return ret;
 }
 #else
@@ -417,7 +422,10 @@ char* which(char* cmd) {
   s(cmd);
 #endif
   char* p=system_(which_cmd);
-  char* p2=remove_char("\r\n",p);
+  if(verbose>1)
+    fprintf(stderr,"system_ result:%s\n",p);
+  p=substitute_char('\0','\r',substitute_char('\0','\n',p));
+  char* p2=p?remove_char("\r\n",p):q("");
   s(p),s(which_cmd);
   return p2;
 }

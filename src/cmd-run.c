@@ -135,7 +135,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   char* config=configdir();
   set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)),0);
   set_opt(&local_opt,"argv0",argv_orig[0],0);
-  set_opt(&local_opt,"wargv0",which(argv_orig[0]),0);
+  set_opt(&local_opt,"wargv0",(which(argv_orig[0])||q("")),0);
   set_opt(&local_opt,"homedir",config,0);
   if(rc) {
     char* init=s_cat(configdir(),q("init.lisp"),NULL);
