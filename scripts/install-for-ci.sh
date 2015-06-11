@@ -9,6 +9,7 @@ ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
+ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-$HOME/.roswell}
 
 echo "Installing Roswell..."
 
@@ -17,7 +18,7 @@ mkdir $ROSWELL_DIR
 tar -C $ROSWELL_DIR --strip-components 1 -xf $ROSWELL_TARBALL_PATH
 cd $ROSWELL_DIR
 sh bootstrap
-./configure
+./configure --prefix=$ROSWELL_INSTALL_DIR
 make
 sudo make install
 
