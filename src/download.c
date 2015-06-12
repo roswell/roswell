@@ -1,21 +1,30 @@
 #include "opt.h"
+#include "math.h"
 
 static int count=0;
 static int block=10240;
-static int fold=90;
+static int width=90;
 
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
-  int written = fwrite(ptr, size, nmemb, (FILE *)stream);
-  int current = count/block;
-  int dots,i;
-  count+=written*size;
-  for(i=current;i<count/block;++i) {
-    if(i%fold==0 && i)
-      printf("\n");
-    printf(".");
+  return fwrite(ptr, size, nmemb, (FILE *)stream);
+}
+
+int show_progress(void* ptr, double total_to_download, double downloaded, double total_to_upload, double uploaded) {
+  int percent, progress, i;
+  if (total_to_download != 0) {
+    percent = downloaded / total_to_download;
+    progress = (int)floor(percent * width);
+    printf("\r");
+    for (i = 0; i < progress; ++i) {
+      printf("#");
+    }
+    for (i = 0; i < width - progress; ++i) {
+      printf(" ");
+    }
+    printf(" %3d%%", (int)floor(percent * 100));
     fflush(stdout);
   }
-  return written;
+  return 0;
 }
 
 static size_t header_callback(char *buffer, size_t size,size_t nitems, int *verbose) {
@@ -66,6 +75,8 @@ int download_simple (char* uri,char* path,int verbose) {
     curl_easy_setopt(curl, CURLOPT_URL, uri);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
+    curl_easy_setopt(curl, CURLOPT_NOPROGRESS, 0);
+    curl_easy_setopt(curl, CURLOPT_PROGRESSFUNCTION, show_progress);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
     curl_easy_setopt(curl, CURLOPT_HEADERDATA, &verbose);
     bodyfile = fopen(path_partial,"wb");
