@@ -1,35 +1,55 @@
 #include "opt.h"
 
 static int count=0;
-static int block=10240;
-static int fold=90;
+static int width=90;
+static int content_length=0;
 
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
-  int current = count/block;
-  int dots,i;
+  int current,i,aux;
+  static char* last_showd=NULL;
+  char* w=q("");
+  last_showd=last_showd?last_showd:q("");
   count+=written*size;
-  for(i=current;i<count/block;++i) {
-    if(i%fold==0 && i)
-      printf("\n");
-    printf(".");
-    fflush(stdout);
+  w=s_cat2(w,q("\r"));
+  if(content_length) {
+    for(i=0;i<width;++i)
+      w=s_cat2(w,q((i>=(count/(content_length/(width)))?" ":"#")));
+    w=s_cat2(w,qsprintf(8," %3d%%",(count/(content_length/(99)))));
+  }else {
+    aux=1024>count?' ':1024*1024>count?(current=count/1024,'K'):
+      1024*1024*1024>count?(current=count/(1024*1024),'M'):(current=count/(1024*1024*1024),'G');
+    w=s_cat2(w,qsprintf(20,"%4d%c downloaded.",current,aux));
   }
+  if(strcmp(w,last_showd) !=0){
+    printf("%s",w);
+    fflush(stdout);
+    s(last_showd),last_showd=q(w);
+  }
+  s(w);
   return written;
 }
 
 static size_t header_callback(char *buffer, size_t size,size_t nitems, int *verbose) {
   int pos=-1,pos2,code=0;
-  if(strncmp("HTTP",buffer,size<4?size:4)==0)
+  if(strncmp("HTTP",buffer,nitems<4?nitems:4)==0) {
     pos=position_char(" ",buffer);
-  if(pos!=-1 && (pos2=position_char_not("0123456789",&buffer[pos+1]))!=-1) {
-    char *num=subseq(&buffer[pos+1],0,pos2);
-    code=atoi(num),s(num);
-    if(*verbose)
-      fprintf(stderr, "http response:%d\n",code);
+    if(pos!=-1 && (pos2=position_char_not("0123456789",&buffer[pos+1]))!=-1) {
+      char *num=subseq(&buffer[pos+1],0,pos2);
+      code=atoi(num),s(num);
+      if(*verbose)
+	fprintf(stderr, "http response:%d\n",code);
+    }
+    if(400<=code)
+      return 0; /*invoke error for curl*/
+  }else if(strncmp("content-length:",downcase(buffer),nitems<15?nitems:15)==0) {
+    pos=position_char(" ",buffer);
+    if(pos!=-1 && (pos2=position_char_not("0123456789",&buffer[pos+1]))!=-1) {
+      char *num=subseq(&buffer[pos+1],0,pos2);
+      code=atoi(num),s(num);
+      content_length=code;
+    }
   }
-  if(400<=code)
-    return 0; /*invoke error for curl*/
   return nitems * size;
 }
 
@@ -62,7 +82,7 @@ int download_simple (char* uri,char* path,int verbose) {
         curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, userpwd);
       s(reserve);
     }
-    count=0;
+    count=0,content_length=0;
     curl_easy_setopt(curl, CURLOPT_URL, uri);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
