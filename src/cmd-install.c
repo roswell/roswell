@@ -69,7 +69,7 @@ int download(struct install_options* param) {
   char* impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
   if(!file_exist_p(impl_archive)
      || get_opt("download.force",1)) {
-    printf("Downloading archive:%s\n",url);
+    printf("Downloading %s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
       ensure_directories_exist(impl_archive);
