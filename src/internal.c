@@ -4,7 +4,7 @@ LVal internal_commands=(LVal)NULL;
 
 int cmd_download (int argc,char **argv,struct sub_command* cmd) {
   if(argc>=2) {
-    fprintf(stderr,"download %s\n",argv[1]);
+    fprintf(stderr,"Downloading %s\n",argv[1]);
     return download_simple(argv[1],argv[2],0);
   }
   return 0;
