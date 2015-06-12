@@ -51,7 +51,7 @@
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn
-        (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
+        (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
         (download (get-opt "download.uri") (get-opt "download.archive")))
       (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
               (get-opt "download.uri")))
@@ -64,14 +64,14 @@
     (if (or (not (probe-file archive))
             (get-opt "download.force"))
         (progn
-          (format t "~&Downloading archive.:~A~%" uri)
+          (format t "~&Downloading archive:~A~%" uri)
           (download uri archive))
         (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
                 uri)))
   (cons t argv))
 
 (defun clisp-expand (argv)
-  (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
+  (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
