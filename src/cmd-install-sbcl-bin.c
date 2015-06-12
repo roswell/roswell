@@ -95,7 +95,7 @@ int sbcl_bin_expand(struct install_options* param) {
   char* version=q(param->version);
   char* dist_path=param->expand_path;
   char* home=configdir();
-  printf("Extracting archive tar. %s to %s\n",archive,dist_path);
+  printf("Extracting %s to %s\n",archive,dist_path);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
   argv[2]=cat(home,"archives",SLASH,archive,NULL);
