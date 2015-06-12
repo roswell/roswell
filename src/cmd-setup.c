@@ -14,14 +14,14 @@ int cmd_setup(int argc, const char **argv) {
   int ret=1;
   char* sbcl_bin_version=get_opt("sbcl-bin.version",0);
   if(!sbcl_bin_version) {
-    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install sbcl-bin",NULL),"setting up sbcl-bin\n");
+    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install sbcl-bin",NULL),"Installing sbcl-bin...\n");
   }else
-    fprintf(stderr,"already have sbcl-bin\n");
-  CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install quicklisp",NULL),"setting up quicklisp\n");
+    fprintf(stderr,"Already have sbcl-bin.\n");
+  CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install quicklisp",NULL),"Installing Quicklisp...\n");
 #ifdef HAVE_WINDOWS_H
-  CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install 7zip",NULL),"setting up 7zip\n");
+  CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install 7zip",NULL),"Installing 7zip...\n");
 #endif
   if(argc==1)
-    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"making core for roswell\n");
+    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"Making core for Roswell...\n");
   return ret;
 }
