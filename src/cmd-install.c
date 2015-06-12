@@ -36,7 +36,7 @@ int start(struct install_options* param) {
   char *home=configdir(),*p;
   ensure_directories_exist(home);
   if(installed_p(param)) {
-    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",param->impl,param->version?param->version:"");
+    printf("%s/%s is already installed. Try (TBD) if you intend to reinstall it.\n",param->impl,param->version?param->version:"");
     return 0;
   }
   if(install_running_p(param)) {
