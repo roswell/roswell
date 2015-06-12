@@ -149,7 +149,7 @@ int sbcl_bin_install(struct install_options* param) {
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   char* install_root=q(impl_path);
   char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
-  fprintf(stderr,"installing %s/%s ",impl,version);
+  fprintf(stderr,"Building %s/%s...",impl,version);
   ensure_directories_exist(impl_path);
   ensure_directories_exist(log_path);
   change_directory(src);
@@ -164,7 +164,7 @@ int sbcl_bin_install(struct install_options* param) {
   if(system_redirect("sh install.sh",log_path)==-1)
     ret=0;
   s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
-  printf("done.\n");
+  printf(" Done.\n");
   return ret;
 #endif
 }
