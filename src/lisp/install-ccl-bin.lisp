@@ -26,7 +26,7 @@
                                              (char= (aref href (1- len)) #\/))
                                     (push (string-right-trim "/" href) result))))))
                :callback-only t))
-    (format t "~&Installing ccl-bin/~s...~%" (first result))
+    (format t "~&Installing ccl-bin/~A...~%" (first result))
     result))
 
 (defun ccl-bin-version (argv)
