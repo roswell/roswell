@@ -13,17 +13,15 @@ int sbcl_version_bin(struct install_options* param) {
 
   if(!param->version) {
     int ret;
-    printf("version not specified\nto specify version,downloading platform-table.html...");
+    printf("SBCL version is not specified. Downloading platform-table.html to see which version to install...\n");
     ret=download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
-    if(ret==0)
-      printf("done\n");
-    else {
-      printf("download error %d\n",ret);
+    if(ret!=0) {
+      printf("Download failed (Code=%d)\n",ret);
       return 0;
     }
 
     param->version=sbcl_bin(platforms_html);
-    printf("version to install would be '%s'\n",param->version);
+    printf("Installing sbcl-bin/%s...\n",param->version);
   }else
     param->version=q(param->version);
   param->arch_in_archive_name=1;
@@ -95,7 +93,7 @@ int sbcl_bin_expand(struct install_options* param) {
   char* version=q(param->version);
   char* dist_path=param->expand_path;
   char* home=configdir();
-  printf("Extracting archive tar. %s to %s\n",archive,dist_path);
+  printf("Extracting %s to %s\n",archive,dist_path);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
   argv[2]=cat(home,"archives",SLASH,archive,NULL);
@@ -151,7 +149,7 @@ int sbcl_bin_install(struct install_options* param) {
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   char* install_root=q(impl_path);
   char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
-  fprintf(stderr,"installing %s/%s ",impl,version);
+  fprintf(stderr,"Building %s/%s...",impl,version);
   ensure_directories_exist(impl_path);
   ensure_directories_exist(log_path);
   change_directory(src);
@@ -166,7 +164,7 @@ int sbcl_bin_install(struct install_options* param) {
   if(system_redirect("sh install.sh",log_path)==-1)
     ret=0;
   s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
-  printf("done.\n");
+  printf(" Done.\n");
   return ret;
 #endif
 }

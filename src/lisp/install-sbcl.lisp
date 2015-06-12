@@ -9,11 +9,10 @@
 (defun sbcl-get-version ()
   (let (result
         (file (merge-pathnames "tmp/sbcl.html" (homedir))))
-    (format t "checking version....~%")
-    (if (and (probe-file file)
-             (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-        (format t "download sbcl.html every one hour. skip.~%")
-        (download "https://github.com/sbcl/sbcl/releases" file))
+    (format t "Checking version to install....~%")
+    (unless (and (probe-file file)
+                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+      (download "https://github.com/sbcl/sbcl/releases" file))
     (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
       (ros:quicklisp :environment nil)
       (with-output-to-string (*standard-output*)
@@ -32,7 +31,6 @@
                                                   (- (length href) 7)) result))))))
                :callback-only t))
     (setq result (nreverse result))
-    (format t "sbcl ~s to install~%" (first result))
     result))
 
 (defun sbcl-msys (argv)
@@ -73,7 +71,7 @@
 (defun sbcl-start (argv)
   (when (and (equal (getf argv :target) "sbcl")
              (not (get-opt "sbcl.compiler")))
-    (format t "compiler variable 'sbcl.compiler'.assume it as 'sbcl-bin'~%")
+    (format t "Using 'sbcl-bin' to compile SBCL. (default)~%")
     (set-opt "sbcl.compiler" "sbcl-bin"))
   (cons t argv))
 
@@ -81,14 +79,14 @@
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn
-        (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
+        (format t "~&Downloading archive: ~A~%" (get-opt "download.uri"))
         (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
+      (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download again.~%"
               (get-opt "download.uri")))
   (cons t argv))
 
 (defun sbcl-expand (argv)
-  (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
+  (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
@@ -127,13 +125,12 @@
   (cons t argv))
 
 (defun sbcl-install (argv)
-  (format t "~&Installing~%")
   (let* ((impl-path (get-opt "prefix"))
          (src (get-opt "src"))
          (install-root impl-path)
          (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
-    (format t "~&prefix :~s~%" impl-path)
-    (format t "~&installing ~A/~A" (getf argv :target) (get-opt "as"))
+    (format t "~&Installing ~A/~A" (getf argv :target) (get-opt "as"))
+    (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
     (uiop/os:chdir src)

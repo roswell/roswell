@@ -36,7 +36,7 @@ int start(struct install_options* param) {
   char *home=configdir(),*p;
   ensure_directories_exist(home);
   if(installed_p(param)) {
-    printf("%s/%s are already installed.if you intend to reinstall by (TBD).\n",param->impl,param->version?param->version:"");
+    printf("%s/%s is already installed. Try (TBD) if you intend to reinstall it.\n",param->impl,param->version?param->version:"");
     return 0;
   }
   if(install_running_p(param)) {
@@ -69,7 +69,7 @@ int download(struct install_options* param) {
   char* impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
   if(!file_exist_p(impl_archive)
      || get_opt("download.force",1)) {
-    printf("Downloading archive.:%s\n",url);
+    printf("Downloading %s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
       ensure_directories_exist(impl_archive);
@@ -77,7 +77,7 @@ int download(struct install_options* param) {
         printf("Failed to Download.\n");
         return 0;
         /* fail */
-      }else printf("done\n");
+      }
       s(url);
     }
   } else printf("Skip downloading %s\n",url);

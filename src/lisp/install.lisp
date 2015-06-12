@@ -113,7 +113,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (let ((target (getf argv :target))
         (version (getf argv :version)))
     (when (and (installedp argv) (not (get-opt "install.force")))
-      (format t "~A/~A are already installed.if you intend to reinstall by (TBD).~%"
+      (format t "~A/~A is already installed. Try (TBD) if you intend to reinstall it.~%"
               target version)
       (return-from start (cons nil argv)))
     (when (install-running-p argv)

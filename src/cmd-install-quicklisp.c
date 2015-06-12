@@ -32,7 +32,7 @@ int quicklisp_setup(struct install_options* param) {
     {char* p[]={"--eval",init};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
     {char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
   }else
-    fprintf(stderr,"already have quicklisp.\n");
+    fprintf(stderr,"Already have quicklisp.\n");
   s(archive),s(lisp_path),s(exe_path),s(home),s(install_path),s(installed),s(init);
   return 1;
 }

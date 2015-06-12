@@ -7,11 +7,10 @@
 (defun ccl-bin-get-version ()
   (let (result
         (file (merge-pathnames "tmp/ccl-bin.html" (homedir))))
-    (format t "checking version....~%")
-    (if (and (probe-file file)
-             (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-        (format t "download ~A every one hour. skip.~%" (file-namestring file))
-        (download "http://ccl.clozure.com/ftp/pub/release/" file))
+    (format t "Checking version to install...~%")
+    (unless (and (probe-file file)
+                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+      (download "http://ccl.clozure.com/ftp/pub/release/" file))
     (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
       (ros:quicklisp :environment nil)
       (with-output-to-string (*standard-output*)
@@ -27,7 +26,7 @@
                                              (char= (aref href (1- len)) #\/))
                                     (push (string-right-trim "/" href) result))))))
                :callback-only t))
-    (format t "~%ccl-bin ~s to install~%" (first result))
+    (format t "~&Installing ccl-bin/~A...~%" (first result))
     result))
 
 (defun ccl-bin-version (argv)
@@ -64,15 +63,15 @@
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn
-        (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
+        (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
         ;;TBD proxy support... and other params progress bar?
         (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
+      (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
               (get-opt "download.uri")))
   (cons t argv))
 
 (defun ccl-bin-expand (argv)
-  (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
+  (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
   (#-win32 expand #+win32 zip:unzip
            (get-opt "download.archive")
            (ensure-directories-exist (merge-pathnames (format nil "impls/~A/~A/ccl-bin/" (uname-m) (uname%)) (homedir))))

@@ -2,10 +2,9 @@
 
 (defun clisp-get-version ()
   (let (result (file (merge-pathnames "tmp/clisp.html" (homedir))))
-    (if (and (probe-file file)
-             (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-        (format t "download ~A every one hour. skip.~%" (file-namestring file))
-        (download "http://ftp.gnu.org/pub/gnu/clisp/release/" file))
+    (unless (and (probe-file file)
+                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+      (download "http://ftp.gnu.org/pub/gnu/clisp/release/" file))
     (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
       (with-output-to-string (*standard-output*)
         (funcall (intern (string :quickload) :ql)
@@ -22,7 +21,6 @@
                                              (not (equal "latest/" href)))
                                     (push (subseq href 0 len) result))))))
                :callback-only t))
-    (format t "~%clisp ~s to install~%" (first result))
     result))
 
 (defun clisp-version (argv)
@@ -51,9 +49,9 @@
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn
-        (format t "~&Downloading archive.:~A~%" (get-opt "download.uri"))
+        (format t "~&Downloading archive: ~A~%" (get-opt "download.uri"))
         (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
+      (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download it again.~%"
               (get-opt "download.uri")))
   (cons t argv))
 
@@ -64,14 +62,14 @@
     (if (or (not (probe-file archive))
             (get-opt "download.force"))
         (progn
-          (format t "~&Downloading archive.:~A~%" uri)
+          (format t "~&Downloading archive: ~A~%" uri)
           (download uri archive))
-        (format t "~&Skip downloading ~A~%specify download.force=t to download again.~%"
+        (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download it again.~%"
                 uri)))
   (cons t argv))
 
 (defun clisp-expand (argv)
-  (format t "~%Extracting archive.:~A~%" (get-opt "download.archive"))
+  (format t "~%Extracting archive: ~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
@@ -109,12 +107,11 @@
   (cons t argv))
 
 (defun clisp-install (argv)
-  (format t "~&Installing~%")
   (let* ((impl-path (get-opt "prefix"))
          (src (namestring (namestring (merge-pathnames "src/" (get-opt "src")))))
          (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
-    (format t "~&prefix :~s~%" impl-path)
-    (format t "~&installing ~A/~A" (getf argv :target) (get-opt "as"))
+    (format t "~&Installing ~A/~A..." (getf argv :target) (get-opt "as"))
+    (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
     (uiop/os:chdir src)
