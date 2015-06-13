@@ -411,15 +411,12 @@ char* which(char* cmd) {
 #ifndef HAVE_WINDOWS_H
   char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
 #else
-  cmd=substitute_char('\\','/',q(cmd));
-  /* if(position_char("\\:",cmd)!=-1) { */
-  /*   char tmp[MAX_PATH]; */
-  /*   GetFullPathName(cmd,MAX_PATH,tmp,NULL); */
-  /*   s(cmd); */
-  /*   return q(tmp); */
-  /* } */
+  if((cmd[0]=='.' && cmd[1]=='/')|| /* relative path */
+     position_char("/:",cmd)!=-1) { /* have no path element */
+    cmd=substitute_char('\\','/',q(cmd));
+    return truename(cmd);
+  }
   char* which_cmd=cat("cmd /c where ",cmd,"",NULL);
-  s(cmd);
 #endif
   char* p=system_(which_cmd);
   if(verbose>1)
