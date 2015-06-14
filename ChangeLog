@@ -1,3 +1,11 @@
+roswell (0.0.2.34-1) unstable; urgency=low
+
+  * Improve: 'ros use' take not only 'ros use impl/version' format but also take 'ros use impl' or 'ros use version'
+  * Improve: a lot of ugly messages are gone.  (by Eitaro Fukamachi)
+  * New: progress bar for non windows environment. (by Eitaro Fukamachi)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 14 Jun 2015 14:37:27 +0900
+
 roswell (0.0.2.33-1) unstable; urgency=low
 
   * Bugfix: 'ql-http:fetch' doesn't work well.(reported by Eitaro Fukamachi)
