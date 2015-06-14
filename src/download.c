@@ -143,14 +143,14 @@ int download_simple (char* uri,char* path,int verbose) {
   HINTERNET hRequest = HttpOpenRequest(hConnection,"GET",szUrlPath,NULL,NULL,NULL,dwFlags,0);
 
   HttpSendRequest(hRequest,NULL,0,NULL,0);
-  DWORD dwStatusCode;
+  DWORD dwStatusCode,dwContentLen;
   DWORD dwLength = sizeof(DWORD);
+  if(HttpQueryInfo(hRequest,HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,&dwContentLen,&dwLength,0))
+    content_length=dwContentLen;
   if( !HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0 ) ) 
     return -4;
   if(HTTP_STATUS_OK != dwStatusCode)
     return -3;
-  DWORD dwContentLen;
-  DWORD dwBufLen = sizeof(dwContentLen);
   char pData[10000];
   DWORD dwBytesRead = 1;
   count=0;
