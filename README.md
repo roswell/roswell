@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/snmsts/roswell.svg?branch=master)](https://travis-ci.org/snmsts/roswell)
 [![Circle CI](https://circleci.com/gh/snmsts/roswell/tree/master.svg?style=svg)](https://circleci.com/gh/snmsts/roswell/tree/master)
+[![Build status](https://ci.appveyor.com/api/projects/status/ubs9la7881yarjjg?svg=true)](https://ci.appveyor.com/project/snmsts/roswell)
 
 This software is still beta. Basic interfaces are fixed, we beleive it works well on Unix-like platforms like Linux, Mac OS X and FreeBSD, but some parts are not implemented, not stable on other OSes yet.
 
