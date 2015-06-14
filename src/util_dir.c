@@ -33,7 +33,7 @@ char* configdir(void) {
 }
 
 char* subcmddir(void) {
-  return s_cat(lispdir(),q_("subcmd"),q(SLASH),NULL);
+  return lispdir();
 }
 
 char* truename(const char* path) {
