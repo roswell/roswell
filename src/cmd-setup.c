@@ -20,8 +20,9 @@ int cmd_setup(int argc, const char **argv) {
   CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install quicklisp",NULL),"Installing Quicklisp...\n");
 #ifdef HAVE_WINDOWS_H
   CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install 7zip",NULL),"Installing 7zip...\n");
-#endif
+#else /* until fix it for windows*/
   if(argc==1)
     CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"Making core for Roswell...\n");
+#endif
   return ret;
 }
