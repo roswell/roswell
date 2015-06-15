@@ -53,15 +53,6 @@ exec ros -- $0 "$@"
                                       (dump-dir))))
            (dump (ensure-directories-exist path) :normal))))))
 
-(defun dump-list (params)
-  (declare (ignorable params)) ;; tbd list images not only for current image
-  (format t "preserved dump lists for ~A:~%" (ros:opt "impl"))
-  (format t "~{  ~A~%~}" (mapcar #'pathname-name
-                               (directory (make-pathname :name :wild
-                                                         :type :wild
-                                                         :defaults
-                                                         (dump-dir))))))
-
 (defun dump-rm (params)
   (declare (ignorable params))
   (let ((path (make-pathname :name (first params)

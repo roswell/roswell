@@ -37,31 +37,48 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
     (mapcar function
             dir)))
 #-ros.sub.list
-(export
- (defun installed (&rest r)
-   (cond
-     ((null r)
-      (format t "detail shown by~%~A list installed [implemntation]~2%implementations:~%"
-              (ros:opt "argv0"))
-      (let ((dir (directory
-                  (make-pathname
-                   :defaults (merge-pathnames
-                              (format nil "impls/~A/~A/" (uname-m) (uname))
-                              (homedir))
-                   :name :wild
-                   :type :wild))))
-        (mapc (lambda (d) (format t "    ~A~%" (first (last (pathname-directory d)))))  dir)))
-     ((probe-file
-       (merge-pathnames
-        (format nil "impls/~A/~A/~A" (uname-m) (uname) (first r))
-        (homedir)))
-      (list-impls (first r)
-                  :function (lambda (d) (format t "~A/~A~%"
-                                                (first r)
-                                                (first (last (pathname-directory d)))))
-                  :params r)))))
+(progn
+  (defun dump-dir (param)
+    (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                             (uname-m) (uname) param)
+                     (homedir)))
+  (export
+   (defun installed (&rest r)
+     (cond
+       ((null r)
+        (format t "detail shown by~%~A list installed [implemntation]~2%implementations:~%"
+                (ros:opt "argv0"))
+        (let ((dir (directory
+                    (make-pathname
+                     :defaults (merge-pathnames
+                                (format nil "impls/~A/~A/" (uname-m) (uname))
+                                (homedir))
+                     :name :wild
+                     :type :wild))))
+          (mapc (lambda (d) (format t "    ~A~%" (first (last (pathname-directory d)))))  dir)))
+       ((probe-file
+         (merge-pathnames
+          (format nil "impls/~A/~A/~A" (uname-m) (uname) (first r))
+          (homedir)))
+        (list-impls (first r)
+                    :function (lambda (d) (format t "~A/~A~%"
+                                                  (first r)
+                                                  (first (last (pathname-directory d)))))
+                    :params r)))))
+  (export
+   (defun dump (&rest params)
+     (declare (ignorable params)) ;; tbd list images not only for current image
+     (format t "preserved dump lists for ~A:~%" (ros:opt "impl"))
+     (format t "~{  ~A~%~}" (mapcar #'pathname-name
+                                    (directory (make-pathname :name :wild
+                                                              :type :wild
+                                                              :defaults
+                                                              (dump-dir (first params)))))))))
+
 #-ros.sub.list
-(setf (get 'installed :doc) "List implementations that already installed")
+(setf (get 'installed :doc) "List implementations that already installed"
+      (get 'dump :doc) "List dumped")
+
 #-ros.sub.list
 (defun main (subcmd cmd &rest r)
   (declare (ignorable cmd))
