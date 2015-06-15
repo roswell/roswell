@@ -65,8 +65,6 @@
 (defun exec (args)
   #+(and unix sbcl)
   (execvp (first args) args)
-  #+(and unix ccl)
-  (ccl::%execvp args)
   (funcall (read-from-string "uiop/run-program:run-program")
            (format nil "~{~A~^ ~}" args))
   (quit -1))
