@@ -32,8 +32,13 @@ void s_internal(char* f,char* name,char* file,int line) {
 
 #ifdef _WIN32
 setenv(const char* name,const char* value,int overwrite) {
-  char* s=cat((char*)name,"=",(char*)value,NULL);
-  _putenv(s);
+  char* s_=cat((char*)name,"=",(char*)value,NULL);
+  _putenv(s_);
+  s(name);
+}
+unsetenv(const char* name) {
+  char* s_=cat((char*)name,"=",NULL);
+  _putenv(s_);
   s(name);
 }
 #endif

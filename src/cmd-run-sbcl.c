@@ -23,6 +23,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   int paramc=0;
   char *bin;
   int issystem=(strcmp("system",version)==0);
+  unsetenv("SBCL_HOME");
   if(issystem){
     bin=truename(which("sbcl"));
   }else {
