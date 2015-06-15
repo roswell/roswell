@@ -1,8 +1,6 @@
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
-roslisp_DATA = $(wildcard lisp/*.lisp)
-roslispsubcmddir = $(roslispdir)/subcmd
-roslispsubcmd_DATA = $(wildcard lisp/*.ros)
+roslisp_DATA = $(wildcard lisp/*.lisp) $(wildcard lisp/*.ros)
 
 noinst_PROGRAMS = gen
 gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c

@@ -107,13 +107,11 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     LVal p;
     if(command==top_commands && position_char(".",argv[0])==-1) {
       /* local commands*/
-      char* home=configdir();
-      char* lisp_path=lispdir();
-      char* cmddir=cat(home,"subcmd",SLASH,NULL);
+      char* cmddir=configdir();
       char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
       if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
         proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
-      s(home),s(cmddir),s(cmdpath);
+      s(cmddir),s(cmdpath);
       /* systemwide commands*/
       cmddir=subcmddir();
       cmdpath=cat(cmddir,argv[0],".ros",NULL);
@@ -124,7 +122,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       }
-      s(lisp_path),s(cmddir),s(cmdpath);
+      s(cmddir),s(cmdpath);
     }
     /* search internal commands.*/
     for(p=command;p;p=Next(p)) {
