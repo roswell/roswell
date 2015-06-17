@@ -91,6 +91,18 @@
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
 
+(defun sbcl-patch (argv)
+  #+darwin
+  (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir)))
+        (uri "https://gist.githubusercontent.com/snmsts/e8e4fd4bd5e458ac45e8/raw/bb7f1cd2e8e9a914f4e9b1b5acf889ecf75dfe0c/posix-tests.patch"))
+    (format t "~&Downloading patch: ~A~%" uri)
+    (download uri file)
+    (uiop/os:chdir (get-opt "src"))
+    (format t "~&chdir ~A~%" (get-opt "src"))
+    (format t "~%Applying patch:~%")
+    (uiop/run-program:run-program "patch -p0" :output t :input file))
+  (cons t argv))
+
 (defun sbcl-config (argv)
   (with-open-file (out (merge-pathnames
                         (format nil "src/sbcl-~A/customize-target-features.lisp"
@@ -204,6 +216,7 @@
             'start
             'sbcl-download
             'sbcl-expand
+            'sbcl-patch
             'sbcl-config
             'sbcl-make
             'sbcl-install
