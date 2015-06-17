@@ -42,15 +42,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     offset+=1;
   if(script)
     offset+=1;
-  if(quicklisp) {
-    char* setup_file=s_cat(ql_path(),q("setup.lisp"),NULL);
-    if(file_exist_p(setup_file)) {
-      offset+=2;
-    }else {
-      quicklisp=0;
-    }
-    s(setup_file);
-  }
+  if(quicklisp)
+    offset+=2;
   if(program||script)
     offset+=2;
 
@@ -103,10 +96,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL);
 
   if(quicklisp) {
-    char *tmp,*tmp2;
     arg[paramc++]=q("--eval");
-    tmp=s_cat(q("(progn #-quicklisp(cl:load \""),ql_path(),q("setup.lisp\"))"),NULL);
-    arg[paramc++]=tmp;
+    arg[paramc++]=q("(ros:quicklisp)");
   }
 
   if(program || script) {

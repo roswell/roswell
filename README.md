@@ -113,6 +113,9 @@ Or, Just simply `ros emacs` would launch emacs with slime setup.
 
 - [fukamachi/legion/.travis.yml](https://github.com/fukamachi/legion/blob/master/.travis.yml)
 
+## Where to put my local project?
+You can put at ~/.roswell/local-projects/ (From version 0.0.3.34).
+
 ## Why we named it 'roswell'?
 From &lsquo;[made with secret alien technology](http://www.lisperati.com/logo.html)&rsquo;.
 

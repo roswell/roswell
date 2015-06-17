@@ -86,8 +86,13 @@
       :type "lisp"
       :defaults (or path
                     (and environment (getenv environment))
-                    (second (assoc "quicklisp" (ros-opts)
-                                   :test 'equal)))))))
+                    (opt "quicklisp"))))
+    (let ((symbol (read-from-string "ql:*local-project-directories*")))
+      (set symbol (cons (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir")))
+                        (symbol-value symbol))))))
+
+#+quicklisp
+(push (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))) ql:*local-project-directories*)
 
 (defun shebang-reader (stream sub-character infix-parameter)
   (declare (ignore sub-character infix-parameter))
