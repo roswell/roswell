@@ -80,16 +80,18 @@
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)
-    (cl:load
-     (make-pathname
-      :name "setup"
-      :type "lisp"
-      :defaults (or path
-                    (and environment (getenv environment))
-                    (opt "quicklisp"))))
-    (let ((symbol (read-from-string "ql:*local-project-directories*")))
-      (set symbol (cons (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir")))
-                        (symbol-value symbol))))))
+    (let ((path (make-pathname
+                 :name "setup"
+                 :type "lisp"
+                 :defaults (or path
+                               (and environment (getenv environment))
+                               (opt "quicklisp")))))
+      (when (probe-file path)
+        (cl:load path)
+        (let ((symbol (read-from-string "ql:*local-project-directories*")))
+          (set symbol (cons (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir")))
+                            (symbol-value symbol))))
+        t))))
 
 #+quicklisp
 (push (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))) ql:*local-project-directories*)
