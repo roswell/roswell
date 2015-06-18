@@ -6,6 +6,13 @@
       (which "bash")
       "sh"))
 
+(defvar *sbcl-options*
+  '(("thread" t "Build SBCL without support for native threads")
+    ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
+    ("ldb" nil "Include low-level debugger in the build")
+    ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)")
+    ("simd-pack" nil "Enable SIMD intrinsics")))
+
 (defun sbcl-get-version ()
   (let (result
         (file (merge-pathnames "tmp/sbcl.html" (homedir))))
@@ -62,10 +69,8 @@
                       (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
                             ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) nil)
                             (t default)))))
-    (with "thread" t)
-    (with "core-compression" t)
-    (with "ldb" nil)
-    (with "xref-for-internals" nil))
+    (loop for (opt default . nil) in *sbcl-options*
+       do (with opt default)))
   (cons t argv))
 
 (defun sbcl-start (argv)
@@ -110,10 +115,8 @@
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
     (format out "~s"
             `(lambda (list)
-               (dolist (i '((:sb-thread ,(get-opt "thread"))
-                            (:sb-core-compression ,(get-opt "core-compression"))
-                            (:sb-ldb ,(get-opt "ldb"))
-                            (:sb-xref-for-internals ,(get-opt "xref-for-internals"))))
+               (dolist (i ',(loop for (name . nil) in *sbcl-options*
+                               collect (list (read-from-string (format nil ":sb-~A" name)) (get-opt name))))
                  (if (second i)
                      (pushnew (first i) list)
                      (setf list (remove (first i) list))))
@@ -190,22 +193,20 @@
 
 (defun sbcl-help (argv)
   (flet ((fmt (param default more)
-           (format t "--~A~A ~A~%~5T~A~%" (cond ((eql default t)
-                                             "without-")
-                                            ((null default)
-                                             "with-")
-                                            (t
-                                             ""))
-                   param (or (and (not (null default))
-                                  (not (eql default t))
-                                  default)
-                             "") more)))
+           (format t "--~A~A ~A~%~5T~A~%"
+                   (cond ((eql default t) "without-")
+                         ((null default) "with-")
+                         (t ""))
+                   param
+                   (or (and (not (null default))
+                            (not (eql default t))
+                            default)
+                       "")
+                   more)))
     (format t "sbcl install options~%")
     (fmt "as" "nickname" "install non-default optioned version of SBCL")
-    (fmt "thread" t "Build SBCL without support for native threads")
-    (fmt "core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
-    (fmt "ldb" nil "Include low-level debugger in the build")
-    (fmt "xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)"))
+    (dolist (e *sbcl-options*)
+      (apply #'fmt e)))
   (cons t argv))
 
 (setq *install-cmds*
