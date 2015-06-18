@@ -53,16 +53,6 @@ exec ros -- $0 "$@"
                                       (dump-dir))))
            (dump (ensure-directories-exist path) :normal))))))
 
-(defun dump-rm (params)
-  (declare (ignorable params))
-  (let ((path (make-pathname :name (first params)
-                             :type "core"
-                             :defaults
-                             (dump-dir))))
-    (if (probe-file path)
-        (delete-file path)
-        (format t "image doesn't exist ~s~%" (first params)))))
-
 (defun dump-executable (params)
   (if params
       (let ((cmds (let ((*read-eval*))
@@ -101,9 +91,7 @@ exec ros -- $0 "$@"
       (format t "ros dump executable help~%")))
 
 (defvar *subcmds*
-  '(("list" "List images" dump-list)
-    ("output" "Create dump" dump-output)
-    ("rm" "delete image" dump-rm)
+  '(("output" "Create dump" dump-output)
     #+(or sbcl ccl)("executable" "Create executable" dump-executable)))
 
 (defun main (subcmd cmd &rest r)

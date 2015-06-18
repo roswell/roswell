@@ -16,40 +16,55 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.sub.delete
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
+
 #-ros.sub.delete
-(defun homedir ()
-  (ros:opt "homedir"))
-#-ros.sub.delete
-(defun uname ()
-  (ros:roswell '("roswell-internal-use uname") :string t))
-#-ros.sub.delete
-(defun uname-m ()
-  (ros:roswell '("roswell-internal-use uname -m") :string t))
-#-ros.sub.delete
-(defun config (c)
-  (ros:roswell (list "config show" c) :string t))
-#-ros.sub.delete
-(defun (setf config) (a b)
-  (ros:roswell (list "config" b a) :string t)
-  a)
-#-ros.sub.delete
-(defun main (subcmd cmd &rest r)
-  (let* ((default (config "default.lisp"))
-         (verstring (format nil "~A.version" default))
-         (config (format nil "~A/~A" default (config verstring))))
-    (cond ((and (equal subcmd "main") r)
-           (let* ((impl-name (first r))
-                  (path (merge-pathnames (format nil "impls/~A/~A/~A/"
-                                                 (uname-m) (uname) impl-name)
-                                         (homedir))))
-             (unless (position :up (pathname-directory path))
-               (cond ((probe-file path)
-                      (uiop/filesystem:delete-directory-tree path :validate t)
-                      (format t "~&~A has successfully deleted.~%" impl-name)
-                      (when (equal impl-name config)
-                        (format t "~&clear config ~S~%" verstring)
-                        (setf (config verstring) "")))
-                     (t (format *error-output* "~&~A is not installed yet.~%" impl-name))))))
-          ((or (equal subcmd "help") (not r))
-           (format t "Usage: ~A [OPTIONS] ~A impl/version ~%"
-                   (ros:opt "argv0") cmd)))))
+(progn
+  (defun homedir ()
+    (ros:opt "homedir"))
+  (defun uname ()
+    (ros:roswell '("roswell-internal-use uname") :string t))
+
+  (defun uname-m ()
+    (ros:roswell '("roswell-internal-use uname -m") :string t))
+
+  (defun config (c)
+    (ros:roswell (list "config show" c) :string t))
+
+  (defun (setf config) (a b)
+    (ros:roswell (list "config" b a) :string t)
+    a)
+
+  (defun delete-dump (params)
+    (declare (ignorable params))
+    (let ((path (make-pathname :name (second params)
+                               :type "core"
+                               :defaults
+                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                        (uname-m) (uname) (first params))
+                                                (homedir)))))
+      (if (probe-file path)
+          (delete-file path)
+          (format t "image doesn't exist \"~A ~A\"~%" (first params) (second params)))))
+
+  (defun main (subcmd cmd &rest r)
+    (let* ((default (config "default.lisp"))
+           (verstring (format nil "~A.version" default))
+           (config (format nil "~A/~A" default (config verstring))))
+      (cond ((and (equal subcmd "main") r)
+             (cond ((equal (first r) "dump")
+                    (delete-dump (rest r)))
+                   (t  (let* ((impl-name (first r))
+                              (path (merge-pathnames (format nil "impls/~A/~A/~A/"
+                                                             (uname-m) (uname) impl-name)
+                                                     (homedir))))
+                         (unless (position :up (pathname-directory path))
+                           (cond ((probe-file path)
+                                  (uiop/filesystem:delete-directory-tree path :validate t)
+                                  (format t "~&~A has successfully deleted.~%" impl-name)
+                                  (when (equal impl-name config)
+                                    (format t "~&clear config ~S~%" verstring)
+                                    (setf (config verstring) "")))
+                                 (t (format *error-output* "~&~A is not installed yet.~%" impl-name))))))))
+            ((or (equal subcmd "help") (not r))
+             (format t "Usage: ~A [OPTIONS] ~A [subcmd params]| impl/version ~%"
+                     (ros:opt "argv0") cmd))))))

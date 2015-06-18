@@ -38,10 +38,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
             dir)))
 #-ros.sub.list
 (progn
-  (defun dump-dir (param)
-    (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                             (uname-m) (uname) param)
-                     (homedir)))
   (export
    (defun installed (&rest r)
      (cond
@@ -71,9 +67,11 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
      (format t "preserved dump lists for ~A:~%" (ros:opt "impl"))
      (format t "~{  ~A~%~}" (mapcar #'pathname-name
                                     (directory (make-pathname :name :wild
-                                                              :type :wild
+                                                              :type "core"
                                                               :defaults
-                                                              (dump-dir (first params)))))))))
+                                                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                                                       (uname-m) (uname) (first params))
+                                                                               (homedir)))))))))
 
 #-ros.sub.list
 (setf (get 'installed :doc) "List implementations that already installed"
