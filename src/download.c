@@ -22,8 +22,8 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
     w=s_cat2(w,qsprintf(20,"%4d%c downloaded.",current,aux));
   }
   if(strcmp(w,last_showd) !=0){
-    printf("%s",w);
-    fflush(stdout);
+    fprintf(stderr, "%s", w);
+    fflush(stderr);
     s(last_showd),last_showd=q(w);
   }
   s(w);
@@ -161,7 +161,7 @@ int download_simple (char* uri,char* path,int verbose) {
   }
   fclose(bodyfile);
 #endif
-  printf("\n");
+  fprintf(stderr, "\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
   return ret?0:-3;
