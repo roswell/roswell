@@ -4,7 +4,7 @@ extern char** argv_orig;
 
 #define CMD_SETUP_SYSTEM(sys,msg) { \
     fprintf(stderr,"%s",msg);       \
-    ret=system(sys);                \
+    ret=System(sys);                \
     s(sys);                         \
     if(ret) return ret;             \
   }

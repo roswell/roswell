@@ -80,7 +80,7 @@ int ensure_directories_exist (char* path) {
   if(!directory_exist_p(path)) {
 #ifndef HAVE_WINDOWS_H
     char* cmd=cat("mkdir -p ",path,NULL);
-    if(system(cmd)!=0) {
+    if(System(cmd)!=0) {
       fprintf(stderr,"failed:%s\n",cmd);
       return 0;
     };
@@ -148,7 +148,7 @@ int delete_directory(char* pathspec,int recursive) {
   }else {
     cmd=s_cat2(q("rmdir "),q(pathspec));
   }
-  ret=system(cmd);
+  ret=System(cmd);
   s(cmd);
   return ret==0;
 #else

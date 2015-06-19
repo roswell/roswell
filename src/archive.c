@@ -51,7 +51,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   if(verbose>0)
     fprintf(stderr,"extractcmd=%s\n",str);
   if(str) {
-    ret=system(str);
+    ret=System(str);
     s(str);
   }
   return ret;

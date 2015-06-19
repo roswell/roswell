@@ -3,7 +3,7 @@ roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 roslisp_DATA = $(wildcard lisp/*.lisp) $(wildcard lisp/*.ros)
 
 noinst_PROGRAMS = gen
-gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c
+gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c util_system.c
 
 gend.h: gen$(EXEEXT) FORCE
 	(which $(CC)&&(./gen$(EXEEXT) $(CC) > $@.tmp;cmp -s $@.tmp $@||cp $@.tmp $@))||echo $(CC) not found
@@ -11,7 +11,7 @@ gend.h: gen$(EXEEXT) FORCE
 cmd-version.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
-	util_list.c util.c util_string.c util_dir.c \
+	util_list.c util.c util_string.c util_dir.c util_system.c \
 	cmd-version.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c \
 	cmd-install.c cmd-install-sbcl-bin.c cmd-install-quicklisp.c \

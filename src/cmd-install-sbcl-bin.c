@@ -79,7 +79,7 @@ int sbcl_bin_expand(struct install_options* param) {
   s(cmd);cmd=cat("cmd /c \"",cmd2,"\"",NULL);s(cmd2);
   if(verbose)
     fprintf(stderr,"msiexeccmd:%s\n",cmd);
-  ret=system(cmd);
+  ret=System(cmd);
   s(impl);
   s(dist_path);
   s(log_path);
@@ -114,14 +114,14 @@ int sbcl_bin_install(struct install_options* param) {
   str3=escape_string(str4);s(str4);
   str=cat("cmd /c \"echo f|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
   s(str2),s(str3);
-  ret=system(str);s(str);
+  ret=System(str);s(str);
   if(ret) return 0;
   str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core",NULL);
   str2=escape_string(str4);s(str4);
   str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core",NULL);
   str3=escape_string(str4);s(str4);
   str=cat("cmd /c \"echo f|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
-  ret=system(str);s(str);
+  ret=System(str);s(str);
   if(ret) return 0;
   str=cat("echo d|xcopy \"",
           home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
@@ -132,7 +132,7 @@ int sbcl_bin_install(struct install_options* param) {
   str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib",NULL);
   str3=escape_string(str4);s(str4);
   str=cat("cmd /c \"echo d|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
-  ret=system(str);
+  ret=System(str);
   s(str),s(home);
   if(ret) return 0;
   return 1;
@@ -152,7 +152,7 @@ int sbcl_bin_install(struct install_options* param) {
   change_directory(src);
   setenv("SBCL_HOME",sbcl_home,1);
   setenv("INSTALL_ROOT",install_root,1);
-  ret=system("(cat find-gnumake.sh; echo find_gnumake)|sh");
+  ret=System("(cat find-gnumake.sh; echo find_gnumake)|sh");
   if(ret!=0) {
     fprintf(stderr,"make does not exists.\n");
     return 0;
