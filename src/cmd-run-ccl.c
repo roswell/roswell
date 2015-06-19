@@ -78,7 +78,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   }
 
   if(program || script) {
-    char *tmp,*tmp2;
+    char *tmp;
     arg[paramc++]=q("--eval");
     tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
     arg[paramc++]=tmp;

@@ -3,12 +3,9 @@
 #define ROS_RUN_REPL "run"
 
 #ifdef _WIN32
-BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar){
-  CHAR szPrintBuffer[512];
-  DWORD nCharsWritten;
-  if(CTRL_C_EVENT == ctrlChar){
+BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar) {
+  if(CTRL_C_EVENT == ctrlChar)
     return TRUE;
-  }
   return FALSE;
 }
 #endif
@@ -32,7 +29,6 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd) {
   }else {
     int i;
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],run_options,run_commands));
-    current=get_opt("program",0);
     if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
       char* tmp[]={"--"};
       proccmd(1,tmp,run_options,run_commands);
@@ -216,7 +212,6 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   if(wrap)
     arg[0]=q(wrap);
   if(arg && file_exist_p(arg[1])) {
-    char* cmd;
     char* opts=sexp_opts(local_opt);
     setenv("ROS_OPTS",opts,1);
     if(verbose>0 ||testing) {

@@ -60,10 +60,9 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 int cmd_tar(int argc,char **argv,struct sub_command* cmd) {
   const char *filename = NULL;
   const char *outputpath = NULL;
-  int compress, flags=0, mode, opt;
+  int flags=0, mode, opt;
 
   mode = 'x';
-  compress = '\0';
   /* Among other sins, getopt(3) pulls in printf(3). */
   while (*++argv != NULL && **argv == '-') {
     const char *p = *argv + 1;

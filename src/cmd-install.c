@@ -86,7 +86,6 @@ int download(struct install_options* param) {
 }
 
 int cmd_install(int argc,char **argv,struct sub_command* cmd) {
-  int ret=1,k;
   install_cmds *cmds=NULL;
   struct install_options param;
   quicklisp=1;
@@ -95,8 +94,8 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
   param.arch_in_archive_name=0;
   param.expand_path=NULL;
   if(argc!=1) {
+    int ret=1,k;
     for(k=1;k<argc;++k) {
-      char* version_arg=NULL;
       int i,pos;
       param.impl=argv[k];
       pos=position_char("/",param.impl);
@@ -153,12 +152,12 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
       if(ret) { // after install latest installed impl/version should be default for 'run'
         struct opts* opt=global_opt;
         struct opts** opts=&opt;
-        int i;
         char* home=configdir();
         char* path=cat(home,"config",NULL);
         char* v=cat(param.impl,".version",NULL);
         char* version=param.version;
         if(!install_impl->util) {
+          int i;
           for(i=0;version[i]!='\0';++i)
             if(version[i]=='-')
               version[i]='\0';

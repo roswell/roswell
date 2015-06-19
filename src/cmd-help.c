@@ -3,8 +3,6 @@ extern char** argv_orig;
 
 int cmd_help(int argc, const char **argv) {
   LVal help=(LVal)NULL;
-  int i;int cmdmax,optmax;
-  char *fmt;
   char* subcmds=subcmddir();
   LVal dir=directory(subcmds);
 
@@ -32,8 +30,7 @@ int cmd_help(int argc, const char **argv) {
     LVal pinit;
     int i;
     for(i=0;i<2;++i) {
-      cmdmax=0;
-      optmax=0;
+      int cmdmax=0,optmax=0;
       char *cmd_opt;
       if(i==0) {
         cmd_opt="Commands:\n";
@@ -65,6 +62,7 @@ int cmd_help(int argc, const char **argv) {
         }
       }
       if(cmdmax) {
+        char *fmt;
         fprintf(stderr,"%s",cmd_opt);
         if(i==0)
           fmt=s_cat(q("    %-"),qsprintf(5,"%d",cmdmax+2),q("s%s\n"),NULL);
@@ -81,7 +79,7 @@ int cmd_help(int argc, const char **argv) {
               fprintf(stderr,fmt,tmp2,tmp,fp->description?fp->description:"");
               fprintf(stderr,"\n");
               s(tmp),s(tmp2);
-             }
+            }
           }
         }
         if(i==0 && help==top_helps) {
@@ -122,7 +120,6 @@ int cmd_help(int argc, const char **argv) {
       char* f=firsts(v);
       int len=strlen(f)-4; /* ".ros" */
       if (len>0 && strcmp(f+len,".ros")==0 && f[0]!='+') {
-        FILE* in;
         char* fname=cat(subcmds,SLASH,f);
         if(strncmp(f,argv[1],strlen(argv[1]))==0)
           proccmd_with_subcmd(fname,"help",argc,(char**)argv,top_options,top_commands);

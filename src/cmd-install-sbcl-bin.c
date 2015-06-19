@@ -7,7 +7,6 @@ char* arch_(struct install_options* param) {
 
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
-  char* ret;
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
   ensure_directories_exist(platforms_html);
 
@@ -90,7 +89,6 @@ int sbcl_bin_expand(struct install_options* param) {
 #else
   char* argv[6]={"","-xf",NULL,"-C",NULL,NULL};
   char* archive=download_archive_name(param);
-  char* version=q(param->version);
   char* dist_path=param->expand_path;
   char* home=configdir();
   printf("Extracting %s to %s\n",archive,dist_path);
@@ -104,7 +102,6 @@ int sbcl_bin_expand(struct install_options* param) {
 
 int sbcl_bin_install(struct install_options* param) {
 #ifdef HAVE_WINDOWS_H
-  char* impl=param->impl;
   char* version=param->version;
   char* arch=param->arch;
   char* home=configdir();
@@ -140,7 +137,7 @@ int sbcl_bin_install(struct install_options* param) {
   if(ret) return 0;
   return 1;
 #else
-  int ret=1;
+  int ret;
   char* home=configdir();
   char* impl=param->impl;
   char* version=param->version;
