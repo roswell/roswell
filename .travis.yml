@@ -1,14 +1,15 @@
 language: objective-c
 
 script:
-  - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l
-  - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l
+  - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
+  - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
   - sh bootstrap
   - ./configure
   - make -j4
   - sudo make install
   - ros version
   - ros -v setup
+  - ros list
   - ros -v run -- --version
   - ros install sbcl
   - ros -v run -- --version
