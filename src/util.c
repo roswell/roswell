@@ -84,7 +84,6 @@ void touch(char* path) {
 void DisplayError(char *pszAPI) {
   LPVOID lpvMessageBuffer;
   CHAR szPrintBuffer[512];
-  DWORD nCharsWritten;
   FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER|FORMAT_MESSAGE_FROM_SYSTEM,
                 NULL, GetLastError(),
                 MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
@@ -102,12 +101,9 @@ char* system_(char* cmd) {
   HANDLE hOutputReadTmp,hOutputRead,hOutputWrite;
   HANDLE hInputWriteTmp,hInputRead,hInputWrite;
   HANDLE hErrorWrite;
-  HANDLE hThread;
-  DWORD ThreadId;
   SECURITY_ATTRIBUTES sa;
   CHAR lpBuffer[256];
   DWORD nBytesRead;
-  DWORD nCharsWritten;
   DWORD ExitCode;
   PROCESS_INFORMATION pi;
   STARTUPINFO si;
@@ -282,7 +278,7 @@ int system_redirect(const char* cmd,char* filename) {
 #ifndef HAVE_WINDOWS_H
   pid_t pid;
   int fd[2];
-  char c;
+  int c;
   if (pipe(fd)==-1) {
     perror("pipe");
     return -1;
@@ -326,7 +322,6 @@ int system_redirect_function(const char* cmd,Function1 f) {
 #ifndef HAVE_WINDOWS_H
   pid_t pid;
   int fd[2];
-  char c;
   if (pipe(fd)==-1) {
     perror("pipe");
     return -1;
@@ -346,7 +341,7 @@ int system_redirect_function(const char* cmd,Function1 f) {
     close(fd[1]);
     execvp(argv[0],argv);
   }else {
-    FILE *in,*out;
+    FILE *in;
     close(fd[1]);
     if((in=fdopen(fd[0], "r"))!=NULL) {
       f((LVal)in);
@@ -456,7 +451,7 @@ LVal directory(char* path) {
   do {
     if(!(strcmp(fd.cFileName,".")==0 ||
          strcmp(fd.cFileName,"..")==0)) {
-      char* str=cat(fd.cFileName,NULL);
+      char* str=q(fd.cFileName);
       if(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
         str=s_cat2(str,q(SLASH));
       ret=conss(str,ret);

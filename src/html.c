@@ -27,7 +27,7 @@ void attrsfree(struct Cons* a) {
 }
 
 LVal parse_attr(char* str) {
-  int i,j,pos;
+  int i,j;
   char *name,*val;
   struct Cons tmp,*ret=&tmp,*cur=ret;
   struct opts* p;
@@ -35,7 +35,7 @@ LVal parse_attr(char* str) {
   for(i=0;str[i]!='\0';++i) {
     name=NULL,val=NULL;
     /*skip space*/
-    pos=position_char_not(" \t\r\n",&str[i]);
+    int pos=position_char_not(" \t\r\n",&str[i]);
     if(pos!=-1) {
       i+=pos;
     }else continue;
@@ -147,9 +147,8 @@ LVal delete_not_tags(char* tags,LVal tag) {
 LVal filter_href(LVal t) {
   LVal tags=t;
   LVal ret=(LVal)NULL;
-  char* href;
   for(;tags!=(LVal)NULL;tags=Next(tags)) {
-    href=NULL;
+    char* href=NULL;
     LVal a=(LVal)((struct tag*)firstp(tags))->attr;
     for(;a;a=Next(a)) {
       struct opts* v=(struct opts*)firstp(a);
@@ -167,7 +166,7 @@ LVal filter_href(LVal t) {
 LVal parse_tags(FILE* fp,LVal before,int mode) {
   LVal current=tagalloc();
   char str[2]={'\0','\0'};
-  int c,i=0,token_count=0;
+  int c,i=0;
   char* buf=q("");
   switch(mode) {
   case 0: /* wait for '<' */
@@ -308,7 +307,7 @@ LVal filter_sbcl_uri(LVal v) {
       i=3;
     }
     i=(strcmp(m2,m)==0 && strcmp(firsts(nthcdr(i,ret)),u)==0);
-    
+
     s(m2),s(str),s(m),s(u),sL(ret);
     return i?toNumber(1):0;
   }

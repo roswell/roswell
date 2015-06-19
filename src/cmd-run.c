@@ -112,17 +112,6 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-char* ql_path(void) {
-  char* env_ql=getenv("QUICKLISP_HOME");
-  if(env_ql){
-    env_ql=q(env_ql);
-  }else {
-    env_ql=q(get_opt("quicklisp",0));
-  }
-  env_ql=append_trail_slash(env_ql);
-  return env_ql;
-}
-
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   int ret=1;
   char* impl;

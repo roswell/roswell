@@ -46,7 +46,6 @@ int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option
 }
 
 int proccmd(int argc,char** argv,LVal option,LVal command) {
-  int i;
   int pos;
   if(verbose>0)
     fprintf(stderr,"proccmd:%s\n",argv[0]);
@@ -198,7 +197,6 @@ int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
     char* current=get_opt("program",0);
     char* escaped=escape_string(argv[1]);
-    int len=strlen(escaped)+strlen(cmd->name)+7;
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
     s(escaped);
     set_opt(&local_opt,"program",current,0);
@@ -210,7 +208,6 @@ int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
     char* current=get_opt("restart",0);
     char* escaped=escape_string(argv[1]);
-    int len=strlen(escaped)+strlen(cmd->name)+7;
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
     s(escaped);
     set_opt(&local_opt,"restart",current,0);
@@ -222,7 +219,6 @@ int opt_final(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name && argc>1) {
     char* current=get_opt("final",0);
     char* escaped=escape_string(argv[1]);
-    int len=strlen(escaped)+strlen(cmd->name)+7;
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
     s(escaped);
     set_opt(&local_opt,"final",current,0);
@@ -263,7 +259,6 @@ LVal register_runtime_options(LVal opt) {
 }
 
 int main (int argc,char **argv) {
-  int i;
   argv_orig=argv;
   argc_orig=argc;
   char* _help;
@@ -307,8 +302,10 @@ int main (int argc,char **argv) {
   if(argc==1) {
     char* tmp[]={"help"};
     proccmd(1,tmp,top_options,top_commands);
-  }else
+  }else {
+    int i;
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
+  }
   if(get_opt("program",0)) {
     char* tmp[]={"run","-q","--"};
     proccmd(3,tmp,top_options,top_commands);

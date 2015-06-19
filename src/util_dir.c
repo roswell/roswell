@@ -1,12 +1,9 @@
 #include "util.h"
 
 char* homedir(void) {
-  char *c;
   char *postfix="_HOME";
-  struct passwd * pwd=NULL;
+  char *c=s_cat2(upcase(q_(PACKAGE)),q_(postfix));
   char *env=NULL;
-  int i;
-  c=s_cat2(upcase(q_(PACKAGE)),q_(postfix));
   env=getenv(c);
   s(c);
   if(env)
@@ -16,13 +13,13 @@ char* homedir(void) {
   if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData)))
     c=q_(szAppData);
 #else
-  pwd= getpwuid(getuid());
+  struct passwd *pwd= getpwuid(getuid());
   if(pwd)
     c=q_(pwd->pw_dir);
 #endif
   else
     return NULL; /* error? */
-  return s_cat(append_trail_slash(c),NULL);
+  return append_trail_slash(c);
 }
 
 char* configdir(void) {

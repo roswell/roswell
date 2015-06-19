@@ -1,8 +1,8 @@
 #include "opt.h"
 
 void free_opts(struct opts* opt) {
-  void* tmp;
   while(opt) {
+    void* tmp=opt->next;
     if(opt->value) {
       dealloc((void*)opt->value);
       opt->value=NULL;
@@ -11,7 +11,7 @@ void free_opts(struct opts* opt) {
       dealloc((void*)opt->name);
       opt->name=NULL;
     }
-    tmp=opt->next;
+
     opt->next=NULL;
     tmp=opt;
     opt=opt->next;
@@ -56,13 +56,11 @@ struct opts* load_opts(const char* path) {
   struct opts *cur=&opt;
   opt.next=NULL;
 
-  if((fp=fopen(path,"r"))==NULL) {
+  if((fp=fopen(path,"r"))==NULL)
     return NULL;
-  }
 
   while(fgets(buf,1024,fp) !=NULL) {
     int i,mode,last;
-    char* str;
     cur->next=(struct opts*)alloc(sizeof(struct opts));
     cur=cur->next;
     cur->type=OPT_VOID;
@@ -92,11 +90,9 @@ struct opts* load_opts(const char* path) {
 
 int save_opts(const char* path,struct opts* opt) {
   FILE* fp;
-  void* tmp;
 
-  if((fp=fopen(path,"w"))==NULL) {
+  if((fp=fopen(path,"w"))==NULL)
     return 0;
-  }
 
   while(opt) {
     fprintf(fp,"%s\t%d\t%s\n",opt->name,opt->type,opt->value);
@@ -115,9 +111,8 @@ int set_opt(struct opts** opts,const char* name,char* value,int type) {
       found=1;
       /*s((char*)opt->value);*/
       opt->value=remove_char("\n\t",value);
-      if(type!=0) {
-	opt->type=type;
-      }
+      if(type!=0)
+        opt->type=type;
     }
     opt=opt->next;
   }

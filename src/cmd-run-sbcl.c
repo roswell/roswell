@@ -1,7 +1,5 @@
 #include "opt.h"
 
-char* ql_path(void);
-
 char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char** arg=NULL;
   char* home=configdir();

@@ -6,17 +6,18 @@ static int content_length=0;
 
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
-  int current,i,aux;
   static char* last_showd=NULL;
   char* w=q("");
   last_showd=last_showd?last_showd:q("");
   count+=written*size;
   w=s_cat2(w,q("\r"));
   if(content_length) {
+    int i;
     for(i=0;i<width;++i)
       w=s_cat2(w,q((i>=(count/(content_length/(width)))?" ":"#")));
     w=s_cat2(w,qsprintf(8," %3d%%",(count/(content_length/(99)))));
   }else {
+    int current,aux;
     aux=1024>count?' ':1024*1024>count?(current=count/1024,'K'):
       1024*1024*1024>count?(current=count/(1024*1024),'M'):(current=count/(1024*1024*1024),'G');
     w=s_cat2(w,qsprintf(20,"%4d%c downloaded.",current,aux));
@@ -38,7 +39,7 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *verb
       char *num=subseq(&buffer[pos+1],0,pos2);
       code=atoi(num),s(num);
       if(*verbose)
-	fprintf(stderr, "http response:%d\n",code);
+        fprintf(stderr, "http response:%d\n",code);
     }
     if(400<=code)
       return 0; /*invoke error for curl*/
@@ -56,12 +57,12 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *verb
 int download_simple (char* uri,char* path,int verbose) {
 #ifndef HAVE_WINDOWS_H
   CURL *curl;
-  CURLcode res;
-  FILE *bodyfile;
+  CURLcode res=!CURLE_OK;
   char* path_partial=cat(path,".partial",NULL);
 
   curl = curl_easy_init();
   if(curl) {
+    FILE *bodyfile;
     char* current=get_opt("ros.proxy",1);
     if(current) {
       /*<[protocol://][user:password@]proxyhost[:port]>*/
@@ -101,8 +102,8 @@ int download_simple (char* uri,char* path,int verbose) {
               curl_easy_strerror(res));
     }
     curl_easy_cleanup(curl);
+    fclose(bodyfile);
   }
-  fclose(bodyfile);
   if(res != CURLE_OK)
     return -2;
 #else
@@ -131,15 +132,20 @@ int download_simple (char* uri,char* path,int verbose) {
   u.lpszPassword   = NULL;
   u.lpszUrlPath    = szUrlPath;
   u.lpszExtraInfo  = NULL;
-  if(!InternetCrackUrl( uri, (DWORD)strlen(uri), 0, &u ))
+  if(!InternetCrackUrl(uri,(DWORD)strlen(uri),0,&u)) {
+    fclose(bodyfile);
     return -2;
+  }
   HINTERNET hSession = InternetOpen("WinInet",INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,0);
   HINTERNET hConnection = InternetConnect(hSession,szHostName,u.nPort,NULL,NULL,INTERNET_SERVICE_HTTP,0,0);
   DWORD dwFlags = INTERNET_FLAG_RELOAD | INTERNET_FLAG_DONT_CACHE;
   if(INTERNET_SCHEME_HTTP == u.nScheme) {
   }else if( INTERNET_SCHEME_HTTPS == u.nScheme ) {
     dwFlags = dwFlags | INTERNET_FLAG_SECURE| INTERNET_FLAG_IGNORE_CERT_DATE_INVALID| INTERNET_FLAG_IGNORE_CERT_CN_INVALID;
-  }else return -2;
+  }else {
+    fclose(bodyfile);
+    return -2;
+  }
   HINTERNET hRequest = HttpOpenRequest(hConnection,"GET",szUrlPath,NULL,NULL,NULL,dwFlags,0);
 
   HttpSendRequest(hRequest,NULL,0,NULL,0);
@@ -147,10 +153,14 @@ int download_simple (char* uri,char* path,int verbose) {
   DWORD dwLength = sizeof(DWORD);
   if(HttpQueryInfo(hRequest,HTTP_QUERY_CONTENT_LENGTH | HTTP_QUERY_FLAG_NUMBER,&dwContentLen,&dwLength,0))
     content_length=dwContentLen;
-  if( !HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE | HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0 ) ) 
+  if(!HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE|HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0)) {
+    fclose(bodyfile);
     return -4;
-  if(HTTP_STATUS_OK != dwStatusCode)
+  }
+  if(HTTP_STATUS_OK != dwStatusCode) {
+    fclose(bodyfile);
     return -3;
+  }
   char pData[10000];
   DWORD dwBytesRead = 1;
   count=0;

@@ -33,9 +33,8 @@ LVal nreverse(LVal v) {
 
 LVal remove_if_not1(Function1 f,LVal v) {
   LVal ret;
-  LVal fret;
   for(ret=0;v;v=Next(v)) {
-    fret=f(v);
+    LVal fret=f(v);
     if(fret) {
       if(NumberP(first(v))) {
         ret=consi(firsti(v),ret);

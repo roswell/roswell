@@ -1,7 +1,5 @@
 #include "opt.h"
 
-char* ql_path(void);
-
 char* ccl_binname(void) {
   char* ret=q("");
   char* _uname_m=uname_m();
