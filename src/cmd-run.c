@@ -213,13 +213,15 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     }
     s(opts);
 #ifdef _WIN32
-    cmd=q(arg[wrap?0:1]);
-    for(i=wrap?1:2;arg[i]!=NULL;++i) {
-      cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
+    {
+      char* cmd=q(arg[wrap?0:1]);
+      for(i=wrap?1:2;arg[i]!=NULL;++i) {
+        cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
+      }
+      SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+      exit(system(cmd));
+      s(cmd);
     }
-    SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-    exit(system(cmd));
-    s(cmd);
 #else
     execvp(arg[wrap?0:1],&(arg[wrap?0:1]));
 #endif
