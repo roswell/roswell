@@ -163,12 +163,12 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
         (setq imp seq))
     (cond ((and
             (setf sub (or (probe-file (merge-pathnames
-				       (format nil "install-~A.lisp" imp)
-				       (setf sub (make-pathname :name nil :type nil
-								:defaults *load-pathname*))))
-			  (probe-file (merge-pathnames
-				       (format nil "install+~A.lisp" imp)
-				       sub))))
+                                       (format nil "install-~A.lisp" imp)
+                                       (setf sub (make-pathname :name nil :type nil
+                                                                :defaults *load-pathname*))))
+                          (probe-file (merge-pathnames
+                                       (format nil "install+~A.lisp" imp)
+                                       sub))))
             (progn (load sub)
                    (let (*read-eval*)
                      (setf *opts* (append (read-from-string (first argv))
@@ -191,7 +191,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                (ql:where-is-system impl/version))
            (format *error-output* "found system ~A.~%Attempting install scripts...~%" impl/version)
            (ql:quickload impl/version :silent t)
-           (dolist (dir '("roswell/*.*" "bin/*.*"))
-             (dolist (from (directory (merge-pathnames dir (ql:where-is-system impl/version))))
-               (install-script from))))
+           (dolist (from (directory (merge-pathnames "roswell/*.*" (ql:where-is-system impl/version))))
+             (install-script from)))
           (t (format *error-output* "not supported software ~A" imp)))))
