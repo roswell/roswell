@@ -19,8 +19,10 @@ install:
   - msys%MSYS2_BITS%\autorebase.bat
 build_script:
   - msys%MSYS2_BITS%\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; touch -t 202501010101 documents/ros.1; make"
-  - cd %APPVEYOR_BUILD_FOLDER%\src
-  - 7z a ..\Roswell-%MSYS2_ARCH%.zip ros.exe lisp/*.*
+  - cd %APPVEYOR_BUILD_FOLDER%
+  - move src roswell
+  - 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.*
+  - move roswell src
 # disable automatic tests
 test: off
 
