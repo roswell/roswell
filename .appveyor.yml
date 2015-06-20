@@ -7,12 +7,15 @@ environment:
     - MSYS2_ARCH: x86_64
       MSYS2_BITS: 64
       MSYSTEM: MINGW64
+    - MSYS2_ARCH: i686
+      MSYS2_BITS: 32
+      MSYSTEM: MINGW32
 install:
   - appveyor DownloadFile "http://kent.dl.sourceforge.net/project/msys2/Base/%MSYS2_ARCH%/msys2-base-%MSYS2_ARCH%-%MSYS2_BASEVER%.tar.xz" -FileName "msys2.tar.xz"
   - 7z x msys2.tar.xz
   - 7z x msys2.tar > NUL
   - msys%MSYS2_BITS%\usr\bin\bash -lc ""
-  - msys%MSYS2_BITS%\usr\bin\bash -lc "for i in {1..3}; do pacman --noconfirm -Suy autoconf automake pkg-config gcc make zlib-devel && break || sleep 15; done"
+  - msys%MSYS2_BITS%\usr\bin\bash -lc "for i in {1..3}; do pacman --noconfirm -Suy autoconf automake pkg-config mingw-w64-%MSYS2_ARCH%-gcc make zlib-devel && break || sleep 15; done"
   - msys%MSYS2_BITS%\autorebase.bat
 build_script:
   - msys%MSYS2_BITS%\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make"
