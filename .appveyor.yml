@@ -20,12 +20,10 @@ install:
 build_script:
   - msys%MSYS2_BITS%\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; touch -t 202501010101 documents/ros.1; make"
   - cd %APPVEYOR_BUILD_FOLDER%\src
-  - 7za a ..\Roswell-%MSYS2_ARCH%.zip ros.exe lisp/*.*
+  - 7z a ..\Roswell-%MSYS2_ARCH%.zip ros.exe lisp/*.*
 # disable automatic tests
 test: off
 
 artifacts:
-  - path: Roswell-x86_64.zip
-    name: Roswell-x86_64.zip
-  - path: Roswell-i686.zip
-    name: Roswell-i686.zip
+  - path: Roswell-%MSYS2_ARCH%.zip
+    name: Roswell-%MSYS2_ARCH%.zip
