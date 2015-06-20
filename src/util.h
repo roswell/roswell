@@ -21,6 +21,7 @@
 #include <shellapi.h>
 #include <shlobj.h>
 #include <wininet.h>
+typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 #endif
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>
