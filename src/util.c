@@ -71,13 +71,14 @@ int rename_file(char* file,char* new_name) {
 
 void touch(char* path) {
   int ret;
+  if(verbose)
+    fprintf(stderr,"%s\n",path);
 #ifndef HAVE_WINDOWS_H
   char* cmd=s_cat2(q("touch "),q(path));
-#else
-  char* cmd=q("");
-#endif
   ret=System(cmd);
   s(cmd);
+#else
+#endif
 }
 
 char* s_decode(char* str) {

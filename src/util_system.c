@@ -62,7 +62,7 @@ char* system_(char* cmd) {
   si.hStdOutput = hOutputWrite;
   si.hStdInput  = hInputRead;
   si.hStdError  = hErrorWrite;
-  if (!CreateProcess(NULL,cmd,NULL,NULL,TRUE,CREATE_NO_WINDOW,NULL,NULL,&si,&pi))
+  if (!CreateProcess(NULL,cmd,NULL,NULL,TRUE,0,NULL,NULL,&si,&pi))
     DisplayError("CreateProcess");
   if (!CloseHandle(pi.hThread)) DisplayError("CloseHandle");
   if (!CloseHandle(hOutputWrite)) DisplayError("CloseHandle");
@@ -186,10 +186,23 @@ int system_redirect_function(const char* cmd,Function1 f) {
 
 int System(const char* command) {
 #ifndef HAVE_WINDOWS_H
-  system(command);
+  return system(command);
 #else
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+  DWORD ExitCode;
   if(verbose)
     fprintf(stderr,"System:'%s'\n",command);
-  system(command);
+  ZeroMemory(&si,sizeof(STARTUPINFO));
+  si.cb = sizeof(STARTUPINFO);
+  if(!CreateProcess(NULL,(char*)command,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))
+    DisplayError("CreateProcess");
+  if(!CloseHandle(pi.hThread)) DisplayError("CloseHandle");
+  DWORD r=WaitForSingleObject(pi.hProcess, INFINITE);
+  if(WAIT_OBJECT_0!=r)
+    return 1;
+  if(!GetExitCodeProcess(pi.hProcess,&ExitCode)||ExitCode)
+    return ExitCode||1;
+  return 0;
 #endif
 }

@@ -75,8 +75,7 @@ int sbcl_bin_expand(struct install_options* param) {
                 log_path,
                 "\"",
                 NULL);
-  char* cmd2=escape_string(cmd);
-  s(cmd);cmd=cat("cmd /c \"",cmd2,"\"",NULL);s(cmd2);
+  cmd=cat("cmd /c \"",cmd,"\"",NULL);
   if(verbose)
     fprintf(stderr,"msiexeccmd:%s\n",cmd);
   ret=System(cmd);
@@ -108,30 +107,24 @@ int sbcl_bin_install(struct install_options* param) {
   char *str,*str2,*str3,*str4;
   char* version_num= q(version);
   int ret;
-  str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe",NULL);
-  str2=escape_string(str4);s(str4);
-  str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\bin\\sbcl.exe",NULL);
-  str3=escape_string(str4);s(str4);
-  str=cat("cmd /c \"echo f|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
+  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe",NULL);
+  str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\bin\\sbcl.exe",NULL);
+  str=cat("cmd /c \"echo f|xcopy ^\"",str2,"^\" ^\"",str3,"^\" > NUL","\"",NULL);
   s(str2),s(str3);
   ret=System(str);s(str);
   if(ret) return 0;
-  str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core",NULL);
-  str2=escape_string(str4);s(str4);
-  str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core",NULL);
-  str3=escape_string(str4);s(str4);
-  str=cat("cmd /c \"echo f|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
+  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core",NULL);
+  str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core",NULL);
+  str=cat("cmd /c \"echo f|xcopy ^\"",str2,"^\" ^\"",str3,"^\" > NUL","\"",NULL);
   ret=System(str);s(str);
   if(ret) return 0;
-  str=cat("echo d|xcopy \"",
-          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib\" \"",
-          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib\" >NUL",NULL);
+  str=cat("echo d|xcopy ^\"",
+          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib^\" ^\"",
+          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib^\" >NUL",NULL);
 
-  str4=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib",NULL);
-  str2=escape_string(str4);s(str4);
-  str4=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib",NULL);
-  str3=escape_string(str4);s(str4);
-  str=cat("cmd /c \"echo d|xcopy \\\"",str2,"\\\" \\\"",str3,"\\\""," > NUL","\"",NULL);
+  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib",NULL);
+  str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib",NULL);
+  str=cat("cmd /c \"echo d|xcopy ^\"",str2,"^\" ^\"",str3,"^\""," > NUL","\"",NULL);
   ret=System(str);
   s(str),s(home);
   if(ret) return 0;
