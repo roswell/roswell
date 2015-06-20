@@ -188,6 +188,8 @@ int System(const char* command) {
 #ifndef HAVE_WINDOWS_H
   system(command);
 #else
+  if(verbose)
+    fprintf(stderr,"System:'%s'\n",command);
   system(command);
 #endif
 }
