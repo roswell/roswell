@@ -218,8 +218,23 @@ char* uname_m(void) {
   }
   return substitute_char('-','_',p2);
 #else
-  /*TBD check x86 or x86-64 */
-  return q("x86");
+#if _WIN64
+  return q("x86-64");
+#elif _WIN32
+  BOOL isWow64 = FALSE;
+  LPFN_ISWOW64PROCESS fnIsWow64Process  = (LPFN_ISWOW64PROCESS)
+    GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
+  if(fnIsWow64Process) {
+    if (!fnIsWow64Process(GetCurrentProcess(), &isWow64))
+      return q("x86");
+    if(isWow64)
+      return q("x86-64");
+    else
+      return q("x86");
+  }
+  else
+    return q("x86");
+#endif
 #endif
 }
 
