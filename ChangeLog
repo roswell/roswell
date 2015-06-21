@@ -1,3 +1,9 @@
+roswell (0.0.3.36-1) unstable; urgency=low
+
+  * Bugfix: Build fail without git.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 22 Jun 2015 02:37:35 +0900
+
 roswell (0.0.3.35-1) unstable; urgency=low
 
   * Improve: 'ros install' to support local project for roswell scripts.
