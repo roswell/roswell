@@ -1,3 +1,15 @@
+roswell (0.0.3.35-1) unstable; urgency=low
+
+  * Improve: 'ros install' to support local project for roswell scripts.
+  * Improve: set ~/.roswell/local-projects/ as local project directory.
+  * New: support 'ros install sbcl --with-simd-pack'
+  * Bugfix: unset 'SBCL_HOME' when needed.
+  * Change: change 'ros dump list' to 'ros list dump'/ 'ros dump rm' to 'ros delete dump'
+  * Change: 'ros install project' don't check 'bin/' anymore. use 'roswell/' for install.
+  * Change: 'ros version' shows lispdir
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 21 Jun 2015 23:06:52 +0900
+
 roswell (0.0.2.34-1) unstable; urgency=low
 
   * Improve: 'ros use' take not only 'ros use impl/version' format but also take 'ros use impl' or 'ros use version'
