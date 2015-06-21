@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <string.h>
+#include <stdarg.h>
 #ifndef HAVE_WINDOWS_H
 #include <pwd.h>
 #include <unistd.h>

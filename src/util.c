@@ -1,7 +1,7 @@
 #include "util.h"
 
 void cond_printf(int v,char* format,...) {
-  if(v&verbose == v) {
+  if((v&verbose) == v) {
     va_list list;
     va_start(list,format);
     vfprintf(stderr,format,list);

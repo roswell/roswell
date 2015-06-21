@@ -1,5 +1,4 @@
 #include "util.h"
-#include <stdarg.h>
 
 char* qsprintf(int bufsize,char* format,...) {
   char* result=alloc(bufsize+1);
