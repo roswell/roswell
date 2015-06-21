@@ -7,7 +7,7 @@ gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c util_system
 
 gend.h: gen$(EXEEXT) FORCE
 	which $(CC)&&(($(CC) --version| $(WINE) ./gen$(EXEEXT) 1) > $@.tmp)
-	((which git&&[ -e ../.git ]&&(git log -n 1 --oneline))||echo -n)|$(WINE) ./gen$(EXEEXT) 2 >> $@.tmp
+	((which git>/dev/null&&[ -e ../.git ]&&(git log -n 1 --oneline))||echo -n)|$(WINE) ./gen$(EXEEXT) 2 >> $@.tmp
 	((echo `sh -c 'cd $(roslispdir); pwd -W 2>/dev/null'`| $(WINE) ./gen$(EXEEXT) 3) >> $@.tmp)
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	rm -f $@.tmp
