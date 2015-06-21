@@ -71,8 +71,7 @@ char* file_namestring(char* path) {
 
 int ensure_directories_exist (char* path) {
   int len = strlen(path);
-  if(verbose)
-    fprintf(stderr,"ensure_directories_exist:%s\n",path);
+  cond_printf(1,"ensure_directories_exist:%s\n",path);
   if(len) {
     for(--len;(path[len]!=SLASH[0]||len==-1);--len);
     path=subseq(path,0,len+1);

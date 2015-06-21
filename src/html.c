@@ -271,8 +271,7 @@ LVal parse_tags(FILE* fp,LVal before,int mode) {
 LVal atag_list(char* filename) {
   FILE* fp;
   LVal ret=(LVal)NULL;
-  if(verbose>0)
-    fprintf(stderr,"open %s\n",filename);
+  cond_printf(1,"open %s\n",filename);
   fp=fopen(filename,"r");
   if(fp!=NULL) {
     LVal tags=parse_tags(fp,(LVal)NULL,0);
@@ -318,15 +317,14 @@ LVal filter_sbcl_uri(LVal v) {
 char* sbcl_bin(char* file) {
   char* str;
   LVal ret3,ret2,ret;
-  if(verbose>0)
-    fprintf(stderr,"uname=%s uname-m=%s\n",uname(),uname_m());
+  cond_printf(1,"uname=%s uname-m=%s\n",uname(),uname_m());
   ret=atag_list(file);
   ret2=remove_if_not1(filter_sbcl_uri,ret);
   if(ret2==(LVal)NULL) {
     fprintf(stderr,"this architecture is not supported.stop\n");
     exit(1);
   }
-  if(verbose>1)
+  if(verbose&2)
     print_list(ret2);
   ret3= split_string(firsts(ret2),"-");
   str=q(firsts(nthcdr(1,ret3)));
@@ -339,7 +337,7 @@ char* sbcl_bin(char* file) {
 char** argv_orig;
 int verbose=0;
 int main(int argc,char** argv) {
-  verbose=2;
+  verbose=1;
   sbcl_bin(argv[1]);
 }
 #endif

@@ -47,8 +47,7 @@ int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option
 
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int pos;
-  if(verbose>0)
-    fprintf(stderr,"proccmd:%s\n",argv[0]);
+  cond_printf(1,"proccmd:%s\n",argv[0]);
   if(argv[0][0]=='-' || argv[0][0]=='+') {
     if(argv[0][0]=='-' &&
        argv[0][1]=='-') { /*long option*/
@@ -58,16 +57,13 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
         if(strcmp(&argv[0][2],fp->name)==0) {
           int result= fp->call(argc,argv,fp);
           if(fp->terminating) {
-            if(verbose>0)
-              fprintf(stderr,"terminating:%s\n",argv[0]);
+            cond_printf(1,"terminating:%s\n",argv[0]);
             exit(result);
-          }else {
+          }else
             return result;
-          }
         }
       }
-      if(verbose>0)
-        fprintf(stderr,"proccmd:invalid? %s\n",argv[0]);
+      cond_printf(1,"proccmd:invalid? %s\n",argv[0]);
     }else { /*short option*/
       if(argv[0][1]!='\0') {
         LVal p;
@@ -76,8 +72,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
           if(fp->short_name&&strcmp(argv[0],fp->short_name)==0) {
             int result= fp->call(argc,argv,fp);
             if(fp->terminating) {
-              if(verbose>0)
-                fprintf(stderr,"terminating:%s\n",argv[0]);
+              cond_printf(1,"terminating:%s\n",argv[0]);
               exit(result);
             }else {
               return result;
@@ -146,41 +141,35 @@ int opt_top(int argc,char** argv,struct sub_command* cmd) {
 
 int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
   if(strcmp(cmd->name,"verbose")==0) {
-    ++verbose;
+    verbose=1|verbose<<1;
   }else if(strcmp(cmd->name,"quiet")==0) {
-    --verbose;
+    verbose=verbose>>1;
   }
-  if(verbose>0)
-    fprintf(stderr,"opt_verbose:%s %d\n",cmd->name,verbose);
+  cond_printf(1,"opt_verbose:%s %d\n",cmd->name,verbose);
   return 1;
 }
 
 int opt_top_testing(int argc,char** argv,struct sub_command* cmd) {
   ++testing;
-  if(verbose>0)
-    fprintf(stderr,"opt_testing:%s %d\n",cmd->name,testing);
+  cond_printf(1,"opt_testing:%s %d\n",cmd->name,testing);
   return 1;
 }
 
 int opt_top_rc(int argc,char** argv,struct sub_command* cmd) {
   if(strcmp(cmd->name,"rc")==0) {
     rc=1;
-  }else if(strcmp(cmd->name,"no-rc")==0) {
+  }else if(strcmp(cmd->name,"no-rc")==0)
     rc=0;
-  }
-  if(verbose>0)
-    fprintf(stderr,"opt_rc:%s\n",cmd->name);
+  cond_printf(1,"opt_rc:%s\n",cmd->name);
   return 1;
 }
 
 int opt_top_ql(int argc,char** argv,struct sub_command* cmd) {
   if(strcmp(cmd->name,"quicklisp")==0) {
     quicklisp=1;
-  }else if(strcmp(cmd->name,"no-quicklisp")==0) {
+  }else if(strcmp(cmd->name,"no-quicklisp")==0)
     quicklisp=0;
-  }
-  if(verbose>0)
-    fprintf(stderr,"opt_quicklisp:%s\n",cmd->name);
+  cond_printf(1,"opt_quicklisp:%s\n",cmd->name);
   return 1;
 }
 

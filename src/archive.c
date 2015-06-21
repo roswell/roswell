@@ -19,8 +19,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
       }
     }
   }
-  if(verbose>0)
-    fprintf(stderr,"extracttype=%s\n",type);
+  cond_printf(1,"extracttype=%s\n",type);
 #ifndef HAVE_WINDOWS_H
   if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0 || strcmp(type,"xz")==0) {
     str=cat(type," -dc ",filename," | tar -",do_extract?"x":"t",
@@ -48,8 +47,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   }
   s(outputpath2),s(filename2),s(_homedir),s(_uname),s(_uname_m);
 #endif
-  if(verbose>0)
-    fprintf(stderr,"extractcmd=%s\n",str);
+  cond_printf(1,"extractcmd=%s\n",str);
   if(str) {
     ret=System(str);
     s(str);
@@ -89,7 +87,7 @@ int cmd_tar(int argc,char **argv,struct sub_command* cmd) {
         mode = opt;
         break;
       case 'v':
-        verbose++;
+        verbose=1|verbose<<1;
         break;
       case 'x':
         mode = opt;

@@ -99,6 +99,7 @@ void print_list(LVal v);
 LVal split_string(char* string,char* by);
 void sL(LVal l);
 
+void cond_printf (int v,char* format,...);
 void* alloc(size_t bytes);
 void dealloc(void* f);
 char* q_(const char* orig);

@@ -1,5 +1,14 @@
 #include "util.h"
 
+void cond_printf(int v,char* format,...) {
+  if(v&verbose == v) {
+    va_list list;
+    va_start(list,format);
+    vfprintf(stderr,format,list);
+    va_end(list);
+  }
+}
+
 void* alloc(size_t bytes) {
   void* p=malloc(bytes);
   //  printf("**%d\n",p);
@@ -17,16 +26,14 @@ char* q_(const char* orig) {
 }
 
 char* q_internal(const char* orig,char* file,int line) {
-  if(verbose>1)
-    fprintf(stderr,"%s %d q(%s) %lu \n",file,line,orig,(intptr_t)orig);
+  cond_printf(2,"%s %d q(%s) %lu \n",file,line,orig,(intptr_t)orig);
   char* ret= (char*)alloc(strlen(orig)+1);
   strcpy(ret,orig);
   return ret;
 }
 
 void s_internal(char* f,char* name,char* file,int line) {
-  if(verbose>1)
-    fprintf(stderr,"%s %d s(%s) %lu \n",file,line,name,(intptr_t)f);
+  cond_printf(2,"%s %d s(%s) %lu \n",file,line,name,(intptr_t)f);
   dealloc(f);
 }
 
@@ -71,8 +78,7 @@ int rename_file(char* file,char* new_name) {
 
 void touch(char* path) {
   int ret;
-  if(verbose)
-    fprintf(stderr,"%s\n",path);
+  cond_printf(1,"%s\n",path);
 #ifndef HAVE_WINDOWS_H
   char* cmd=s_cat2(q("touch "),q(path));
   ret=System(cmd);
@@ -250,8 +256,7 @@ char* which(char* cmd) {
   char* which_cmd=cat("cmd /c where ",cmd,"",NULL);
 #endif
   char* p=system_(which_cmd);
-  if(verbose>1)
-    fprintf(stderr,"system_ result:%s\n",p);
+  cond_printf(1,"system_ result:%s\n",p);
   p=substitute_char('\0','\r',substitute_char('\0','\n',p));
   char* p2=p?remove_char("\r\n",p):q("");
   s(p),s(which_cmd);

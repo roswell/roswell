@@ -191,8 +191,7 @@ int System(const char* command) {
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
   DWORD ExitCode;
-  if(verbose)
-    fprintf(stderr,"System:'%s'\n",command);
+  cond_printf(1,"System:'%s'\n",command);
   ZeroMemory(&si,sizeof(STARTUPINFO));
   si.cb = sizeof(STARTUPINFO);
   if(!CreateProcess(NULL,(char*)command,NULL,NULL,FALSE,0,NULL,NULL,&si,&pi))

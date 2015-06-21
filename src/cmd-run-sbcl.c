@@ -59,8 +59,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     if(file_exist_p(path))
       arg[paramc++]=path;
     else {
-      if(verbose>0)
-        fprintf(stderr,"core not found:%s\n",path);
+      cond_printf(1,"core not found:%s\n",path);
       arg[paramc++]=cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL);
       s(path);
     }
@@ -108,10 +107,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   s(impl_path);
 
   arg[paramc]=NULL;
-  if(verbose>0) {
-    fprintf(stderr,"\nhelp=%s ",help?"t":"nil");
-    fprintf(stderr,"script=%s\n",script?script:"nil");
-  }
+  cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil"
+              ,script?script:"nil");
   s(help),s(dynamic_space_size),s(control_stack_size);
   return arg;
 }

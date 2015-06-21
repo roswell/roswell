@@ -21,8 +21,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
 
 int cmd_run(int argc,char **argv,struct sub_command* cmd) {
   char* current=get_opt("program",0);
-  if(verbose>0)
-    fprintf(stderr,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current) {
     char* tmp[]={(char*)cmd->name,"--"};
     return proccmd(2,tmp,top_options,top_commands);
@@ -37,18 +36,15 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd) {
       proccmd(1,tmp,run_options,run_commands);
       //return proccmd(1,tmp,top_options,top_commands);
     }
-    if(verbose>0)
-      fprintf(stderr,"cmd_%s ends here %d\n",cmd->name,i);
+    cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
     return i;
   }
 }
 
 int cmd_script(int argc,char **argv,struct sub_command* cmd) {
   char* current=get_opt("program",0);
-  if(verbose>0) {
-    fprintf(stderr,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
-    fprintf(stderr,"current=%s\n",current);
-  }
+  cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  cond_printf(1,"current=%s\n",current);
   if(argc==1 && !current &&
      strcmp(argv[0],"--")==0) {
     char* tmp[]={"help","--"};
@@ -83,8 +79,7 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   script_frontend_sentinel=1;
   if(strcmp(argv[0],"--")==0)
     ++argv,--argc;
-  if(verbose>0)
-    fprintf(stderr,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  cond_printf(1,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if((in=fopen(argv[0],"rb"))!=NULL) {
     if(fgetc(in)!='#'||fgetc(in)!='!') {
       fclose(in);
@@ -99,8 +94,7 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
     buf[i]='\0';
     fclose(in);
   }
-  if(verbose>0)
-    fprintf(stderr,"ros_script_cmd=%s\n",buf);
+  cond_printf(1,"ros_script_cmd=%s\n",buf);
   argv_=parse_cmdline(buf,&argc_);
   argv_gen=alloc(sizeof(char**)*(argc+argc_-2));
   for(i=0;i<argc_-2&&strcmp(argv_[i+2],"$0")!=0;++i)
@@ -146,10 +140,8 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       set_opt(&local_opt,"program",would,0);
     }
   }
-  if(verbose>0) {
-    fprintf(stderr,"cmd_run_star:%s argc=%d argv[0]=%s \n",cmd->name,argc,argv[0]);
-    fprintf(stderr,"localopt:%s\n",sexp_opts(local_opt));
-  }
+  cond_printf(1,"cmd_run_star:%s argc=%d argv[0]=%s \nlocalopt:%s\n"
+              ,cmd->name,argc,argv[0],sexp_opts(local_opt));
   impl=get_opt("lisp",1);
   if(impl && (pos=position_char("/",impl))!=-1) {
     version=subseq(impl,pos+1,0);
@@ -173,11 +165,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     char* ret;
     if(impl) s(impl);
     impl=q("sbcl-bin");
-    if(verbose>0)
-      fprintf(stderr,"cmd:%s\n",cmd);
+    cond_printf(1,"cmd:%s\n",cmd);
     ret=system_(cmd);
-    if(verbose>0)
-      fprintf(stderr,"ret:%s\n",ret);
+    cond_printf(1,"ret:%s\n",ret);
     s(ret);
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);;
@@ -203,7 +193,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   if(arg && file_exist_p(arg[1])) {
     char* opts=sexp_opts(local_opt);
     setenv("ROS_OPTS",opts,1);
-    if(verbose>0 ||testing) {
+    if(verbose&1 ||testing) {
       fprintf(stderr,"args ");
       for(i=0;arg[i]!=NULL;++i)
         fprintf(stderr,"%s ",arg[i]);

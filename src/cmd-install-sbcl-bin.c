@@ -76,8 +76,7 @@ int sbcl_bin_expand(struct install_options* param) {
                 "\"",
                 NULL);
   cmd=cat("cmd /c \"",cmd,"\"",NULL);
-  if(verbose)
-    fprintf(stderr,"msiexeccmd:%s\n",cmd);
+  cond_printf(1,"msiexeccmd:%s\n",cmd);
   ret=System(cmd);
   s(impl);
   s(dist_path);

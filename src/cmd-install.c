@@ -20,9 +20,7 @@ int installed_p(struct install_options* param) {
   i=s_cat(configdir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
           q(impl),q(param->version?SLASH:""),q(param->version?param->version:""),q(SLASH),NULL);
   ret=directory_exist_p(i);
-  if(verbose>0) {
-    fprintf(stderr,"directory_exist_p(%s)=%d\n",i,ret);
-  }
+  cond_printf(1,"directory_exist_p(%s)=%d\n",i,ret);
   s(i),s(impl);
   return ret;
 }
@@ -118,7 +116,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         int i,j,argc_;
         char** tmp;
         char* install_ros=s_cat2(lisp_path,q("install.lisp"));
-        if(verbose>0) {
+        if(verbose&1) {
           fprintf(stderr,"%s is not implemented for install. %s argc:%d\n",param.impl,install_ros,argc);
           for(i=0;i<argc;++i)
             fprintf(stderr,"%s:",argv[i]);
@@ -136,7 +134,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         tmp[i++]=(argv_orig[0]);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
-        if(verbose>0) {
+        if(verbose&1) {
           int j;
           fprintf(stderr,"argc_=%d",argc_);
           for(j=0;j<argc_;++j)
