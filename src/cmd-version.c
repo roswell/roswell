@@ -10,8 +10,7 @@ int cmd_version(int argc,char **argv,struct sub_command* cmd) {
 #ifdef HAVE_CURL_CURL_H
     fprintf(stderr,"\nlibcurl %s",LIBCURL_VERSION);
 #endif
-    fprintf(stderr,"\n");
-    return 0;
+    fprintf(stderr,"\nlispdir='%s'",lispdir());
   }
   fprintf(stderr,"\n");
   return 0;
