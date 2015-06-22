@@ -111,7 +111,7 @@
                           (opt "argv0")
                           (opt "wargv0"))))
          (ret  (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
-                   (funcall #1# (format nil "~A~{ ~A~}" a0 args) :output output)
+                   (funcall #1# (cons a0 args) :output output)
                    (with-output-to-string (out)
                      (funcall (read-from-string "sb-ext:run-program")
                               a0 (mapcar #'princ-to-string args)
