@@ -10,7 +10,6 @@ script:
   - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
   - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
   - brew install roswell --verbose --HEAD
-  - brew test roswell
   - ros version
   - ros -v setup
   - ros list
@@ -21,4 +20,3 @@ script:
   - ros -v run -- --version
   - ros config
   - man -Pcat ros
-  - make test
