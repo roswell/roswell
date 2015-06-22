@@ -153,7 +153,7 @@
             (asdf:operate 'asdf:load-op arg))
      while p))
 
-(setf (fdefinition 'load-systm)
+(setf (fdefinition 'load-system)
       #'system)
 
 (defun package (cmd arg &rest rest)
