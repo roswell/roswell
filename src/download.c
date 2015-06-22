@@ -1,7 +1,7 @@
 #include "opt.h"
 
 static int count=0;
-static int width=90;
+static int width=74;
 static int content_length=0;
 
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
