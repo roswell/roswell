@@ -29,7 +29,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
          :initform *standard-output*
          :reader count-line-stream-base)
    (print-char :initarg :print-char
-               :initform `((900 . line-number)(10 . #\.))
+               :initform `((700 . line-number)(10 . #\.))
                :accessor count-line-stream-print-char)
    (count-char :initarg :count-char
                 :initform #\NewLine
@@ -51,7 +51,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 #+sbcl
 (defun line-number (stream)
-  (format (count-line-stream-base stream) "~&~8d " (count-line-stream-count stream)))
+  (format (count-line-stream-base stream) "~&~6d " (count-line-stream-count stream)))
 
 (defun system- (cmd)
   (with-output-to-string (*standard-output*)
