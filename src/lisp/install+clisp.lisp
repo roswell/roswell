@@ -2,6 +2,7 @@
 
 (defun clisp-get-version ()
   (let (result (file (merge-pathnames "tmp/clisp.html" (homedir))))
+    (format t "Checking version to install....~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
       (download "http://ftp.gnu.org/pub/gnu/clisp/release/" file))
@@ -127,6 +128,7 @@
 (setq *install-cmds*
       (list 'clisp-version
             'clisp-argv-parse
+            'start
             'clisp-download
             'clisp-ffcall
             'clisp-expand
