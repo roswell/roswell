@@ -38,6 +38,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
   int issystem=(strcmp("system",version)==0);
+  unsetenv("CCL_DEFAULT_DIRECTORY");
   if(issystem){
     bin=truename(which("ccl"));
   }else {
