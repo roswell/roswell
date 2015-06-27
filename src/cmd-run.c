@@ -70,7 +70,7 @@ static int script_frontend_sentinel=0;
 int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   FILE* in;
   char buf[800];
-  int i,j,c;
+  int i=0,j,c;
   int argc_;
   char** argv_;
   char** argv_gen;
@@ -87,16 +87,15 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
     }
     for(i=0;i<3;++i)
       while((c=fgetc(in))!=EOF && c!='\n');
-    i=0;
-    for(;(c=fgetc(in))!=EOF;buf[i++]=c)
+    for(i=0;(c=fgetc(in))!=EOF;buf[i++]=c)
       if(c=='\r'||c=='\n'||i==799)
         break;
-    buf[i]='\0';
     fclose(in);
   }
+  buf[i]='\0';
   cond_printf(1,"ros_script_cmd=%s\n",buf);
   argv_=parse_cmdline(buf,&argc_);
-  argv_gen=alloc(sizeof(char**)*(argc+argc_-2));
+  argv_gen=alloc(sizeof(char**)*(argc+argc_));
   for(i=0;i<argc_-2&&strcmp(argv_[i+2],"$0")!=0;++i)
     argv_gen[i]=argv_[i+2];
   for(j=i;i<j+argc;++i)

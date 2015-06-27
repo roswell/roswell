@@ -109,6 +109,5 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc]=NULL;
   cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil"
               ,script?script:"nil");
-  s(help),s(dynamic_space_size),s(control_stack_size);
   return arg;
 }
