@@ -8,6 +8,7 @@ install:
 
 script:
   - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
+  - find . \( -name \*.go \) -type f|xargs wc -l -c
   - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
   - brew install roswell --verbose --HEAD
   - ros version
