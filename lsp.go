@@ -12,11 +12,11 @@ func Proccmd(argv []string, option []string, command []string) int {
 }
 
 func main() {
-  /*options*/
-  /* toplevel */
-  topOptions=AddCommand(topOptions,"wrap","-w",0/*dummy*/,1,0,"shell wrapper CODE to run in roswell","CODE");
-  topOptions=AddCommand(topOptions,"image","-m",0/*dummy*/,1,0,"build from Lisp image IMAGE","IMAGE");
-  topOptions=AddCommand(topOptions,"lisp","-L",0/*dummy*/,1,0,"try use these LISP implementation","NAME");
+	/*options*/
+	/* toplevel */
+	topOptions = AddCommand(topOptions, "wrap", "-w", 0 /*dummy*/, 1, 0, "shell wrapper CODE to run in roswell", "CODE")
+	topOptions = AddCommand(topOptions, "image", "-m", 0 /*dummy*/, 1, 0, "build from Lisp image IMAGE", "IMAGE")
+	topOptions = AddCommand(topOptions, "lisp", "-L", 0 /*dummy*/, 1, 0, "try use these LISP implementation", "NAME")
 
 	if len(os.Args) == 1 {
 		fmt.Print("help")
