@@ -1,3 +1,13 @@
+roswell (0.0.3.37-1) unstable; urgency=low
+
+  * Change: Change progress bar width (for CMD.exe WIN32 platform)
+  * Bugfix: Fix typo of --load-system option (by Eitaro Fukamachi)
+  * Bugfix: 'ros -L ccl-bin run' fails when environment variable
+	'CCL_DEFAULT_DIRECTORY' are set (reported by Tatsuya BIZENN)
+  * Bugfix: fix some memory leaky part.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 28 Jun 2015 10:32:04 +0900
+
 roswell (0.0.3.36-1) unstable; urgency=low
 
   * Bugfix: Build fail without git.
