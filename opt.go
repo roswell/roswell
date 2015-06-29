@@ -1,13 +1,13 @@
 package main
 
-type subCommandFnc func(argv []string, cmd []subCommand) int
+type subCommandFnc func(argv []string, cmd subCommand) int
 
 type subCommand struct {
 	name        string
 	shortName   string
 	call        subCommandFnc
 	showOpt     int
-	terminating int
+	terminating bool
 	description string
 	argExample  string
 }
@@ -22,7 +22,6 @@ type commandHelp struct {
 	call     subCommandFnc
 }
 
-
 func addHelp(base []commandHelp, name string, usage string, commands []subCommand,
 	opts []subCommand, header string, footer string, call subCommandFnc) []commandHelp {
 	return append(base, commandHelp{name: name, usage: usage,
@@ -30,7 +29,7 @@ func addHelp(base []commandHelp, name string, usage string, commands []subComman
 }
 
 func addCommand(base []subCommand, name string, shortName string, call subCommandFnc,
-	showOpt int, terminating int, description string, argExample string) []subCommand {
+	showOpt int, terminating bool, description string, argExample string) []subCommand {
 
 	return append(base, subCommand{name: name, shortName: shortName, call: call, showOpt: showOpt,
 		terminating: terminating, description: description, argExample: argExample})
