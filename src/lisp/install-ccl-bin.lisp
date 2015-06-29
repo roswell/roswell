@@ -88,12 +88,11 @@
   (format t "no options for ccl-bin~%")
   (cons t argv))
 
-(setq *install-cmds*
-      (list 'ccl-bin-version
-            'ccl-bin-argv-parse
-            'ccl-bin-download
-            'ccl-bin-expand
-            'setup))
+(push `("ccl-bin" . (ccl-bin-version
+                     ccl-bin-argv-parse
+                     ccl-bin-download
+                     ccl-bin-expand
+                     setup))
+      *install-cmds*)
 
-(setq *help-cmds*
-      (list 'ccl-bin-help))
+(push `("ccl-bin" . ,(list 'ccl-bin-help)) *help-cmds*)

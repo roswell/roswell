@@ -175,8 +175,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                                           (read-from-string (second argv)))
                            argv (nthcdr 4 argv)
                            cmds (cond
-                                  ((equal subcmd "install") *install-cmds*)
-                                  ((equal subcmd "help") *help-cmds*))))))
+                                  ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
+                                  ((equal subcmd "help") (cdr (assoc imp *help-cmds* :test #'equal))))))))
            (loop for call in cmds
               for i = (funcall call `(:target ,imp :version ,version
                                               :argv ,argv)) then (funcall call (rest i))

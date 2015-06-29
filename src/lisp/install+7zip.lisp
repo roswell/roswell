@@ -38,12 +38,10 @@
           (unzip archive (ensure-directories-exist prefix)))))
   (cons t argv)))
 
-(setq *install-cmds*
-      '(setup-7za))
+(push `("7zip" . ,'(setup-7za)) *install-cmds*)
 
 (defun 7z-help (argv)
   (format t "~%")
   (cons t argv))
 
-(setq *help-cmds*
-      (list '7z-help))
+(push `("7zip" . ,(list '7z-help)) *help-cmds*)

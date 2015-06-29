@@ -151,16 +151,15 @@
           (merge-pathnames (format nil "impls/~A/~A/~A/" (uname-m) (uname) "mingw") (homedir))))))
   (cons t argv))
 
-(setq *install-cmds*
-      (list
-       'msys-setup-msys
-       'msys-setup-mingw
-       'msys-setup-fstab
-       'msys-setup-profile))
+(push `("msys" . ,(list
+                   'msys-setup-msys
+                   'msys-setup-mingw
+                   'msys-setup-fstab
+                   'msys-setup-profile))
+      *install-cmds*)
 
 (defun msys-help (argv)
   (format t "~%")
   (cons t argv))
 
-(setq *help-cmds*
-      (list 'msys-help))
+(push `("msys" . ,(list 'msys-help)) *help-cmds*)

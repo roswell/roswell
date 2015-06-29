@@ -125,16 +125,15 @@
     (format *error-output* "done.~%"))
   (cons t argv))
 
-(setq *install-cmds*
-      (list 'clisp-version
-            'clisp-argv-parse
-            'start
-            'clisp-download
-            'clisp-ffcall
-            'clisp-expand
-            'clisp-config
-            'clisp-make
-            'clisp-install))
+(push `("clisp" . ,(list 'clisp-version
+                         'clisp-argv-parse
+                         'start
+                         'clisp-download
+                         'clisp-ffcall
+                         'clisp-expand
+                         'clisp-config
+                         'clisp-make
+                         'clisp-install))
+      *install-cmds*)
 
-(setq *help-cmds*
-      (list 'clisp-help))
+(push `("clisp" . ,(list 'clisp-help)) *help-cmds*)

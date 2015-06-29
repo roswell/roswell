@@ -209,21 +209,20 @@
       (apply #'fmt e)))
   (cons t argv))
 
-(setq *install-cmds*
-      (list #+win32 'sbcl-msys
-            'sbcl-version
-            'sbcl-argv-parse
-            'sbcl-start
-            'start
-            'sbcl-download
-            'sbcl-expand
-            'sbcl-patch
-            'sbcl-config
-            'sbcl-make
-            'sbcl-install
-            'sbcl-backup-features
-            'sbcl-clean
-            'setup))
+(push `("sbcl" . ,(list #+win32 'sbcl-msys
+                        'sbcl-version
+                        'sbcl-argv-parse
+                        'sbcl-start
+                        'start
+                        'sbcl-download
+                        'sbcl-expand
+                        'sbcl-patch
+                        'sbcl-config
+                        'sbcl-make
+                        'sbcl-install
+                        'sbcl-backup-features
+                        'sbcl-clean
+                        'setup))
+      *install-cmds*)
 
-(setq *help-cmds*
-      (list 'sbcl-help))
+(push `("sbcl" . ,(list 'sbcl-help)) *help-cmds*)

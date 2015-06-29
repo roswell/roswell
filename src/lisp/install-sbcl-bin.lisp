@@ -4,5 +4,4 @@
   (format t "no options for sbcl-bin~%")
   (cons t argv))
 
-(setq *help-cmds*
-      (list 'sbcl-bin-help))
+(push `("sbcl-bin" . ,(list 'sbcl-bin-help)) *help-cmds*)
