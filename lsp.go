@@ -2,16 +2,29 @@ package main
 
 import (
 	"os"
+	"reflect"
 	"strings"
 )
 
 var topOptions []subCommand
 var topCommands []subCommand
 var topHelps []commandHelp
+var subcommandName []string
+
+func subcmddir() string {
+	// tbd
+	if i := strings.LastIndex(os.Args[0], "/"); i != -1 {
+		return os.Args[0][0:i+1] + "src/lisp/"
+	}
+	return ""
+}
+
+func proccmdWithSubcmd(path string, subcmd string, argv []string, option []subCommand, command []subCommand) int {
+	condPrintf(1, "proccmdwithsubcmd:%s,%s\n", path, subcmd)
+	return proccmd(append([]string{path, subcmd}, argv...), option, command)
+}
 
 func proccmd(argv []string, option []subCommand, command []subCommand) int {
-	condPrintf(1, "proccmd:%s\n", argv[0])
-	condPrintf(1, "proccmd:%c\n", argv[0][0])
 	condPrintf(1, "proccmd:%s\n", argv[0])
 	if argv[0][0] == '-' || argv[0][0] == '+' {
 		if argv[0][0] == '-' && argv[0][1] == '-' { /*long option*/
@@ -44,7 +57,44 @@ func proccmd(argv []string, option []subCommand, command []subCommand) int {
 			/* invalid */
 		}
 	} else if pos := strings.Index(argv[0], "="); -1 != pos {
+		l, r := argv[0][0:pos], argv[0][pos+1:]
+		condPrintf(1, "proccmd:=\n")
+		if r != "" {
+			localOpt = setOpt(localOpt, l, r, 0)
+		} else {
+			globalOpt = unsetOpt(globalOpt, l)
+		}
+		if len(argv) > 1 {
+			return proccmd(argv[1:], option, command)
+		}
+	} else {
+		if reflect.DeepEqual(command, topCommands) && strings.Index(argv[0], ".") == -1 {
+			/* local commands*/
+			// tbd
+			/* systemwide commands*/
+			cmddir := subcmddir()
+			cmdpath := cmddir + argv[0] + ".ros"
+			condPrintf(1, "proccmd cmdpath:=%s\n", cmdpath)
+			_, err := os.Stat(cmdpath)
+			if err == nil {
+				proccmdWithSubcmd(cmdpath, "main", argv, topOptions, topCommands)
+			}
+			cmdpath = cmddir + "+" + argv[0] + ".ros"
+			condPrintf(1, "proccmd cmdpath:=%s\n", cmdpath)
+			if _, err := os.Stat(cmdpath); err == nil {
+				proccmdWithSubcmd(cmdpath, "main", argv, topOptions, topCommands)
+			}
+
+		}
+		/* search internal commands.*/
+		for _, fp := range command {
+			if fp.name == argv[0] || fp.name == "*" {
+				os.Exit(fp.call(argv, fp))
+			}
+		}
 	}
+	condPrintf(0, "invalid command\n")
+	proccmd([]string{"help"}, topOptions, topCommands)
 	return 1
 }
 
@@ -119,7 +169,7 @@ func main() {
 	if len(os.Args) == 1 {
 		proccmd([]string{"help"}, topOptions, topCommands)
 	} else {
-		for i := 1; i < len(os.Args); i += proccmd(os.Args, topOptions, topCommands) {
+		for i := 1; i < len(os.Args); i += proccmd(os.Args[i:], topOptions, topCommands) {
 		}
 	}
 	/*if get_opt("program", 0) {

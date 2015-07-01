@@ -1,6 +1,15 @@
 package main
 
+var localOpt []opts
+var globalOpt []opts
+
 type subCommandFnc func(argv []string, cmd subCommand) int
+
+type opts struct {
+	name  string
+	typ   int
+	value string
+}
 
 type subCommand struct {
 	name        string
@@ -33,4 +42,16 @@ func addCommand(base []subCommand, name string, shortName string, call subComman
 
 	return append(base, subCommand{name: name, shortName: shortName, call: call, showOpt: showOpt,
 		terminating: terminating, description: description, argExample: argExample})
+}
+
+func setOpt(opt []opts, name string, value string, typ int) []opts {
+	//tbd
+	condPrintf(1, "setOpt:\n")
+	return []opts{}
+}
+
+func unsetOpt(opt []opts, name string) []opts {
+	//tbd
+	condPrintf(1, "unsetOpt:\n")
+	return []opts{}
 }
