@@ -11,14 +11,6 @@ var topCommands []subCommand
 var topHelps []commandHelp
 var subcommandName []string
 
-func subcmddir() string {
-	// tbd
-	if i := strings.LastIndex(os.Args[0], "/"); i != -1 {
-		return os.Args[0][0:i+1] + "src/lisp/"
-	}
-	return ""
-}
-
 func proccmdWithSubcmd(path string, subcmd string, argv []string, option []subCommand, command []subCommand) int {
 	condPrintf(1, "proccmdwithsubcmd:%s,%s\n", path, subcmd)
 	return proccmd(append([]string{path, subcmd}, argv...), option, command)
@@ -160,12 +152,8 @@ func main() {
 		"Usage: " + os.Args[0] + " [OPTIONS] [[--] script-path arguments...]  \n\n"
 	topHelps = addHelp(topHelps, "", help, topCommands, topOptions, "", "", nullSubCommandFnc)
 
-	/*
-		char * path = s_cat(configdir(), q("config"), NULL)
-		global_opt = load_opts(path)
-		struct opts** opts=&global_opt;
-		unset_opt(opts, "program")
-	*/
+	globalOpt = loadOpts(configdir() + "config")
+	globalOpt = unsetOpt(globalOpt, "program")
 	if len(os.Args) == 1 {
 		proccmd([]string{"help"}, topOptions, topCommands)
 	} else {
