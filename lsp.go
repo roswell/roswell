@@ -10,6 +10,7 @@ var topOptions []subCommand
 var topCommands []subCommand
 var topHelps []commandHelp
 var subcommandName []string
+var quicklisp int = 1
 
 func proccmdWithSubcmd(path string, subcmd string, argv []string, option []subCommand, command []subCommand) int {
 	condPrintf(1, "proccmdwithsubcmd:%s,%s\n", path, subcmd)
@@ -118,8 +119,6 @@ func registerCmdInstall() {
 }
 
 func registerCmdRun() {
-}
-func registerCmdInternal() {
 }
 
 func main() {

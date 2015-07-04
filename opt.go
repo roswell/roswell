@@ -86,7 +86,7 @@ func loadOpts(path string) []opts {
 				}
 
 			}
-                        last=i+1
+			last = i + 1
 		}
 		if err == io.EOF {
 			break
