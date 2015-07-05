@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"fmt"
 	"io"
 	"os"
 )
@@ -37,6 +38,12 @@ type commandHelp struct {
 	call     subCommandFnc
 }
 
+func printOpts(opt []opts) {
+	for _, op := range opt {
+		fmt.Printf("%s=%s[]\n", op.name, op.value)
+	}
+}
+
 func addHelp(base []commandHelp, name string, usage string, commands []subCommand,
 	opts []subCommand, header string, footer string, call subCommandFnc) []commandHelp {
 	return append(base, commandHelp{name: name, usage: usage,
@@ -51,18 +58,33 @@ func addCommand(base []subCommand, name string, shortName string, call subComman
 }
 
 func setOpt(opt []opts, name string, value string, typ int) []opts {
-	//tbd
-	condPrintf(1, "setOpt:\n")
-	return []opts{}
+	for _, v := range opt {
+		if v.name == name {
+			v.value = value
+			return opt
+		}
+	}
+	return append(opt, opts{name: name, value: value, typ: 0})
+}
+
+func _getOpt(opt []opts, name string) string {
+	for _, v := range opt {
+		if v.name == name {
+			return v.value
+		}
+	}
+	return ""
 }
 
 func unsetOpt(opt []opts, name string) []opts {
-	//tbd
-	condPrintf(1, "unsetOpt:\n")
-	return []opts{}
+	for i, v := range opt {
+		if v.name == name {
+			return append(opt[0:i], opt[i+1:]...)
+		}
+	}
+	return opt
 }
-func loadOpts(path string) []opts {
-
+func loadOpts(path string) (ret []opts) {
 	f, err := os.Open(path)
 	if err != nil {
 		return []opts{}
@@ -73,20 +95,23 @@ func loadOpts(path string) []opts {
 		cur := opts{}
 		line, _, err := reader.ReadLine()
 		buf := string(line)
-		for i, mode, last := 0, 0, 0; i < len(buf); i++ {
-			if buf[i] == '\t' || buf[i] == '\n' {
-				mode++
-				switch mode {
-				case 0:
-					cur.name = buf[last:i]
-				case 1:
-					//cur.typ = buf[i-1] - '0'
-				case 2:
-					cur.value = buf[last:i]
+		if buf != "" {
+			for i, mode, last := 0, 0, 0; i < len(buf); i++ {
+				if buf[i] == '\t' || buf[i] == '\n' || len(buf)-1 == i {
+					mode++
+					switch mode {
+					case 1:
+						cur.name = buf[last:i]
+					case 2:
+						//cur.typ = buf[i-1] - '0'
+					case 3:
+						cur.value = buf[last:]
+					}
+					last = i + 1
 				}
 
 			}
-			last = i + 1
+			ret = append(ret, cur)
 		}
 		if err == io.EOF {
 			break
@@ -94,5 +119,17 @@ func loadOpts(path string) []opts {
 			panic(err)
 		}
 	}
-	return []opts{}
+	return
+}
+
+func saveOpts(path string, opt []opts) int {
+	f, err := os.Create(path)
+	if err != nil {
+		return 0
+	}
+	defer f.Close()
+	for _, op := range opt {
+		f.WriteString(fmt.Sprintf("%s\t%d\t%s\n", op.name, 0, op.value))
+	}
+	return 1
 }

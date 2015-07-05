@@ -105,9 +105,6 @@ func cmdHelp(argv []string, cmd subCommand) int {
 func cmdInternal(argv []string, cmd subCommand) int {
 	return 2
 }
-func cmdConfig(argv []string, cmd subCommand) int {
-	return 2
-}
 func cmdSetup(argv []string, cmd subCommand) int {
 	return 2
 }

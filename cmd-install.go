@@ -14,13 +14,43 @@ type installOptions struct {
 	opt               int    // dummy
 	expandPath        string //expand dist
 }
-
-type install_impls struct {
+type installCmds func(param *installOptions) int
+type installImpls struct {
 	name      string
-	call      int //dummy
+	call      []installCmds
 	uri       int // dummy
 	extention int //dummy
-	util      int
+	util      bool
+}
+
+var impls_quicklisp installImpls
+var impls_to_install = []*installImpls{&impls_sbcl_bin, &impls_quicklisp}
+
+func cmdInstallInternal(impl *installImpls, param *installOptions) {
+	var ret int
+	for _, fun := range impl.call {
+		ret = fun(param)
+		if ret == 0 {
+			break
+		}
+	}
+	if ret == 0 { // after install latest installed impl/version should be default for 'run'
+		path := configdir() + "config"
+		v := param.impl + ".version"
+		version := param.version
+		if !impl.util {
+			for i := 0; i < len(version); i++ {
+				if version[i] == '-' {
+					version = version[0:i]
+				}
+			}
+			globalOpt = setOpt(globalOpt, "default.lisp", param.impl, 0)
+			globalOpt = setOpt(globalOpt, v, version, 0)
+			saveOpts(path, globalOpt)
+		}
+	} else {
+		os.Exit(1)
+	}
 }
 
 func cmdInstall(argv []string, cmd subCommand) (ret int) {
@@ -31,7 +61,7 @@ func cmdInstall(argv []string, cmd subCommand) (ret int) {
 	param.arch = uname_m()
 	param.archInArchiveName = false
 	param.expandPath = ""
-//	condPrintf(1, "argv:%s:%d\n", argv, len(argv))
+	//condPrintf(1, "argv:%s:%d\n", argv, len(argv))
 	if len(argv) != 1 {
 		for k := 1; k < len(argv); k++ {
 			param.impl = argv[k]
@@ -42,7 +72,11 @@ func cmdInstall(argv []string, cmd subCommand) (ret int) {
 				param.version = ""
 			}
 		}
-
+		for _, impl := range impls_to_install {
+			if param.impl == impl.name {
+				cmdInstallInternal(impl, &param)
+			}
+		}
 	} else {
 		proccmd([]string{"help", "install"}, topOptions, topCommands)
 		os.Exit(0)
