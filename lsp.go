@@ -120,6 +120,7 @@ func registerCmdRun() {
 
 func main() {
 	verbose = 1
+	sbclBin("/Users/snmsts/.roswell/tmp/sbcl-bin.html")
 	/*options*/
 	/* toplevel */
 	topOptions = addCommand(topOptions, "wrap", "-w", optTop, 1, false, "shell wrapper CODE to run in roswell", "CODE")
