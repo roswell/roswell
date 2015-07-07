@@ -13,6 +13,7 @@ func sbclVersionBin(param *installOptions) int {
 			return 0
 		}
 	}
+	condPrintf(1, "got:%s\n", sbclBin(platforms_html))
 	return 1
 }
 

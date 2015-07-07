@@ -8,7 +8,7 @@ import (
 
 func uname() string {
 	result, retcode := system_("uname")
-	if retcode != 0 {
+	if retcode == 0 {
 		return strings.ToLower(strings.Replace(strings.Replace(result, "\n", "", -1), "\r", "", -1))
 	} else {
 		return ""
