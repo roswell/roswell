@@ -23,7 +23,7 @@ extern install_cmds install_sbcl_bin_full[];
 struct install_impls {
   const char* name;
   install_cmds *call;
-  install_cmd_string uri;
+  char* uri;
   install_cmd_string extention;
   int util;
 };

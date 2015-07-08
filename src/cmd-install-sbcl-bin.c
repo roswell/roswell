@@ -5,9 +5,14 @@ char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
 
+char* sbcl_bin_extention(struct install_options* param) {
+  return SBCL_BIN_EXTENTION;
+}
+
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
+  char* arch=arch_(param);
   ensure_directories_exist(platforms_html);
 
   if(!param->version) {
@@ -24,22 +29,12 @@ int sbcl_version_bin(struct install_options* param) {
   }else
     param->version=q(param->version);
   param->arch_in_archive_name=1;
-  param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch_(param),SLASH,NULL);
-  s(platforms_html),s(home);
+  param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
+  impls_sbcl_bin.uri=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
+                 "-",arch,"-binary",sbcl_bin_extention(param),NULL);
+
+  s(arch),s(platforms_html),s(home);
   return 1;
-}
-
-char* sbcl_bin_extention(struct install_options* param) {
-  return SBCL_BIN_EXTENTION;
-}
-
-char* sbcl_uri_bin(struct install_options* param) {
-  /*should I care about it's existance? */
-  char* arch=arch_(param);
-  char* ret=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
-                "-",arch,"-binary",sbcl_bin_extention(param),NULL);
-  s(arch);
-  return ret;
 }
 
 int sbcl_bin_expand(struct install_options* param) {
@@ -167,4 +162,4 @@ install_cmds install_sbcl_bin_full[]={
   NULL
 };
 
-struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,sbcl_uri_bin,sbcl_bin_extention,0};
+struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,NULL,sbcl_bin_extention,0};

@@ -62,7 +62,7 @@ char* download_archive_name(struct install_options* param) {
 
 int download(struct install_options* param) {
   char* home=configdir();
-  char* url=(*(install_impl->uri))(param);
+  char* url=install_impl->uri;
   char* archive_name=download_archive_name(param);
   char* impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
   if(!file_exist_p(impl_archive)
