@@ -5,6 +5,7 @@ int quicklisp_start(struct install_options* param) {
   char* home=configdir();
   param->version=NULL;
   param->arch_in_archive_name=0;
+  utils_quicklisp.uri=q("http://beta.quicklisp.org/quicklisp.lisp");
   //param->expand_path=cat(home,"src",SLASH,param->impl,SLASH,NULL);
   s(home);
   return 1;
@@ -29,7 +30,6 @@ int quicklisp_setup(struct install_options* param) {
     {char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
   }else
     fprintf(stderr,"Already have quicklisp.\n");
-  utils_quicklisp.uri=q("http://beta.quicklisp.org/quicklisp.lisp");
   s(archive),s(lisp_path),s(exe_path),s(home),s(install_path),s(installed),s(init);
   return 1;
 }
