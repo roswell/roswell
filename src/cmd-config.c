@@ -15,7 +15,7 @@ int cmd_config(int argc, const char **argv) {
     if(argc==2) {
       unset_opt(opts, argv[1]);
       save_opts(path,opt);
-    }else if(argc>2) {
+    }else {
       if(strcmp(argv[1],"set")==0) {
         set_opt(opts, argv[2],(char*)argv[3],0);
         save_opts(path,opt);
