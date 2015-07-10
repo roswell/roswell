@@ -33,3 +33,11 @@ func uname_m() string {
 		return ""
 	}
 }
+
+func touch(path string) {
+	condPrintf(1, "%s\n", path)
+	system_("touch " + path)
+}
+
+func setupSignalHandler(file_to_delete string) {
+}

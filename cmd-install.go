@@ -18,13 +18,72 @@ type installCmds func(param *installOptions) int
 type installImpls struct {
 	name      string
 	call      []installCmds
-	uri       int // dummy
-	extention int //dummy
+	uri       func(param *installOptions) string
+	extention func(param *installOptions) string
 	util      bool
 }
 
+var install_impl *installImpls
 var impls_quicklisp installImpls
 var impls_to_install = []*installImpls{&impls_sbcl_bin, &impls_quicklisp}
+
+func installedP(param *installOptions) bool {
+	impl := param.impl
+	//TBD for util.
+	i := configdir() + "impls" + SLASH + param.arch + SLASH + param.os + SLASH + impl + ters(param.version != "", SLASH, "") + param.version + SLASH
+	ret := directoryExistP(i)
+	condPrintf(1, "directoryExistP(%s)=%t\n", i, ret)
+	return ret
+}
+
+func installRunningP(param *installOptions) bool {
+	/* TBD */
+	return false
+}
+
+func start(param *installOptions) int {
+	ensureDirectoriesExist(configdir())
+	if installedP(param) {
+		condPrintf(0, "%s/%s is already installed. Try (TBD) if you intend to reinstall it.\n", param.impl, param.version)
+		return 0
+	}
+	if installRunningP(param) {
+		condPrintf(0, "It seems running installation process for $1/$2.\n")
+		return 0
+	}
+	p := configdir() + "tmp" + SLASH + param.impl + ters(param.version != "", "-", "") + param.version + SLASH
+	setupSignalHandler(p)
+	touch(p)
+	return 1
+}
+
+func download_archive_name(param *installOptions) string {
+	condPrintf(0, "arch:%s:\n", param.impl+ters(param.version != "", "-", "")+param.version)
+	return param.impl + ters(param.version != "", "-", "") + param.version +
+		ters(!param.archInArchiveName,
+			install_impl.extention(param),
+			"-"+param.arch+"-"+param.os+install_impl.extention(param))
+}
+
+func download(param *installOptions) int {
+	url := install_impl.uri(param)
+	archive_name := download_archive_name(param)
+	impl_archive := configdir() + "archives" + SLASH + archive_name
+	condPrintf(0, "impl_archive:%s:\n", impl_archive)
+	if !fileExistP(impl_archive) /*|| get_opt("download.force",1) */ {
+		condPrintf(0, "Downloading %s\n", url)
+		if url != "" {
+			ensureDirectoriesExist(impl_archive)
+			if downloadSimple(url, impl_archive, verbose)!=0 {
+				condPrintf(0,"Failed to Download.\n")
+				return 0
+			}
+		}
+	} else {
+		condPrintf(0,"Skip downloading %s\n", url)
+	}
+	return 1
+}
 
 func cmdInstallInternal(impl *installImpls, param *installOptions) {
 	var ret int
@@ -74,6 +133,7 @@ func cmdInstall(argv []string, cmd subCommand) (ret int) {
 		}
 		for _, impl := range impls_to_install {
 			if param.impl == impl.name {
+				install_impl = impl
 				cmdInstallInternal(impl, &param)
 			}
 		}

@@ -25,7 +25,7 @@ func sbclBin(path string) string {
 		if n.Type == html.ElementNode && n.Data == "a" {
 			for _, attr := range n.Attr {
 				if k, v := attr.Key, attr.Val; k == "href" && (v[len(v)-3:] == "bz2" || v[len(v)-3:] == "msi") && strings.Index(v, u) != -1 {
-					return v
+					return strings.Split(v, "-")[1]
 				}
 			}
 		}
