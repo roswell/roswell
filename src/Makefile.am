@@ -14,8 +14,9 @@ gend.h: gen$(EXEEXT) FORCE
 	cat $@
 cmd-version.c: gend.h
 bin_PROGRAMS = ros
-ros_SOURCES = lsp.c opt.c download.c archive.c html.c internal.c \
+ros_SOURCES = lsp.c opt.c download.c archive.c html.c \
 	util_list.c util.c util_string.c util_dir.c util_system.c \
+	cmd-internal.c \
 	cmd-version.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c \
 	cmd-install.c cmd-install-sbcl-bin.c cmd-install-quicklisp.c \
