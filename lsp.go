@@ -34,7 +34,7 @@ func proccmd(argv []string, option []subCommand, command []subCommand) int {
 			}
 			condPrintf(1, "proccmd:invalid? %s\n", argv[0])
 		} else { /*short option*/
-			if len(argv[0]) == 1 {
+			if len(argv[0]) != 1 {
 				for _, fp := range option {
 					if fp.shortName != "" && strings.Index(argv[0], fp.shortName) != -1 {
 						result := fp.call(argv, fp)
@@ -102,30 +102,65 @@ func cmdHelp(argv []string, cmd subCommand) int {
 	condPrintf(1, "cmd help\n")
 	return 2
 }
-func cmdInternal(argv []string, cmd subCommand) int {
-	return 2
-}
 func cmdSetup(argv []string, cmd subCommand) int {
 	return 2
 }
+
 func nullSubCommandFnc(argv []string, cmd subCommand) int {
 	return 2
-}
-
-func registerCmdInstall() {
 }
 
 func registerCmdRun() {
 }
 
+func optTopVerbose(argv []string, cmd subCommand) int {
+	if cmd.name == "verbose" {
+		verbose = 1 | verbose<<1
+	} else if cmd.name == "quiet" {
+		verbose = verbose >> 1
+	}
+	condPrintf(1, "opt_verbose:%s %d\n", cmd.name, verbose)
+	return 1
+}
+
+func registerRuntimeOptions(opt []subCommand) []subCommand {
+	//opt = addCommand(opt, "load", "-l", opt_top_build, 1, 0, "load lisp FILE while building", "FILE")
+	//opt = addCommand(opt, "source-registry", "-S", opt_top_build, 1, 0, "override source registry of asdf systems", "X")
+	//opt = addCommand(opt, "system", "-s", opt_top_build, 1, 0, "load asdf SYSTEM while building", "SYSTEM")
+	//opt = addCommand(opt, "load-system", NULL, opt_top_build, 1, 0, "same as above (buildapp compatibility)", "SYSTEM")
+	//opt = addCommand(opt, "package", "-p", opt_top_build, 1, 0, "change current package to PACKAGE", "PACKAGE")
+	//opt = addCommand(opt, "system-package", "-sp", opt_top_build, 1, 0, "combination of -s SP and -p SP", "SP")
+	//opt = addCommand(opt, "eval", "-e", opt_top_build, 1, 0, "evaluate FORM while building", "FORM")
+	//opt = addCommand(opt, "require", NULL, opt_top_build, 1, 0, "require MODULE while building", "MODULE")
+	//opt = addCommand(opt, "quit", "-q", opt_top_build0, 1, 0, "quit lisp here", NULL)
+
+	//opt = addCommand(opt, "restart", "-r", opt_restart_after, 1, 0, "restart from build by calling (FUNC)", "FUNC")
+	//opt = addCommand(opt, "entry", "-E", opt_restart_after, 1, 0, "restart from build by calling (FUNC argv)", "FUNC")
+	//opt = addCommand(opt, "init", "-i", opt_restart_after, 1, 0, "evaluate FORM after restart", "FORM")
+	//opt = addCommand(opt, "print", "-ip", opt_restart_after, 1, 0, "evaluate and princ FORM after restart", "FORM")
+	//opt = addCommand(opt, "write", "-iw", opt_restart_after, 1, 0, "evaluate and write FORM after restart", "FORM")
+
+	//opt = addCommand(opt, "final", "-F", opt_final, 1, 0, "evaluate FORM before dumping IMAGE", "FORM")
+
+	/* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
+	/* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
+	//opt = addCommand(opt, "rc", "-R", opt_top_rc, 1, 0, "try read /etc/rosrc, ~/.roswell/init.lisp", NULL)
+	//opt = addCommand(opt, "no-rc", "+R", opt_top_rc, 1, 0, "skip /etc/rosrc, ~/.roswell/init.lisp", NULL)
+	//opt = addCommand(opt, "quicklisp", "-Q", opt_top_ql, 1, 0, "use quicklisp (default)", NULL)
+	//opt = addCommand(opt, "no-quicklisp", "+Q", opt_top_ql, 1, 0, "do not use quicklisp", NULL)
+	opt = addCommand(opt, "verbose", "-v", optTopVerbose, 1, false, "be quite noisy while building", "")
+	opt = addCommand(opt, "quiet", "", optTopVerbose, 1, false, "be quite quiet while building (default)", "")
+	//opt = addCommand(opt, "test", NULL, opt_top_testing, 1, 0, "for test purpose", NULL)
+	return opt
+}
+
 func main() {
-	verbose = 1
 	/*options*/
 	/* toplevel */
 	topOptions = addCommand(topOptions, "wrap", "-w", optTop, 1, false, "shell wrapper CODE to run in roswell", "CODE")
 	topOptions = addCommand(topOptions, "image", "-m", optTop, 1, false, "build from Lisp image IMAGE", "IMAGE")
 	topOptions = addCommand(topOptions, "lisp", "-L", optTop, 1, false, "try use these LISP implementation", "NAME")
-	//topOptions = registerRuntimeOptions(topOptions)
+	topOptions = registerRuntimeOptions(topOptions)
 
 	/* abbrevs */
 	topOptions = addCommand(topOptions, "version", "-V", cmdVersion, 0, true, "", "")

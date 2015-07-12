@@ -24,17 +24,8 @@ func sbclVersionBin(param *installOptions) int {
 	return 1
 }
 
-func dum1(param *installOptions) int {
-	condPrintf(1, "hoge-----:%s:\n", param.version)
-	return 0
-}
-
-func sbcl_bin_extention(param *installOptions) string {
-	return ".tar.bz2"
-}
-
 func sbcl_bin_uri(param *installOptions) string {
-        return "http://prdownloads.sourceforge.net/sbcl/sbcl-"+param.version+"-"+arch_(param)+"-binary"+sbcl_bin_extention(param)
+	return "http://prdownloads.sourceforge.net/sbcl/sbcl-" + param.version + "-" + arch_(param) + "-binary" + sbcl_bin_extention(param)
 }
 
 var impls_sbcl_bin = installImpls{
@@ -43,7 +34,9 @@ var impls_sbcl_bin = installImpls{
 		sbclVersionBin,
 		start,
 		download,
-		dum1},
+		sbclBinExpand,
+		sbclBinInstall,
+	},
 	extention: sbcl_bin_extention,
-        uri:sbcl_bin_uri ,
+	uri:       sbcl_bin_uri,
 }

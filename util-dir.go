@@ -27,3 +27,16 @@ func configdir() string {
 	}
 	return ""
 }
+
+func deleteDirectory(pathspec string, recursive bool) int {
+	var e error
+	if recursive {
+		e = os.RemoveAll(pathspec)
+	} else {
+		e = os.Remove(pathspec)
+	}
+	if e != nil {
+		return 0
+	}
+	return 1
+}

@@ -52,13 +52,14 @@ func start(param *installOptions) int {
 		return 0
 	}
 	p := configdir() + "tmp" + SLASH + param.impl + ters(param.version != "", "-", "") + param.version + SLASH
+	ensureDirectoriesExist(p)
+	p = configdir() + "tmp" + SLASH + param.impl + ters(param.version != "", "-", "") + param.version + ".lock"
 	setupSignalHandler(p)
 	touch(p)
 	return 1
 }
 
-func download_archive_name(param *installOptions) string {
-	condPrintf(0, "arch:%s:\n", param.impl+ters(param.version != "", "-", "")+param.version)
+func downloadArchiveName(param *installOptions) string {
 	return param.impl + ters(param.version != "", "-", "") + param.version +
 		ters(!param.archInArchiveName,
 			install_impl.extention(param),
@@ -67,20 +68,20 @@ func download_archive_name(param *installOptions) string {
 
 func download(param *installOptions) int {
 	url := install_impl.uri(param)
-	archive_name := download_archive_name(param)
+	archive_name := downloadArchiveName(param)
 	impl_archive := configdir() + "archives" + SLASH + archive_name
 	condPrintf(0, "impl_archive:%s:\n", impl_archive)
 	if !fileExistP(impl_archive) /*|| get_opt("download.force",1) */ {
 		condPrintf(0, "Downloading %s\n", url)
 		if url != "" {
 			ensureDirectoriesExist(impl_archive)
-			if downloadSimple(url, impl_archive, verbose)!=0 {
-				condPrintf(0,"Failed to Download.\n")
+			if downloadSimple(url, impl_archive, verbose) != 0 {
+				condPrintf(0, "Failed to Download.\n")
 				return 0
 			}
 		}
 	} else {
-		condPrintf(0,"Skip downloading %s\n", url)
+		condPrintf(0, "Skip downloading %s\n", url)
 	}
 	return 1
 }
@@ -149,7 +150,7 @@ func installHelp(argv []string, cmd subCommand) int {
 	return 2
 }
 
-func registerCmdInternal() {
+func registerCmdInstall() {
 	topCommands = addCommand(topCommands, "install", "", cmdInstall, 1, true, "Install archive and build it for "+PACKAGE+" environment", "")
 	topHelps = addHelp(topHelps, "install", "", nil, nil, "", "", installHelp)
 }

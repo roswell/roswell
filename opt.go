@@ -84,6 +84,7 @@ func unsetOpt(opt []opts, name string) []opts {
 	}
 	return opt
 }
+
 func loadOpts(path string) (ret []opts) {
 	f, err := os.Open(path)
 	if err != nil {
