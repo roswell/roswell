@@ -17,6 +17,8 @@
 #include <unistd.h>
 #include <signal.h>
 #include <dirent.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #else
 #include <windows.h>
 #include <shellapi.h>
@@ -146,6 +148,7 @@ char* uname_m(void);
 char* which(char* cmd);
 LVal directory(char* path);
 void setup_signal_handler (char* file_to_delete);
+void setup_uid(int euid_or_uid);
 
 int proccmd(int argc,char** argv,LVal option,LVal command);
 int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command);

@@ -322,3 +322,21 @@ void setup_signal_handler (char* file_to_delete) {
   atexit(atexit_handler);
 #endif
 }
+
+void setup_uid(int euid_or_uid) {
+#ifndef HAVE_WINDOWS_H
+  if(getuid()==0) {
+    char *uid_str=getenv("SUDO_UID"),*gid_str=getenv("SUDO_GID");
+    uid_t uid=uid_str?atoi(uid_str):0;
+    gid_t gid=gid_str?atoi(gid_str):0;
+
+    if(euid_or_uid) {
+      setegid(gid)!=-1;
+      seteuid(uid)!=-1;
+    }else {
+      setgid(gid)!=-1;
+      setuid(uid)!=-1;
+    }
+  }
+#endif
+}

@@ -26,6 +26,7 @@ int quicklisp_setup(struct install_options* param) {
 
   if(!file_exist_p(installed)){
     {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+    {char* p[]={"-L","sbcl-bin"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
     {char* p[]={"--eval",init};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
     {char* p[]={"--",lisp_path,exe_path,archive,install_path};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
   }else

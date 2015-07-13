@@ -13,7 +13,10 @@ char* homedir(void) {
   if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData)))
     c=q_(szAppData);
 #else
+  char* user=getenv("SUDO_USER");
   struct passwd *pwd= getpwuid(getuid());
+  if(user)
+    pwd=getpwnam(user);
   if(pwd)
     c=q_(pwd->pw_dir);
 #endif
@@ -78,12 +81,26 @@ int ensure_directories_exist (char* path) {
   }else path=q(path);
   if(!directory_exist_p(path)) {
 #ifndef HAVE_WINDOWS_H
+  pid_t  pid=fork();
+  if(pid==-1) {
+    perror("fork");
+    return 0;
+  }
+  if(pid==0) {
     char* cmd=cat("mkdir -p ",path,NULL);
+    setup_uid(0);
     if(System(cmd)!=0) {
       fprintf(stderr,"failed:%s\n",cmd);
-      return 0;
-    };
+      exit(1);
+    }
     s(cmd);
+    exit(0);
+  }else {
+    int status;
+    s(path);
+    waitpid(pid,&status,0);
+    return WEXITSTATUS(status);
+  }
 #else
     SHCreateDirectoryEx(NULL,path,NULL);
 #endif
@@ -135,7 +152,7 @@ int change_directory(const char* path) {
   return chdir(path);
 #else
   return _chdir(path);
-#endif  
+#endif
 }
 
 int delete_directory(char* pathspec,int recursive) {

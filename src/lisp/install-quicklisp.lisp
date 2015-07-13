@@ -15,6 +15,13 @@
     ((probe-file path)
      (format *error-output* "Quicklisp is already setup.~%"))
     (t
+     #-win32
+     (ignore-errors
+       (require :sb-posix)
+       (let ((gid (sb-posix:getenv "SUDO_GID")))
+         (sb-posix:setgid (parse-integer gid)))
+       (let ((uid (sb-posix:getenv "SUDO_UID")))
+         (sb-posix:setuid (parse-integer uid))))
      (load archive)
      ;; use roswell to download everithing.
      (progn

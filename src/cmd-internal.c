@@ -39,5 +39,6 @@ void register_cmd_internal(void) {
 }
 
 int cmd_internal(int argc,char **argv,struct sub_command* cmd) {
+  setup_uid(0);
   return proccmd(argc-1,&(argv[1]),(LVal)NULL,internal_commands);
 }

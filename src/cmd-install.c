@@ -32,7 +32,10 @@ int install_running_p(struct install_options* param) {
 
 int start(struct install_options* param) {
   char *home=configdir(),*p;
-  ensure_directories_exist(home);
+  char *localprojects=cat(home,"local-projects/",NULL);
+  setup_uid(1);
+  ensure_directories_exist(localprojects);
+  s(localprojects);
   if(installed_p(param)) {
     printf("%s/%s is already installed. Try (TBD) if you intend to reinstall it.\n",param->impl,param->version?param->version:"");
     return 0;
@@ -190,8 +193,8 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
         int p=position_char(".",str);
         if(p!=-1) {
           char *sub=subseq(str,0,p);
-	  if(p>=8/*strlen("install-")*/ && strncmp(str,"install-",8)==0)
-	    printf("%s\n",sub+8);
+          if(p>=8/*strlen("install-")*/ && strncmp(str,"install-",8)==0)
+            printf("%s\n",sub+8);
           s(sub);
         }
       }

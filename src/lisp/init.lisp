@@ -89,12 +89,15 @@
       (when (probe-file path)
         (cl:load path)
         (let ((symbol (read-from-string "ql:*local-project-directories*")))
-          (set symbol (cons (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir")))
-                            (symbol-value symbol))))
+          (when (probe-file (merge-pathnames "local-projects/" (opt "homedir")))
+            (set symbol (cons (merge-pathnames "local-projects/" (opt "homedir"))
+                              (symbol-value symbol)))))
         t))))
 
 #+quicklisp
-(push (ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))) ql:*local-project-directories*)
+(let ((path (merge-pathnames "local-projects/" (opt "homedir"))))
+  (when (probe-file path)
+    (push path ql:*local-project-directories*)))
 
 (defun shebang-reader (stream sub-character infix-parameter)
   (declare (ignore sub-character infix-parameter))
