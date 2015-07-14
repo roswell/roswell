@@ -23,5 +23,12 @@ func sbclBinExpand(param *installOptions) int {
 }
 
 func sbclBinInstall(param *installOptions) int {
+	version, impl := param.version, param.impl
+	implPath := configdir() + "impls" + SLASH + param.arch + SLASH + param.os + SLASH + impl + SLASH + version
+	logPath := configdir() + "impls" + SLASH + "log" + SLASH + impl + "-" + version + SLASH + "install.log"
+	condPrintf(0, "Building %s/%s...", impl, version)
+	ensureDirectoriesExist(implPath)
+	ensureDirectoriesExist(logPath)
+	//change_directory(src)
 	return 0
 }
