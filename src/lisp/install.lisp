@@ -143,10 +143,13 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
              (make-pathname
               :defaults (merge-pathnames "bin/" *home-path*)
               :name (pathname-name from)
-              :type (unless (or #+unix (equalp (pathname-type from) "ros"))
-                      (pathname-type from))))))
+              :type (if (equalp (pathname-type from) "ros")
+                        (or #+win32 "exe")
+                        (pathname-type from))))))
     (format *error-output* "~&~A~%" to)
-    (uiop/stream:copy-file from to)
+    (if (equalp (pathname-type from) "ros")
+        (ros:roswell `("build" ,from "-o" ,to) :interactive nil)
+        (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
 
 (defun main (subcmd impl/version &rest argv)

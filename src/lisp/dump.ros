@@ -59,7 +59,10 @@ exec ros -- $0 "$@"
                     (read-from-string
                      (format nil "(~A)"
                              (ros:opt "restart")))))
-            (out (first params)))
+            (out (first params))
+            (actual-out (or (and (equal (second params) "-o") ;; skimped ...
+                                 (third params))
+                            (first params))))
         (unless cmds
           (warn "dumping executable without specifing initial behaviour."))
         (when (equalp (pathname-type out) "ros")
@@ -68,7 +71,7 @@ exec ros -- $0 "$@"
             (ros:script nil out)
             (setf main-list (let ((*package* (find-package :keyword)))
                               `((:entry ,(format nil "~S" ros:*main*))))
-                  out (make-pathname :type #-win32 nil #+win32 "exe" :defaults out)
+                  out (make-pathname :type #-win32 nil #+win32 "exe" :defaults actual-out)
                   cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))

@@ -15,12 +15,12 @@ exec ros -Q +R -- $0 "$@"
             :do (return (subseq argv hl (1- i)))))))
 
 (defun main- (argv)
-  (ros:roswell (list (with-open-file (in (third argv))
-                       (read-line in)
-                       (read-line in)
-                       (read-line in)
-                       (parse-argv (read-line in)))
-                     "dump executable" (third argv))
+  (ros:roswell `(,(with-open-file (in (third argv))
+                                  (read-line in)
+                                  (read-line in)
+                                  (read-line in)
+                                  (parse-argv (read-line in)))
+                  "dump executable" ,@(cddr argv))
                :interactive nil))
 
 (defun main (&rest argv)
