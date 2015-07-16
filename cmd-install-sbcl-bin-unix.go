@@ -1,7 +1,9 @@
 // +build !windows
 package main
 
-import ()
+import (
+	"os"
+)
 
 func sbcl_bin_extention(param *installOptions) string {
 	return ".tar.bz2"
@@ -26,9 +28,14 @@ func sbclBinInstall(param *installOptions) int {
 	version, impl := param.version, param.impl
 	implPath := configdir() + "impls" + SLASH + param.arch + SLASH + param.os + SLASH + impl + SLASH + version
 	logPath := configdir() + "impls" + SLASH + "log" + SLASH + impl + "-" + version + SLASH + "install.log"
+	src := param.expandPath
+	sbclHome := implPath + SLASH + "lib" + SLASH + "sbcl"
+	installRoot := implPath
 	condPrintf(0, "Building %s/%s...", impl, version)
 	ensureDirectoriesExist(implPath)
 	ensureDirectoriesExist(logPath)
-	//change_directory(src)
+	os.Chdir(src)
+	os.Setenv("SBCL_HOME", sbclHome)
+	os.Setenv("INSTALL_ROOT", installRoot)
 	return 0
 }
