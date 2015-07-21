@@ -1,0 +1,139 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(ql:quickload '(:plump :dexador :cl-ppcre))
+
+(defvar *base-html* "http://sourceforge.net")
+(defvar *root-html* "http://sourceforge.net/projects/sbcl/files/sbcl/")
+
+(defvar *supported-table*
+  '((:linux           (:x86 :x86-64 :powerpc :sparc :alpha :mips :mipsel :armel  :armhf))
+    (:darwin          (:x86 :x86-64 :powerpc))
+    (:solaris         (:x86 :x86-64          :sparc))
+    (:freebsd         (:x86 :x86-64))
+    (:netbsd          (:x86 :x86-64 :powerpc))
+    (:openbsd         (:x86 :x86-64 :powerpc))
+    (:dragonfly       (     :x86-64))
+    (:debian-kfreebsd (:x86 :x86-64))
+    (:windows         (:x86 :x86-64))))
+
+(defun table2pair (&optional (table *supported-table*))
+  (loop :for (os cpus) :in table
+     :append (loop :for cpu :in cpus
+                :collect (cons os cpu))))
+
+(let (result)
+  (defun cpulist (&optional (table *supported-table*))
+    (unless result
+      (loop :with r
+         :for (os cpus) :in table
+         :do (loop :for cpu :in cpus
+                :do (pushnew cpu r))
+         :finally (setq result r)))
+    result))
+
+(defun valid-cpu (cpu)
+  (find cpu (cpulist) :test 'string-equal))
+
+(let (result)
+  (defun oslist (&optional (table *supported-table*))
+    (unless result
+      (setq result (mapcar 'car table)))
+    result))
+
+(defun valid-os (os)
+  (or (find-if (lambda (_) (string-equal _ os :end2 (min (length (string _))
+                                                         (length (string os)))))
+               (oslist))
+      (and (equal os "debian") ;; dirty...
+           :debian-kfreebsd)))
+
+(defun version-list (&optional (html *root-html*))
+  (let ((html (plump:get-element-by-id (plump:parse (dex:get html)) "files_list"))
+        result)
+    (labels
+        ((f (x depth)
+           (let ((ret
+                  (loop :for i :across (plump:children x)
+                     :unless (or
+                              (typep i 'plump-dom:doctype)
+                              (typep i 'plump-dom:comment)
+                              (typep i 'plump-dom:fulltext-element)
+                              (typep i 'plump-dom:text-node))
+                     :collect (f i (1+ depth)))))
+             (when (equal (or ret (plump:tag-name x)) "a")
+               (push (plump:attribute x "href") result)))))
+      (f html 0)
+      (reverse result))))
+
+(defun list-files (&optional (elt "/projects/sbcl/files/sbcl/1.2.13/"))
+  (let((html (plump:get-element-by-id
+              (plump:parse (dex:get (format nil "~A~A" *base-html* elt)))
+              "files_list"))
+       result)
+    (labels
+        ((f (x depth)
+           (let ((ret (loop :for i :across (plump:children x)
+                         :unless (or
+                                  (typep i 'plump-dom:doctype)
+                                  (typep i 'plump-dom:comment)
+                                  (typep i 'plump-dom:fulltext-element)
+                                  (typep i 'plump-dom:text-node))
+                         :collect (f i (1+ depth)))))
+             (when (equal (or ret (plump:tag-name x)) "a")
+               (push (plump:attribute x "href") result)))))
+      (f html 0)
+      (reverse result))))
+
+(defun information-from-sourceforge.net (uri)
+  (let ((result (rest (split-sequence:split-sequence #\- (cl-ppcre:scan-to-strings "/sbcl-[^/]*" uri)))))
+    (when result
+      (when (and (equal (second result) "x86")
+                 (equal (third result) "64"))
+        (setq result `(,(first result) "x86-64" ,@(nthcdr 3 result))))
+      (setq result (if (and (valid-cpu (second result))
+                            (valid-os (third result)))
+                       `(,(first result) (,(valid-os (third result)) . ,(valid-cpu (second result)))
+                          ,(cl-ppcre:scan-to-strings ".*\\.[^/]*" uri))
+                       nil))
+      result)))
+;; (information-from-sourceforge.net "http://sourceforge.net/projects/sbcl/files/sbcl/1.2.13/sbcl-1.2.13-x86-windows-binary.msi/download")
+
+(defun collect-uri ()
+  (loop
+     :with a := (table2pair)
+     :with result
+     :for version :in (version-list)
+     :while a
+     :do (list a result)
+     (loop :for j :in (list-files (print version))
+        :for i := (information-from-sourceforge.net j)
+        :when i
+        :do (when (find (second i) a :test 'equalp)
+              (print (cons :found (second i)))
+              (push i result)
+              (setq a (remove (second i) a :test 'equalp))))
+     :finally (return result)))
+
+(defvar *html-head* "<!DOCTYPE html>
+<html>
+<head></head>
+<body>")
+
+(defvar *html-foot* "</body>
+</html>
+")
+
+(defun html-to-file (file list)
+  (with-open-file (o file :direction :output :if-exists :supersede :if-does-not-exist :create)
+    (format o "~A~%" *html-head*)
+    (loop :for line :in (reverse list)
+       :do (format o "<a href=\"~A\">~A ~A</a>~%" (third line)
+                   (car(second line)) (cdr(second line))))
+    (format o "~A~%" *html-foot*)))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (html-to-file (first argv) (collect-uri)))
