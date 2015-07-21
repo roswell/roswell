@@ -2,8 +2,8 @@
 
 struct tag {
   int type; /* 0 for not tag
-	       1 for open tag
-	       2 for close tag*/
+               1 for open tag
+               2 for close tag*/
   char* name;
   struct Cons* attr;
 };
@@ -153,8 +153,8 @@ LVal filter_href(LVal t) {
     for(;a;a=Next(a)) {
       struct opts* v=(struct opts*)firstp(a);
       if(strcmp(v->name,"href")==0) {
-	href=q(v->value);
-	break;
+        href=q(v->value);
+        break;
       }
     }
     if(href)
