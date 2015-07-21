@@ -332,12 +332,15 @@ char* sbcl_bin(char* file) {
   return str;
 }
 
-/*gcc html.c -DROSWELL_HTML_TEST util.c util_list.c util_dir.c util_string.c*/
+/*gcc html.c -DROSWELL_HTML_TEST util.c util_list.c util_dir.c util_string.c util_system.c*/
 #ifdef ROSWELL_HTML_TEST
+char* lispdir(void) {
+  return NULL;
+}
 char** argv_orig;
 int verbose=0;
 int main(int argc,char** argv) {
   verbose=1;
-  sbcl_bin(argv[1]);
+  printf("version is %s\n",sbcl_bin(argv[1]));
 }
 #endif

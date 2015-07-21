@@ -18,7 +18,7 @@ int sbcl_version_bin(struct install_options* param) {
   if(!param->version) {
     int ret;
     printf("SBCL version is not specified. Downloading platform-table.html to see which version to install...\n");
-    ret=download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
+    ret=download_simple("https://gist.githubusercontent.com/snmsts/12f0cf8567b8e26ae15f/raw/0b9134f9820c195e1ca84d382176777ec989183e/platform-table.html",platforms_html,0);
     if(ret!=0) {
       printf("Download failed (Code=%d)\n",ret);
       return 0;

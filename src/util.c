@@ -331,11 +331,11 @@ void setup_uid(int euid_or_uid) {
     gid_t gid=gid_str?atoi(gid_str):0;
 
     if(euid_or_uid) {
-      setegid(gid)!=-1;
-      seteuid(uid)!=-1;
+      setegid(gid);
+      seteuid(uid);
     }else {
-      setgid(gid)!=-1;
-      setuid(uid)!=-1;
+      setgid(gid);
+      setuid(uid);
     }
   }
 #endif
