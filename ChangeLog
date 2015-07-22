@@ -1,3 +1,12 @@
+roswell (0.0.3.38-1) unstable; urgency=low
+
+  * Change: add gist url for outage of sbcl.org.
+  * New: scripts/make-table.ros to make apropriate html file for roswell.
+  * Change: ros script are automatically compiled when it is installed by 'ros install hoge'.
+  * Improve: it's experimental implementation but setuid/setgid are properly done for 'ros setup'.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 23 Jul 2015 00:54:46 +0900
+
 roswell (0.0.3.37-1) unstable; urgency=low
 
   * Change: Change progress bar width (for CMD.exe WIN32 platform)
