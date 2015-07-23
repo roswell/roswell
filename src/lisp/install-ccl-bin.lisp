@@ -49,6 +49,8 @@
   (let ((uname (uname%))
         (uname-m (uname-m%)))
     (set-opt "as" (getf argv :version))
+    (when (position "--without-install" (getf argv :argv) :test 'equal)
+      (set-opt "without-install" t))
     (set-opt "download.uri" (format nil "~@{~A~}" "http://ccl.clozure.com/ftp/pub/release/"
                                     (getf argv :version) "/ccl-" (getf argv :version) "-" uname uname-m (if (equal uname "windows")
                                                                                                             ".zip"".tar.gz")))
@@ -68,7 +70,7 @@
         (download (get-opt "download.uri") (get-opt "download.archive")))
       (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
               (get-opt "download.uri")))
-  (cons t argv))
+  (cons (not (get-opt "without-install")) argv))
 
 (defun ccl-bin-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -85,7 +87,8 @@
   (cons t argv))
 
 (defun ccl-bin-help (argv)
-  (format t "no options for ccl-bin~%")
+  (format t "ccl-bin install options~%")
+  (fmt "install" t "Download archive")
   (cons t argv))
 
 (push `("ccl-bin" . (ccl-bin-version

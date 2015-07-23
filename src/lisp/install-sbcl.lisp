@@ -57,6 +57,8 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
+  (when (position "--without-install" (getf argv :argv) :test 'equal)
+    (set-opt "without-install" t))
   (set-opt "download.uri" (format nil "~@{~A~}" "http://sourceforge.net/projects/sbcl/files/sbcl/" 
                                   (getf argv :version) "/sbcl-" (getf argv :version) "-source.tar.bz2"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
@@ -88,7 +90,7 @@
         (download (get-opt "download.uri") (get-opt "download.archive")))
       (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download again.~%"
               (get-opt "download.uri")))
-  (cons t argv))
+  (cons (not (get-opt "without-install")) argv))
 
 (defun sbcl-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -205,6 +207,7 @@
                    more)))
     (format t "sbcl install options~%")
     (fmt "as" "nickname" "install non-default optioned version of SBCL")
+    (fmt "install" t "Download archive")
     (dolist (e *sbcl-options*)
       (apply #'fmt e)))
   (cons t argv))
