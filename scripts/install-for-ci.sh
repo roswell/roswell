@@ -20,7 +20,11 @@ cd $ROSWELL_DIR
 sh bootstrap
 ./configure --prefix=$ROSWELL_INSTALL_DIR
 make
-sudo make install
+if [ -w "$ROSWELL_INSTALL_DIR" ]; then
+    make install
+else
+    sudo make install
+fi
 
 echo "Roswell has been installed."
 log "ros --version"
