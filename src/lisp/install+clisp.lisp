@@ -75,6 +75,18 @@
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
 
+(defun clisp-patch (argv)
+  #+darwin
+  (let ((file (merge-pathnames "tmp/clisp.patch" (homedir)))
+        (uri "https://raw.githubusercontent.com/Homebrew/homebrew/2fb8cb1a2279f80dc89900b3ebaca9e5afc90494/Library/Formula/clisp.rb"))
+    (format t "~&Downloading patch: ~A~%" uri)
+    (download uri file)
+    (uiop/os:chdir (get-opt "src"))
+    (format t "~&chdir ~A~%" (get-opt "src"))
+    (format t "~%Applying patch:~%")
+    (uiop/run-program:run-program (format nil "git apply ~A" file) :output t))
+  (cons t argv))
+
 (defun clisp-config (argv)
   (format t "~&configure~%")
   (with-open-file (out (ensure-directories-exist
@@ -100,7 +112,7 @@
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
     (let* ((src (namestring (namestring (merge-pathnames "src/" (get-opt "src")))))
-           (cmd (format nil "make"))
+           (cmd (format nil "ulimit -s 16384 && make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (format t "~&chdir ~A~%" src)
@@ -131,6 +143,7 @@
                          'clisp-download
                          'clisp-ffcall
                          'clisp-expand
+                         'clisp-patch
                          'clisp-config
                          'clisp-make
                          'clisp-install))
