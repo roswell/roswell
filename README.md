@@ -107,11 +107,11 @@ Or, Just simply `ros emacs` would launch emacs with slime setup.
 
 - [Rudolph-Miller/chef-roswell](https://github.com/Rudolph-Miller/chef-roswell)
 
-## Roswell with Travis CI.
+## Roswell with CircleCI
 
-[@fukamachi](https://github.com/fukamachi) use Roswell with Travis CI.
+[@fukamachi](https://github.com/fukamachi) use Roswell with CircleCI.
 
-- [fukamachi/legion/.travis.yml](https://github.com/fukamachi/legion/blob/master/.travis.yml)
+- [fukamachi/legion/circle.yml](https://github.com/fukamachi/legion/blob/master/circle.yml)
 
 ## Where to put my local project?
 You can put at ~/.roswell/local-projects/ (From version 0.0.3.34).
@@ -123,6 +123,7 @@ I felt making it easier to use Lisp for people is a kind of making opportunity f
 
 ## See Also
 + [keens/cim](https://github.com/keens/cim) : similar project that is implemented in shellscript.I motivated to implement roswell by seeing this project.
++ [cl-launch](http://cliki.net/cl-launch) : influenced by the project of command line parameters design.
 
 ## Author
 SANO Masatoshi (snmsts@gmail.com)
@@ -138,4 +139,4 @@ SANO Masatoshi (snmsts@gmail.com)
  * https://github.com/snmsts/roswell
 
 ## License
-MIT
+Licensed under the MIT License.
