@@ -187,9 +187,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                     while (first param))
                (sb-sys:interactive-interrupt (condition)
                  (declare (ignore condition))
-                 ;;(format t "SIGINT detected cleanup files ~s~%" param)
-                 (force-output t)
-                 ))))
+                 (format t "SIGINT detected cleanup files~%")
+                 (ros:roswell `(,(format nil"delete ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            #+nil(uiop/stream:copy-file sub (make-pathname
                                        :defaults (merge-pathnames "subcmd/" *home-path*)
