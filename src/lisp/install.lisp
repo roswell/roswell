@@ -180,10 +180,16 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                            cmds (cond
                                   ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
                                   ((equal subcmd "help") (cdr (assoc imp *help-cmds* :test #'equal))))))))
-           (loop for call in cmds
-              for i = (funcall call `(:target ,imp :version ,version
-                                              :argv ,argv)) then (funcall call (rest i))
-              while (first i)))
+           (let ((param `(t :target ,imp :version ,version :argv ,argv)))
+             (handler-case
+                 (loop for call in cmds
+                    do (setq param (funcall call (rest param)))
+                    while (first param))
+               (sb-sys:interactive-interrupt (condition)
+                 (declare (ignore condition))
+                 ;;(format t "SIGINT detected cleanup files ~s~%" param)
+                 (force-output t)
+                 ))))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            #+nil(uiop/stream:copy-file sub (make-pathname
                                        :defaults (merge-pathnames "subcmd/" *home-path*)
