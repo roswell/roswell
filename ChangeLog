@@ -1,3 +1,11 @@
+roswell (0.0.3.39-1) unstable; urgency=low
+
+  * Change: revert automatically compile ros script facility (0.0.3.38-1).
+  * New: Handle SIGINT
+  * New: 'ros install sbcl/ccl-bin --without-install' will just download archive.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 28 Jul 2015 03:54:55 +0900
+
 roswell (0.0.3.38-1) unstable; urgency=low
 
   * Change: add gist url for outage of sbcl.org.
