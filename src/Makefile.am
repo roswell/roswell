@@ -2,13 +2,14 @@ AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 roslisp_DATA = $(wildcard lisp/*.lisp) $(wildcard lisp/*.ros)
 
-noinst_PROGRAMS = gen
-gen_SOURCES = generate.c util_list.c util.c util_string.c util_dir.c util_system.c
-
-gend.h: gen$(EXEEXT) FORCE
+gend.h: FORCE
 	printf "#define ROS_COMPILE_ENVIRONMENT \"%s\"\n" "`$(CC) --version|head -n 1`" > $@.tmp
-	((which git>/dev/null&&[ -e ../.git ]&&(git log -n 1 --oneline))||printf "")|$(WINE) ./gen$(EXEEXT) 2 >> $@.tmp
-	((echo `sh -c 'cd $(roslispdir); pwd -W 2>/dev/null'`| $(WINE) ./gen$(EXEEXT) 3) >> $@.tmp)
+	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
+	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
+	(sh -c 'cd $(roslispdir); pwd -W' 2>&1 >/dev/null && (printf "#define WIN_LISP_PATH \"" \
+	echo `sh -c 'cd $(roslispdir); pwd -W 2>/dev/null'`| tr -d '\n'| tr -d '\r' |\
+	sed /\//\\/ \
+	printf "\\\\\"\n")  >> $@.tmp) || printf ""
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	rm -f $@.tmp
 	cat $@
