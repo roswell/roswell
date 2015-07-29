@@ -88,7 +88,18 @@
 
 (defun ccl-bin-help (argv)
   (format t "ccl-bin install options~%")
-  (fmt "install" t "Download archive")
+  (flet ((fmt (param default more)
+           (format t "--~A~A ~A~%~5T~A~%"
+                   (cond ((eql default t) "without-")
+                         ((null default) "with-")
+                         (t ""))
+                   param
+                   (or (and (not (null default))
+                            (not (eql default t))
+                            default)
+                       "")
+                   more)))
+    (fmt "install" t "Download archive"))
   (cons t argv))
 
 (push `("ccl-bin" . (ccl-bin-version
