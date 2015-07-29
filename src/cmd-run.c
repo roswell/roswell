@@ -1,6 +1,23 @@
 #include "opt.h"
 
 #define ROS_RUN_REPL "run"
+#define DEFAULT_IMPL "sbcl-bin"
+
+typedef char** (*cmd_run_impl)(int argc,char** argv,struct sub_command* cmd);
+
+struct run_impl_t {
+  char* name;
+  cmd_run_impl impl;
+};
+
+extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
+extern char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd);
+
+struct run_impl_t impls_to_run[]={
+  {"sbcl",&cmd_run_sbcl},
+  {"sbcl-bin",&cmd_run_sbcl},
+  {"ccl-bin",&cmd_run_ccl},
+};
 
 #ifdef _WIN32
 BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar) {
@@ -13,8 +30,6 @@ BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar) {
 LVal run_commands=(LVal)NULL;
 LVal run_options =(LVal)NULL;
 
-extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd);
 extern LVal register_runtime_options(LVal opt);
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
@@ -163,14 +178,14 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
     char* ret;
     if(impl) s(impl);
-    impl=q("sbcl-bin");
+    impl=q(DEFAULT_IMPL);
     cond_printf(1,"cmd:%s\n",cmd);
     ret=system_(cmd);
     cond_printf(1,"ret:%s\n",ret);
     s(ret);
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);;
-    version=get_opt("sbcl-bin.version",0);
+    version=get_opt(DEFAULT_IMPL".version",0);
   }
   char** arg=NULL;
   int i;
@@ -178,14 +193,15 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
   {
     struct sub_command cmd;
+    struct run_impl_t *p;
+    int i;
     cmd.name=impl;
     cmd.short_name=version;
-    if(strcmp(impl,"sbcl")==0 ||
-       strcmp(impl,"sbcl-bin")==0) {
-      arg=cmd_run_sbcl(argc,argv,&cmd);
-    }else if(strcmp(impl,"ccl-bin")==0) {
-      arg=cmd_run_ccl(argc,argv,&cmd);
-    }
+    for(p=NULL,i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
+      if(strcmp(impls_to_run[i].name,impl)==0) {
+        arg=impls_to_run[i].impl(argc,argv,&cmd);
+        break;
+      }
   }
   if(wrap)
     arg[0]=q(wrap);
