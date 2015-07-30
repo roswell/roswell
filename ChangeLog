@@ -1,3 +1,9 @@
+roswell (0.0.3.40-1) unstable; urgency=low
+
+  * New: support download failure cause from upstream upload failure(?)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 30 Jul 2015 16:50:18 +0900
+
 roswell (0.0.3.39-1) unstable; urgency=low
 
   * Change: revert automatically compile ros script facility (0.0.3.38-1).
