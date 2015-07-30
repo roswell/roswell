@@ -12,7 +12,6 @@ char* sbcl_bin_extention(struct install_options* param) {
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
-  char* arch=arch_(param);
   ensure_directories_exist(platforms_html);
 
   if(!param->version) {
@@ -33,11 +32,32 @@ int sbcl_version_bin(struct install_options* param) {
   }else
     param->version=q(param->version);
   param->arch_in_archive_name=1;
-  param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
-  impls_sbcl_bin.uri=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
-                 "-",arch,"-binary",sbcl_bin_extention(param),NULL);
 
-  s(arch),s(platforms_html),s(home);
+  s(platforms_html),s(home);
+  return 1;
+}
+
+int sbcl_bin_download(struct install_options* param) {
+  int result;
+  char* home=configdir();
+  char* arch=arch_(param);
+  do {
+    param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
+    impls_sbcl_bin.uri=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
+                           "-",arch,"-binary",sbcl_bin_extention(param),NULL);
+    result = download(param);
+    if(!result) {
+      int len = strlen(param->version)-1;
+      if('1'<= param->version[len] && param->version[len] <= '9') {
+        param->version[len]--;
+        s(param->expand_path),s(impls_sbcl_bin.uri);
+      }else{
+        s(arch),s(home);
+        return 0;
+      }
+    }
+  }while (!result);
+  s(arch),s(home);
   return 1;
 }
 
@@ -160,7 +180,7 @@ int sbcl_bin_install(struct install_options* param) {
 install_cmds install_sbcl_bin_full[]={
   sbcl_version_bin,
   start,
-  download,
+  sbcl_bin_download,
   sbcl_bin_expand,
   sbcl_bin_install,
   NULL
