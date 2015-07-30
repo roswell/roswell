@@ -59,8 +59,8 @@
                       (getf argv :version))))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" "http://sourceforge.net/projects/sbcl/files/sbcl/" 
-                                  (getf argv :version) "/sbcl-" (getf argv :version) "-source.tar.bz2"))
+  (set-opt "download.uri" (format nil "~@{~A~}" "https://github.com/sbcl/sbcl/archive/sbcl-"
+                                  (getf argv :version) ".tar.gz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos 
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
@@ -96,6 +96,17 @@
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
           (merge-pathnames "src/" (homedir)))
+  (ignore-errors
+    (let ((h (homedir))
+          (v (getf argv :version)))
+      (ql-impl-util:rename-directory
+       (merge-pathnames (format nil "src/sbcl-sbcl-~A" v) h)
+       (merge-pathnames (format nil "src/sbcl-~A" v) h))
+      (with-open-file (o (merge-pathnames (format nil "src/sbcl-~A/version.lisp-expr" v) h)
+                         :direction :output
+                         :if-does-not-exist :create
+                         :if-exists nil)
+        (format o "~S~%" v))))
   (cons t argv))
 
 (defun sbcl-patch (argv)
