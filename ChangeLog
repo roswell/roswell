@@ -1,3 +1,9 @@
+roswell (0.0.3.41-1) unstable; urgency=low
+
+  * Change: use github to download sbcl source.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 31 Jul 2015 09:05:16 +0900
+
 roswell (0.0.3.40-1) unstable; urgency=low
 
   * New: support download failure cause from upstream upload failure(?)
