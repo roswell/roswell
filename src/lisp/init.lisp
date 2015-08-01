@@ -1,5 +1,4 @@
 (cl:in-package :cl-user)
-#-asdf (require :asdf)
 
 (let ((*standard-output* (make-broadcast-stream)))
   #+sbcl (require :sb-posix))
@@ -19,7 +18,8 @@
 ;; small tools
 (defun getenv (x)
   #+sbcl(sb-posix:getenv x)
-  #-sbcl(funcall (read-from-string "asdf::getenv") x))
+  #+clisp(ext:getenv x)
+  #-(or sbcl clisp) (funcall (read-from-string "asdf::getenv") x))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -58,7 +58,7 @@
 
 (defun quit (&optional (return-code 0) &rest rest)
   (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
-    (ignore-errors(funcall 'asdf::quit ret))
+    (ignore-errors(funcall (read-from-string "asdf::quit") ret))
     #+sbcl(ignore-errors(funcall (read-from-string "cl-user::exit") :code ret))
     #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))))
 
@@ -78,6 +78,10 @@
 (defun opt (param)
   (second (assoc param (ros-opts) :test 'equal)))
 
+(or
+ (ignore-errors #-asdf (require :asdf))
+ (ignore-errors (cl:load (merge-pathnames "asdf.lisp" (ros:opt "quicklisp")))))
+
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)
     (let ((path (make-pathname
@@ -89,14 +93,16 @@
       (when (probe-file path)
         (cl:load path)
         (let ((symbol (read-from-string "ql:*local-project-directories*")))
-          (when (probe-file (merge-pathnames "local-projects/" (opt "homedir")))
+          (when (or (ignore-errors (probe-file path))
+                    #+clisp(ext:probe-directory path))
             (set symbol (cons (merge-pathnames "local-projects/" (opt "homedir"))
                               (symbol-value symbol)))))
         t))))
 
 #+quicklisp
 (let ((path (merge-pathnames "local-projects/" (opt "homedir"))))
-  (when (probe-file path)
+  (when (or (ignore-errors (probe-file path))
+            #+clisp(ext:probe-directory path))
     (push path ql:*local-project-directories*)))
 
 (defun shebang-reader (stream sub-character infix-parameter)
