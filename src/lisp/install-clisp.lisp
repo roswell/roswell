@@ -146,7 +146,8 @@
                          'clisp-patch
                          'clisp-config
                          'clisp-make
-                         'clisp-install))
+                         'clisp-install
+                         'setup))
       *install-cmds*)
 
 (push `("clisp" . ,(list 'clisp-help)) *help-cmds*)
