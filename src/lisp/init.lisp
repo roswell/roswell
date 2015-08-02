@@ -203,8 +203,8 @@
       (with-open-file (in arg)
         (let ((line(read-line in)))
           (push :ros.script *features*)
-          (funcall #+sbcl 'cl:load
-                   #-sbcl 'asdf::eval-input
+          (funcall #+(or sbcl clisp) 'cl:load
+                   #-(or sbcl clisp) 'asdf::eval-input
                    (make-concatenated-stream
                     (make-string-input-stream
                      (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (truename cl:*load-pathname*))~A" (merge-pathnames (make-pathname :defaults arg))
@@ -227,3 +227,9 @@
      :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
 
 (push :ros.init *features*)
+
+#+clisp
+(loop
+   with *package* = (find-package :cl-user)
+   for i in ext:*args*
+   do (cl:eval (cl:read-from-string i)))

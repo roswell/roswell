@@ -7,8 +7,8 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=10; /*[binpath for clisp] -norc -q -q -M param -x init.lisp
-                   [terminating NULL] that total 9 are default. */
+  int offset=9; /*[binpath for clisp] -q -q -M param -repl init.lisp
+                  [terminating NULL] that total 8 are default. */
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
@@ -29,8 +29,6 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   }
   if(clisp_version)
     offset+=1;
-  if(script)
-    offset+=2;
   if(quicklisp)
     offset+=2;
   if(program||script)
@@ -40,9 +38,8 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   /* runtime options from here */
-  arg[paramc++]=q("-norc");
-  arg[paramc++]=q("--quiet");
-  arg[paramc++]=q("--silent");
+  arg[paramc++]=q("-q");
+  arg[paramc++]=q("-q");
 
   if(image) {
     char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
@@ -60,15 +57,14 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=q("-on-error");
     arg[paramc++]=q("exit");
   }
-  arg[paramc++]=q("-x");
-  arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\") (values))"),NULL);
+  if (!(program || script))
+    arg[paramc++]=q("-repl");
+  arg[paramc++]=s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL);
   if(quicklisp) {
-    arg[paramc++]=q("-x");
-    arg[paramc++]=q("(progn (ros:quicklisp) (values))");
+    arg[paramc++]=q("(ros:quicklisp)");
   }
   if(program || script) {
     char *tmp;
-    arg[paramc++]=q("-x");
     tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
     arg[paramc++]=tmp;
   }
