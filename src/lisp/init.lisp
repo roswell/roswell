@@ -78,10 +78,9 @@
 (defun opt (param)
   (second (assoc param (ros-opts) :test 'equal)))
 
-(let (*load-verbose*)
-  (or
-   (ignore-errors #-asdf (require :asdf))
-   (ignore-errors (cl:load (merge-pathnames "asdf.lisp" (ros:opt "quicklisp"))))))
+(or
+ (ignore-errors #-asdf (require :asdf))
+ (ignore-errors (cl:load (merge-pathnames "asdf.lisp" (ros:opt "quicklisp")))))
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)
