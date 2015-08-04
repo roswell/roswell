@@ -19,7 +19,7 @@ ros_SOURCES = lsp.c opt.c download.c archive.c html.c \
 	util_list.c util.c util_string.c util_dir.c util_system.c \
 	cmd-internal.c \
 	cmd-version.c \
-	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c \
+	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c \
 	cmd-install.c cmd-install-sbcl-bin.c cmd-install-quicklisp.c \
 	cmd-help.c \
 	cmd-config.c \
