@@ -30,15 +30,17 @@ echo "Roswell has been installed."
 log "ros --version"
 
 case "$LISP" in
+    # 'ccl' is an alias for 'ccl-bin'
     ccl)
-        echo "Installing Clozure CL..."
-        ros install ccl-bin
+        LISP=ccl-bin
         ;;
-    sbcl|*)
-        echo "Installing SBCL..."
-        ros install sbcl-bin
+    # 'sbcl-bin' is the default
+    "")
+        LISP=sbcl-bin
         ;;
 esac
+echo "Installing $LISP..."
+ros install $LISP
 
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
