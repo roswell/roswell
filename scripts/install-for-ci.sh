@@ -16,14 +16,9 @@ fetch () {
 }
 
 extract () {
-    if [ "$3" = "" ]; then
-        file=$1
-        destination=$2
-    else
-        opt=$1
-        file=$2
-        destination=$3
-    fi
+    opt=$1
+    file=$2
+    destination=$3
     echo "Extracting a tarball $file into $destination..."
     mkdir -p $destination
     tar -C $destination --strip-components=1 -xf $opt $file
@@ -33,9 +28,9 @@ CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
 install_cmucl () {
     fetch $CMU_TARBALL_URL $HOME/cmucl.tar.bz2
-    extract $HOME/cmucl.tar.bz2 $HOME/cmucl
+    extract -j $HOME/cmucl.tar.bz2 $HOME/cmucl
     fetch $CMU_EXTRA_TARBALL_URL $HOME/cmucl-extra.tar.bz2
-    extract $HOME/cmucl-extra.tar.bz2 $HOME/cmucl
+    extract -j $HOME/cmucl-extra.tar.bz2 $HOME/cmucl
 
     export CMUCLLIB="$HOME/cmucl/lib/cmucl/lib"
     sudo ln -s "$HOME/cmucl/bin/lisp" "/usr/local/bin/cmucl"
@@ -67,7 +62,7 @@ ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
 echo "Installing Roswell..."
 
 fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" $ROSWELL_TARBALL_PATH
-extract $ROSWELL_TARBALL_PATH $ROSWELL_DIR
+extract -j $ROSWELL_TARBALL_PATH $ROSWELL_DIR
 cd $ROSWELL_DIR
 sh bootstrap
 ./configure --prefix=$ROSWELL_INSTALL_DIR
