@@ -39,8 +39,17 @@ case "$LISP" in
         LISP=sbcl-bin
         ;;
 esac
+
 echo "Installing $LISP..."
-ros install $LISP
+case "$LISP" in
+    clisp)
+        sudo apt-get install clisp
+        ros use clisp/system
+        ;;
+    *)
+        ros install $LISP
+        ;;
+esac
 
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
