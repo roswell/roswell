@@ -41,6 +41,17 @@ install_cmucl () {
     sudo ln -s "$HOME/cmucl/bin/lisp" "/usr/local/bin/cmucl"
 }
 
+ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
+install_abcl () {
+    sudo apt-get install default-jre
+    fetch $ABCL_TARBALL_URL $HOME/abcl.tar.bz2
+    extract -z $HOME/abcl.tar.bz2 $HOME/abcl
+    sudo cat <<EOF >/usr/local/bin/abcl
+#!/bin/sh
+java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\"
+EOF
+}
+
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
@@ -84,6 +95,10 @@ case "$LISP" in
     cmu|cmucl)
         install_cmucl
         ros use cmucl/system
+        ;;
+    abcl)
+        install_abcl
+        ros use abcl/system
         ;;
     *)
         ros install $LISP
