@@ -24,6 +24,18 @@ extract () {
     tar -C "$destination" --strip-components=1 "$opt" -xf "$file"
 }
 
+install_script () {
+    path=$1; shift
+    tmp=$(mktemp)
+
+    for line; do
+        echo "$line" >> "$tmp"
+    done
+    chmod 755 "$tmp"
+
+    sudo mv "$tmp" "$path"
+}
+
 CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
 install_cmucl () {
@@ -41,10 +53,8 @@ install_abcl () {
     sudo apt-get install default-jre
     fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
     extract -z "$HOME/abcl.tar.gz" "$HOME/abcl"
-    sudo cat <<EOF >/usr/local/bin/abcl
-#!/bin/sh
-java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\"
-EOF
+    install_script "#!/bin/sh" \
+        "java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\""
 }
 
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
