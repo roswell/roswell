@@ -16,9 +16,29 @@ fetch () {
 }
 
 extract () {
-    echo "Extracting a tarball $1 into $2..."
-    mkdir -p $2
-    tar -C $2 --strip-components 1 -xf $1
+    if $3; then
+        opt=$1
+        file=$2
+        destination=$3
+    else
+        file=$1
+        destination=$2
+    fi
+    echo "Extracting a tarball $file into $destination..."
+    mkdir -p $destination
+    tar -C $destination --strip-components=1 -xf $opt $file
+}
+
+CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
+CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
+install_cmucl () {
+    fetch $CMU_TARBALL_URL $HOME/cmucl.tar.bz2
+    extract -j $HOME/cmucl.tar.bz2 $HOME/cmucl
+    fetch $CMU_EXTRA_TARBALL_URL $HOME/cmucl-extra.tar.bz2
+    extract $HOME/cmucl-extra.tar.bz2 $HOME/cmucl
+
+    export CMUCLLIB="$HOME/cmucl/lib/cmucl/lib"
+    sudo ln -s "$HOME/cmucl/bin/lisp" "/usr/local/bin/cmucl"
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
@@ -60,6 +80,10 @@ case "$LISP" in
     clisp)
         sudo apt-get install clisp
         ros use clisp/system
+        ;;
+    cmu|cmucl)
+        install_cmucl
+        ros use cmucl/system
         ;;
     *)
         ros install $LISP
