@@ -10,6 +10,8 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   int offset=10; /*[binpath for lisp] -quiet -core param -eval init.lisp
                   -noinit -nositeinit [terminating NULL] that total 9 are default. */
   int i;
+  if(strcmp(impl,"cmu"))
+    impl="cmucl";
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);

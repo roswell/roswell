@@ -25,6 +25,7 @@ struct run_impl_t impls_to_run[]={
   {"ecl",&cmd_run_ecl},
   {"abcl",&cmd_run_abcl},
   {"cmu",&cmd_run_cmu},
+  {"cmucl",&cmd_run_cmu},
 };
 
 #ifdef _WIN32
@@ -162,9 +163,10 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       set_opt(&local_opt,"program",would,0);
     }
   }
-  cond_printf(1,"cmd_run_star:%s argc=%d argv[0]=%s \nlocalopt:%s\n"
-              ,cmd->name,argc,argv[0],sexp_opts(local_opt));
   impl=get_opt("lisp",1);
+  cond_printf(1,"cmd_run_star:%s argc=%d argv[0]=%s \nlocalopt:%s\nimpl=%s\n"
+              ,cmd->name,argc,argv[0],sexp_opts(local_opt),impl);
+
   if(impl && (pos=position_char("/",impl))!=-1) {
     version=subseq(impl,pos+1,0);
     impl=subseq(impl,0,pos);
@@ -180,6 +182,11 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       impl=q(impl);
     if(version)
       version=q(version);
+  }
+  if(impl&&!version) {
+    if(!version)
+      s(version);
+    version=q("system");
   }
 
   if(!(impl && version)) {
