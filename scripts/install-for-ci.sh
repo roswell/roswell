@@ -39,8 +39,8 @@ install_cmucl () {
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
 install_abcl () {
     sudo apt-get install default-jre
-    fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.bz2"
-    extract -z "$HOME/abcl.tar.bz2" "$HOME/abcl"
+    fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
+    extract -z "$HOME/abcl.tar.gz" "$HOME/abcl"
     sudo cat <<EOF >/usr/local/bin/abcl
 #!/bin/sh
 java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\"
@@ -62,7 +62,7 @@ ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
 echo "Installing Roswell..."
 
 fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
-extract -j "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
+extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
 cd $ROSWELL_DIR
 sh bootstrap
 ./configure --prefix=$ROSWELL_INSTALL_DIR
