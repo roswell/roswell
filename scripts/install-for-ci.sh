@@ -61,14 +61,18 @@ install_abcl () {
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
 install_ecl () {
     fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
-    sudo tar -C / -xzf "$HOME/ecl.tgz"
+    extract -z "$HOME/ecl.tgz" "$HOME/ecl"
+    cd $HOME/ecl
+    ./configure
+    make
+    sudo make install
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
 install_allegro () {
     fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
     extract -j "$HOME/acl.bz2" "$HOME/acl"
-    sudo ln -s "$HOME/acl/alisp" "/usr/local/bin"
+    sudo ln -s "$HOME/acl/alisp" "/usr/local/bin/alisp"
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
