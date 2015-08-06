@@ -20,17 +20,17 @@ extract () {
     file=$2
     destination=$3
     echo "Extracting a tarball $file into $destination..."
-    mkdir -p $destination
-    tar -C $destination --strip-components=1 -xf $opt $file
+    mkdir -p "$destination"
+    tar -C "$destination" --strip-components=1 "$opt" -xf "$file"
 }
 
 CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
 install_cmucl () {
-    fetch $CMU_TARBALL_URL $HOME/cmucl.tar.bz2
-    extract -j $HOME/cmucl.tar.bz2 $HOME/cmucl
-    fetch $CMU_EXTRA_TARBALL_URL $HOME/cmucl-extra.tar.bz2
-    extract -j $HOME/cmucl-extra.tar.bz2 $HOME/cmucl
+    fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
+    extract -j "$HOME/cmucl.tar.bz2" "$HOME/cmucl"
+    fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
+    extract -j "$HOME/cmucl-extra.tar.bz2" "$HOME/cmucl"
 
     export CMUCLLIB="$HOME/cmucl/lib/cmucl/lib"
     sudo ln -s "$HOME/cmucl/bin/lisp" "/usr/local/bin/cmucl"
@@ -39,8 +39,8 @@ install_cmucl () {
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
 install_abcl () {
     sudo apt-get install default-jre
-    fetch $ABCL_TARBALL_URL $HOME/abcl.tar.bz2
-    extract -z $HOME/abcl.tar.bz2 $HOME/abcl
+    fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.bz2"
+    extract -z "$HOME/abcl.tar.bz2" "$HOME/abcl"
     sudo cat <<EOF >/usr/local/bin/abcl
 #!/bin/sh
 java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\"
@@ -49,8 +49,8 @@ EOF
 
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
 install_ecl () {
-    fetch $ECL_TARBALL_URL $HOME/ecl.tgz
-    sudo tar -C / -xzf $HOME/ecl.tgz
+    fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
+    sudo tar -C / -xzf "$HOME/ecl.tgz"
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
@@ -61,8 +61,8 @@ ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
 
 echo "Installing Roswell..."
 
-fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" $ROSWELL_TARBALL_PATH
-extract -j $ROSWELL_TARBALL_PATH $ROSWELL_DIR
+fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
+extract -j "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
 cd $ROSWELL_DIR
 sh bootstrap
 ./configure --prefix=$ROSWELL_INSTALL_DIR
