@@ -53,7 +53,8 @@ install_abcl () {
     sudo apt-get install default-jre
     fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
     extract -z "$HOME/abcl.tar.gz" "$HOME/abcl"
-    install_script "#!/bin/sh" \
+    install_script "/usr/local/bin/abcl" \
+        "#!/bin/sh" \
         "java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\""
 }
 
