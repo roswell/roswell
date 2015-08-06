@@ -52,6 +52,12 @@ java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\"
 EOF
 }
 
+ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
+install_ecl () {
+    fetch $ECL_TARBALL_URL $HOME/ecl.tgz
+    sudo tar -C / -xzf $HOME/ecl.tgz
+}
+
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
@@ -99,6 +105,10 @@ case "$LISP" in
     abcl)
         install_abcl
         ros use abcl/system
+        ;;
+    ecl)
+        install_ecl
+        ros use ecl/system
         ;;
     *)
         ros install $LISP
