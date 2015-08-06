@@ -5,6 +5,22 @@ log () {
     echo `$1`
 }
 
+fetch () {
+    echo "Downloading $1..."
+    if curl --no-progress-bar --retry 10 -o $2 -L $1; then
+        return 0;
+    else
+        echo "Failed to download $1."
+        exit 1
+    fi
+}
+
+extract () {
+    echo "Extracting a tarball $1 into $2..."
+    mkdir -p $2
+    tar -C $2 --strip-components 1 -xf $1
+}
+
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
@@ -13,9 +29,8 @@ ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
 
 echo "Installing Roswell..."
 
-curl --no-progress-bar --retry 10 -o $ROSWELL_TARBALL_PATH -L $ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz
-mkdir $ROSWELL_DIR
-tar -C $ROSWELL_DIR --strip-components 1 -xf $ROSWELL_TARBALL_PATH
+fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" $ROSWELL_TARBALL_PATH
+extract $ROSWELL_TARBALL_PATH $ROSWELL_DIR
 cd $ROSWELL_DIR
 sh bootstrap
 ./configure --prefix=$ROSWELL_INSTALL_DIR
