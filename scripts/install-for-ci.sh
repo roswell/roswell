@@ -63,6 +63,13 @@ install_ecl () {
     sudo tar -C / -xzf "$HOME/ecl.tgz"
 }
 
+ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
+install_allegro () {
+    fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
+    extract -j "$HOME/acl.bz2" "$HOME/acl"
+    sudo ln -s "$HOME/acl/alisp" "/usr/local/bin"
+}
+
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
@@ -114,6 +121,10 @@ case "$LISP" in
     ecl)
         install_ecl
         ros use ecl/system
+        ;;
+    allegro|alisp)
+        install_allegro
+        ros use alisp/system
         ;;
     *)
         ros install $LISP
