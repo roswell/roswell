@@ -52,39 +52,40 @@ apt_unless_installed () {
 
 CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
+CMU_DIR="$HOME/cmucl"
 install_cmucl () {
     fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
-    extract -j "$HOME/cmucl.tar.bz2" "$HOME/cmucl"
+    extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
     fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
-    extract -j "$HOME/cmucl-extra.tar.bz2" "$HOME/cmucl"
+    extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
 
-    export CMUCLLIB="$HOME/cmucl/lib/cmucl/lib"
+    export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
     install_script "$LISP_IMPLS_PREFIX/bin/cmucl" \
-        "export CMUCLLIB=\"$HOME/cmucl/lib/cmucl/lib\"" \
-        "exec \"$HOME/cmucl/bin/lisp\" \"\$@\""
+        "export CMUCLLIB=\"$CMU_DIR/lib/cmucl/lib\"" \
+        "exec \"$CMU_DIR/bin/lisp\" \"\$@\""
 }
 
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
+ABCL_DIR="$HOME/abcl"
 install_abcl () {
     apt_unless_installed default-jre
     fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
-    extract -z "$HOME/abcl.tar.gz" "$HOME/abcl"
+    extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
     install_script "$LISP_IMPLS_PREFIX/bin/abcl" \
-        "exec java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\""
+        "exec java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
 }
 
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
+ECL_DIR="$HOME/ecl"
 install_ecl () {
     fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
-    extract -z "$HOME/ecl.tgz" "$HOME/ecl"
-    cd $HOME/ecl
-    ./configure --prefix="$LISP_IMPLS_PREFIX"
+    extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
+    cd $HOME/ecl-src
+    ./configure --prefix="$ECL_DIR"
     make
-    if [ -w "$LISP_IMPLS_PREFIX" ]; then
-        make install
-    else
-        sudo make install
-    fi
+    make install
+    install_script "$LISP_IMPLS_PREFIX/bin/ecl" \
+        "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
