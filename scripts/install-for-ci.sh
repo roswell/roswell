@@ -5,7 +5,7 @@ log () {
     echo `$1`
 }
 
-LISP_IMPLS_PREFIX=${LISP_IMPLS_PREFIX:-/usr/local}
+LISP_IMPLS_BIN="$HOME/.roswell/bin"
 
 fetch () {
     echo "Downloading $1..."
@@ -60,9 +60,10 @@ install_cmucl () {
     extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
 
     export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
-    install_script "$LISP_IMPLS_PREFIX/bin/cmucl" \
+    install_script "$LISP_IMPLS_BIN/cmucl" \
         "export CMUCLLIB=\"$CMU_DIR/lib/cmucl/lib\"" \
         "exec \"$CMU_DIR/bin/lisp\" \"\$@\""
+    PATH="$LISP_IMPLS_BIN:$PATH" ros use cmucl/system
 }
 
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
@@ -71,8 +72,9 @@ install_abcl () {
     apt_unless_installed default-jre
     fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
     extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
-    install_script "$LISP_IMPLS_PREFIX/bin/abcl" \
+    install_script "$LISP_IMPLS_BIN/abcl" \
         "exec java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+    PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
 
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
@@ -84,16 +86,18 @@ install_ecl () {
     ./configure --prefix="$ECL_DIR"
     make
     make install
-    install_script "$LISP_IMPLS_PREFIX/bin/ecl" \
+    install_script "$LISP_IMPLS_BIN/ecl" \
         "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
+    PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
 install_allegro () {
     fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
     extract -j "$HOME/acl.bz2" "$HOME/acl"
-    install_script "$LISP_IMPLS_PREFIX/bin/alisp" \
+    install_script "$LISP_IMPLS_BIN/alisp" \
         "exec \"$HOME/acl/alisp\" \"\$@\""
+    PATH="$LISP_IMPLS_BIN:$PATH" ros use alisp/system
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
@@ -138,19 +142,15 @@ case "$LISP" in
         ;;
     cmu|cmucl)
         install_cmucl
-        ros use cmucl/system
         ;;
     abcl)
         install_abcl
-        ros use abcl/system
         ;;
     ecl)
         install_ecl
-        ros use ecl/system
         ;;
     allegro|alisp)
         install_allegro
-        ros use alisp/system
         ;;
     *)
         ros install $LISP
