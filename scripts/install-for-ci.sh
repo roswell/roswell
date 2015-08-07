@@ -5,6 +5,8 @@ log () {
     echo `$1`
 }
 
+LISP_IMPLS_PREFIX=${LISP_IMPLS_PREFIX:-/usr/local}
+
 fetch () {
     echo "Downloading $1..."
     if curl --no-progress-bar --retry 10 -o $2 -L $1; then
@@ -26,14 +28,26 @@ extract () {
 
 install_script () {
     path=$1; shift
+    dir=$(dirname "$path")
     tmp=$(mktemp)
 
+    echo "#!/bin/sh" > "$tmp"
     for line; do
         echo "$line" >> "$tmp"
     done
     chmod 755 "$tmp"
 
-    sudo mv "$tmp" "$path"
+    if [ -w $dir ]; then
+        mv "$tmp" "$path"
+    else
+        sudo mv "$tmp" "$path"
+    fi
+}
+
+apt_unless_installed () {
+    if ! [ dpkg -s "$1" >/dev/null 2>&1 ]; then
+        sudo apt-get install "$1"
+    fi
 }
 
 CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
@@ -45,17 +59,18 @@ install_cmucl () {
     extract -j "$HOME/cmucl-extra.tar.bz2" "$HOME/cmucl"
 
     export CMUCLLIB="$HOME/cmucl/lib/cmucl/lib"
-    sudo ln -s "$HOME/cmucl/bin/lisp" "/usr/local/bin/cmucl"
+    install_script "$LISP_IMPLS_PREFIX/bin/cmucl" \
+        "export CMUCLLIB=\"$HOME/cmucl/lib/cmucl/lib\"" \
+        "exec \"$HOME/cmucl/bin/lisp\" \"\$@\""
 }
 
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
 install_abcl () {
-    sudo apt-get install default-jre
+    apt_unless_installed default-jre
     fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
     extract -z "$HOME/abcl.tar.gz" "$HOME/abcl"
-    install_script "/usr/local/bin/abcl" \
-        "#!/bin/sh" \
-        "java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\""
+    install_script "$LISP_IMPLS_PREFIX/bin/abcl" \
+        "exec java -cp \"$HOME/abcl/abcl-contrib.jar\" -jar \"$HOME/abcl/abcl.jar\" \"\$@\""
 }
 
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
@@ -63,16 +78,21 @@ install_ecl () {
     fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
     extract -z "$HOME/ecl.tgz" "$HOME/ecl"
     cd $HOME/ecl
-    ./configure
+    ./configure --prefix="$LISP_IMPLS_PREFIX"
     make
-    sudo make install
+    if [ -w "$LISP_IMPLS_PREFIX" ]; then
+        make install
+    else
+        sudo make install
+    fi
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
 install_allegro () {
     fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
     extract -j "$HOME/acl.bz2" "$HOME/acl"
-    sudo ln -s "$HOME/acl/alisp" "/usr/local/bin/alisp"
+    install_script "$LISP_IMPLS_PREFIX/bin/alisp" \
+        "exec \"$HOME/acl/alisp\" \"\$@\""
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
@@ -112,7 +132,7 @@ esac
 echo "Installing $LISP..."
 case "$LISP" in
     clisp)
-        sudo apt-get install clisp
+        apt_unless_installed clisp
         ros use clisp/system
         ;;
     cmu|cmucl)
