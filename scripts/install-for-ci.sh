@@ -5,7 +5,13 @@ log () {
     echo `$1`
 }
 
-LISP_IMPLS_BIN="$HOME/.roswell/bin"
+ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
+ROSWELL_DIR=$HOME/roswell
+ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
+ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
+ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
+LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
+LISP_IMPLS_BIN="$ROSWELL_DIR/bin"
 
 fetch () {
     echo "Downloading $1..."
@@ -52,59 +58,62 @@ apt_unless_installed () {
 
 CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
-CMU_DIR="$HOME/cmucl"
+CMU_DIR="$LISP_IMPLS_DIR/cmucl"
 install_cmucl () {
-    fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
-    extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
-    fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
-    extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
+    if ! [ -f "$LISP_IMPLS_BIN/cmucl" ]; then
+        fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
+        extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
+        fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
+        extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
 
-    export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
-    install_script "$LISP_IMPLS_BIN/cmucl" \
-        "export CMUCLLIB=\"$CMU_DIR/lib/cmucl/lib\"" \
-        "exec \"$CMU_DIR/bin/lisp\" \"\$@\""
+        export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
+        install_script "$LISP_IMPLS_BIN/cmucl" \
+            "export CMUCLLIB=\"$CMU_DIR/lib/cmucl/lib\"" \
+            "exec \"$CMU_DIR/bin/lisp\" \"\$@\""
+    fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use cmucl/system
 }
 
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
-ABCL_DIR="$HOME/abcl"
+ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
-    apt_unless_installed default-jre
-    fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
-    extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
-    install_script "$LISP_IMPLS_BIN/abcl" \
-        "exec java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+    if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
+        apt_unless_installed default-jre
+        fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
+        extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
+        install_script "$LISP_IMPLS_BIN/abcl" \
+            "exec java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+    fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
 
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
-ECL_DIR="$HOME/ecl"
+ECL_DIR="$LISP_IMPLS_DIR/ecl"
 install_ecl () {
-    fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
-    extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
-    cd $HOME/ecl-src
-    ./configure --prefix="$ECL_DIR"
-    make
-    make install
-    install_script "$LISP_IMPLS_BIN/ecl" \
-        "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
+    if ! [ -f "$LISP_IMPLS_BIN/ecl" ]; then
+        fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
+        extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
+        cd $HOME/ecl-src
+        ./configure --prefix="$ECL_DIR"
+        make
+        make install
+        install_script "$LISP_IMPLS_BIN/ecl" \
+            "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
+    fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
+ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
 install_allegro () {
-    fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
-    extract -j "$HOME/acl.bz2" "$HOME/acl"
-    install_script "$LISP_IMPLS_BIN/alisp" \
-        "exec \"$HOME/acl/alisp\" \"\$@\""
+    if ! [ -f "$LISP_IMPLS_BIN/alisp" ]; then
+        fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
+        extract -j "$HOME/acl.bz2" "$ALLEGRO_DIR"
+        install_script "$LISP_IMPLS_BIN/alisp" \
+            "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
+    fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use alisp/system
 }
-
-ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
-ROSWELL_DIR=$HOME/roswell
-ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
-ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
-ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
 
 echo "Installing Roswell..."
 
