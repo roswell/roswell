@@ -3,6 +3,10 @@
 #|
 exec ros -Q +R -- $0 "$@"
 |#
+
+(unless (find-package :uiop)
+  (ql:quickload :uiop :silent t))
+
 (defun parse-argv (argv)
   (let* ((header "exec ros")
          (hl (length header)))
@@ -14,16 +18,32 @@ exec ros -Q +R -- $0 "$@"
                        (equal #\- c))
             :do (return (subseq argv hl (1- i)))))))
 
+(defun help ()
+  (format *error-output* "~&Usage: ~A build <file>~%"
+          (ros:opt "argv0")))
+
 (defun main- (argv)
-  (ros:roswell `(,(with-open-file (in (third argv))
-                                  (read-line in)
-                                  (read-line in)
-                                  (read-line in)
-                                  (parse-argv (read-line in)))
-                  "dump executable" ,@(cddr argv))
-               :interactive nil))
+  (let ((file (third argv)))
+    (unless file
+      (help)
+      (uiop:quit -1))
+    (unless (probe-file file)
+      (error "File does not exist: '~A'" file))
+    (ros:roswell `(,(with-open-file (in file)
+                      (read-line in)
+                      (read-line in)
+                      (read-line in)
+                      (parse-argv (read-line in)))
+                   "dump executable" ,@(cddr argv))
+                 :interactive nil)))
 
 (defun main (&rest argv)
-  (main- argv))
+  (unless argv
+    (help)
+    (uiop:quit -1))
+  (handler-case (main- argv)
+    (error (e)
+      (format *error-output* "~&~A~%" e)
+      (help))))
 
 ;;(defun test (&rest argv) (with-open-file (in (car argv))))
