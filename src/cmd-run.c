@@ -16,6 +16,7 @@ extern char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd);
+extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
 
 struct run_impl_t impls_to_run[]={
   {"sbcl",&cmd_run_sbcl},
@@ -26,6 +27,7 @@ struct run_impl_t impls_to_run[]={
   {"abcl",&cmd_run_abcl},
   {"cmu",&cmd_run_cmu},
   {"cmucl",&cmd_run_cmu},
+  {"acl",&cmd_run_acl},
 };
 
 #ifdef _WIN32
