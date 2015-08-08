@@ -79,7 +79,6 @@
     #+clisp(ext:exit ret)))
 
 (defun run-program (args &key output)
-  (format t "run-program:~s ~s~%" args output)
   (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
       (funcall #1# (format nil "~{~A~^ ~}" args) :output output)
       (with-output-to-string (out)
