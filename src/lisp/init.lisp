@@ -21,6 +21,19 @@
   #+clisp(ext:getenv x)
   #-(or sbcl clisp) (funcall (read-from-string "asdf::getenv") x))
 
+(defun ros-opts ()
+  (or *ros-opts*
+      (setf *ros-opts*
+            (let((*read-eval*))
+              (read-from-string (getenv "ROS_OPTS"))))))
+
+(defun opt (param)
+  (second (assoc param (ros-opts) :test 'equal)))
+
+(or
+ (ignore-errors #-asdf (require :asdf))
+ (ignore-errors (cl:load (merge-pathnames "asdf.lisp" (opt "quicklisp")))))
+
 #+(and unix sbcl) ;; from swank
 (progn
   (sb-alien:define-alien-routine ("execvp" %execvp) sb-alien:int
@@ -49,38 +62,39 @@
 (defun setenv (name value)
   (declare (ignorable name value))
   #+sbcl(funcall (read-from-string "sb-posix:setenv") name value 1)
-  #+ccl(ccl:setenv name value t))
+  #+ccl(ccl:setenv name value t)
+  #+clisp(system::setenv name value))
 
 (defun unsetenv (name)
   (declare (ignorable name))
   #+sbcl(funcall (read-from-string "sb-posix:unsetenv") name)
-  #+ccl(ccl:unsetenv name))
+  #+ccl(ccl:unsetenv name)
+  #+clisp(system::setenv name nil))
 
 (defun quit (&optional (return-code 0) &rest rest)
   (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
     (ignore-errors(funcall (read-from-string "asdf::quit") ret))
     #+sbcl(ignore-errors(funcall (read-from-string "cl-user::exit") :code ret))
-    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))))
+    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))
+    #+clisp(ext:exit ret)))
+
+(defun run-program (args &key output)
+  (format t "run-program:~s ~s~%" args output)
+  (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
+      (funcall #1# (format nil "~{~A~^ ~}" args) :output output)
+      (with-output-to-string (out)
+        #+sbcl(funcall (read-from-string "sb-ext:run-program")
+                       (first args) (mapcar #'princ-to-string (rest args))
+                       :output out)
+        #+clisp(let ((asdf:*verbose-out* out))
+                 (format t "run-program:~s~%" (list (first args) :arguments (mapcar #'princ-to-string (rest args))))
+                 (asdf:run-shell-command (format nil "~{~A~^ ~}" args))))))
 
 (defun exec (args)
   #+(and unix sbcl)
   (execvp (first args) args)
-  (funcall (read-from-string "uiop/run-program:run-program")
-           (format nil "~{~A~^ ~}" args))
+  (run-program args)
   (quit -1))
-
-(defun ros-opts ()
-  (or *ros-opts*
-      (setf *ros-opts*
-            (let((*read-eval*))
-              (read-from-string (getenv "ROS_OPTS"))))))
-
-(defun opt (param)
-  (second (assoc param (ros-opts) :test 'equal)))
-
-(or
- (ignore-errors #-asdf (require :asdf))
- (ignore-errors (cl:load (merge-pathnames "asdf.lisp" (ros:opt "quicklisp")))))
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)
@@ -119,12 +133,7 @@
                       (if (zerop (length (opt "wargv0")))
                           (opt "argv0")
                           (opt "wargv0"))))
-         (ret  (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
-                   (funcall #1# (format nil "~A~{ ~A~}" a0 args) :output output)
-                   (with-output-to-string (out)
-                     (funcall (read-from-string "sb-ext:run-program")
-                              a0 (mapcar #'princ-to-string args)
-                              :output out)))))
+         (ret (run-program (cons a0 args) :output output)))
     (if trim
         (remove #\Newline (remove #\Return ret))
         ret)))

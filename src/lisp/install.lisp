@@ -128,7 +128,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (defun download (uri file &key proxy)
   (declare (ignorable proxy))
-  (ros:roswell `("roswell-internal-use download" ,uri ,file) :interactive nil))
+  (ros:roswell `("roswell-internal-use" "download" ,uri ,file) :interactive nil))
 
 (defun expand (archive dest &key verbose)
   (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest) :interactive nil))

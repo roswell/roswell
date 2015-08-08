@@ -31,7 +31,7 @@
                "Request URL and write the body of the response to FILE."
                (declare (ignorable url file follow-redirects quietly
                                    maximum-redirects))
-               (ros:roswell `("roswell-internal-use download" ,url ,file) :interactive nil)))
+               (ros:roswell `("roswell-internal-use" "download" ,url ,file) :interactive nil)))
        (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))
                             :direction :output :if-exists :supersede)
          (format out "~s"
@@ -40,7 +40,7 @@
                                        (maximum-redirects 10))
                      "Request URL and write the body of the response to FILE."
                      (declare (ignorable url follow-redirects quietly maximum-redirects))
-                     (ros:roswell `("roswell-internal-use download"
+                     (ros:roswell `("roswell-internal-use" "download"
                                     ,(funcall (find-symbol (string :urlstring) :ql-http)
                                               (funcall (find-symbol (string :url) :ql-http) url)) ,file) :interactive nil)
                      (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
