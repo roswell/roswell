@@ -18,6 +18,18 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   int paramc=0;
   char *bin;
   int issystem=(strcmp("system",version)==0);
+  char *asdf3= cat(home,"lisp",SLASH,"asdf3.lisp",NULL);
+
+  if(!file_exist_p(asdf3)) {
+    char* cmd=cat(which(argv_orig[0])," install asdf3",NULL);
+    char* ret;
+    cond_printf(1,"cmd:%s\n",cmd);
+    ret=system_(cmd);
+    cond_printf(1,"ret:%s\n",ret);
+    s(ret);
+  }
+  s(asdf3);
+
   if(issystem){
     bin=truename(which("clisp"));
   }else {
@@ -73,6 +85,5 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc]=NULL;
   cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil"
               ,script?script:"nil");
-
   return arg;
 }

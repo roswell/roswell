@@ -32,7 +32,7 @@
 
 (or
  (ignore-errors #-asdf (require :asdf))
- (ignore-errors (cl:load (merge-pathnames "asdf.lisp" (opt "quicklisp")))))
+ (ignore-errors (cl:load (merge-pathnames "lisp/asdf3.lisp" (opt "homedir")))))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -143,8 +143,10 @@
 
 (let ((symbol (read-from-string "asdf::*user-cache*")))
   (when (boundp symbol)
-    (unless (equal (first (last (symbol-value symbol))) (impl))
-      (set symbol (append (symbol-value symbol) (list (impl)))))))
+    (if (listp (symbol-value symbol))
+        (unless (equal (first (last (symbol-value symbol))) (impl))
+          (set symbol (append (symbol-value symbol) (list (impl)))))
+        (cl:print "tbd....."))))
 
 (defun source-registry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
