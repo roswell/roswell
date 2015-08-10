@@ -112,7 +112,7 @@
 (defun sbcl-patch (argv)
   #+darwin
   (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir)))
-        (uri "https://gist.githubusercontent.com/snmsts/e8e4fd4bd5e458ac45e8/raw/bb7f1cd2e8e9a914f4e9b1b5acf889ecf75dfe0c/posix-tests.patch"))
+        (uri "https://trac.macports.org/export/88830/trunk/dports/lang/sbcl/files/patch-posix-tests.diff"))
     (format t "~&Downloading patch: ~A~%" uri)
     (download uri file)
     (uiop/os:chdir (get-opt "src"))
