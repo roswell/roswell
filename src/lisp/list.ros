@@ -42,7 +42,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
    (defun installed (&rest r)
      (cond
        ((null r)
-        (format t "detail shown by~%~A list installed [implemntation]~2%implementations:~%"
+        (format t "detail shown by~%~A list installed [implementation]~2%implementations:~%"
                 (ros:opt "argv0"))
         (let ((dir (directory
                     (make-pathname
