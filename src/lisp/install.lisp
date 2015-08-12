@@ -15,13 +15,15 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (ql:quickload :uiop :silent t))
 
 (defpackage :ros.install
-  (:use :cl))
+  (:use :cl)
+  (:export :*build-hook*))
 
 (in-package :ros.install)
 
 (defvar *opts* nil)
 (defvar *home-path* nil)
 (defvar *ros-path* nil)
+(defvar *build-hook* nil)
 
 #+sbcl
 (defclass count-line-stream (sb-gray:fundamental-character-output-stream)
@@ -203,8 +205,11 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                  (*standard-output* (make-broadcast-stream))
                  (*error-output*    (make-broadcast-stream))
                  (*trace-output*    (make-broadcast-stream)))
-             (ql:quickload impl/version :silent t)
-             (asdf:oos 'asdf:compile-op impl/version :force t))
+             (if (ql:where-is-system impl/version)
+                 (asdf:oos 'asdf:load-op impl/version :force t)
+                 (ql:quickload impl/version)))
+           (when *build-hook*
+             (funcall *build-hook*))
            (dolist (from (directory (merge-pathnames "roswell/*.*" (ql:where-is-system impl/version))))
              (install-script from)))
           (t (format *error-output* "not supported software ~A" imp)))))
