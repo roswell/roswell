@@ -48,6 +48,11 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
     tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
     arg[paramc++]=tmp;
   }
+
+  for(i=1;i<argc;++i) {
+    arg[paramc++]=argv[i];
+  }
+
   s(impl_path);
   arg[paramc]=NULL;
   cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil"

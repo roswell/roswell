@@ -86,6 +86,9 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   for(i=1;i<argc;++i) {
     arg[paramc++]=argv[i];
   }
+
+  s(impl_path);
+
   arg[paramc]=NULL;
   return arg;
 }

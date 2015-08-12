@@ -81,9 +81,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=q("--version");
   }
   /* runtime options end here */
-  for(i=1;i<argc;++i) {
-    arg[paramc++]=argv[i];
-  }
   arg[paramc++]=q("--no-sysinit");
   arg[paramc++]=q("--no-userinit");
   if(script)
@@ -102,6 +99,10 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=q("--eval");
     tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
     arg[paramc++]=tmp;
+  }
+
+  for(i=1;i<argc;++i) {
+    arg[paramc++]=argv[i];
   }
 
   s(impl_path);
