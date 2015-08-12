@@ -9,6 +9,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char* version=(char*)cmd->short_name;
   int offset=9; /*[binpath for clisp] -q -q -M param -repl init.lisp
                   [terminating NULL] that total 8 are default. */
+  int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
