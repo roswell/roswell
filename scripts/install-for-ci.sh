@@ -38,12 +38,13 @@ install_script () {
     tmp=$(mktemp)
 
     echo "#!/bin/sh" > "$tmp"
-    for line; do
-        echo "$line" >> "$tmp"
+    while [ "$1" != "" ]; do
+        echo "$1" >> "$tmp"
+        shift
     done
     chmod 755 "$tmp"
 
-    if [ -w $dir ]; then
+    if [ -w "$dir" ]; then
         mv "$tmp" "$path"
     else
         sudo mv "$tmp" "$path"
