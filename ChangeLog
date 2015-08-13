@@ -1,3 +1,12 @@
+roswell (0.0.3.42-1) unstable; urgency=low
+
+  * New: support new impls for 'ros run' (clisp ecl abcl cmu acl)
+  * Improve: Better error handling in 'ros build' (by Eitaro Fukamachi)
+  * Improve: scripts/install-for-ci.sh improved for new impls (by Eitaro Fukamachi)
+  * Change: 'ros install package' will call function bound to 'ros.install:*build-hook*'
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 13 Aug 2015 23:43:32 +0900
+
 roswell (0.0.3.41-1) unstable; urgency=low
 
   * Change: use github to download sbcl source.
