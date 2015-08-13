@@ -169,7 +169,7 @@ esac
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
                 (lisp-implementation-version)
-                (asdf:asdf-version))'
+                (asdf:asdf-version))' || exit 1
 
 # Setup ASDF source regisry
 ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
