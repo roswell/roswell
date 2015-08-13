@@ -6,7 +6,7 @@ log () {
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
-ROSWELL_DIR=$HOME/roswell
+ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
@@ -38,12 +38,13 @@ install_script () {
     tmp=$(mktemp)
 
     echo "#!/bin/sh" > "$tmp"
-    for line; do
-        echo "$line" >> "$tmp"
+    while [ "$1" != "" ]; do
+        echo "$1" >> "$tmp"
+        shift
     done
     chmod 755 "$tmp"
 
-    if [ -w $dir ]; then
+    if [ -w "$dir" ]; then
         mv "$tmp" "$path"
     else
         sudo mv "$tmp" "$path"
@@ -169,7 +170,7 @@ esac
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
                 (lisp-implementation-version)
-                (asdf:asdf-version))'
+                (asdf:asdf-version))' || exit 1
 
 # Setup ASDF source regisry
 ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
