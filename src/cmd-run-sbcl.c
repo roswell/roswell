@@ -80,6 +80,12 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   if(sbcl_version) {
     arg[paramc++]=q("--version");
   }
+  for(i=1;i<argc;++i) {
+    if(strcmp(argv[i],"--eval")==0||
+       strcmp(argv[i],"--load")==0)
+      break;
+    arg[paramc++]=argv[i];
+  }
   /* runtime options end here */
   arg[paramc++]=q("--no-sysinit");
   arg[paramc++]=q("--no-userinit");
@@ -101,7 +107,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=tmp;
   }
 
-  for(i=1;i<argc;++i) {
+  for(;i<argc;++i) {
     arg[paramc++]=argv[i];
   }
 
