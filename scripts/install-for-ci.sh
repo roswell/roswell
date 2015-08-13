@@ -6,7 +6,7 @@ log () {
 }
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
-ROSWELL_DIR=$HOME/roswell
+ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
