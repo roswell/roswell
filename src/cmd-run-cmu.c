@@ -24,7 +24,10 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   char *bin;
   int issystem=(strcmp("system",version)==0);
   if(issystem){
-    bin=truename(which("lisp"));
+    bin=which("lisp");
+    if(strcmp(bin,"")==0)
+      s(bin),bin=which("cmucl");
+    bin=truename(bin);
   }else {
     bin=cat(impl_path,SLASH,"bin",SLASH,"lisp",EXE_EXTENTION,NULL);
   }

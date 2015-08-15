@@ -40,7 +40,11 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   int issystem=(strcmp("system",version)==0);
   unsetenv("CCL_DEFAULT_DIRECTORY");
   if(issystem){
-    bin=truename(which("ccl"));
+    if(strcmp(impl,"ccl32")==0) {
+      bin=truename(which("ccl32"));
+    }else {
+      bin=truename(which("ccl"));
+    }
   }else {
     bin=s_cat(q(impl_path),q(SLASH),ccl_binname(),q(EXE_EXTENTION),NULL);
   }

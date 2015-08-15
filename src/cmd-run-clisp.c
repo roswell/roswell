@@ -32,7 +32,11 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   s(asdf3);
 
   if(issystem){
-    bin=truename(which("clisp"));
+    if(strcmp(impl,"clisp32")==0) {
+      bin=truename(which("clisp32"));
+    }else {
+      bin=truename(which("clisp"));
+    }
   }else {
     bin=cat(impl_path,SLASH,"bin",SLASH,"clisp",EXE_EXTENTION,NULL);
   }

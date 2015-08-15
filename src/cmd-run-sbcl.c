@@ -22,8 +22,12 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char *bin;
   int issystem=(strcmp("system",version)==0);
   unsetenv("SBCL_HOME");
-  if(issystem){
-    bin=truename(which("sbcl"));
+  if(issystem) {
+    if(strcmp(impl,"sbcl32")==0) {
+      bin=truename(which("sbcl32"));
+    }else {
+      bin=truename(which("sbcl"));
+    }
   }else {
     bin=cat(impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
   }

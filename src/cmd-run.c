@@ -20,14 +20,18 @@ extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
 
 struct run_impl_t impls_to_run[]={
   {"sbcl",&cmd_run_sbcl},
+  {"sbcl32",&cmd_run_sbcl},
   {"sbcl-bin",&cmd_run_sbcl},
   {"ccl-bin",&cmd_run_ccl},
+  {"ccl32",&cmd_run_ccl},
   {"clisp",&cmd_run_clisp},
+  {"clisp32",&cmd_run_clisp},
   {"ecl",&cmd_run_ecl},
   {"abcl",&cmd_run_abcl},
   {"cmu",&cmd_run_cmu},
   {"cmucl",&cmd_run_cmu},
   {"acl",&cmd_run_acl},
+  {"alisp",&cmd_run_acl},
 };
 
 #ifdef _WIN32
