@@ -40,7 +40,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   filename2=s_escape_string(filename2);
   ensure_directories_exist(outputpath2);
   if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0 || strcmp(type,"xz")==0) {
-    str=cat(exe," ",do_extract?"x ":"l ",filename2," -so |",exe," x -ttar -si -y -o",outputpath2,NULL);
+    str=cat("cmd /c \"",exe," ",do_extract?"x ":"l ",filename2," -so |",exe," x -ttar -si -y -o",outputpath2,"\"",NULL);
   }else if(strcmp(type,"7za")==0) {
     ensure_directories_exist(outputpath2);
     str=cat(exe," ",do_extract?"x":"t"," -y -o",outputpath2," ",filename2,NULL);
