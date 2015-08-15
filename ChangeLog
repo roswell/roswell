@@ -1,3 +1,9 @@
+roswell (0.0.3.43-1) unstable; urgency=low
+
+  * Improve: Confirmed and some fix are applied for scripts/install-for-ci.sh
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 15 Aug 2015 18:59:27 +0900
+
 roswell (0.0.3.42-1) unstable; urgency=low
 
   * New: support new impls for 'ros run' (clisp ecl abcl cmu acl)
