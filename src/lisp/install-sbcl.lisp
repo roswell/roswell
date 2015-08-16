@@ -2,7 +2,9 @@
 
 (defun sh ()
   (or #+win32
-      (format nil "~A -l" (merge-pathnames (format nil "impls/~A/~A/~A/~A/msys/1.0/bin/sh" (uname-m) (uname) "msys" "mingw32") (homedir)))
+      (format nil "~A -l" (sb-ext:native-namestring
+                           (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+                                                    #+x86-64 "64" #-x86-64 "32") (homedir))))
       (which "bash")
       "sh"))
 
@@ -41,7 +43,7 @@
     result))
 
 (defun sbcl-msys (argv)
-  (ros:roswell '("install msys") :interactive nil)
+  (ros:roswell '("install msys2") :interactive nil)
   (cons t argv))
 
 (defun sbcl-version (argv)
