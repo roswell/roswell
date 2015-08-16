@@ -1,16 +1,25 @@
-language: objective-c
+language: common-lisp
+
+os:
+  - linux
+  - osx
+
 before_install:
-  - brew update
-  - brew --env
-  - brew config
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; brew update
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; brew --env
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; brew config
 install:
-  - brew tap snmsts/roswell
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; brew tap snmsts/roswell
 
 script:
   - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
   - find . \( -name \*.go \) -type f|xargs wc -l -c
   - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
-  - brew install roswell --verbose --HEAD
+  - if [ "$TRAVIS_OS_NAME" = "osx" ]; brew install roswell --verbose --HEAD
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; sh bootstrap
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; ./configure
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; make -j4
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; sudo make install
   - ros version
   - ros -v setup
   - ros list
