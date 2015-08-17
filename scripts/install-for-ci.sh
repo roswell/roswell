@@ -52,7 +52,7 @@ install_script () {
 }
 
 apt_unless_installed () {
-    if ! [ dpkg -s "$1" >/dev/null 2>&1 ]; then
+    if ! $(dpkg -s "$1" >/dev/null 2>&1); then
         sudo apt-get install "$1"
     fi
 }
@@ -80,7 +80,11 @@ ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
     if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
-        apt_unless_installed default-jre
+        if ! $(which java >/dev/null); then
+            sudo apt-get install "openjdk-7-jre"
+            sudo update-alternatives --set java /usr/lib/jvm/java-7-openjdk/bin/java
+        fi
+
         fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
         extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
         install_script "$LISP_IMPLS_BIN/abcl" \
