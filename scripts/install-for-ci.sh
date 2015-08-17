@@ -51,8 +51,11 @@ install_script () {
     fi
 }
 
+apt_installed_p () {
+    $(dpkg -s "$1" >/dev/null 2>&1)
+}
 apt_unless_installed () {
-    if ! $(dpkg -s "$1" >/dev/null 2>&1); then
+    if ! apt_installed_p "$1"; then
         sudo apt-get install "$1"
     fi
 }
@@ -80,15 +83,22 @@ ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
     if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
-        if ! $(which java >/dev/null); then
-            sudo apt-get install "openjdk-7-jre"
-            sudo update-alternatives --set java /usr/lib/jvm/java-7-openjdk/bin/java
+        java=$(which java)
+        if [ "$java" = "" ]; then
+            if apt_installed_p "openjdk-7-jre"; then
+                java="/usr/lib/jvm/java-7-openjdk/bin/java"
+            elif apt_installed_p "openjdk-6-jre"; then
+                java="/usr/lib/jvm/java-6-openjdk/bin/java"
+            else
+                sudo apt-get install "openjdk-7-jre"
+                java="/usr/lib/jvm/java-7-openjdk/bin/java"
+            fi
         fi
 
         fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
         extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
         install_script "$LISP_IMPLS_BIN/abcl" \
-            "exec java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+            "exec $java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
