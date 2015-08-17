@@ -62,6 +62,7 @@ CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots
 CMU_DIR="$LISP_IMPLS_DIR/cmucl"
 install_cmucl () {
     if ! [ -f "$LISP_IMPLS_BIN/cmucl" ]; then
+        apt_unless_installed libc6-i386
         fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
         extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
         fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
@@ -108,6 +109,7 @@ ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90expr
 ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
 install_allegro () {
     if ! [ -f "$LISP_IMPLS_BIN/alisp" ]; then
+        apt_unless_installed libc6-i386
         fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
         extract -j "$HOME/acl.bz2" "$ALLEGRO_DIR"
         install_script "$LISP_IMPLS_BIN/alisp" \
