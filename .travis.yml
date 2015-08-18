@@ -1,29 +1,30 @@
 language: common-lisp
 env:
   global:
-      - PATH=~/.roswell/bin:$PATH
-      - ROSWELL_BRANCH=master
-      - ROSWELL_INSTALL_DIR=$HOME/.roswell
-      - LISP=sbcl
+    - PATH=~/.roswell/bin:$PATH
+    - ROSWELL_BRANCH=master
+    - ROSWELL_INSTALL_DIR=$HOME/.roswell
+  matrix:
+    - BREW="YES"
+    - BREW= LISP=sbcl
+    - BREW= LISP=ccl-bin    
 os:
   - linux
   - osx
 
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew --env; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew config; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew update; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew --env; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew config; fi
 install:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew tap snmsts/roswell; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew tap snmsts/roswell; fi
 
 script:
-  - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
-  - find . \( -name \*.go \) -type f|xargs wc -l -c
-  - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
-  - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install roswell --verbose --HEAD; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
-       curl -L https://raw.githubusercontent.com/snmsts/roswell/$ROSWELL_BRANCH/scripts/install-for-ci.sh | sh;
-    fi
-  - ros version
-  - ros -v run -- --version
-  - ros config
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.go \) -type f|xargs wc -l -c; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew install roswell --verbose --HEAD; fi
+  - if [ "$BREW" != "YES" ]; then sh ./scripts/install-for-ci.sh; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros version; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; ros -v run -- --version; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; ros config; fi
