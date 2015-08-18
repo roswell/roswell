@@ -26,5 +26,5 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$BREW" != "YES" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros version; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; ros -v run -- --version; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; ros config; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros -v run -- --version; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros config; fi
