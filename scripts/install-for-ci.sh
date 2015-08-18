@@ -180,6 +180,7 @@ case "$LISP" in
         ;;
     *)
         ros install $LISP
+        ros use $LISP
         ;;
 esac
 
