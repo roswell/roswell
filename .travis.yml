@@ -1,5 +1,10 @@
 language: common-lisp
-
+env:
+  global:
+      - PATH=~/.roswell/bin:$PATH
+      - ROSWELL_BRANCH=master
+      - ROSWELL_INSTALL_DIR=$HOME/.roswell
+      - LISP=sbcl
 os:
   - linux
   - osx
@@ -16,17 +21,9 @@ script:
   - find . \( -name \*.go \) -type f|xargs wc -l -c
   - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew install roswell --verbose --HEAD; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sh bootstrap; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then ./configure; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then make -j4; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo make install; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then
+       curl -L https://raw.githubusercontent.com/snmsts/roswell/$ROSWELL_BRANCH/scripts/install-for-ci.sh | sh;
+    fi
   - ros version
-  - ros -v setup
-  - ros list
-  - ros -v run -- --version
-  - ros install sbcl
-  - ros -v run -- --version
-  - ros install ccl-bin
   - ros -v run -- --version
   - ros config
-  - man -Pcat ros
