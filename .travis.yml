@@ -20,11 +20,12 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew tap snmsts/roswell; fi
 
 script:
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.go \) -type f|xargs wc -l -c; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.go \) -type f|xargs wc -l -c; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$BREW" = "YES" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$BREW" != "YES" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros version; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros -v run -- --version; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros config; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "YES" ]; then ros -s prove-asdf -e "(asdf:test-system :quri-test)"; fi
