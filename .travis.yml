@@ -24,7 +24,7 @@ script:
   - if [ "$BREW" = "true" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
   - if [ "$BREW" = "true" ]; then find . \( -name \*.go \) -type f|xargs wc -l -c; fi
   - if [ "$BREW" = "true" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "YES" ]; then brew install roswell --verbose --HEAD; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "true" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$BREW" != "true" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros version; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros -v run -- --version; fi
