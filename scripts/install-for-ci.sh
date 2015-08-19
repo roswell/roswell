@@ -43,12 +43,9 @@ install_script () {
         shift
     done
     chmod 755 "$tmp"
+    mkdir -p "$dir"
 
-    if [ -w "$dir" ]; then
-        mv "$tmp" "$path"
-    else
-        sudo mv "$tmp" "$path"
-    fi
+    mv "$tmp" "$path"
 }
 
 apt_installed_p () {
