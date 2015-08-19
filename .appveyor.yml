@@ -31,3 +31,5 @@ artifacts:
     name: Roswell-x86_64.zip
   - path: Roswell-i686.zip
     name: Roswell-i686.zip
+cache:
+  - msys%MSYS2_BITS% -> .appveyor.yml
