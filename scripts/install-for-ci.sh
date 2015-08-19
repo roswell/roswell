@@ -11,7 +11,7 @@ ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/snmsts/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local/}
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
-LISP_IMPLS_BIN="$ROSWELL_DIR/bin"
+LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 
 fetch () {
     echo "Downloading $1..."
@@ -43,9 +43,13 @@ install_script () {
         shift
     done
     chmod 755 "$tmp"
-    mkdir -p "$dir"
+    mkdir -p "$dir" 2>/dev/null || sudo mkdir -p "$dir"
 
-    mv "$tmp" "$path"
+    if [ -w "$dir" ]; then
+        mv "$tmp" "$path"
+    else
+        sudo mv "$tmp" "$path"
+    fi
 }
 
 apt_installed_p () {
