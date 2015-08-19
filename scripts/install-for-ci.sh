@@ -117,8 +117,8 @@ install_ecl () {
         extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
         cd $HOME/ecl-src
         ./configure --prefix="$ECL_DIR"
-        make
-        make install
+        make >/dev/null
+        make install >/dev/null
         install_script "$LISP_IMPLS_BIN/ecl" \
             "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
     fi
