@@ -57,6 +57,7 @@ apt_installed_p () {
 }
 apt_unless_installed () {
     if ! apt_installed_p "$1"; then
+        sudo apt-get update
         sudo apt-get install "$1"
     fi
 }
