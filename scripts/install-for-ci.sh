@@ -98,7 +98,7 @@ install_abcl () {
         fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
         extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
         install_script "$LISP_IMPLS_BIN/abcl" \
-            "exec $java -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+            "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
