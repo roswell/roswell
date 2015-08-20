@@ -12,7 +12,7 @@ environment:
       MSYSTEM: MINGW64
 install:
   - ps: |
-    If (Test-Path msys%MSYS2_BITS%){
+    If (Test-Path msys + env:MSYS2_BITS){
       Write-Host "Using cached msys2"
     }Else{
       $url="http://kent.dl.sourceforge.net/project/msys2/Base/" + env:MSYS2_ARCH +  "/msys2-base-" + env:MSYS2_ARCH + "-" + env:MSYS2_BASEVER + ".tar.xz"
