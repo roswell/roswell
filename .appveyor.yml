@@ -12,10 +12,11 @@ environment:
       MSYSTEM: MINGW64
 install:
   - ps: |
-    If (Test-Path msys + env:MSYS2_BITS){
+    $dir=msys + env:MSYS2_BITS
+    $url="http://kent.dl.sourceforge.net/project/msys2/Base/" + env:MSYS2_ARCH +  "/msys2-base-" + env:MSYS2_ARCH + "-" + env:MSYS2_BASEVER + ".tar.xz"
+    If (Test-Path $dir){
       Write-Host "Using cached msys2"
     }Else{
-      $url="http://kent.dl.sourceforge.net/project/msys2/Base/" + env:MSYS2_ARCH +  "/msys2-base-" + env:MSYS2_ARCH + "-" + env:MSYS2_BASEVER + ".tar.xz"
       Invoke-WebRequest -UserAgent wget -Uri $url -OutFile "msys2.tar.xz"
       & "7z" x msys2.tar.xz
       & "7z" x msys2.tar > NUL
