@@ -8,7 +8,7 @@ env:
     - BREW=true
     - BREW= LISP=sbcl
     - BREW= LISP=ccl-bin
-
+    - BREW= LISP=clisp
 os:
   - linux
   - osx

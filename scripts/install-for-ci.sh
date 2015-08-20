@@ -53,12 +53,24 @@ install_script () {
 }
 
 apt_installed_p () {
-    $(dpkg -s "$1" >/dev/null 2>&1)
+    if [ `uname` = "Darwin" ]; then
+        if brew info "$1" |grep installed;then
+            false
+        else
+            true
+        fi
+    else
+        $(dpkg -s "$1" >/dev/null 2>&1)
+    fi
 }
 apt_unless_installed () {
     if ! apt_installed_p "$1"; then
-        sudo apt-get update
-        sudo apt-get install "$1"
+        if [ `uname` = "Darwin" ]; then
+            brew install "$1"
+        else
+            sudo apt-get update
+            sudo apt-get install "$1"
+        fi
     fi
 }
 
