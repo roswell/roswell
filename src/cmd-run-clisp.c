@@ -19,6 +19,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   int paramc=0;
   char *bin;
   int issystem=(strcmp("system",version)==0);
+  int simple=0;
   char *asdf3= cat(home,"lisp",SLASH,"asdf3.lisp",NULL);
 
   if(!file_exist_p(asdf3)) {
@@ -54,9 +55,13 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
-  /* runtime options from here */
-  arg[paramc++]=q("-q");
-  arg[paramc++]=q("-q");
+  for(i=1;i<argc;++i) {
+    arg[paramc++]=argv[i];
+    if(strcmp(argv[i],"--version")==0)
+      simple=1;
+  }
+  if(help)
+    arg[paramc++]=q("--help");
 
   if(image) {
     char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
@@ -68,28 +73,28 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
       s(path);
     }
   }
-  if(help)
-    arg[paramc++]=q("--help");
+
+  /* runtime options from here */
+  arg[paramc++]=q("-q");
+  arg[paramc++]=q("-q");
+
   if(script) {
     arg[paramc++]=q("-on-error");
     arg[paramc++]=q("exit");
   }
   if (!(program || script))
     arg[paramc++]=q("-repl");
-  arg[paramc++]=s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL);
-  if(quicklisp) {
-    arg[paramc++]=q("(ros:quicklisp)");
+  if(!simple) {
+    arg[paramc++]=s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL);
+    if(quicklisp) {
+      arg[paramc++]=q("(ros:quicklisp)");
+    }
+    if(program || script) {
+      char *tmp;
+      tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
+      arg[paramc++]=tmp;
+    }
   }
-  if(program || script) {
-    char *tmp;
-    tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
-    arg[paramc++]=tmp;
-  }
-
-  for(i=1;i<argc;++i) {
-    arg[paramc++]=argv[i];
-  }
-
   s(impl_path);
 
   arg[paramc]=NULL;
