@@ -78,17 +78,21 @@ CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
 CMU_DIR="$LISP_IMPLS_DIR/cmucl"
 install_cmucl () {
-    if ! [ -f "$LISP_IMPLS_BIN/cmucl" ]; then
-        apt_unless_installed libc6-i386
-        fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
-        extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
-        fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
-        extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
+    if [ `uname` = "Darwin" ]; then
+        brew install homebrew/binary/cmucl
+    else
+        if ! [ -f "$LISP_IMPLS_BIN/cmucl" ]; then
+            apt_unless_installed libc6-i386
+            fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
+            extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
+            fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
+            extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
 
-        export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
-        install_script "$LISP_IMPLS_BIN/cmucl" \
+            export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
+            install_script "$LISP_IMPLS_BIN/cmucl" \
             "export CMUCLLIB=\"$CMU_DIR/lib/cmucl/lib\"" \
             "exec \"$CMU_DIR/bin/lisp\" \"\$@\""
+        fi
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use cmucl/system
 }
