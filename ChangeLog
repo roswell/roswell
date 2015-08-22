@@ -1,3 +1,11 @@
+roswell (0.0.3.44-1) unstable; urgency=low
+
+  * Fixed:Error when installing ros script from locally installed project.
+  * Improve: scripts/install-for-ci.sh improved especially ABCL and CMUCL.(by Eitaro Fukamachi)
+  * New: on windows, 'ros install msys2' implemented.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 22 Aug 2015 14:23:18 +0900
+
 roswell (0.0.3.43-1) unstable; urgency=low
 
   * Improve: Confirmed and some fix are applied for scripts/install-for-ci.sh
