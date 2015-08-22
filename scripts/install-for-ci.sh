@@ -100,23 +100,27 @@ install_cmucl () {
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
-    if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
-        java=$(which java)
-        if [ "$java" = "" ]; then
-            if apt_installed_p "openjdk-7-jre"; then
-                java="/usr/lib/jvm/java-7-openjdk/bin/java"
-            elif apt_installed_p "openjdk-6-jre"; then
-                java="/usr/lib/jvm/java-6-openjdk/bin/java"
-            else
-                sudo apt-get install "openjdk-7-jre"
-                java="/usr/lib/jvm/java-7-openjdk/bin/java"
+    if [ `uname` = "Darwin" ]; then
+        brew install maven32 abcl
+    else
+        if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
+            java=$(which java)
+            if [ "$java" = "" ]; then
+                if apt_installed_p "openjdk-7-jre"; then
+                    java="/usr/lib/jvm/java-7-openjdk/bin/java"
+                elif apt_installed_p "openjdk-6-jre"; then
+                    java="/usr/lib/jvm/java-6-openjdk/bin/java"
+                else
+                    sudo apt-get install "openjdk-7-jre"
+                    java="/usr/lib/jvm/java-7-openjdk/bin/java"
+                fi
             fi
-        fi
 
-        fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
-        extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
-        install_script "$LISP_IMPLS_BIN/abcl" \
-            "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+            fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
+            extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
+            install_script "$LISP_IMPLS_BIN/abcl" \
+                "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+        fi
     fi
 
     # Install 'jna' beforehand because ABCL doesn't work with the newer Maven.

@@ -6,11 +6,12 @@ env:
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
-    - BREW= LISP=cmucl
+    - BREW= LISP=abcl
     - BREW=true
     - BREW= LISP=sbcl
     - BREW= LISP=ccl-bin
     - BREW= LISP=clisp
+    - BREW= LISP=cmucl
 os:
   - linux
   - osx
