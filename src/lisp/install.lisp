@@ -206,7 +206,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                  (*error-output*    (make-broadcast-stream))
                  (*trace-output*    (make-broadcast-stream)))
              (if (ql:where-is-system impl/version)
-                 (asdf:oos 'asdf:load-op impl/version :force t)
+                 (progn (ql:quickload impl/version)
+                        (asdf:oos 'asdf:load-op impl/version :force t))
                  (ql:quickload impl/version)))
            (when *build-hook*
              (funcall *build-hook*))
