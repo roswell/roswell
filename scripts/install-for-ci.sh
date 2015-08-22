@@ -101,7 +101,7 @@ ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
     if [ `uname` = "Darwin" ]; then
-        brew install maven32 abcl
+        brew install maven31 abcl
     else
         if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
             java=$(which java)
