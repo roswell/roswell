@@ -26,7 +26,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   }
   s(arch),s(os);
   if(abcl_version)
-    offset+=1;
+    offset+=2;
   if(quicklisp)
     offset+=2;
   if(program||script)
@@ -38,6 +38,10 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc++]=q("--noinform");
   arg[paramc++]=q("--noinit");
   arg[paramc++]=q("--nosystem");
+  if(abcl_version) {
+    arg[paramc++]=q("--eval");
+    arg[paramc++]=q("(progn (format t \"~A ~A~%\" (lisp-implementation-type) (lisp-implementation-version))(extensions:quit))");
+  }
   arg[paramc++]=q("--eval");
   arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL);
   if(quicklisp) {
