@@ -101,7 +101,7 @@ ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
     if [ `uname` = "Darwin" ]; then
-        brew install maven31 abcl
+        brew install abcl
     else
         if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
             java=$(which java)
@@ -134,15 +134,19 @@ install_abcl () {
 ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
 ECL_DIR="$LISP_IMPLS_DIR/ecl"
 install_ecl () {
-    if ! [ -f "$LISP_IMPLS_BIN/ecl" ]; then
-        fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
-        extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
-        cd $HOME/ecl-src
-        ./configure --prefix="$ECL_DIR"
-        make >/dev/null
-        make install >/dev/null
-        install_script "$LISP_IMPLS_BIN/ecl" \
-            "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
+    if [ `uname` = "Darwin" ]; then
+        brew install ecl
+    else
+        if ! [ -f "$LISP_IMPLS_BIN/ecl" ]; then
+            fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
+            extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
+            cd $HOME/ecl-src
+            ./configure --prefix="$ECL_DIR"
+            make >/dev/null
+            make install >/dev/null
+            install_script "$LISP_IMPLS_BIN/ecl" \
+                           "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
+        fi
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
 }
