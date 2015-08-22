@@ -31,6 +31,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   int offset=8;  /*[binpath for ccl] --no-init --quiet --batch --image-name param --eval init.lisp
                    [terminating NULL] that total 9 are default. */
   int i;
+  char* ccl_version=get_opt("version",0);
   int paramc=0;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* bin;
@@ -49,6 +50,8 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
     bin=s_cat(q(impl_path),q(SLASH),ccl_binname(),q(EXE_EXTENTION),NULL);
   }
 
+  if(ccl_version)
+    offset+=1;
   if(script)
     offset+=1;
   if(quicklisp)
@@ -59,6 +62,8 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
+  if(ccl_version)
+    arg[paramc++]=q("--version");
   arg[paramc++]=q("--no-init");
   arg[paramc++]=q("--quiet");
   if(image||!issystem)

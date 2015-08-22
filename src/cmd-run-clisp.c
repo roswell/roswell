@@ -55,6 +55,12 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
+
+  if(clisp_version) {
+    arg[paramc++]=q("--version");
+    simple=1;
+  }
+
   for(i=1;i<argc;++i) {
     arg[paramc++]=argv[i];
     if(strcmp(argv[i],"--version")==0)

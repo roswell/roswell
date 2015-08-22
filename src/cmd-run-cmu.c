@@ -36,7 +36,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   if(control_stack_size)
     offset+=2;
   if(cmu_version)
-    offset+=1;
+    offset+=2;
   if(script)
     offset+=1;
   if(quicklisp)
@@ -75,6 +75,10 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   if(control_stack_size) {
     arg[paramc++]=q("-control-stack-size");
     arg[paramc++]=q(control_stack_size);
+  }
+  if(cmu_version) {
+    arg[paramc++]=q("-eval");
+    arg[paramc++]=q("(progn (format t \"~A ~A~%\" (lisp-implementation-type) (lisp-implementation-version))(extensions:quit))");
   }
   arg[paramc++]=q("-eval");
   arg[paramc++]=s_cat(q("(progn(setq *load-verbose*()*compile-verbose*())#-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL);

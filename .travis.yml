@@ -29,7 +29,7 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ] && [ "$BREW" = "true" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$BREW" != "true" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros version; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros -v run -- --version; fi
+  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros -v version=t run; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros config; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
 

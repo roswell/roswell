@@ -64,7 +64,6 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd) {
     }else {
       char* tmp[]={"--",ROS_RUN_REPL};
       proccmd(1,tmp,run_options,run_commands);
-      //return proccmd(1,tmp,top_options,top_commands);
     }
     cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
     return i;
@@ -134,6 +133,13 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   for(i=0;i<j;i+=proccmd(j-i,&argv_gen[i],top_options,top_commands));
   return 0;
 }
+
+/*int cmd_run_version (int argc,char **argv,struct sub_command* cmd) {
+  cond_printf(1,"cmd_run_version called\n");
+  set_opt(&local_opt,"version","t",0);
+  return 1;
+}
+*/
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   int ret=1;
@@ -263,6 +269,7 @@ void register_cmd_run(void) {
   /*options*/
   run_options=register_runtime_options(run_options);
   run_options=add_command(run_options,"",NULL,cmd_run_star,OPT_SHOW_NONE,1,NULL,NULL);
+  /*run_options=add_command(run_options,"version",NULL,cmd_run_version,OPT_SHOW_NONE,0,NULL,NULL);*/
   run_options=nreverse(run_options);
 
   /*commands*/
