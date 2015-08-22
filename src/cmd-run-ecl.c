@@ -34,6 +34,9 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
   arg=alloc(sizeof(char*)*(offset+argc));
   arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
+  if(ecl_version)
+    arg[paramc++]=q("--version");
+
   /* runtime options from here */
   arg[paramc++]=q("-norc");
   arg[paramc++]=q("-eval");

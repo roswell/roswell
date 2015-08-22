@@ -6,6 +6,7 @@ env:
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
+    - BREW= LISP=ecl
     - BREW= LISP=abcl
     - BREW=true
     - BREW= LISP=sbcl
