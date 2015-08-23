@@ -100,27 +100,25 @@ install_cmucl () {
 ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
-    if [ `uname` = "Darwin" ]; then
-        brew install abcl
-    else
-        if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
-            java=$(which java)
-            if [ "$java" = "" ]; then
-                if apt_installed_p "openjdk-7-jre"; then
-                    java="/usr/lib/jvm/java-7-openjdk/bin/java"
-                elif apt_installed_p "openjdk-6-jre"; then
-                    java="/usr/lib/jvm/java-6-openjdk/bin/java"
-                else
-                    sudo apt-get install "openjdk-7-jre"
-                    java="/usr/lib/jvm/java-7-openjdk/bin/java"
-                fi
+    if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
+        java=$(which java)
+        if [ "$java" = "" ]; then
+            if apt_installed_p "openjdk-7-jre"; then
+                java="/usr/lib/jvm/java-7-openjdk/bin/java"
+            elif apt_installed_p "openjdk-6-jre"; then
+                java="/usr/lib/jvm/java-6-openjdk/bin/java"
+            else
+                sudo apt-get install "openjdk-7-jre"
+                java="/usr/lib/jvm/java-7-openjdk/bin/java"
             fi
-
-            fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
-            extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
-            install_script "$LISP_IMPLS_BIN/abcl" \
-                "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
         fi
+
+        fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
+        extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
+        install_script "$LISP_IMPLS_BIN/abcl" \
+                       "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+    fi
+    if ! [ `uname` = "Darwin" ]; then
         # Install 'jna' beforehand because ABCL doesn't work with the newer Maven.
         # http://abcl.org/trac/ticket/390
         # The compatibility issue has been resolved at trunk and it's going to be included in ver 1.3.3.
@@ -150,14 +148,26 @@ install_ecl () {
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
+ALLEGRO_DMG_URL="http://franz.com/ftp/pub/acl90express/macosx86/acl90express-macosx-x86.dmg"
+
 ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
 install_allegro () {
     if ! [ -f "$LISP_IMPLS_BIN/alisp" ]; then
-        apt_unless_installed libc6-i386
-        fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
-        extract -j "$HOME/acl.bz2" "$ALLEGRO_DIR"
-        install_script "$LISP_IMPLS_BIN/alisp" \
-            "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
+        if [ `uname` = "Darwin" ]; then
+            fetch "$ALLEGRO_DMG_URL" "$HOME/acl.dmg"
+            mount_dir=`hdiutil attach $HOME/acl.dmg | awk -F '\t' 'END{print $NF}'`
+            cp -r $mount_dir/AllegroCLexpress.app/Contents/Resources/ $LISP_IMPLS_DIR/
+            mv Resources acl
+            hdiutil detach "$mount_dir"
+            install_script "$LISP_IMPLS_BIN/alisp" \
+                "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
+        else
+            apt_unless_installed libc6-i386
+            fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
+            extract -j "$HOME/acl.bz2" "$ALLEGRO_DIR"
+            install_script "$LISP_IMPLS_BIN/alisp" \
+                "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
+        fi
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use alisp/system
 }
