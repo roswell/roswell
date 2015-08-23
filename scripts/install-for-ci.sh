@@ -35,7 +35,7 @@ extract () {
 install_script () {
     path=$1; shift
     dir=$(dirname "$path")
-    tmp=$(mktemp)
+    tmp=$(mktemp /tmp/rosci_XXX)
 
     echo "#!/bin/sh" > "$tmp"
     while [ "$1" != "" ]; do
