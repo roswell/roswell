@@ -26,7 +26,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   }
   s(arch),s(os);
   if(acl_version)
-    offset+=1;
+    offset+=3;
   if(script)
     offset+=1;
   if(quicklisp)
@@ -39,6 +39,12 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   arg[paramc++]=bin;
   /* runtime options from here */
   arg[paramc++]=q("-qq");
+  if(acl_version) {
+    arg[paramc++]=q("-e");
+    arg[paramc++]=q("(format t \"~A ~A~%\" (lisp-implementation-type) (lisp-implementation-version))");
+    arg[paramc++]=q("-kill");
+  }
+
   if(image) {
     char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)){
