@@ -155,9 +155,10 @@ install_allegro () {
     if ! [ -f "$LISP_IMPLS_BIN/alisp" ]; then
         if [ `uname` = "Darwin" ]; then
             fetch "$ALLEGRO_DMG_URL" "$HOME/acl.dmg"
+            mkdir -p $ALLEGRO_DIR
             mount_dir=`hdiutil attach $HOME/acl.dmg | awk -F '\t' 'END{print $NF}'`
-            cp -r $mount_dir/AllegroCLexpress.app/Contents/Resources/ $LISP_IMPLS_DIR/
-            mv Resources acl
+            cp -r $mount_dir/AllegroCLexpress.app/Contents/Resources/ $ALLEGRO_DIR/
+            mv $LISP_IMPLS_DIR/Resources $LISP_IMPLS_DIR/acl
             hdiutil detach "$mount_dir"
             install_script "$LISP_IMPLS_BIN/alisp" \
                 "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
