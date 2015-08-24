@@ -1,26 +1,25 @@
 language: common-lisp
 sudo: required
-os:
-  - linux
-  - osx
-
 env:
   global:
     - PATH=~/.roswell/bin:$PATH
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
+    - BREW= LISP=alisp
+    - BREW= LISP=abcl
     - BREW=true
     - BREW= LISP=sbcl
     - BREW= LISP=ccl-bin
     - BREW= LISP=clisp
     - BREW= LISP=cmucl
     - BREW= LISP=ecl
-    - BREW= LISP=abcl
-    - BREW= LISP=alisp
     exclude:
       - os: linux
         BREW: true
+os:
+  - linux
+  - osx
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
