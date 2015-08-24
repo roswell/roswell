@@ -59,6 +59,8 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
+  (when (position "--archive" (getf argv :argv) :test 'equal)
+    (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
   (set-opt "download.uri" (format nil "~@{~A~}" "https://github.com/sbcl/sbcl/archive/sbcl-"
@@ -194,6 +196,37 @@
                 (set-difference origin opts)))))
   (cons t argv))
 
+(defvar *sbcl-copy-files*
+  `((:copy
+     "BUGS"
+     "COPYING"
+     "CREDITS"
+     "INSTALL"
+     "NEWS"
+     "README"
+     "find-gnumake.sh"
+     "install.sh"
+     "pubring.pgp"
+     "run-sbcl.sh"
+     "sbcl-pwd.sh"
+     "contrib/asdf-module.mk"
+     "contrib/vanilla-module.mk"
+     "doc/sbcl.1"
+     "output/sbcl.core"
+     "src/runtime/sbcl"
+     "contrib/*/Makefile"
+     "output/prefix.def"
+     "obj/sbcl-home/contrib/*.*")
+    (:touch
+     ,(lambda (from)
+              (loop for e in (directory (merge-pathnames "obj/asdf-cache/*" from))
+                 collect (merge-pathnames e "test-passed.test-report"))))))
+
+(defun sbcl-make-archive (argv)
+  (when (get-opt "archive")
+    )
+  (cons t argv))
+
 (defun sbcl-clean (argv)
   (format t "~&Cleaning~%")
   (let ((src (get-opt "src")))
@@ -237,6 +270,7 @@
                         'sbcl-make
                         'sbcl-install
                         'sbcl-backup-features
+                        'sbcl-make-archive
                         'sbcl-clean
                         'setup))
       *install-cmds*)
