@@ -19,9 +19,9 @@ os:
   - osx
 matrix:
   exclude:
-  - os: linux
+    - os: linux
       BREW: true
-  
+
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew --env; fi
