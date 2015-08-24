@@ -1,22 +1,26 @@
 language: common-lisp
 sudo: required
+os:
+  - linux
+  - osx
+
 env:
   global:
     - PATH=~/.roswell/bin:$PATH
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
-    - BREW= LISP=alisp
-    - BREW= LISP=abcl
     - BREW=true
     - BREW= LISP=sbcl
     - BREW= LISP=ccl-bin
     - BREW= LISP=clisp
     - BREW= LISP=cmucl
     - BREW= LISP=ecl
-os:
-  - linux
-  - osx
+    - BREW= LISP=abcl
+    - BREW= LISP=alisp
+    exclude:
+      - os: linux
+        BREW: true
 
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
@@ -35,8 +39,3 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros -v version=t run; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros config; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$BREW" != "true" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
-
-matrix:
-  exclude:
-    - os: linux
-      BREW: true
