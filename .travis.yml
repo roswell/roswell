@@ -14,13 +14,14 @@ env:
     - BREW= LISP=clisp
     - BREW= LISP=cmucl
     - BREW= LISP=ecl
-    exclude:
-      - os: linux
-        BREW: true
 os:
   - linux
   - osx
-
+matrix:
+  exclude:
+  - os: linux
+      BREW: true
+  
 before_install:
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew update; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ]; then brew --env; fi
