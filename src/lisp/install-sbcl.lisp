@@ -60,13 +60,14 @@
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
   (when (position "--archive" (getf argv :argv) :test 'equal)
+    (set-opt "install.force" "t")
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
   (set-opt "download.uri" (format nil "~@{~A~}" "https://github.com/sbcl/sbcl/archive/sbcl-"
                                   (getf argv :version) ".tar.gz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos 
+                                (when pos
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
@@ -161,20 +162,21 @@
          (src (get-opt "src"))
          (install-root impl-path)
          (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
-    (format t "~&Installing ~A/~A" (getf argv :target) (get-opt "as"))
-    (format t "~&prefix: ~s~%" impl-path)
-    (ensure-directories-exist impl-path)
-    (ensure-directories-exist log-path)
-    (uiop/os:chdir src)
-    (format t "~&chdir ~A~%" src)
-    (ros:unsetenv "SBCL_HOME")
-    (ros:setenv "INSTALL_ROOT" (format nil "~A" install-root))
-    (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
-      (format out "~&--~&~A~%" (date))
-      (let ((*standard-output* (make-broadcast-stream
-                                out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program (format nil "~A install.sh" (sh)) :output t)))
-    (format *error-output* "done.~%"))
+    (unless (get-opt "archive")
+      (format t "~&Installing ~A/~A" (getf argv :target) (get-opt "as"))
+      (format t "~&prefix: ~s~%" impl-path)
+      (ensure-directories-exist impl-path)
+      (ensure-directories-exist log-path)
+      (uiop/os:chdir src)
+      (format t "~&chdir ~A~%" src)
+      (ros:unsetenv "SBCL_HOME")
+      (ros:setenv "INSTALL_ROOT" (format nil "~A" install-root))
+      (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
+        (format out "~&--~&~A~%" (date))
+        (let ((*standard-output* (make-broadcast-stream
+                                  out #+sbcl(make-instance 'count-line-stream))))
+          (uiop/run-program:run-program (format nil "~A install.sh" (sh)) :output t)))
+      (format *error-output* "done.~%")))
   (cons t argv))
 
 (defun sbcl-backup-features (argv)
@@ -204,27 +206,60 @@
      "INSTALL"
      "NEWS"
      "README"
-     "find-gnumake.sh"
-     "install.sh"
+     ("find-gnumake.sh" #o755)
+     ("install.sh" #o755)
      "pubring.pgp"
-     "run-sbcl.sh"
-     "sbcl-pwd.sh"
+     ("run-sbcl.sh" #o755)
+     ("sbcl-pwd.sh" #o755)
      "contrib/asdf-module.mk"
      "contrib/vanilla-module.mk"
      "doc/sbcl.1"
      "output/sbcl.core"
-     "src/runtime/sbcl"
+     ("src/runtime/sbcl" #o755)
      "contrib/*/Makefile"
      "output/prefix.def"
      "obj/sbcl-home/contrib/*.*")
     (:touch
-     ,(lambda (from)
+     ,(lambda (from to method)
               (loop for e in (directory (merge-pathnames "obj/asdf-cache/*" from))
-                 collect (merge-pathnames e "test-passed.test-report"))))))
+                 do (funcall method (let ((x (merge-pathnames e "test-passed.test-report")))
+                                      (make-pathname :defaults x
+                                                     :directory (append (pathname-directory to)
+                                                                        (nthcdr (length (pathname-directory from))
+                                                                                (pathname-directory x)))))))))))
 
 (defun sbcl-make-archive (argv)
   (when (get-opt "archive")
-    )
+    (let ((from (truename (get-opt "src")))
+          (to (truename (ensure-directories-exist (merge-pathnames (format nil "tmp/sbcl-~A-~A-~A/" (getf argv :version) (uname-m) (uname)) (homedir))))))
+      (flet ((copy (from to)
+               (ensure-directories-exist to)
+               (uiop:copy-file from to))
+             (touch (file)
+               (ensure-directories-exist file)
+               (with-open-file (i file
+                                  :direction :probe
+                                  :if-does-not-exist :create))))
+        (loop :for (method . elts) :in *sbcl-copy-files*
+           :do (case method
+                 (:copy (loop for elt in elts
+                           do (if (and (stringp elt) (wild-pathname-p elt))
+                                  (mapc (lambda (x)
+                                          (copy x (make-pathname :defaults x
+                                                                 :directory (append (pathname-directory to)
+                                                                                    (nthcdr (length (pathname-directory from))
+                                                                                            (pathname-directory x))))))
+                                        (reverse (directory (merge-pathnames elt from))))
+                                  (if (consp elt)
+                                      (progn
+                                        (copy (merge-pathnames (first elt) from)
+                                              (merge-pathnames (first elt) to))
+                                        (sb-posix:chmod (merge-pathnames (first elt) to) (second elt)))
+                                      (copy (merge-pathnames elt from)
+                                            (merge-pathnames elt to))))))
+                 (:touch (loop for elt in elts
+                            do (if (functionp elt)
+                                   (funcall elt from to #'touch)))))))))
   (cons t argv))
 
 (defun sbcl-clean (argv)
