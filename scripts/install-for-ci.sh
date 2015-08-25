@@ -219,6 +219,9 @@ case "$LISP" in
     allegro|alisp)
         install_allegro
         ;;
+    sbcl-bin)
+        ros use $LISP        
+        ;;
     *)
         ros install $LISP
         ros use $LISP
