@@ -47,6 +47,55 @@ First of all, you can get sub-commands and command line options by this command:
 
     $ ros
 
+you'll get like below
+
+```
+Usage: ros [OPTIONS] [Command arguments...]
+Usage: ros [OPTIONS] [[--] script-path arguments...]
+
+Commands:
+    install  Install archive and build it for roswell environment
+    config   Get and set options
+    setup    Initial setup
+    version  Show the roswell version information
+    help     Show Command help
+    run      Run repl
+    use      change default implementation
+    init     create new ros script
+    dump     Dump image for faster startup or Make Executable
+    delete   Delete installed implementations
+    list     List Information
+    emacs    launch emacs with slime
+    build
+
+Options:
+    -w CODE     --wrap CODE          shell wrapper CODE to run in roswell
+    -m IMAGE    --image IMAGE        build from Lisp image IMAGE
+    -L NAME     --lisp NAME          try use these LISP implementation
+    -l FILE     --load FILE          load lisp FILE while building
+    -S X        --source-registry X  override source registry of asdf systems
+    -s SYSTEM   --system SYSTEM      load asdf SYSTEM while building
+                --load-system SYSTEM same as above (buildapp compatibility)
+    -p PACKAGE  --package PACKAGE    change current package to PACKAGE
+    -sp SP      --system-package SP  combination of -s SP and -p SP
+    -e FORM     --eval FORM          evaluate FORM while building
+                --require MODULE     require MODULE while building
+    -q          --quit               quit lisp here
+    -r FUNC     --restart FUNC       restart from build by calling (FUNC)
+    -E FUNC     --entry FUNC         restart from build by calling (FUNC argv)
+    -i FORM     --init FORM          evaluate FORM after restart
+    -ip FORM    --print FORM         evaluate and princ FORM after restart
+    -iw FORM    --write FORM         evaluate and write FORM after restart
+    -F FORM     --final FORM         evaluate FORM before dumping IMAGE
+    -R          --rc                 try read /etc/rosrc, ~/.roswell/init.lisp
+    +R          --no-rc              skip /etc/rosrc, ~/.roswell/init.lisp
+    -Q          --quicklisp          use quicklisp (default)
+    +Q          --no-quicklisp       do not use quicklisp
+    -v          --verbose            be quite noisy while building
+                --quiet              be quite quiet while building (default)
+                --test               for test purpose
+```
+
 ### Installing Lisps
 
 If you want to install the newest released version of sbcl you can do it by:
