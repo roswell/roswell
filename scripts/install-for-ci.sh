@@ -127,7 +127,7 @@ install_abcl () {
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
 
-ECL_TARBALL_URL="http://downloads.sourceforge.net/project/ecls/ecls/15.3/ecl-15.3.7.tgz"
+ECL_TARBALL_URL="https://common-lisp.net/project/ecl/files/ecl-16.0.0.tgz"
 ECL_DIR="$LISP_IMPLS_DIR/ecl"
 install_ecl () {
     if [ `uname` = "Darwin" ]; then
