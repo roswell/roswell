@@ -137,15 +137,11 @@
         (remove #\Newline (remove #\Return ret))
         ret)))
 
-(defun impl ()
-  (let ((s (second (assoc "impl" (ros-opts) :test 'equal))))
-    (subseq s (1+ (position #\/ s)))))
-
-(let ((symbol (read-from-string "asdf::*user-cache*")))
+(let ((symbol (read-from-string "asdf::*user-cache*"))
+      (impl (substitute #\- #\/ (second (assoc "impl" (ros-opts) :test 'equal)))))
   (when (boundp symbol)
     (if (listp (symbol-value symbol))
-        (unless (equal (first (last (symbol-value symbol))) (impl))
-          (set symbol (append (symbol-value symbol) (list (impl)))))
+        (set symbol (append (symbol-value symbol) (list impl)))
         (cl:print "tbd....."))))
 
 (defun source-registry (cmd arg &rest rest)
