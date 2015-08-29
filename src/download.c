@@ -15,7 +15,7 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
     int i;
     for(i=0;i<width;++i)
       w=s_cat2(w,q((i>=(count/(content_length/(width)))?" ":"#")));
-    w=s_cat2(w,qsprintf(8," %3d%%",(count/(content_length/(99)))));
+    w=s_cat2(w,qsprintf(8," %3d%%",(100*(count/100))/(content_length/100)));
   }else {
     int current,aux;
     aux=1024>count?' ':1024*1024>count?(current=count/1024,'K'):
