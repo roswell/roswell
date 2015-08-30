@@ -1,3 +1,12 @@
+roswell (0.0.3.45-1) unstable; urgency=low
+
+  * Fixed: better algorithm to calc download progress.
+  * Fixed: Cache directory conflicts when sbcl and sbcl-bin are just same version.
+  * Fixed: wait for input forever when try to compile sbcl again on Darwin.
+  * Improve: Better support for CI service using Darwin.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 30 Aug 2015 14:29:54 +0900
+
 roswell (0.0.3.44-1) unstable; urgency=low
 
   * Fixed:Error when installing ros script from locally installed project.
