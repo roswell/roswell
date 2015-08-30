@@ -4,7 +4,7 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad :uiop) :silent t)
+(ql:quickload '(:cl-emb :cl-html-parse :dexador :ironclad :uiop) :silent t)
 
 (defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
 (defvar *package-name* "roswell")
@@ -12,8 +12,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defun get-newest-url (base)
   (block nil
     (multiple-value-bind (body res)
-	(drakma:http-request
-	 (format nil "https://github.com/~A/releases/" base))
+	(dex:get (format nil "https://github.com/~A/releases/" base))
       (when (= res 200)
 	(net.html.parser:parse-html
 	 body
@@ -36,7 +35,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         (format t "downloading ~a" uri)
         (force-output)
         (multiple-value-bind (in status)
-            (drakma:http-request uri :want-stream t :force-binary t)
+            (dex:get uri :want-stream t :force-binary t)
           (unwind-protect
                (when (= status 200)
                  (loop :with seq := (make-array 4096 :element-type '(unsigned-byte 8))

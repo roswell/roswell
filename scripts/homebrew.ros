@@ -4,15 +4,14 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :drakma :ironclad) :silent t)
+(ql:quickload '(:cl-emb :cl-html-parse :dexador :ironclad) :silent t)
 
 (defun get-newest-url (base &key master)
   (block nil
     (if master
         (format nil "https://github.com/~A/archive/master.tar.gz" base)
         (multiple-value-bind (body res)
-            (drakma:http-request
-             (format nil "https://github.com/~A/releases/" base))
+            (dex:get (format nil "https://github.com/~A/releases/" base))
           (when (= res 200)
             (net.html.parser:parse-html
              body
@@ -27,7 +26,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun sha256-from-url (url)
   (multiple-value-bind (body res)
-      (drakma:http-request url :force-binary t)
+      (dex:get url :force-binary t)
     (when (= res 200)
       (ironclad:byte-array-to-hex-string
        (ironclad:digest-sequence
