@@ -11,32 +11,32 @@
   (let ((path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" *msys2-basever*) (homedir)))
         (msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
     (if  (probe-file (merge-pathnames (format nil "mingw~A/bin/gcc.exe" *msys2-bits*) msys))
-        (format t "msys2 have been already setup~%")
-      (progn
-        (format *error-output* "Download ~a~%" (file-namestring path))
-        (force-output *error-output*)
-        (ros.install::download
-         (format nil "http://kent.dl.sourceforge.net/project/msys2/Base/~A/msys2-base-~A-~A.tar.xz"
-                 *msys2-arch* *msys2-arch* *msys2-basever*) path)
-        (format t " done.~%")
-        (expand path
-                (ensure-directories-exist
-                 (merge-pathnames (format nil "impls/~A/~A/" (uname-m) (uname))
-                                  (homedir))))
-        (uiop/run-program:run-program
-         `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
-           "-lc" " ")
-         :output t)
-        (uiop/run-program:run-program
-         `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
-           "-lc"
-           ,(format nil "~@{~A~}"
-                    "for i in {1..3}; do pacman --noconfirm "
-                    "-Suy autoconf automake pkg-config "
-                    "mingw-w64-" *msys2-arch* "-gcc "
-                    "make zlib-devel && break || sleep 15; done")))
-        (uiop/run-program:run-program
-         `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys)))))))
+         (format t "msys2 have been already setup~%")
+         (progn
+           (format *error-output* "Download ~a~%" (file-namestring path))
+           (force-output *error-output*)
+           (ros.install::download
+            (format nil "http://kent.dl.sourceforge.net/project/msys2/Base/~A/msys2-base-~A-~A.tar.xz"
+                    *msys2-arch* *msys2-arch* *msys2-basever*) path)
+           (format t " done.~%")
+           (expand path
+                   (ensure-directories-exist
+                    (merge-pathnames (format nil "impls/~A/~A/" (uname-m) (uname))
+                                     (homedir))))
+           (uiop/run-program:run-program
+            `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
+               "-lc" " ")
+            :output t)
+           (uiop/run-program:run-program
+            `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
+               "-lc"
+               ,(format nil "~@{~A~}"
+                        "for i in {1..3}; do pacman --noconfirm "
+                        "-Suy autoconf automake pkg-config "
+                        "mingw-w64-" *msys2-arch* "-gcc "
+                        "make zlib-devel && break || sleep 15; done")))
+           (uiop/run-program:run-program
+            `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys)))))))
   (cons t argv))
 
 (push `("msys2" . ,(list
