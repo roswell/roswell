@@ -56,6 +56,11 @@
               (get-opt "download.uri")))
   (cons t argv))
 
+(defun clisp-lib (argv)
+  #+linux(ros:roswell '("install ffcall") :interactive nil)
+  (ros:roswell '("install sigsegv") :interactive nil)
+  (cons t argv))
+
 (defun clisp-expand (argv)
   (format t "~%Extracting archive: ~A~%" (get-opt "download.archive"))
   (expand (get-opt "download.archive")
@@ -83,7 +88,12 @@
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
-           (cmd (format nil "./configure --ignore-absence-of-libsigsegv '--prefix=~A'" (get-opt "prefix")))
+           (cmd (format nil "./configure --with-libsigsegv-prefix=~A ~A '--prefix=~A'"
+                        (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "sigsegv" "2.10") (homedir))
+                        (or #+linux(format nil "--with-libffcall-prefix=~A"
+                                           (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" "1.10") (homedir)))
+                            "")
+                        (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (format t "~&chdir ~A~%" src)
@@ -128,6 +138,7 @@
                          'clisp-argv-parse
                          'start
                          'clisp-download
+                         'clisp-lib
                          'clisp-expand
                          'clisp-patch
                          'clisp-config

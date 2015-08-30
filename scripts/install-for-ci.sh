@@ -204,8 +204,13 @@ esac
 echo "Installing $LISP..."
 case "$LISP" in
     clisp)
-        apt_unless_installed clisp
-        ros use clisp/system
+        if [ `uname` = "Darwin" ]; then
+            apt_unless_installed clisp
+            ros use clisp/system
+        else
+            ros install $LISP
+            ros use $LISP
+        fi
         ;;
     cmu|cmucl)
         install_cmucl

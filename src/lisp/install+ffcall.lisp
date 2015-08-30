@@ -23,7 +23,7 @@
                          :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
       (let* ((cmd (format nil "./configure '--prefix=~A'" 
-                          (ensure-directories-exist(merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "ffcall" *ffcall-version*) (homedir)))))
+                          (ensure-directories-exist(merge-pathnames (format nil "lib/~A/~A/~A/~A/" (uname-m) (uname) "ffcall" *ffcall-version*) (homedir)))))
              (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
         (uiop/os:chdir expand-dir)
         (format t "~&chdir ~A~%" expand-dir)
@@ -36,6 +36,7 @@
       (let* ((cmd (format nil "make"))
              (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
         (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
+    (format t "~&install~%")
     (with-open-file (out (merge-pathnames "impls/log/ffcall/install.log" (homedir))
                          :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
