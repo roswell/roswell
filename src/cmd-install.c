@@ -184,7 +184,8 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
 
 int install_help(int argc,char **argv,struct sub_command* cmd) {
   if(argc==1) {
-    fprintf(stderr,"Candidates to install are:\n");
+    cond_printf(0,"Usage: %s install impl [OPTIONS]\n\nMore detail on impl specific options type:\n %s help install impl\n\n"
+                "Candidates impl to install are:\n",argv_orig[0],argv_orig[0]);
     char* install=lispdir();
     LVal d=directory(install),v=d;
     for(;v;v=Next(v)) {
