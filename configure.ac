@@ -34,4 +34,16 @@ AC_CHECK_HEADERS(windows.h)
 
 # Checks for library functions.
 
+# USE-sbcl-master
+AC_ARG_WITH([sbcl_master],
+[AC_HELP_STRING(
+  [--with-sbcl-master=URL],
+  [set url for sbcl-bin [default=http://prdownloads.sourceforge.net/sbcl/]])
+],
+[SBCL_MASTER=$withval],
+[SBCL_MASTER="http://prdownloads.sourceforge.net/sbcl/"])
+AC_DEFINE_UNQUOTED([SBCL_MASTER],
+["${SBCL_MASTER}"],
+[url for sbcl master])
+
 AC_OUTPUT

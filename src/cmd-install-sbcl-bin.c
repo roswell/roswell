@@ -1,6 +1,10 @@
 #include "cmd-install.h"
 #include "opt.h"
 
+#ifdef HAVE_CONFIG_H
+#  include "config.h"
+#endif
+
 char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
@@ -43,7 +47,7 @@ int sbcl_bin_download(struct install_options* param) {
   char* arch=arch_(param);
   do {
     param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
-    impls_sbcl_bin.uri=cat("http://prdownloads.sourceforge.net/sbcl/sbcl-",param->version,
+    impls_sbcl_bin.uri=cat(SBCL_MASTER"/sbcl-",param->version,
                            "-",arch,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);
     if(!result) {
