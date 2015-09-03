@@ -1,10 +1,6 @@
 #include "cmd-install.h"
 #include "opt.h"
 
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-
 char* arch_(struct install_options* param) {
   return cat(param->arch,"-",param->os,NULL);
 }
