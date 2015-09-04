@@ -30,20 +30,20 @@ fi
 
 AC_CHECK_HEADERS(windows.h)
 
-# Checks for typedefs, structures, and compiler characteristics.
+# Change master uri for sbcl-bin
+AC_ARG_WITH([sbcl_bin_base],
+  [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=http://prdownloads.sourceforge.net/sbcl/]])],
+  [SBCL_BIN_BASE_URI=$withval],[SBCL_BIN_BASE_URI="http://prdownloads.sourceforge.net/sbcl/"])
+AC_DEFINE_UNQUOTED([SBCL_BIN_BASE_URI],["${SBCL_BIN_BASE_URI}"],[uri for sbcl master])
 
-# Checks for library functions.
-
-# USE-sbcl-master
-AC_ARG_WITH([sbcl_master],
-[AC_HELP_STRING(
-  [--with-sbcl-master=URL],
-  [set url for sbcl-bin [default=http://prdownloads.sourceforge.net/sbcl/]])
-],
-[SBCL_MASTER=$withval],
-[SBCL_MASTER="http://prdownloads.sourceforge.net/sbcl/"])
-AC_DEFINE_UNQUOTED([SBCL_MASTER],
-["${SBCL_MASTER}"],
-[url for sbcl master])
+# man file (ros.1) generation switch
+AC_ARG_ENABLE([manual_generation],
+  [AC_HELP_STRING([--enable-manual-generation],[generate manual if enabled])],
+  [case "${enableval}" in
+    yes) manual_generate=true ;;
+    no)  manual_generate=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-manual-generate]) ;;
+   esac],[])
+AM_CONDITIONAL(MANUAL_GENERATE,[test x$manual_generate = x"true"])
 
 AC_OUTPUT

@@ -25,13 +25,15 @@ ros_SOURCES = lsp.c opt.c download.c archive.c html.c \
 	cmd-config.c \
 	cmd-setup.c
 noinst_HEADERS = util.h opt.h cmd-install.h gend.h
-CLEANFILES = gend.h
 
 %.1: %.html ros$(EXEEXT)
 	$(WINE) ./ros$(EXEEXT) setup --no-core;./ros$(EXEEXT) ../scripts/man.ros $< $@
 
-man1_MANS = ../documents/ros.1
-CLEANFILES = $(man1_MANS)
+if MANUAL_GENERATE
+  man1_MANS = ../documents/ros.1
+endif
+
+CLEANFILES = gend.h $(man1_MANS)
 
 FORCE:
 .PHONY: FORCE
