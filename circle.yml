@@ -3,7 +3,7 @@ general:
 test:
   post:
     - sh bootstrap
-    - ./configure
+    - ./configure --enable-manual-generation
     - make -j4
     - sudo make install
     - ros version

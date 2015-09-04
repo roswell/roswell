@@ -47,4 +47,4 @@ script:
   - if ([ "$TRAVIS_OS_NAME" = "osx" ] && [ "$METHOD" = "brew" ]) || [ "$METHOD" = "ci" ]; then ros config; fi
   - if ([ "$TRAVIS_OS_NAME" = "osx" ] && [ "$METHOD" = "brew" ]) || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
   - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;CC=$XCC ./configure --prefix=${PREFIX} ${HOST}; fi
-  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then touch -t 202501010101 documents/ros.1;make; fi
+  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then make; fi
