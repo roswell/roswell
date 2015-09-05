@@ -18,7 +18,7 @@
 (defun sbcl-get-version ()
   (let (result
         (file (merge-pathnames "tmp/sbcl.html" (homedir))))
-    (format t "Checking version to install....~%")
+    (format *error-output* "Checking version to install....~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
       (download "https://github.com/sbcl/sbcl/releases" file))
@@ -26,7 +26,7 @@
       (ros:quicklisp :environment nil)
       (with-output-to-string (*standard-output*)
         (funcall (intern (string :quickload) :ql)
-               :cl-html-parse))
+                 :cl-html-parse :silent t)) 
       (funcall (read-from-string "net.html.parser:parse-html")
                in
                :callbacks
