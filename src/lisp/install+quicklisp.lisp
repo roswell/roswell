@@ -4,8 +4,7 @@
   (defun quicklisp-help (argv)
     (format *error-output* "no options for quicklisp~%")
     (cons t argv))
-  (setq ros.install::*help-cmds*
-        (list 'quicklisp-help)))
+  (push  '("quicklisp" quicklisp-help) *help-cmds*))
 
 (in-package #:cl-user)
 
