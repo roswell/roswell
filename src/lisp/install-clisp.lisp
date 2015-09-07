@@ -147,4 +147,8 @@
                          'setup))
       *install-cmds*)
 
+(defun clisp-help (argv)
+  (format t "no options for clisp~%")
+  (cons t argv))
+
 (push `("clisp" . ,(list 'clisp-help)) *help-cmds*)
