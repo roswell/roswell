@@ -1,6 +1,6 @@
 #include "opt.h"
 
-int cmd_config(int argc, const char **argv) {
+int cmd_config(int argc,char **argv,struct sub_command* cmd) {
   char* home=configdir();
   char* path=cat(home,"config",NULL);
   if(argc==1) {
@@ -29,4 +29,8 @@ int cmd_config(int argc, const char **argv) {
   }
   s(home),s(path);
   return 0;
+}
+
+void register_cmd_config(void) {
+  top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
 }

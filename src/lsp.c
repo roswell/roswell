@@ -17,6 +17,7 @@ extern int cmd_internal(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
+extern void register_cmd_config(void);
 extern void register_cmd_internal(void);
 
 int verbose=0;
@@ -267,7 +268,7 @@ int main (int argc,char **argv) {
   /*commands*/
   register_cmd_install();
   top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1,NULL,NULL);
-  top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
+  register_cmd_config();
   top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"Initial setup",NULL);
 
   /*         {"list",NULL,cmd_list,1,1}, */
