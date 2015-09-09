@@ -30,7 +30,18 @@ int cmd_config(int argc,char **argv,struct sub_command* cmd) {
   s(home),s(path);
   return 0;
 }
+int config_help(int argc,char **argv,struct sub_command* cmd) {
+  if(argc==1) {
+    cond_printf(0,
+                "Usage: %s config              show all variables and it's value.\n"
+                "Usage: %s config set var val  set variable.\n"
+                "Usage: %s config show var     show a variable value.\n\n"
+                ,argv_orig[0],argv_orig[0],argv_orig[0]);
+  }
+  return 0;
+}
 
 void register_cmd_config(void) {
   top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
+  top_helps=add_help(top_helps,"config",q(""),(LVal)NULL,(LVal)NULL,NULL,NULL,config_help);
 }
