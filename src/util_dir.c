@@ -147,6 +147,15 @@ int file_exist_p (char* path) {
 #endif
 }
 
+int pathname_p(char *path) {
+  int i=0;
+  do{
+    if(path[i]==SLASH[0])
+      return 1;
+  }while(path[++i]!='\0');
+  return 0;
+}
+
 int change_directory(const char* path) {
 #ifndef _WIN32
   return chdir(path);
