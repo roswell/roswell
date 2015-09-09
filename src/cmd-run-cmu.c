@@ -51,7 +51,12 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
 
   arg[paramc++]=q("-quiet");
   if(image) {
-    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path;
+    if(pathname_p(image))
+      path=image;
+    else
+      path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    
     arg[paramc++]=q("-core");
     if(file_exist_p(path)) {
       arg[paramc++]=path;

@@ -59,7 +59,12 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     if(!issystem)
       arg[paramc++]=cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL);
   }else {
-    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path;
+    if(pathname_p(image))
+      path=image;
+    else
+      path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    
     if(file_exist_p(path))
       arg[paramc++]=path;
     else {

@@ -70,7 +70,12 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=q("--help");
 
   if(image) {
-    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path;
+    if(pathname_p(image))
+      path=image;
+    else
+      path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    
     if(file_exist_p(path)) {
       arg[paramc++]=q("-M");
       arg[paramc++]=path;

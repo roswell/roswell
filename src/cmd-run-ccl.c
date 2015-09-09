@@ -75,7 +75,12 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
       s(binname);
     }
   }else {
-    arg[paramc++]=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path;
+    if(pathname_p(image))
+      path=image;
+    else
+      path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    arg[paramc++]=path;
   }
   arg[paramc++]=q("--eval");
   arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
