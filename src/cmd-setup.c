@@ -9,7 +9,7 @@ extern char** argv_orig;
     if(ret) return ret;             \
   }
 
-int cmd_setup(int argc, const char **argv) {
+int cmd_setup(int argc,char **argv,struct sub_command* cmd) {
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
   int ret=1;
   char* sbcl_bin_version=get_opt("sbcl-bin.version",0);
@@ -24,4 +24,8 @@ int cmd_setup(int argc, const char **argv) {
   if(argc==1)
     CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"Making core for Roswell...\n");
   return ret;
+}
+
+void register_cmd_setup(int argc,char **argv,struct sub_command* cmd) {
+  top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"Initial setup",NULL);
 }
