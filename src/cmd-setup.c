@@ -26,6 +26,13 @@ int cmd_setup(int argc,char **argv,struct sub_command* cmd) {
   return ret;
 }
 
+int setup_help(int argc,char **argv,struct sub_command* cmd) {
+  if(argc==1)
+    cond_printf(0,"no options for %s setup\n",argv_orig[0]);
+  return 0;
+}
+
 void register_cmd_setup(int argc,char **argv,struct sub_command* cmd) {
   top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"Initial setup",NULL);
+  top_helps=add_help(top_helps,"setup",q(""),(LVal)NULL,(LVal)NULL,NULL,NULL,setup_help);
 }
