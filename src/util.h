@@ -143,6 +143,7 @@ char** parse_cmdline(char* cmdline,int *argc);
 int free_cmdline(char** argv);
 int system_redirect(const char* cmd,char* filename);
 int system_redirect_function(const char* cmd,Function1 f);
+char* determin_impl(char* impl);
 char* uname(void);
 char* uname_m(void);
 char* which(char* cmd);

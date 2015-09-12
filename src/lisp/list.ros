@@ -25,6 +25,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (defun uname-m ()
   (ros:roswell '("roswell-internal-use uname -m") :string t))
 #-ros.sub.list
+(defun impl (imp)
+  (ros:roswell `(,(format nil "roswell-internal-use impl ~A" (or imp (ros:opt "*lisp") ""))) :string t))
+#-ros.sub.list
 (defun list-impls (impl &key function params)
   (declare (ignorable params))
   (let ((dir (directory
@@ -63,14 +66,14 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                     :params r)))))
   (export
    (defun dump (&rest params)
-     (declare (ignorable params)) ;; tbd list images not only for current image
-     (format t "preserved dump lists for ~A:~%" (ros:opt "impl"))
+     (declare (ignorable params))
+     (format t "preserved dump lists for ~A:~%" (impl (first params)))
      (format t "~{  ~A~%~}" (mapcar #'pathname-name
                                     (directory (make-pathname :name :wild
                                                               :type "core"
                                                               :defaults
                                                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                                                       (uname-m) (uname) (first params))
+                                                                                       (uname-m) (uname) (impl (first params)))
                                                                                (homedir)))))))))
 
 #-ros.sub.list

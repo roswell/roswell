@@ -138,51 +138,10 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-/*int cmd_run_version (int argc,char **argv,struct sub_command* cmd) {
-  cond_printf(1,"cmd_run_version called\n");
-  set_opt(&local_opt,"version","t",0);
-  return 1;
-}
-*/
-
-int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
-  int ret=1;
-  char* impl;
+char* determin_impl(char* impl) {
   char* version=NULL;
   int pos;
-  char* config=configdir();
-  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)),0);
-  set_opt(&local_opt,"argv0",argv_orig[0],0);
-  set_opt(&local_opt,"wargv0",which(argv_orig[0]),0);
-  set_opt(&local_opt,"homedir",config,0);
-  if(rc) {
-    char* init=s_cat(configdir(),q("init.lisp"),NULL);
-#ifdef _WIN32
-    char* etc="";
-#else
-    char* etc="/etc/rosrc";
-#endif
-    char* current=get_opt("program",0);
-    char *path,*would;
-    if(file_exist_p(init)) {
-      path=cat("(:load \"",init,"\")",NULL);
-      would=cat(path,current?current:"",NULL);
-      s(current);
-      set_opt(&local_opt,"program",would,0);
-      s(path);
-    }
-    s(init);
-    current=get_opt("program",0);
-    if(file_exist_p(etc)) {
-      path=cat("(:load \"",etc,"\")",NULL);
-      would=cat(path,current?current:"",NULL);
-      set_opt(&local_opt,"program",would,0);
-    }
-  }
-  impl=get_opt("lisp",1);
-  cond_printf(1,"cmd_run_star:%s argc=%d argv[0]=%s \nlocalopt:%s\nimpl=%s\n"
-              ,cmd->name,argc,argv[0],sexp_opts(local_opt),impl);
-
+  cond_printf(1,"determin_impl:%s\n",impl);
   if(impl && (pos=position_char("/",impl))!=-1) {
     version=subseq(impl,pos+1,0);
     impl=subseq(impl,0,pos);
@@ -220,21 +179,60 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     global_opt=load_opts(path),s(path);;
     version=get_opt(DEFAULT_IMPL".version",0);
   }
+  return s_cat(impl,q("/"),version,NULL);
+}
+
+int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
+  int ret=1;
+  char* config=configdir();
+  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)),0);
+  set_opt(&local_opt,"argv0",argv_orig[0],0);
+  set_opt(&local_opt,"wargv0",which(argv_orig[0]),0);
+  set_opt(&local_opt,"homedir",config,0);
+  if(rc) {
+    char* init=s_cat(configdir(),q("init.lisp"),NULL);
+#ifdef _WIN32
+    char* etc="";
+#else
+    char* etc="/etc/rosrc";
+#endif
+    char* current=get_opt("program",0);
+    char *path,*would;
+    if(file_exist_p(init)) {
+      path=cat("(:load \"",init,"\")",NULL);
+      would=cat(path,current?current:"",NULL);
+      s(current);
+      set_opt(&local_opt,"program",would,0);
+      s(path);
+    }
+    s(init);
+    current=get_opt("program",0);
+    if(file_exist_p(etc)) {
+      path=cat("(:load \"",etc,"\")",NULL);
+      would=cat(path,current?current:"",NULL);
+      set_opt(&local_opt,"program",would,0);
+    }
+  }
+  char*lisp=get_opt("lisp",1);
+  if(!lisp)
+    lisp=get_opt("*lisp",0);
+  set_opt(&local_opt,"impl",determin_impl(lisp),0);
   char** arg=NULL;
   int i;
   char* wrap=get_opt("wrap",1);
-  set_opt(&local_opt,"impl",cat(impl,"/",version,NULL),0);
   {
     struct sub_command cmd;
-    struct run_impl_t *p;
     int i;
-    cmd.name=impl;
-    cmd.short_name=version;
-    for(p=NULL,i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
-      if(strcmp(impls_to_run[i].name,impl)==0) {
+    char *_= get_opt("impl",0);
+    i=position_char("/",_);
+    cmd.name=subseq(_,0,i);
+    cmd.short_name=subseq(_,i+1,0);
+    for(i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
+      if(strcmp(impls_to_run[i].name,cmd.name)==0) {
         arg=impls_to_run[i].impl(argc,argv,&cmd);
         break;
       }
+    s((char*)cmd.name),s((char*)cmd.short_name);
   }
   if(wrap)
     arg[0]=q(wrap);
@@ -264,9 +262,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     execvp(arg[wrap?0:1],&(arg[wrap?0:1]));
 #endif
   }else
-    fprintf(stderr,"%s/%s is not installed.stop.\n",impl,version);
+    fprintf(stderr,"%s is not installed.stop.\n",get_opt("impl",0));
 
-  s(config),s(impl),s(version);
+  s(config);
   return ret;
 }
 
