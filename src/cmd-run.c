@@ -191,12 +191,12 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       s(opt);
     }
     if(!impl)
-      impl="sbcl-bin";
+      impl=DEFAULT_IMPL;
     impl=q(impl);
     if(version)
       version=q(version);
   }
-  if(!version&&strcmp(impl,"sbcl-bin")!=0) {
+  if(!version&&strcmp(impl,DEFAULT_IMPL)!=0) {
     cond_printf(1,"once!%s,%s\n",impl,version);
     if(!version)
       s(version);
