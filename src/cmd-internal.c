@@ -30,6 +30,11 @@ int cmd_which (int argc,char **argv,struct sub_command* cmd) {
 }
 
 int cmd_impl (int argc,char **argv,struct sub_command* cmd) {
+  if(argc==1 && get_opt("default.lisp",0)) {
+    char* impl=determin_impl(get_opt("default.lisp",0));
+    printf("%s\n",impl);
+    s(impl);
+  }
   if(argc==2) {
     char* impl=determin_impl(argv[1]);
     printf("%s\n",impl);
