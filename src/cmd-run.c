@@ -103,12 +103,16 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   int argc_;
   char** argv_;
   char** argv_gen;
+  struct opts* opt;
   if(script_frontend_sentinel)
     return cmd_script(argc,argv,cmd);
   script_frontend_sentinel=1;
   if(strcmp(argv[0],"--")==0)
     ++argv,--argc;
   cond_printf(1,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+
+  for(opt=local_opt;opt;opt=opt->next)
+    opt->name=s_cat(q("*"),opt->name,NULL);
   if((in=fopen(argv[0],"rb"))!=NULL) {
     if(fgetc(in)!='#'||fgetc(in)!='!') {
       fclose(in);
