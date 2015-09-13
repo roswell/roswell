@@ -45,4 +45,5 @@ script:
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
-  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;CC=$XCC ./configure --prefix=${PREFIX} ${HOST};make; fi
+  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;./configure;make;sudo make install; fi
+  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then CC=$XCC ./configure --prefix=${PREFIX} ${HOST};make; fi
