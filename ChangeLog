@@ -1,3 +1,13 @@
+roswell (0.0.3.47-1) unstable; urgency=low
+
+  * Fixed: Wrong implementation's dump  are listed when 'ros list dump'.
+  * Improve: 'ros help' can show more subcommands.
+  * Fixed: Ensure 'ros run' invoke 'ros setup' if not yet setup.then run sbcl-bin.
+  * Improve: Stop manual generation by default.
+  * Improve: configure script takes '--with-sbcl-bin-base=URI' to specify sbcl-bin's base uri (by Masaya TANIGUCHI)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 14 Sep 2015 01:02:43 +0900
+
 roswell (0.0.3.46-1) unstable; urgency=low
 
   * Fixed: support ASDF 3.1.5 change asdf::*user-cache*
