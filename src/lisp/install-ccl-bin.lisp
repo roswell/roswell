@@ -7,7 +7,7 @@
 (defun ccl-bin-get-version ()
   (let (result
         (file (merge-pathnames "tmp/ccl-bin.html" (homedir))))
-    (format t "Checking version to install...~%")
+    (format *error-output* "Checking version to install...~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
       (download "http://ccl.clozure.com/ftp/pub/release/" file))
@@ -26,7 +26,7 @@
                                              (char= (aref href (1- len)) #\/))
                                     (push (string-right-trim "/" href) result))))))
                :callback-only t))
-    (format t "~&Installing ccl-bin/~A...~%" (first result))
+    (format *error-output* "~&Installing ccl-bin/~A...~%" (first result))
     result))
 
 (defun ccl-bin-version (argv)
@@ -110,3 +110,4 @@
       *install-cmds*)
 
 (push `("ccl-bin" . ,(list 'ccl-bin-help)) *help-cmds*)
+(push `("ccl-bin" . ccl-bin-get-version) *list-cmd*)

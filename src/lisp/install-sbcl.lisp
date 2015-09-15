@@ -311,3 +311,4 @@
       *install-cmds*)
 
 (push `("sbcl" . ,(list 'sbcl-help)) *help-cmds*)
+(push `("sbcl" . sbcl-get-version) *list-cmd*)

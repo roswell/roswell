@@ -21,7 +21,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (in-package :ros.install)
 
 (defvar *opts* nil)
-(defvar *home-path* nil)
 (defvar *ros-path* nil)
 (defvar *build-hook* nil)
 
@@ -91,12 +90,13 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (uiop/run-program:run-program (format nil "~A config set ~A ~A" *ros-path* item val)))
 
 (defun homedir ()
-  *home-path*)
+  (make-pathname :defaults (ros:opt "homedir")))
 
 ;;end here from util/opts.c
 
 (defvar *install-cmds* nil)
 (defvar *help-cmds* nil)
+(defvar *list-cmd* nil)
 
 (defun installedp (argv)
   (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
@@ -143,7 +143,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (defun install-script (from)
   (let ((to (ensure-directories-exist
              (make-pathname
-              :defaults (merge-pathnames "bin/" *home-path*)
+              :defaults (merge-pathnames "bin/" (homedir))
               :name (pathname-name from)
               :type (unless (or #+unix (equalp (pathname-type from) "ros"))
                       (pathname-type from))))))
@@ -160,8 +160,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
          version
          (seq impl/version)
          (pos (position #\/ impl/version))
-         (*home-path* (make-pathname :defaults (third argv)))
-         (*ros-path* (make-pathname :defaults (fourth argv)))
+         (*ros-path* (make-pathname :defaults (third argv)))
          sub cmds)
     (if pos
         (setq imp (subseq seq 0 pos)
@@ -179,7 +178,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                    (let (*read-eval*)
                      (setf *opts* (append (read-from-string (first argv))
                                           (read-from-string (second argv)))
-                           argv (nthcdr 4 argv)
+                           argv (nthcdr 3 argv)
                            cmds (cond
                                   ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
                                   ((equal subcmd "help") (cdr (assoc imp *help-cmds* :test #'equal))))))))
@@ -194,7 +193,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                  (ros:roswell `(,(format nil"delete ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            #+nil(uiop/stream:copy-file sub (make-pathname
-                                            :defaults (merge-pathnames "subcmd/" *home-path*)
+                                            :defaults (merge-pathnames "subcmd/" (homedir))
                                             :name (pathname-name sub)
                                             :type (pathname-type sub)))
            (install-script sub))
