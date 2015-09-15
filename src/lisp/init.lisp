@@ -127,7 +127,7 @@
 (defun ignore-shebang ()
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
-(defun roswell (args output trim)
+(defun roswell (args &optional (output :string) trim)
   (let* ((a0 (funcall (or #+win32(lambda (x) (substitute #\\ #\/ x)) #'identity)
                       (if (zerop (length (opt "wargv0")))
                           (opt "argv0")
