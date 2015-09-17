@@ -212,4 +212,4 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
              (funcall *build-hook*))
            (dolist (from (directory (merge-pathnames "roswell/*.*" (ql:where-is-system impl/version))))
              (install-script from)))
-          (t (format *error-output* "not supported software ~A" imp)))))
+          (t (format *error-output* "not supported software ~A~%" imp)))))
