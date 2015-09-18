@@ -21,7 +21,7 @@
     (format *error-output* "Checking version to install....~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download "https://github.com/sbcl/sbcl/releases" file))
+      (download "https://github.com/sbcl/sbcl/releases.atom" file))
     (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
       (ros:quicklisp :environment nil)
       (with-output-to-string (*standard-output*)
@@ -30,14 +30,11 @@
       (funcall (read-from-string "net.html.parser:parse-html")
                in
                :callbacks
-               (list (cons :a (lambda (arg)
-                                (let ((href (getf (cdr (car arg)) :href)))
-                                  (when (and (> (length href) 6)
-                                             (equal (subseq href (-(length href) 6))
-                                                    "tar.gz"))
-                                    (push (subseq href (1+ (or (position #\- href)
-                                                               (position #\_ href)))
-                                                  (- (length href) 7)) result))))))
+               (list (cons :link (lambda (arg)
+                                   (let* ((href (getf (cdr (car arg)) :href))
+                                         (pos (position #\- href)))
+                                     (when pos
+                                       (push (subseq href (1+ pos)) result))))))
                :callback-only t))
     (setq result (nreverse result))
     result))
