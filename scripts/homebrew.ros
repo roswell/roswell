@@ -11,7 +11,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (if master
         (format nil "https://github.com/~A/archive/master.tar.gz" base)
         (multiple-value-bind (body res)
-            (dex:get (format nil "https://github.com/~A/releases/" base))
+            (dex:get (format nil "https://github.com/~A/tags/" base))
           (when (= res 200)
             (net.html.parser:parse-html
              body
