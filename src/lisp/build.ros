@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|
+#|Make executable from script.
 exec ros -Q +R -- $0 "$@"
 |#
 

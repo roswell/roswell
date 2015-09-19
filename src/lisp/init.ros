@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|create new ros script
+#|Create new ros script
 exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 (when (cl:find-package :ros.sub.init)
