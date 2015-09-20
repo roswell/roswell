@@ -1,3 +1,10 @@
+roswell (0.0.3.48-1) unstable; urgency=low
+
+  * New: 'ros list versions impl' would show a version list installeable.
+  * Improve: check atom file for checking sbcl version.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 20 Sep 2015 22:39:42 +0900
+
 roswell (0.0.3.47-1) unstable; urgency=low
 
   * Fixed: Wrong implementation's dump  are listed when 'ros list dump'.
