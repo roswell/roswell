@@ -75,15 +75,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (format t "~{~A~%~}~%"
           `("To release"
             "1. Review changes and complete ChangeLog"
-            "2. Type git commands"
-            "git add ChangeLog configure.ac"
-            ,(format nil "git commit -m \"bump version to ~A\"" *new-version*)
-            "git checkout release"
-            "git merge master"
-            ,(format nil "git tag -a \"v~A\" -m \"v~A\"" *new-version* *new-version*)
-            "git push --tags"
-            "git push --all"
-            "git checkout master"
+            "2. Type"
+            "make release"
             "3. don't forget to release homeberew-roswell as well followings are snmsts's"
             "ros scripts/homebrew.ros"
             "cp scripts/homebrew/roswell.rb ../homebrew-roswell/roswell.rb"
@@ -105,7 +98,31 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (edit-configure-ac)
   (show-how-to-release))
 
+(defun release ()
+  (if (not (uiop:getenv "GITHUB_OAUTH_TOKEN"))
+      (error "GITHUB_OAUTH_TOKEN must be set")
+      (let ((version (find-version)))
+        (mapc
+         #'uiop:run-program
+         `("git add ChangeLog configure.ac"
+           ,(format nil "git commit -m \"bump version to ~A\"" version)
+           "git checkout release"
+           "git merge master"
+           ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
+           "git push --tags"
+           "git push --all"
+           "git checkout master"))
+        (load (merge-pathnames "../sn.github/sn.github.asd" *project-path*))
+        (ql:quickload :sn.github :silent t)
+        (let ((tag (string-right-trim (format nil"~%")
+                                      (uiop/run-program:run-program
+                                       "git tag |tail -n 1" :output :string))))
+          (print (funcall (read-from-string "sn.github.release::release-create")
+                          "snmsts" "roswell" tag :name tag))))))
+
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
   (cond ((equalp subcmd "prepare")
-         (prepare))))
+         (prepare))
+        ((equalp subcmd "release")
+         (release))))
