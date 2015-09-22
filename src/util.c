@@ -255,8 +255,9 @@ char* which(char* cmd) {
   }
   char* which_cmd=cat("cmd /c where ",cmd,"",NULL);
 #endif
+  cond_printf(1,"which cmd:%s\n",which_cmd);
   char* p=system_(which_cmd);
-  cond_printf(1,"system_ result:%s\n",p);
+  cond_printf(1,"which result:%s\n",p);
   p=substitute_char('\0','\r',substitute_char('\0','\n',p));
   char* p2=p?remove_char("\r\n",p):q("");
   s(p),s(which_cmd);
