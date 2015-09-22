@@ -54,10 +54,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (defun line-number (stream)
   (format (count-line-stream-base stream) "~&~6d " (count-line-stream-count stream)))
 
-(defun system- (cmd)
-  (with-output-to-string (*standard-output*)
-    (uiop/run-program:run-program cmd :output t)))
-
 (defun uname ()
   (ros:roswell '("roswell-internal-use uname") :string t))
 
@@ -87,7 +83,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
         (push (list item val) *opts*))))
 
 (defun save-opt (item val)
-  (uiop/run-program:run-program (format nil "~A config set ~A ~A" *ros-path* item val)))
+  (ros::run-program (format nil "~A config set ~A ~A" *ros-path* item val)))
 
 (defun homedir ()
   (make-pathname :defaults (ros:opt "homedir")))
