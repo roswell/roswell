@@ -83,7 +83,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
         (push (list item val) *opts*))))
 
 (defun save-opt (item val)
-  (ros::run-program (format nil "~A config set ~A ~A" *ros-path* item val)))
+  (ros:roswell `("config" "set" ,item ,val)))
 
 (defun homedir ()
   (make-pathname :defaults (ros:opt "homedir")))
