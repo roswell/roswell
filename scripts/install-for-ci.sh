@@ -97,7 +97,7 @@ install_cmucl () {
     PATH="$LISP_IMPLS_BIN:$PATH" ros use cmucl/system
 }
 
-ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.2/abcl-bin-1.3.2.tar.gz"
+ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.3/abcl-bin-1.3.3.tar.gz"
 ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
     if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
@@ -117,12 +117,6 @@ install_abcl () {
         extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
         install_script "$LISP_IMPLS_BIN/abcl" \
                        "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
-    fi
-    if ! [ `uname` = "Darwin" ]; then
-        # Install 'jna' beforehand because ABCL doesn't work with the newer Maven.
-        # http://abcl.org/trac/ticket/390
-        # The compatibility issue has been resolved at trunk and it's going to be included in ver 1.3.3.
-        mvn dependency:get -Dartifact=net.java.dev.jna:jna:4.1.0:jar
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
