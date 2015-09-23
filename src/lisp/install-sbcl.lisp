@@ -23,19 +23,15 @@
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
       (download "https://github.com/sbcl/sbcl/releases.atom" file))
     (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
-      (ros:quicklisp :environment nil)
-      (with-output-to-string (*standard-output*)
-        (funcall (intern (string :quickload) :ql)
-                 :cl-html-parse :silent t)) 
-      (funcall (read-from-string "net.html.parser:parse-html")
-               in
-               :callbacks
-               (list (cons :link (lambda (arg)
-                                   (let* ((href (getf (cdr (car arg)) :href))
-                                         (pos (position #\- href)))
-                                     (when pos
-                                       (push (subseq href (1+ pos)) result))))))
-               :callback-only t))
+      (net.html.parser:parse-html
+       in
+       :callbacks
+       (list (cons :link (lambda (arg)
+                           (let* ((href (getf (cdr (car arg)) :href))
+                                  (pos (position #\- href)))
+                             (when pos
+                               (push (subseq href (1+ pos)) result))))))
+       :callback-only t))
     (setq result (nreverse result))
     result))
 

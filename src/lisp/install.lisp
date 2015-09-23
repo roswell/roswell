@@ -14,6 +14,9 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
 
+(unless (find-package :net.html.parser)
+  (ql:quickload :cl-html-parse :silent t))
+
 (defpackage :ros.install
   (:use :cl)
   (:export :*build-hook*))
