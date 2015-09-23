@@ -153,10 +153,10 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (defun main (subcmd impl/version &rest argv)
   (let* (imp
-         version
+         version verbose
          (seq impl/version)
          (pos (position #\/ impl/version))
-         (*ros-path* (make-pathname :defaults (third argv)))
+         (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
          sub cmds)
     (if pos
         (setq imp (subseq seq 0 pos)
@@ -174,6 +174,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                    (let (*read-eval*)
                      (setf *opts* (append (read-from-string (first argv))
                                           (read-from-string (second argv)))
+                           verbose (third argv)
                            argv (nthcdr 3 argv)
                            cmds (cond
                                   ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
