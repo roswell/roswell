@@ -80,7 +80,7 @@
 
 (defun run-program (args &key output)
   (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
-      (funcall #1# (format nil "~{~A~^ ~}" args) :output output)
+      (funcall #1# (format nil "~{~A~^ ~}" args) :output output #+(and sbcl win32) :force-shell #+(and sbcl win32) nil)
       (with-output-to-string (out)
         #+sbcl(funcall (read-from-string "sb-ext:run-program")
                        (first args) (mapcar #'princ-to-string (rest args))
