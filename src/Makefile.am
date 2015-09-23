@@ -15,7 +15,7 @@ gend.h: FORCE
 	cat $@
 cmd-version.c: gend.h
 bin_PROGRAMS = ros
-ros_SOURCES = lsp.c opt.c download.c archive.c html.c \
+ros_SOURCES = ros.c opt.c download.c archive.c html.c \
 	util_list.c util.c util_string.c util_dir.c util_system.c \
 	cmd-internal.c \
 	cmd-version.c \
