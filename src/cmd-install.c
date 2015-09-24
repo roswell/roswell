@@ -120,7 +120,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         char** tmp;
         char* install_ros=s_cat2(lisp_path,q("install.lisp"));
         if(verbose&1) {
-          fprintf(stderr,"%s is not implemented for install. %s argc:%d\n",param.impl,install_ros,argc);
+          fprintf(stderr,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
           for(i=0;i<argc;++i)
             fprintf(stderr,"%s:",argv[i]);
           fprintf(stderr,"\n");
@@ -133,7 +133,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         tmp[i++]=q(argv[1]);
         tmp[i++]=sexp_opts(local_opt);
         tmp[i++]=sexp_opts(global_opt);
-        tmp[i++]=qsprintf(10,"%s",verbose);
+        tmp[i++]=qsprintf(10,"%d",verbose);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
         if(verbose&1) {
