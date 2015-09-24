@@ -15,14 +15,17 @@
          (progn
            (format *error-output* "Download ~a~%" (file-namestring path))
            (force-output *error-output*)
-           (ros.install::download
-            (format nil "http://kent.dl.sourceforge.net/project/msys2/Base/~A/msys2-base-~A-~A.tar.xz"
-                    *msys2-arch* *msys2-arch* *msys2-basever*) path)
+           (when (or (not (probe-file path))
+                   (get-opt "download.force"))
+               (ros.install::download
+                (format nil "http://kent.dl.sourceforge.net/project/msys2/Base/~A/msys2-base-~A-~A.tar.xz"
+                        *msys2-arch* *msys2-arch* *msys2-basever*) path))
            (format t " done.~%")
            (expand path
                    (ensure-directories-exist
                     (merge-pathnames (format nil "impls/~A/~A/" (uname-m) (uname))
                                      (homedir))))
+           (format t "extract done.~%")
            (uiop/run-program:run-program
             `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
                "-lc" " ")
