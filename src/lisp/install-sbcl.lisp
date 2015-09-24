@@ -136,8 +136,9 @@
     (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run -- --disable-debugger" *ros-path* (get-opt "sbcl.compiler")))
-           (cmd (list (sh) "-lc" (format nil "cd ~S;~A ~A ~A"
+           (cmd (list (sh) "-lc" (format nil "cd ~S;~A ~A ~A ~A"
                                          (#+win32 mingw-namestring #-win32 princ-to-string src)
+                                         (or #-win32 (sh) "")
                                          "./make.sh" (format nil "'--xc-host=~A'"  compiler)
                                          (format nil "'--prefix=~A'"
                                                  (funcall #+win32 (lambda (x)
