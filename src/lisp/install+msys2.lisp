@@ -11,7 +11,7 @@
   (let ((path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" *msys2-basever*) (homedir)))
         (msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
     (if  (probe-file (merge-pathnames (format nil "mingw~A/bin/gcc.exe" *msys2-bits*) msys))
-         (format t "msys2 have been already setup~%")
+         (format t "msys2 have been setup~%")
          (progn
            (format *error-output* "Download ~a~%" (file-namestring path))
            (force-output *error-output*)
