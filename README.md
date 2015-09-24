@@ -15,15 +15,14 @@ Checkout [issue lists](https://github.com/snmsts/roswell/issues) if you have int
 ## Installation, Dependency & Usage
 
 See our [github wiki](https://github.com/snmsts/roswell/wiki).
-In blief, we provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
+We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
 
 ## Features
 
 * Implementation Manager (similar to CIM)
 * Scripting environment (similar to cl-launch)
 * Building utility (similar to buildapp)
-* **Novel** : Infrastructure for bundling the scripts to a quicklisp system
-* **Novel** : Infrastructure for installing the scripts from a quicklisp system
+* **Novel** : Infrastructure for bundling/installing the scripts to/from a quicklisp system
 * **Novel** : Better support for Windows environment (tested exhaustively)
 * **Novel** : Better integration to CI environment (e.g. Travis-CI, CircleCI, Coverall)
 
@@ -86,20 +85,44 @@ Options:
     $ ros install ccl-bin       # default prebuilt binary of ccl
     $ ros install sbcl/1.2.0    # A specific version of sbcl
     $ ros list installed sbcl   # Listing the installed implementations
-
-The list is growing further!
-
-#### Compile Options
-
-You can see the compile options by
-
-    $ ros help install sbcl
-
-### Checking and Setting the default implementation used by ros
-
     $ ros run -- --version      # check which implementation is used
     SBCL 1.2.15
     $ ros use sbcl/1.2.3        # change the default implementation
+
+The list of supported implementation is growing further!
+
+### Scripting with Roswell
+
+```diff
+$ ros init
+Usage: ros init [template] name [options...]
+
+$ ros init fact
+Successfully generated: fact.ros
+
+$ emacs fact.ros
+## editing the fact.ros ...
+
+$ cat fact.ros
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+
++ (defun fact (n)
++  (if (zerop n)
++      1
++      (* n (fact (1- n)))))
+
+(defun main (n &rest argv)
+-  (declare (ignore argv)))
++  (declare (ignore argv))
++  (format t "~&Factorial ~D = ~D~%" n (fact (parse-integer n))))
+
+$ ./fact.ros 10
+Factorial 10 = 3628800
+```
 
 ## Chef recipe for roswell
 
