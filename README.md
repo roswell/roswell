@@ -5,51 +5,35 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/ubs9la7881yarjjg?svg=true)](https://ci.appveyor.com/project/snmsts/roswell)
 [![Quicklisp](http://quickdocs.org/badge/roswell.svg)](http://quickdocs.org/roswell/)
 
+Roswell started as a command line tool to install and manage Common Lisp implementations damn easily.
+It now has evolved into a fullstack environment for common lisp web development, testing, code sharing and app distribution which might push the CL community to a whole new level.
+
 This software is still beta. Basic interfaces are fixed, we believe it works well on Unix-like platforms like Linux, Mac OS X and FreeBSD, but some parts are not implemented, not stable on other OSes yet.
 
-## Description
-Roswell is a command line tool to install and manage Common Lisp implementations damn easily.
+Checkout [issue lists](https://github.com/snmsts/roswell/issues) if you have interest in what's lacking.
 
-## Limitations
-There's a lot of works should be done.
+## Installation, Dependency & Usage
 
-checkout [issue lists](https://github.com/snmsts/roswell/issues) if you have interest in what's lacking.
+See our [github wiki](https://github.com/snmsts/roswell/wiki).
+We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
 
-## Installation
+## Features
 
-### Building
+* Implementation Manager (similar to CIM)
+* Scripting environment (similar to cl-launch)
+* Building utility (similar to buildapp)
+* **Novel** : Easier setup for initializing a script
+* **Novel** : Better integration to the command-line interface (Bash completion, etc)
+* **Novel** : Infrastructure for bundling/installing the scripts to/from a quicklisp system
+* **Novel** : Better support for Windows environment (tested exhaustively)
+* **Novel** : Better integration to CI environment (e.g. Travis-CI, CircleCI, Coverall)
 
-#### For Mac OS X users
+## Usage
 
-If you're on Mac OS X and wanna use Homebrew, use the custom tap:
-
-    $ brew tap snmsts/roswell
-    $ brew install roswell
-
-#### For Arch linux users
-
-You can install Roswell via AUR:
-
-    $ yaourt -S roswell
-
-#### others can build from source
-
-    $ git clone -b release https://github.com/snmsts/roswell.git
-    $ cd roswell
-    $ sh bootstrap
-    $ ./configure
-    $ make
-    $ sudo make install
-
-## How to use
-
-First of all, you can get sub-commands and command line options by this command:
-
-    $ ros
-
-you'll get like below
+Roswell has git-like subcommands which resemble that of cl-launch, buildapp and CIM.
 
 ```
+$ ros
 Usage: ros [OPTIONS] [Command arguments...]
 Usage: ros [OPTIONS] [[--] script-path arguments...]
 
@@ -96,60 +80,51 @@ Options:
                 --test               for test purpose
 ```
 
-### Installing Lisps
+### Managing/Installing Several Lisp Installations
 
-If you want to install the newest released version of sbcl you can do it by:
+    $ ros install sbcl-bin      # default sbcl
+    $ ros install sbcl          # The newest released version of sbcl
+    $ ros install ccl-bin       # default prebuilt binary of ccl
+    $ ros install sbcl/1.2.0    # A specific version of sbcl
+    $ ros list installed sbcl   # Listing the installed implementations
+    $ ros run -- --version      # check which implementation is used
+    SBCL 1.2.15
+    $ ros use sbcl/1.2.3        # change the default implementation
 
-    $ ros install sbcl
+The list of supported implementation is growing further!
 
-and if you have specific version like "1.2.0" to install then
+### Scripting with Roswell
 
-    $ ros install sbcl/1.2.0
+```diff
+$ ros init
+Usage: ros init [template] name [options...]
 
-will install that version.
+$ ros init fact
+Successfully generated: fact.ros
 
-You can get which version of SBCL are installed by this command:
+$ emacs fact.ros
+## editing the fact.ros ...
 
-    $ ros list installed sbcl
+$ cat fact.ros
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
 
-#### Supported Implementations and compile options.
++ (defun fact (n)
++  (if (zerop n)
++      1
++      (* n (fact (1- n)))))
 
-So far, `sbcl`,`sbcl-bin`,`ccl-bin` can be parameter for `ros install`.
+(defun main (n &rest argv)
+-  (declare (ignore argv)))
++  (declare (ignore argv))
++  (format t "~&Factorial ~D = ~D~%" n (fact (parse-integer n))))
 
-You can see compile option by
-
-    $ ros help install sbcl
-
-### Setting the default implementation used by ros
-
-    $ ros run -- --version
-
-will show you which version are used. You can change implementation by
-
-    $ ros use sbcl/1.2.3
-
-## Using roswell with Emacs and SLIME
-
-To setup slime with roswell, type like this
-
+$ ./fact.ros 10
+Factorial 10 = 3628800
 ```
-ros -Q -e '(ql:quickload :quicklisp-slime-helper)' -q
-```
-
-Add lines like below to init.el
-
-```lisp
-(load (expand-file-name "~/.roswell/impls/ALL/ALL/quicklisp/slime-helper.el"))
-(setq inferior-lisp-program "ros -L sbcl -Q run")
-```
-
-to load with `.sbclrc`
-
-```lisp
-(setq inferior-lisp-program "ros -L sbcl -Q -l ~/.sbclrc run")
-```
-
-Or, Just simply `ros emacs` would launch emacs with slime setup.
 
 ## Chef recipe for roswell
 
@@ -162,9 +137,6 @@ Or, Just simply `ros emacs` would launch emacs with slime setup.
 [@fukamachi](https://github.com/fukamachi) use Roswell with CircleCI.
 
 - [fukamachi/legion/circle.yml](https://github.com/fukamachi/legion/blob/master/circle.yml)
-
-## Where to put my local project?
-You can put at ~/.roswell/local-projects/ (From version 0.0.3.34).
 
 ## Why we named it 'roswell'?
 From &lsquo;[made with secret alien technology](http://www.lisperati.com/logo.html)&rsquo;.
