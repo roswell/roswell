@@ -22,6 +22,8 @@ We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Wind
 * Implementation Manager (similar to CIM)
 * Scripting environment (similar to cl-launch)
 * Building utility (similar to buildapp)
+* **Novel** : Easier setup for initializing a script
+* **Novel** : Better integration to the command-line interface
 * **Novel** : Infrastructure for bundling/installing the scripts to/from a quicklisp system
 * **Novel** : Better support for Windows environment (tested exhaustively)
 * **Novel** : Better integration to CI environment (e.g. Travis-CI, CircleCI, Coverall)
