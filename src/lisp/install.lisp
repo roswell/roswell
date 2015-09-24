@@ -109,8 +109,28 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   ;;TBD
   (declare (ignore path)))
 
+(defun sh ()
+  (or #+win32
+      (format nil "~A" (sb-ext:native-namestring
+                           (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+                                                    #+x86-64 "64" #-x86-64 "32") (homedir))))
+      (which "bash")
+      "sh"))
+#+win32
+(defun mingw-namestring (path)
+  (string-right-trim #.(format nil "~%")
+                     (uiop:run-program `(,(sh) "-lc" ,(format nil "cd ~S;pwd" (uiop:native-namestring path)))
+                                       :output :string)))
+
 (defun start (argv)
   (ensure-directories-exist (homedir))
+  #+win32
+  (let* ((w (ros:opt "wargv0"))
+         (a (ros:opt "argv0"))
+         (path (uiop:native-namestring
+                (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w)))))
+    (ros:setenv "MSYSTEM" #+x86-64 "MINGW64" #-x86-64 "MINGW32")
+    (ros:setenv "PATH" (format nil "~A;~A"(subseq path 0 (1- (length path))) (ros:getenv "PATH"))))
   (let ((target (getf argv :target))
         (version (getf argv :version)))
     (when (and (installedp argv) (not (get-opt "install.force")))
@@ -132,7 +152,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (ros:roswell `("roswell-internal-use" "download" ,uri ,file) :interactive nil))
 
 (defun expand (archive dest &key verbose)
-  (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest) :interactive nil))
+  (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
+               (or #-win32 :interactive nil) nil))
 
 (defun setup (argv)
   (save-opt "default.lisp" (getf argv :target))

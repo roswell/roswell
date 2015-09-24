@@ -1,13 +1,5 @@
 (in-package :ros.install)
 
-(defun sh ()
-  (or #+win32
-      (format nil "~A -l" (sb-ext:native-namestring
-                           (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-                                                    #+x86-64 "64" #-x86-64 "32") (homedir))))
-      (which "bash")
-      "sh"))
-
 (defvar *sbcl-options*
   '(("thread" t "Build SBCL without support for native threads")
     ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
@@ -143,7 +135,14 @@
     (format out "~&--~&~A~%" (date))
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run -- --disable-debugger" *ros-path* (get-opt "sbcl.compiler")))
-           (cmd (format nil "~A ~A '--xc-host=~A' '--prefix=~A'" (sh) (merge-pathnames "make.sh" src) compiler (get-opt "prefix")))
+           (cmd (list (sh) "-lc" (format nil "cd ~S;~A ~A ~A"
+                                         (#+win32 mingw-namestring #-win32 identity src)
+                                         "./make.sh" (format nil "'--xc-host=~A'"  compiler)
+                                         (format nil "'--prefix=~A'"
+                                                 (funcall #+win32 (lambda (x)
+                                                                    (mingw-namestring (ensure-directories-exist x)))
+                                                          #-win32 'identity
+                                                          (get-opt "prefix"))))))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (format t "~&chdir ~A~%" src)
@@ -168,7 +167,10 @@
         (format out "~&--~&~A~%" (date))
         (let ((*standard-output* (make-broadcast-stream
                                   out #+sbcl(make-instance 'count-line-stream))))
-          (uiop/run-program:run-program (format nil "~A install.sh" (sh)) :output t)))
+          (uiop/run-program:run-program
+           (list (sh) "-lc" (format nil "cd ~S;~A"
+                                    (#+win32 mingw-namestring #-win32 identity src)
+                                    "./install.sh")) :output t)))
       (format *error-output* "done.~%")))
   (cons t argv))
 
@@ -263,7 +265,8 @@
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program (format nil "~A clean.sh" (sh)) :output t))
+      (uiop/run-program:run-program
+       (list (sh) "-lc" (format nil "cd ~S;./clean.sh" src)) :output t))
     (format t "done.~%"))
   (cons t argv))
 
