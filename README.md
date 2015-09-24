@@ -112,15 +112,14 @@ $ cat fact.ros
 exec ros -Q -- $0 "$@"
 |#
 
-+ (defun fact (n)
-+  (if (zerop n)
-+      1
-+      (* n (fact (1- n)))))
+(defun fact (n)
+  (if (zerop n)
+      1
+      (* n (fact (1- n)))))
 
 (defun main (n &rest argv)
--  (declare (ignore argv)))
-+  (declare (ignore argv))
-+  (format t "~&Factorial ~D = ~D~%" n (fact (parse-integer n))))
+  (declare (ignore argv))
+  (format t "~&Factorial ~D = ~D~%" n (fact (parse-integer n))))
 
 $ ./fact.ros 10
 Factorial 10 = 3628800
