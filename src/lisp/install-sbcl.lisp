@@ -112,9 +112,10 @@
   (cons t argv))
 
 (defun sbcl-config (argv)
-  (with-open-file (out (merge-pathnames
-                        (format nil "src/sbcl-~A/customize-target-features.lisp"
-                                (getf argv :version)) (homedir))
+  (with-open-file (out (ensure-directories-exist
+                        (merge-pathnames
+                         (format nil "src/sbcl-~A/customize-target-features.lisp"
+                                 (getf argv :version)) (homedir)))
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
     (format out "~s"
             `(lambda (list)
@@ -136,7 +137,7 @@
     (let* ((src (get-opt "src"))
            (compiler (format nil "~A lisp=~A --no-rc run -- --disable-debugger" *ros-path* (get-opt "sbcl.compiler")))
            (cmd (list (sh) "-lc" (format nil "cd ~S;~A ~A ~A"
-                                         (#+win32 mingw-namestring #-win32 identity src)
+                                         (#+win32 mingw-namestring #-win32 princ-to-string src)
                                          "./make.sh" (format nil "'--xc-host=~A'"  compiler)
                                          (format nil "'--prefix=~A'"
                                                  (funcall #+win32 (lambda (x)
@@ -146,7 +147,8 @@
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (uiop/os:chdir src)
       (format t "~&chdir ~A~%" src)
-      (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
+      (format t "~&~S~%" cmd)
+      (uiop/run-program:run-program cmd :output t :ignore-error-status nil)))
   (cons t argv))
 
 (defun sbcl-install (argv)
@@ -169,7 +171,7 @@
                                   out #+sbcl(make-instance 'count-line-stream))))
           (uiop/run-program:run-program
            (list (sh) "-lc" (format nil "cd ~S;~A"
-                                    (#+win32 mingw-namestring #-win32 identity src)
+                                    (#+win32 mingw-namestring #-win32 princ-to-string src)
                                     "./install.sh")) :output t)))
       (format *error-output* "done.~%")))
   (cons t argv))
