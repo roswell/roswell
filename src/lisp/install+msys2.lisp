@@ -4,6 +4,8 @@
   (warn "msys2 is only required on windows"))
 
 (defvar *msys2-basever* "20150512")
+(defvar *msys2-sha1* "88fa66ac2a18715a542e0768b1af9b2f6e3680b2")
+;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 (defvar *msys2-arch* #+x86-64 "x86_64" #-x86-64 "i686") ;; TBD ARM windows?
 (defvar *msys2-bits* #+x86-64 "64" #-x86-64 "32")
 
