@@ -8,14 +8,15 @@ env:
   matrix:
     - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="/usr/i686-w64-mingw32"
     - METHOD=brew
+    - METHOD=test LISP=sbcl/1.1.14 COMMAND="ros -s prove-asdf -s quri-test -e \"(asdf:test-system :quri-test)\""
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
-    - METHOD=ci LISP=sbcl-bin
+    - METHOD=ci LISP=clisp
     - METHOD=ci LISP=alisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl-bin
-    - METHOD=ci LISP=clisp
     - METHOD=ci LISP=cmucl
+    - METHOD=ci LISP=sbcl-bin
 os:
   - linux
   - osx
@@ -24,14 +25,22 @@ matrix:
     - os: osx
       METHOD: cross
 
+addons:
+  apt:
+    packages:
+#    - gcc-multilib
+     - gcc-mingw-w64-i686
+     - binutils-mingw-w64-i686
+     - wine
+
 before_install:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
+# - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "brew" ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$METHOD" = "brew" ]; then brew update; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$METHOD" = "brew" ]; then brew --env; fi
   - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$METHOD" = "brew" ]; then brew config; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
+# - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
+# - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
 install:
   - if [ "$METHOD" = "brew" ]; then brew tap snmsts/roswell; fi
 
@@ -41,9 +50,11 @@ script:
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
+  - if [ "$METHOD" = "test" ] || ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;./configure;make;sudo make install; fi
+  - if [ "$METHOD" = "test" ]; then ros install $LISP; fi
+  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
+  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
+  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
-  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;./configure;make;sudo make install; fi
   - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then CC=$XCC ./configure --prefix=${PREFIX} ${HOST};make; fi
+  - if [ "$METHOD" = "test" ]; then $COMMAND; fi
