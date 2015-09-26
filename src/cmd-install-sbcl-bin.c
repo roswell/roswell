@@ -17,10 +17,10 @@ int sbcl_version_bin(struct install_options* param) {
   if(!param->version) {
     int ret;
     printf("SBCL version is not specified. Downloading platform-table.html to see which version to install...\n");
-    ret=download_simple("http://www.sbcl.org/platform-table.html",platforms_html,0);
+    ret=download_simple(PLATFORM_HTML_BASE_URI "platform-table.html",platforms_html,0);
     if(ret!=0) {
       printf("Something wrong with sbcl.org.Download failed (Code=%d) try backup.\n",ret);
-      ret=download_simple("https://gist.githubusercontent.com/snmsts/12f0cf8567b8e26ae15f/raw/0b9134f9820c195e1ca84d382176777ec989183e/platform-table.html",platforms_html,0);
+      ret=download_simple(PLATFORM_HTML_BACKUP_BASE_URI"platform-table.html",platforms_html,0);
     }
     if(ret!=0) {
       printf("Download failed (Code=%d)\n",ret);
@@ -43,7 +43,7 @@ int sbcl_bin_download(struct install_options* param) {
   char* arch=arch_(param);
   do {
     param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
-    impls_sbcl_bin.uri=cat(SBCL_BIN_BASE_URI "/sbcl-",param->version,
+    impls_sbcl_bin.uri=cat(SBCL_BIN_BASE_URI "sbcl-",param->version,
                            "-",arch,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);
     if(!result) {

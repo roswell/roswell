@@ -5,7 +5,7 @@ int quicklisp_start(struct install_options* param) {
   char* home=configdir();
   param->version=NULL;
   param->arch_in_archive_name=0;
-  utils_quicklisp.uri=q("http://beta.quicklisp.org/quicklisp.lisp");
+  utils_quicklisp.uri=q(QUICKLISP_BASE_URI "quicklisp.lisp");
   //param->expand_path=cat(home,"src",SLASH,param->impl,SLASH,NULL);
   s(home);
   return 1;
