@@ -152,6 +152,7 @@ SANO Masatoshi (snmsts@gmail.com)
 ## Contributors
  * Eitaro Fukamachi (e.arrows@gmail.com)
  * Tomoya KAWANISHI (chopsticks.tk.ppfm@gmail.com)
+ * Masataro Asai (guicho2.71828@gmail.com)
 
 ## Special Thanks to
  * Eitaro Fukamachi (e.arrows@gmail.com) for naming this project.
