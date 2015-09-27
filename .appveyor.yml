@@ -25,7 +25,7 @@ build_script:
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%\roswell
   - ros version
-  - ros ros version=t run; fi
+  - ros version=t run; fi
   - ros config
 
 artifacts:
@@ -35,5 +35,7 @@ artifacts:
     name: Roswell-i686.zip
 
 cache:
-  - msys64 -> .appveyor.yml
-  - msys32 -> .appveyor.yml
+  - msys64
+# - msys64 -> .appveyor.yml
+  - msys32
+# - msys32 -> .appveyor.yml
