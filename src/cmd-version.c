@@ -6,11 +6,14 @@ int cmd_version(int argc,char **argv,struct sub_command* cmd) {
   if(strlen(ROS_REVISION)>0)
     fprintf(stderr,"(%s)",ROS_REVISION);
   if(strcmp(argv[0],"--version")!=0) {
+    char *c= configdir();
     fprintf(stderr,"\nbuild with %s",ROS_COMPILE_ENVIRONMENT);
 #ifdef HAVE_CURL_CURL_H
     fprintf(stderr,"\nlibcurl %s",LIBCURL_VERSION);
 #endif
     fprintf(stderr,"\nlispdir='%s'",lispdir());
+    if(c)
+      fprintf(stderr,"\nconfigdir='%s'",c),s(c);
   }
   fprintf(stderr,"\n");
   return 0;
