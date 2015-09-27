@@ -8,7 +8,7 @@ env:
   matrix:
     - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="/usr/i686-w64-mingw32"
     - METHOD=brew
-    - METHOD=test LISP=sbcl/1.1.14 COMMAND="ros -s prove-asdf -s quri-test -e \"(asdf:test-system :quri-test)\""
+    - METHOD=test LISP=sbcl/1.1.14 COMMAND="ros -s prove-asdf -s quri-test -e '(asdf:test-system :quri-test)'"
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=clisp
