@@ -171,29 +171,31 @@
         (let ((*standard-output* (make-broadcast-stream
                                   out #+sbcl(make-instance 'count-line-stream))))
           (uiop/run-program:run-program
-           (list (sh) "-lc" (format nil "cd ~S;~A"
+           (list (sh) "-lc" (format nil "cd ~S;~A ~A"
                                     (#+win32 mingw-namestring #-win32 princ-to-string src)
+                                    (sh)
                                     "./install.sh")) :output t)))
       (format *error-output* "done.~%")))
   (cons t argv))
 
 (defun sbcl-backup-features (argv)
   (let ((src (get-opt "src")) origin opts)
-    (with-open-file (out (merge-pathnames "share/features.lisp-expr" (get-opt "prefix"))
-                         :direction :output
-                         :if-exists :supersede
-                         :if-does-not-exist :create)
-      (flet ((read-from-file (f)
-               (with-open-file (in (merge-pathnames f src))
-                 (read in))))
-        (setq origin (funcall (compile nil (read-from-file "local-target-features.lisp-expr"))
-                              (read-from-file "base-target-features.lisp-expr"))
-              opts (funcall (if (probe-file (merge-pathnames #1="customize-target-features.lisp" src))
-                                (compile nil (read-from-file #1#))
-                                #'identity) (copy-list origin)))
-        (format out "(:+ ~s)~%(:- ~s)~%"
-                (set-difference opts origin)
-                (set-difference origin opts)))))
+    (ignore-errors ;; TBD found error on sbcl/1.1.14. Not so important so far to save features.
+      (with-open-file (out (merge-pathnames "share/features.lisp-expr" (get-opt "prefix"))
+                           :direction :output
+                           :if-exists :supersede
+                           :if-does-not-exist :create)
+        (flet ((read-from-file (f)
+                 (with-open-file (in (merge-pathnames f src))
+                   (read in))))
+          (setq origin (funcall (compile nil (read-from-file "local-target-features.lisp-expr"))
+                                (read-from-file "base-target-features.lisp-expr"))
+                opts (funcall (if (probe-file (merge-pathnames #1="customize-target-features.lisp" src))
+                                  (compile nil (read-from-file #1#))
+                                  #'identity) (copy-list origin)))
+          (format out "(:+ ~s)~%(:- ~s)~%"
+                  (set-difference opts origin)
+                  (set-difference origin opts))))))
   (cons t argv))
 
 (defvar *sbcl-copy-files*
