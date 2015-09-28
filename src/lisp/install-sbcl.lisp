@@ -173,7 +173,7 @@
           (uiop/run-program:run-program
            (list (sh) "-lc" (format nil "cd ~S;~A ~A"
                                     (#+win32 mingw-namestring #-win32 princ-to-string src)
-                                    (sh)
+                                    (or #-win32 (sh) "")
                                     "./install.sh")) :output t)))
       (format *error-output* "done.~%")))
   (cons t argv))
