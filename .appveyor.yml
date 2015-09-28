@@ -25,8 +25,11 @@ build_script:
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%\roswell
   - ros version
-  - ros version=t run; fi
+  - ros version=t run
   - ros config
+  - ros install sbcl
+  - ros config
+  - ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"
 
 artifacts:
   - path: Roswell-x86_64.zip
