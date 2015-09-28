@@ -178,6 +178,13 @@
       (format *error-output* "done.~%")))
   (cons t argv))
 
+(defun sbcl-install-win32 (argv)
+  (uiop/run-program:run-program
+   (list (sh) "-lc" (format nil "cp `which zlib1.dll` ~S"
+                            (#+win32 mingw-namestring #-win32 princ-to-string (merge-pathnames "bin/" (get-opt "prefix")))))
+   :output t)
+  (cons t argv))
+
 (defun sbcl-backup-features (argv)
   (let ((src (get-opt "src")) origin opts)
     (ignore-errors ;; TBD found error on sbcl/1.1.14. Not so important so far to save features.
@@ -305,6 +312,7 @@
                         'sbcl-config
                         'sbcl-make
                         'sbcl-install
+                        #+win32 'sbcl-install-win32
                         'sbcl-backup-features
                         'sbcl-make-archive
                         'sbcl-clean
