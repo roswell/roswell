@@ -28,9 +28,10 @@ test_script:
   - ros setup
   - ros version=t run
   - ros config
-  - ros install sbcl
-  - ros config
-  - ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"
+#  - ros install sbcl
+#  - ros config
+#  - ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"
+  - ps: foreach($artifactName in $artifacts.keys) { Write-Host $artifacts[$artifactName].path }
 
 artifacts:
   - path: Roswell-x86_64.zip
