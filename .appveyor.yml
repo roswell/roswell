@@ -25,6 +25,7 @@ build_script:
 test_script:
   - cd %APPVEYOR_BUILD_FOLDER%\roswell
   - ros version
+  - ros setup
   - ros version=t run
   - ros config
   - ros install sbcl
