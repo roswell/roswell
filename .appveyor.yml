@@ -14,15 +14,7 @@ install:
   - ps: If (Test-Path ("msys" + $env:MSYS2_BITS)){Write-Host "Using cached msys2"}
   - ps: If (!(Test-Path ("msys" + $env:MSYS2_BITS))){Invoke-WebRequest -UserAgent wget -Uri ("http://kent.dl.sourceforge.net/project/msys2/Base/" + $env:MSYS2_ARCH +  "/msys2-base-" + $env:MSYS2_ARCH + "-" + $env:MSYS2_BASEVER + ".tar.xz") -OutFile "msys2.tar.xz"}
   - ps: If (!(Test-Path ("msys" + $env:MSYS2_BITS))){&"7z" x msys2.tar.xz}
-  - ps: >-
-  If (!(Test-Path ("msys" + $env:MSYS2_BITS)))
-  {
-    &"7z" x msys2.tar > $nul;&("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "";
-    &("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc ("for i in {1..3}; do pacman --noconfirm -Suy autoconf automake mingw-w64-"+ $env:MSYS2_ARCH + "-gcc make zlib-devel && break || sleep 15; done");
-    &("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "pacman --noconfirm -R -s bash-completion tftp-hpa inetutils util-linux tzcode time rebase dash flex pax-git file bsdcpio bsdtar lndir";
-    &("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "yes y|pacman --noconfirm -Sc";
-    &("msys" + $env:MSYS2_BITS + "\autorebase.bat");
-  }
+  - ps: If (!(Test-Path ("msys" + $env:MSYS2_BITS))){&"7z" x msys2.tar > $nul;&("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "";&("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc ("for i in {1..3}; do pacman --noconfirm -Suy autoconf automake mingw-w64-"+ $env:MSYS2_ARCH + "-gcc make zlib-devel && break || sleep 15; done");&("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "pacman --noconfirm -R -s bash-completion tftp-hpa inetutils util-linux tzcode time rebase dash flex pax-git file bsdcpio bsdtar lndir";&("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "yes y|pacman --noconfirm -Sc";&("msys" + $env:MSYS2_BITS + "\autorebase.bat");}
 
 build_script:
   - msys%MSYS2_BITS%\usr\bin\bash -lc "mkdir /tmp;cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make"
