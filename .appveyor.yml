@@ -14,7 +14,7 @@ install:
   - ps: If (Test-Path ("msys" + $env:MSYS2_BITS)){Write-Host "Using cached msys2"}
   - ps: If (!(Test-Path ("msys" + $env:MSYS2_BITS))){Invoke-WebRequest -UserAgent wget -Uri ("http://kent.dl.sourceforge.net/project/msys2/Base/" + $env:MSYS2_ARCH +  "/msys2-base-" + $env:MSYS2_ARCH + "-" + $env:MSYS2_BASEVER + ".tar.xz") -OutFile "msys2.tar.xz"}
   - ps: If (!(Test-Path ("msys" + $env:MSYS2_BITS))){&"7z" x msys2.tar.xz}
-  - ps: |
+  - ps: >-
   If (!(Test-Path ("msys" + $env:MSYS2_BITS)))
   {
     &"7z" x msys2.tar > $nul;&("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "";
