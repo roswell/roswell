@@ -1,4 +1,4 @@
-#|
+#| -*- lisp -*-
 function Expand-ZIPFile($file, $destination) {
   $shell = new-object -com shell.application
   $zip = $shell.NameSpace($file)
@@ -21,7 +21,21 @@ Write-Host "downloaded" $uri
 Expand-ZIPFile -File $env:ROSWELL_TARBALL_PATH -Destination $env:ROSWELL_DIR
 &$env:ROSWELL_DIR\roswell\ros $MyInvocation.MyCommand.Definition
 <# |#
+
+(defun install-lisp (lisp)
+  (format t "Installing ~A..." lisp)
+  (cond ((equal lisp "sbcl-bin")
+         (ros:roswell `("use" ,lisp) :interactive))
+        (t
+         (ros:roswell `("install" ,lisp) :interactive)
+         (ros:roswell `("use" ,lisp) :interactive))))
+
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (print "Hello, World!"))
+  (install-lisp (ros:getenv "LISP"))
+  (ros:roswell `("-e" ,(format nil "(format t ~S ~A ~A ~A)"
+                               "~&~A ~A up and running! (ASDF ~A)~2%"
+                               "(lisp-implementation-type)"
+                               "(lisp-implementation-version)"
+                               "(asdf:asdf-version)")) :interactive))
 ;#>
