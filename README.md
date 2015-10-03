@@ -19,6 +19,8 @@ We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Wind
 
 ## Features
 
+[Feature comparison is available!](https://github.com/snmsts/roswell/wiki/0.-What's-the-Difference%3F)
+
 * Implementation Manager (similar to CIM)
 * Scripting environment (similar to cl-launch)
 * Building utility (similar to buildapp)
