@@ -6,7 +6,7 @@ env:
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
-    - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="/usr/i686-w64-mingw32"
+    - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - METHOD=brew
     - METHOD=test LISP=sbcl/1.1.14
     - METHOD=ci LISP=sbcl
@@ -50,10 +50,10 @@ script:
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
-  - if [ "$METHOD" = "test" ] || ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;./configure;make;sudo make install; fi
+  - if [ "$METHOD" = "test" ] || ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then sh bootstrap;./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
   - if [ "$METHOD" = "test" ]; then ros install $LISP; fi
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
-  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then CC=$XCC ./configure --prefix=${PREFIX} ${HOST};make; fi
+  - if ([ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]); then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
