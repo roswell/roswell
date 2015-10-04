@@ -17,7 +17,7 @@ environment:
       MSYSTEM: MINGW32
       METHOD: ci
 
-install: APPVEYOR_REPO_TAG_NAME
+install:
   - ps: If ($env:METHOD -eq "cross" -and Test-Path ("msys" + $env:MSYS2_BITS)){Write-Host "Using cached msys2"}
   - ps: If ($env:METHOD -eq "cross" -and !(Test-Path ("msys" + $env:MSYS2_BITS))){Invoke-WebRequest -UserAgent wget -Uri ("http://kent.dl.sourceforge.net/project/msys2/Base/" + $env:MSYS2_ARCH +  "/msys2-base-" + $env:MSYS2_ARCH + "-" + $env:MSYS2_BASEVER + ".tar.xz") -OutFile "msys2.tar.xz"}
   - ps: If ($env:METHOD -eq "cross" -and !(Test-Path ("msys" + $env:MSYS2_BITS))){&"7z" x msys2.tar.xz}
