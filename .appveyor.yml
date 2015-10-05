@@ -30,15 +30,15 @@ build_script:
   - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.*
 
 test_script:
-  - cd %APPVEYOR_BUILD_FOLDER%\roswell
-  - ros version
-  - ros setup
-  - ros version=t run
-  - ros config
+  - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
+  - if "%METHOD%"=="cross" ros version
+  - if "%METHOD%"=="cross" ros setup
+  - if "%METHOD%"=="cross" ros version=t run
+  - if "%METHOD%"=="cross" ros config
 #  - ros install sbcl
 #  - ros config
 #  - ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"
-  - ps: foreach($artifactName in $artifacts.keys) { Write-Host $artifacts[$artifactName].path }
+#  - ps: foreach($artifactName in $artifacts.keys) { Write-Host $artifacts[$artifactName].path }
 
 artifacts:
   - path: Roswell-x86_64.zip
