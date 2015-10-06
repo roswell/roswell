@@ -85,7 +85,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
             ,(format nil "git commit -m \"v~A\"" *new-version*)
             "git push")))
 
-(defun prepare ()
+(defun prepare (argv)
+  (declare (ignore argv))
   (uiop/run-program:run-program "git checkout master" :output t)
   (format t "~&current version is ~s.How about new one's:~%" (find-version))
   (force-output)
@@ -98,7 +99,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (edit-configure-ac)
   (show-how-to-release))
 
-(defun release ()
+(defun release (argv)
+  (declare (ignore argv))
   (if (not (uiop:getenv "GITHUB_OAUTH_TOKEN"))
       (error "GITHUB_OAUTH_TOKEN must be set")
       (let ((version (find-version)))
@@ -120,9 +122,15 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
           (print (funcall (read-from-string "sn.github.release::release-create")
                           "snmsts" "roswell" tag :name tag))))))
 
+(defun github (argv)
+  (declare (ignore argv))
+  (if (not (uiop:getenv "GITHUB_OAUTH_TOKEN"))
+      (error "GITHUB_OAUTH_TOKEN must be set")
+      'stub))
+
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (cond ((equalp subcmd "prepare")
-         (prepare))
-        ((equalp subcmd "release")
-         (release))))
+  (let ((subcmd (find subcmd '(release prepare github)
+                      :test 'equal :key 'string-downcase)))
+    (when subcmd
+      (funcall subcmd argv))))
