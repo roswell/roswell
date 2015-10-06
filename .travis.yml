@@ -44,6 +44,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG !=x ]; then sudo apt-get install -qq lcab > /dev/null; fi
 install:
   - if [ "$METHOD" = "brew" ]; then brew tap snmsts/roswell; fi
+  - if [ x$TRAVIS_TAG !=x ] && [ "$METHOD" = "cross" ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
 script:
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
