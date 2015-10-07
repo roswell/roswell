@@ -3,9 +3,17 @@
 #|
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
-(ql:quickload :cl-ppcre)
+(or
+ (ignore-errors
+   (load "~/lisp/sn.github/sn.github.asd"))
+ (ignore-errors
+   (load "../sn.github/sn.github.asd")))
+(ql:quickload '(:cl-ppcre :split-sequence :sn.github))
+(use-package :sn.github.release)
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)
+(defvar *owner* "snmsts")
+(defvar *repo* "roswell")
 
 (defun find-version ()
   (with-open-file (in (merge-pathnames "configure.ac" *project-path*))
@@ -122,11 +130,29 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
           (print (funcall (read-from-string "sn.github.release::release-create")
                           "snmsts" "roswell" tag :name tag))))))
 
+(defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
+  (ignore-errors
+    (find tagname
+          (sn.github.release::releases-list owner repo)
+          :key (lambda (x) (getf x :|tag_name|))
+          :test 'equal)))
+
+(defun ensure-release-exists (tagname &key (owner *owner*) (repo *repo*))
+  (let ((found (release-exist-p tagname :owner owner :repo repo)))
+    (if found
+        found
+        (sn.github.release::release-create owner repo tagname))))
+
+(defun asset-upload (path tagname &key (owner *owner*) (repo *repo*))
+  (sn.github.release::release-asset-upload
+   owner repo
+   (getf (release-exist-p tagname :owner owner :repo repo) :|id|) path))
+
 (defun github (argv)
-  (declare (ignore argv))
-  (if (not (uiop:getenv "GITHUB_OAUTH_TOKEN"))
-      (error "GITHUB_OAUTH_TOKEN must be set")
-      'stub))
+  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
+    (error "GITHUB_OAUTH_TOKEN must be set"))
+  (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
+  (asset-upload (first argv) (uiop:getenv "TRAVIS_TAG")))
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
