@@ -1,3 +1,12 @@
+roswell (0.0.3.49-1) unstable; urgency=low
+
+  * New: Now 'ros install sbcl' work on windows.
+  * Fix: fix determin architecture broken for armv7l reported by pimiento.
+  * Improve: start working install-for-ci.PS1.
+  * Improve: make all embeded URI configurable.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 08 Oct 2015 02:48:15 +0900
+
 roswell (0.0.3.48-1) unstable; urgency=low
 
   * New: 'ros list versions impl' would show a version list installeable.
