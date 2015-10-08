@@ -157,7 +157,7 @@
                         collect (namestring (probe-file part))
                         while pos))))
     (if (zerop (length dir))
-        (warn "Source-registry ~S isn't valid. Ignored." arg)
+        (warn "Source-registry ~S is invalid. Ignored." arg)
         (funcall (read-from-string "asdf:initialize-source-registry") dir))))
 
 (defun system (cmd args &rest rest)

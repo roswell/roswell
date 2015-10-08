@@ -134,11 +134,11 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (let ((target (getf argv :target))
         (version (getf argv :version)))
     (when (and (installedp argv) (not (get-opt "install.force")))
-      (format t "~A/~A is already installed. Try (TBD) if you intend to reinstall it.~%"
+      (format t "~A/~A is already installed. Try (TBD) for the forced re-installation.~%"
               target version)
       (return-from start (cons nil argv)))
     (when (install-running-p argv)
-      (format t "It seems running installation process for ~A/~A.\n"
+      (format t "It seems installation process for ~A/~A is already running.\n"
               target version)
       (return-from start (cons nil argv)))
     (ensure-directories-exist (merge-pathnames (format nil "tmp/~A-~A/" target version) (homedir)))
@@ -210,8 +210,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                     while (first param))
                (sb-sys:interactive-interrupt (condition)
                  (declare (ignore condition))
-                 (format t "SIGINT detected cleanup files~%")
-                 (ros:roswell `(,(format nil"delete ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))
+                 (format t "SIGINT detected, cleaning up the partially installed files~%")
+                 (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            #+nil(uiop/stream:copy-file sub (make-pathname
                                             :defaults (merge-pathnames "subcmd/" (homedir))
@@ -220,7 +220,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
            (install-script sub))
           ((or (ql-dist:find-system impl/version)
                (ql:where-is-system impl/version))
-           (format *error-output* "found system ~A.~%Attempting install scripts...~%" impl/version)
+           (format *error-output* "System '~A' found.~%Attempting to install the scripts in roswell/ subdirectory of the system...~%" impl/version)
            (let ((*features* (cons :ros.installing *features*))
                  (*standard-output* (make-broadcast-stream))
                  (*error-output*    (make-broadcast-stream))
@@ -233,4 +233,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
              (funcall *build-hook*))
            (dolist (from (directory (merge-pathnames "roswell/*.*" (ql:where-is-system impl/version))))
              (install-script from)))
-          (t (format *error-output* "not supported software ~A~%" imp)))))
+          (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
++ a quicklisp-installable system
++ a common lisp installation ~%" imp)))))
