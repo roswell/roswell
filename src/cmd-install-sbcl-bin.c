@@ -19,7 +19,7 @@ int sbcl_version_bin(struct install_options* param) {
     printf("No SBCL version specified. Downloading platform-table.html to see the available versions...\n");
     ret=download_simple(PLATFORM_HTML_BASE_URI "platform-table.html",platforms_html,0);
     if(ret!=0) {
-      printf("Something wrong! Check the connection or sbcl.org is down. Download failed (Code=%d), tring backup.\n",ret);
+      printf("Something wrong! Check the connection or sbcl.org is down. Download failed (Code=%d), tring the backup URL.\n",ret);
       ret=download_simple(PLATFORM_HTML_BACKUP_BASE_URI"platform-table.html",platforms_html,0);
     }
     if(ret!=0) {
@@ -77,7 +77,7 @@ int sbcl_bin_expand(struct install_options* param) {
   }else
     impl=q(impl);
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
-  printf("Extracting the archive by msi. %s to %s\n",archive,dist_path);
+  printf("Extracting the msi archive. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
