@@ -54,6 +54,15 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *verb
   return nitems * size;
 }
 
+/* return value:
+ * 0  success
+ * -1 fopen failed
+ * -2 curl initialization failed
+ * -2 faild to parse the URL (InternetCrackUrl) (windows)
+ * -2 scheme is neither http nor https
+ * -3 https responce status is not HTTP_STATUS_OK (windows)
+ * -4 HttpQueryInfo failed (windows)
+ */
 int download_simple (char* uri,char* path,int verbose) {
 #ifndef HAVE_WINDOWS_H
   CURL *curl;

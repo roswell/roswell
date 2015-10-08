@@ -16,10 +16,10 @@ int sbcl_version_bin(struct install_options* param) {
 
   if(!param->version) {
     int ret;
-    printf("SBCL version is not specified. Downloading platform-table.html to see which version to install...\n");
+    printf("No SBCL version specified. Downloading platform-table.html to see the available versions...\n");
     ret=download_simple(PLATFORM_HTML_BASE_URI "platform-table.html",platforms_html,0);
     if(ret!=0) {
-      printf("Something wrong with sbcl.org.Download failed (Code=%d) try backup.\n",ret);
+      printf("Something wrong! Check the connection or sbcl.org is down. Download failed (Code=%d), tring backup.\n",ret);
       ret=download_simple(PLATFORM_HTML_BACKUP_BASE_URI"platform-table.html",platforms_html,0);
     }
     if(ret!=0) {
@@ -77,7 +77,7 @@ int sbcl_bin_expand(struct install_options* param) {
   }else
     impl=q(impl);
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
-  printf("Extracting archive by msi. %s to %s\n",archive,dist_path);
+  printf("Extracting the archive by msi. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
@@ -165,7 +165,7 @@ int sbcl_bin_install(struct install_options* param) {
   setenv("INSTALL_ROOT",install_root,1);
   ret=System("(cat find-gnumake.sh; echo find_gnumake)|sh");
   if(ret!=0) {
-    fprintf(stderr,"make does not exists.\n");
+    fprintf(stderr,"'make' command not available.\n");
     return 0;
   }
   ret=1;

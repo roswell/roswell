@@ -138,7 +138,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
               target version)
       (return-from start (cons nil argv)))
     (when (install-running-p argv)
-      (format t "It seems installation process for ~A/~A is already running.\n"
+      (format t "It seems there are another ongoing installation process for ~A/~A somewhere in the system.\n"
               target version)
       (return-from start (cons nil argv)))
     (ensure-directories-exist (merge-pathnames (format nil "tmp/~A-~A/" target version) (homedir)))
