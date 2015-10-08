@@ -37,11 +37,11 @@ int start(struct install_options* param) {
   ensure_directories_exist(localprojects);
   s(localprojects);
   if(installed_p(param)) {
-    printf("%s/%s is already installed. Try (TBD) if you intend to reinstall it.\n",param->impl,param->version?param->version:"");
+    printf("%s/%s is already installed. Try (TBD) for the forced re-installation.\n",param->impl,param->version?param->version:"");
     return 0;
   }
   if(install_running_p(param)) {
-    printf("It seems running installation process for $1/$2.\n");
+    printf("It seems another installation process for $1/$2 is in progress somewhere in the system.\n");
     return 0;
   }
   p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",SLASH,NULL);
@@ -73,9 +73,10 @@ int download(struct install_options* param) {
     printf("Downloading %s\n",url);
     /*TBD proxy support... etc*/
     if(url) {
-      ensure_directories_exist(impl_archive);
-      if(download_simple(url,impl_archive,verbose)) {
-        printf("Failed to Download.\n");
+        ensure_directories_exist(impl_archive);
+        int status = download_simple(url,impl_archive,verbose);
+      if(status) {
+          printf("Download Failed with status %d. See download_simple in src/download.c\n", status);
         return 0;
         /* fail */
       }
@@ -183,8 +184,8 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
 
 int install_help(int argc,char **argv,struct sub_command* cmd) {
   if(argc==1) {
-    cond_printf(0,"Usage: %s install impl [OPTIONS]\n\nMore detail on impl specific options type:\n %s help install impl\n\n"
-                "Candidates impl to install are:\n",argv_orig[0],argv_orig[0]);
+    cond_printf(0,"Usage: %s install impl [OPTIONS]\n\nFor more details on impl specific options, type:\n %s help install impl\n\n"
+                "Candidates impls for installation are:\n",argv_orig[0],argv_orig[0]);
     char* install=lispdir();
     LVal d=directory(install),v=d;
     for(;v;v=Next(v)) {
@@ -223,6 +224,6 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
 }
 
 void register_cmd_install(void) {
-  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install archive and build it for "PACKAGE" environment",NULL);
+  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install a given implementation (e.g. sbcl, ccl) or a quicklisp system (e.g. alexandria) for "PACKAGE" environment",NULL);
   top_helps=add_help(top_helps,"install",q(""),(LVal)NULL,(LVal)NULL,NULL,NULL,install_help);
 }

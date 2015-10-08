@@ -27,7 +27,7 @@
                    (ensure-directories-exist
                     (merge-pathnames (format nil "impls/~A/~A/" (uname-m) (uname))
                                      (homedir))))
-           (format t "extract done.~%")
+           (format t "extraction done.~%")
            (uiop/run-program:run-program
             `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
                "-lc" " ")

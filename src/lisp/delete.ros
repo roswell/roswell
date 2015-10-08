@@ -44,7 +44,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                                 (homedir)))))
       (if (probe-file path)
           (delete-file path)
-          (format t "image doesn't exist \"~A ~A\"~%" (first params) (second params)))))
+          (format t "The specified image doesn't exist \"~A ~A\"~%" (first params) (second params)))))
 
   (defun main (subcmd cmd &rest r)
     (let* ((default (config "default.lisp"))
@@ -60,7 +60,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                          (unless (position :up (pathname-directory path))
                            (cond ((probe-file path)
                                   (uiop/filesystem:delete-directory-tree path :validate t)
-                                  (format t "~&~A has successfully deleted.~%" impl-name)
+                                  (format t "~&~A was deleted successfully.~%" impl-name)
                                   (when (equal impl-name config)
                                     (format t "~&clear config ~S~%" verstring)
                                     (setf (config verstring) "")))

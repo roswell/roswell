@@ -47,7 +47,7 @@ exec ros -- $0 "$@"
       ((equal "-o" (first params))
        (if (> (length params) 1)
            (dump (second params))
-           (format t "dump file should be specified.~%")))
+           (format t "you should specify a filename where the image is dumped.~%")))
       (t (let ((path (merge-pathnames (format nil "~A.core"
                                               (first params))
                                       (dump-dir))))
@@ -64,7 +64,7 @@ exec ros -- $0 "$@"
                                  (third params))
                             (first params))))
         (unless cmds
-          (warn "dumping executable without specifing initial behaviour."))
+          (warn "dumping an executable without specifing the initial behaviour."))
         (when (equalp (pathname-type out) "ros")
           (let ((*package* (find-package :cl-user))
                 main-list)
@@ -95,16 +95,16 @@ exec ros -- $0 "$@"
 
 (defvar *subcmds*
   '(("output" "Create dump" dump-output)
-    #+(or sbcl ccl)("executable" "Create executable" dump-executable)))
+    #+(or sbcl ccl)("executable" "Create an executable" dump-executable)))
 
 (defun main (subcmd cmd &rest r)
   (cond ((and (equal subcmd "main") r)
          (let ((func (third (assoc (first r) *subcmds* :test 'equal))))
            (if func
                (funcall func (rest r))
-               (format t "~A is not supported for ~A subcommand~%" (first r) cmd))))
+               (format t "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))
         ((or (equal subcmd "help") (not r))
-         (format t "Usage: ~A [OPTIONS] ~A subcmd [ARGS]~%"
+         (format t "Usage: ~A [OPTIONS] ~A SUBCMD [ARGS]~%"
                  (ros:opt "argv0") cmd)
          (loop :with len := (1+ (loop :for (cmd . nil) :in *subcmds* :maximize (length cmd)))
             :for (cmd desc nil) :in *subcmds*
