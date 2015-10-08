@@ -19,3 +19,5 @@ config.log
 scripts/roswell*
 scripts/homebrew
 documents/*.1
+*~
+#*
