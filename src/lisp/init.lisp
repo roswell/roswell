@@ -19,7 +19,8 @@
 (defun getenv (x)
   #+sbcl(sb-posix:getenv x)
   #+clisp(ext:getenv x)
-  #-(or sbcl clisp) (funcall (read-from-string "asdf::getenv") x))
+  #+ccl(ccl:getenv x)
+  #-(or sbcl clisp ccl) (funcall (read-from-string "asdf::getenv") x))
 
 (defun ros-opts ()
   (or *ros-opts*
@@ -76,7 +77,8 @@
     (ignore-errors(funcall (read-from-string "asdf::quit") ret))
     #+sbcl(ignore-errors(funcall (read-from-string "cl-user::exit") :code ret))
     #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))
-    #+clisp(ext:exit ret)))
+    #+clisp(ext:exit ret)
+    #+ccl(ccl:quit ret)))
 
 (defun run-program (args &key output)
   (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
@@ -92,6 +94,9 @@
 (defun exec (args)
   #+(and unix sbcl)
   (execvp (first args) args)
+  #+(and unix ccl)
+  (ignore-errors
+    (ccl:with-string-vector (argv args) (ccl::%execvp argv)))
   (run-program args)
   (quit -1))
 
