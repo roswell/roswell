@@ -7,7 +7,7 @@ char* homedir(void) {
   env=getenv(c);
   s(c);
   if(env)
-    return append_trail_slash(env);
+    return append_trail_slash(subseq(env, 0, strlen(env)));
 #ifdef HAVE_WINDOWS_H
   TCHAR szAppData[MAX_PATH];
   if(SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData)))
