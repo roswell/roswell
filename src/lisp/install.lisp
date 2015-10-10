@@ -118,7 +118,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
       "sh"))
 #+win32
 (defun mingw-namestring (path)
-  (string-right-trim #.(format nil "~%")
+  (string-right-trim (format nil "~%")
                      (uiop:run-program `(,(sh) "-lc" ,(format nil "cd ~S;pwd" (uiop:native-namestring path)))
                                        :output :string)))
 
