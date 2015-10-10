@@ -19,7 +19,7 @@ Instruction for the system-wide installation follows:
 
 This is useful when using roswell as a backend of CI services (e.g. travis): When you specify a directory accessible without root permission, then you can switch to the new [container-based infrastructure](http://docs.travis-ci.com/user/workers/container-based-infrastructure/) for faster startup (of the tests). 
 
-This option can be used to write an installation script for CI services, but [we already provide such a script for Travis, CircleCI and Coverall](4.-Roswell-as-a-Testing-Environment-(Travis-CI-and-Coverall)) using this feature. 
+This option can be used to write an installation script for CI services, but [we already provide such a script for Travis, CircleCI and Coverall](https://github.com/snmsts/roswell/wiki/4.-Roswell-as-a-Testing-Environment-(Travis-CI-and-Coverall)))) using this feature. 
 
 Example:
 
