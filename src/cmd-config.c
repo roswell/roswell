@@ -4,8 +4,6 @@ int cmd_config(int argc,char **argv,struct sub_command* cmd) {
   char* home=configdir();
   char* path=cat(home,"config",NULL);
   if(argc==1) {
-    printf("oneshot:\n");
-    print_opts(local_opt);
     printf("local:\n");
     print_opts(global_opt);
   }else {

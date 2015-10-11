@@ -20,32 +20,14 @@ void free_opts(struct opts* opt) {
 }
 
 void print_opts(struct opts* opt) {
-  char* typestr;
-  while(opt) {
-    switch(opt->type) {
-    case OPT_INT:
-      typestr="int";
-      break;
-    case OPT_STRING:
-      typestr="string";
-      break;
-    case OPT_BOOL:
-      typestr="bool";
-      break;
-    default:
-      typestr="unknown";
-    }
-    printf("%s=%s[%s]\n",opt->name,opt->value,typestr);
-    opt=opt->next;
-  }
+  for(;opt;opt=opt->next)
+    printf("%s=%s\n",opt->name,opt->value);
 }
 
 char* sexp_opts(struct opts* opt) {
   void* ret=q("(");
-  while(opt) {
+  for(;opt;opt=opt->next)
     ret=s_cat(ret,q("(\""),q(opt->name),q("\"\""),escape_string((char*)opt->value),q("\")"),NULL);
-    opt=opt->next;
-  }
   return ret=s_cat2(ret,q(")"));
 }
 
