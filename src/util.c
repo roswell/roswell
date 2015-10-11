@@ -11,7 +11,7 @@ void cond_printf(int v,char* format,...) {
 
 void* alloc(size_t bytes) {
   void* p=malloc(bytes);
-  //  printf("**%d\n",p);
+  // printf("**%d\n",p);
   return p;
 }
 

@@ -35,7 +35,7 @@ extern int argc_orig;
 extern int verbose;
 extern int testing;
 
-int download_simple (char* uri,char* path,int verbose);
+int download_simple (char* uri,char* path,int opt);
 
 typedef intptr_t LVal;
 struct Cons {
