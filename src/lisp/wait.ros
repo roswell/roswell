@@ -1,0 +1,8 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Wait forever
+exec ros -Q -- $0 "$@"
+|#
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (loop (sleep 1)))
