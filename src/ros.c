@@ -124,7 +124,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     for(p=command;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
       if(fp->name&&(strcmp(fp->name,argv[0])==0||strcmp(fp->name,"*")==0)) {
-        subcommand_name=conss(q(fp->name),subcommand_name);
+        subcommand_name=conss(fp->name,subcommand_name);
         exit(fp->call(argc,argv,fp));
       }
     }
