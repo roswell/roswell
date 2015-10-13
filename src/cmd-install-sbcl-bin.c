@@ -118,36 +118,40 @@ int sbcl_bin_expand(struct install_options* param) {
 }
 
 int sbcl_bin_install(struct install_options* param) {
-  char* version=param->version;
-  int ret;
-  char* home=configdir();
 #ifdef HAVE_WINDOWS_H
+  char* version=param->version;
   char* arch=param->arch;
+  char* home=configdir();
   char *str,*str2,*str3,*str4;
-  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version,"\\sbcl.exe",NULL);
+  char* version_num= q(version);
+  int ret;
+  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.exe",NULL);
   str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\bin\\sbcl.exe",NULL);
   str=cat("cmd /c \"echo f|xcopy ^\"",str2,"^\" ^\"",str3,"^\" > NUL","\"",NULL);
   s(str2),s(str3);
   ret=System(str);s(str);
-  if(!ret) {
-    str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version,"\\sbcl.core",NULL);
-    str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core",NULL);
-    str=cat("cmd /c \"echo f|xcopy ^\"",str2,"^\" ^\"",str3,"^\" > NUL","\"",NULL);
-    ret=System(str);s(str),s(str2),s(str3);
-  }
-  if(!ret) {
-    str=cat("echo d|xcopy ^\"",
-            home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version,"\\contrib^\" ^\"",
-            home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib^\" >NUL",NULL);
+  if(ret) return 0;
+  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\sbcl.core",NULL);
+  str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\sbcl.core",NULL);
+  str=cat("cmd /c \"echo f|xcopy ^\"",str2,"^\" ^\"",str3,"^\" > NUL","\"",NULL);
+  ret=System(str);s(str);
+  if(ret) return 0;
+  str=cat("echo d|xcopy ^\"",
+          home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib^\" ^\"",
+          home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib^\" >NUL",NULL);
 
-    str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version,"\\contrib",NULL);
-    str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib",NULL);
-    str=cat("cmd /c \"echo d|xcopy ^\"",str2,"^\" ^\"",str3,"^\""," > NUL","\"",NULL);
-    ret=System(str),s(str2),s(str3),s(str);
-  }
-  ret=!ret;
+  str2=cat(home,"src\\sbcl-",version,"-",arch,"-windows\\PFiles\\Steel Bank Common Lisp\\",version_num,"\\contrib",NULL);
+  str3=cat(home,"impls\\",arch,"\\windows\\sbcl-bin\\",version,"\\lib\\sbcl\\contrib",NULL);
+  str=cat("cmd /c \"echo d|xcopy ^\"",str2,"^\" ^\"",str3,"^\""," > NUL","\"",NULL);
+  ret=System(str);
+  s(str),s(home);
+  if(ret) return 0;
+  return 1;
 #else
+  int ret;
+  char* home=configdir();
   char* impl=param->impl;
+  char* version=param->version;
   char* impl_path= cat(home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
   char* src=param->expand_path;
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
@@ -167,11 +171,10 @@ int sbcl_bin_install(struct install_options* param) {
   ret=1;
   if(system_redirect("sh install.sh",log_path)==-1)
     ret=0;
-  s(impl_path),s(sbcl_home),s(install_root),s(log_path),s(version);
+  s(home),s(impl_path),s(sbcl_home),s(install_root),s(log_path);
   printf(" Done.\n");
-#endif
-  s(home);
   return ret;
+#endif
 }
 
 install_cmds install_sbcl_bin_full[]={

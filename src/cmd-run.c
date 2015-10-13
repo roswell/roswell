@@ -84,7 +84,8 @@ int cmd_script(int argc,char **argv,struct sub_command* cmd) {
     int i=strcmp(argv[0],"--")==0?1:0;
     for (;i<argc;++i) {
       char* val=escape_string(argv[i]);
-      result=s_cat(result,q("\""),val,q("\""),NULL);
+      result=cat(result,"\"",val,"\"",NULL);
+      s(val);
     }
     set_opt(&local_opt,"script",result,0);
     s(result);
@@ -135,7 +136,6 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
     argv_gen[i]=argv[i-j];
   j=i;
   for(i=0;i<j;i+=proccmd(j-i,&argv_gen[i],top_options,top_commands));
-  free(argv_);
   return 0;
 }
 
@@ -185,12 +185,10 @@ char* determin_impl(char* impl) {
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   int ret=1;
-  char *config=configdir(),
-    *ql= s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)),
-    *w=which(argv_orig[0]);
-  set_opt(&local_opt,"quicklisp",ql,0);
+  char* config=configdir();
+  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)),0);
   set_opt(&local_opt,"argv0",argv_orig[0],0);
-  set_opt(&local_opt,"wargv0",w,0);
+  set_opt(&local_opt,"wargv0",which(argv_orig[0]),0);
   set_opt(&local_opt,"homedir",config,0);
   if(rc) {
     char* init=s_cat(configdir(),q("init.lisp"),NULL);
@@ -203,27 +201,26 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     char *path,*would;
     if(file_exist_p(init)) {
       path=cat("(:load \"",init,"\")",NULL);
-      would=s_cat(path,q(current?current:""),NULL);
+      would=cat(path,current?current:"",NULL);
+      s(current);
       set_opt(&local_opt,"program",would,0);
+      s(path);
     }
-    s(init),s(current);
+    s(init);
     current=get_opt("program",0);
     if(file_exist_p(etc)) {
       path=cat("(:load \"",etc,"\")",NULL);
       would=cat(path,current?current:"",NULL);
       set_opt(&local_opt,"program",would,0);
-      s(would);
     }
   }
   char*lisp=get_opt("lisp",1);
-  char* di=determin_impl(lisp);
+  if(!lisp)
+    lisp=get_opt("*lisp",0);
+  set_opt(&local_opt,"impl",determin_impl(lisp),0);
   char** arg=NULL;
   int i;
   char* wrap=get_opt("wrap",1);
-  if(!lisp)
-    lisp=get_opt("*lisp",0);
-  set_opt(&local_opt,"impl",di,0);
-  s(config),s(ql),s(w);
   {
     struct sub_command cmd;
     int i;
@@ -268,7 +265,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   }else
     fprintf(stderr,"%s is not installed.stop.\n",get_opt("impl",0));
 
-  s(config),s(di);
+  s(config);
   return ret;
 }
 
