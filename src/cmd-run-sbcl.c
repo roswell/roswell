@@ -10,7 +10,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   int offset=10; /*[binpath for sbcl] --noinform --core param --eval init.lisp
                   --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path= s_cat(home,q("impls"),q(SLASH),arch,q(SLASH),os,q(SLASH),q(impl),q(SLASH),q(version),NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -32,7 +32,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     bin=cat(impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
   }
 
-  s(arch),s(os);
   if(help) {
     offset++;
   }
