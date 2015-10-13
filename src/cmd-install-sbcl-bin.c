@@ -167,7 +167,7 @@ int sbcl_bin_install(struct install_options* param) {
   ret=1;
   if(system_redirect("sh install.sh",log_path)==-1)
     ret=0;
-  s(impl_path),s(sbcl_home),s(install_root),s(log_path),s(version);
+  s(impl_path),s(sbcl_home),s(install_root),s(log_path);
   printf(" Done.\n");
 #endif
   s(home);
