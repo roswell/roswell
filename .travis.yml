@@ -63,5 +63,5 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
   - if [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
-  - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
-  - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "valgrind" ]; then ros setup; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
