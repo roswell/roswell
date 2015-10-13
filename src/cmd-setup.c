@@ -34,5 +34,5 @@ int setup_help(int argc,char **argv,struct sub_command* cmd) {
 
 void register_cmd_setup(int argc,char **argv,struct sub_command* cmd) {
   top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"Initial setup",NULL);
-  top_helps=add_help(top_helps,"setup",q(""),(LVal)NULL,(LVal)NULL,NULL,NULL,setup_help);
+  top_helps=add_help(top_helps,"setup","",(LVal)NULL,(LVal)NULL,NULL,NULL,setup_help);
 }

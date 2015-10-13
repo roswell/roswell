@@ -246,7 +246,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
         fprintf(stderr,"%s ",arg[i]);
       fprintf(stderr,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
       if(testing)
-        exit(EXIT_SUCCESS);
+        s(opts),exit(EXIT_SUCCESS);
     }
     s(opts);
 #ifdef _WIN32
