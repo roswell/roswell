@@ -40,15 +40,8 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   int issystem=(strcmp("system",version)==0);
   unsetenv("CCL_DEFAULT_DIRECTORY");
-  if(issystem){
-    if(strcmp(impl,"ccl32")==0) {
-      bin=truename(which("ccl32"));
-    }else {
-      bin=truename(which("ccl"));
-    }
-  }else {
-    bin=s_cat(q(impl_path),q(SLASH),ccl_binname(),q(EXE_EXTENTION),NULL);
-  }
+  bin=issystem?truename(which(strcmp(impl,"ccl32")==0?"ccl32":"ccl")):
+    s_cat(q(impl_path),q(SLASH),ccl_binname(),q(EXE_EXTENTION),NULL);
 
   if(ccl_version)
     offset+=1;
