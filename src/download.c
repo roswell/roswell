@@ -3,13 +3,21 @@
 static int count=0;
 static int width=74;
 static int content_length=0;
-
+static int download_opt=0;
+static FILE* c_out;
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   static char* last_showd=NULL;
   char* w=q("\r");
   last_showd=last_showd?last_showd:q("");
   count+=written*size;
+  if(download_opt&&content_length) {
+    int i,len=width*count/content_length-width*(count-written*size)/content_length;
+    s(w);
+    for(i=0;i<len;++i)
+      fprintf(c_out,"#"),fflush(c_out);
+    return written;
+  }
   if(content_length) {
     int i;
     for(i=0;i<width;++i)
@@ -21,13 +29,12 @@ static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
       1024*1024*1024>count?(current=count/(1024*1024),'M'):(current=count/(1024*1024*1024),'G');
     w=s_cat2(w,qsprintf(20,"%4d%c downloaded.",current,aux));
   }
-  if(strcmp(w,last_showd) !=0){
-    fprintf(stderr, "%s", w);
-    fflush(stderr);
+  if(strcmp(w,last_showd)){
+    if(!(download_opt&1))
+      fprintf(c_out, "%s", w),fflush(c_out);
     s(last_showd),last_showd=q(w);
   }
-  s(w);
-  return written;
+  s(w);return written;
 }
 
 static size_t header_callback(char *buffer, size_t size,size_t nitems, int *opt) {
@@ -38,7 +45,7 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *opt)
       char *num=subseq(&buffer[pos+1],0,pos2);
       code=atoi(num),s(num);
       if(verbose)
-        fprintf(stderr, "http response:%d\n",code);
+        fprintf(c_out, "http response:%d\n",code);
     }
     if(400<=code)
       return 0; /*invoke error for curl*/
@@ -70,6 +77,7 @@ int download_simple (char* uri,char* path,int opt) {
     s(path_partial);
     return -1;
   }
+  c_out=0==(download_opt=opt)?stderr:stdout;
 #ifndef HAVE_WINDOWS_H
   CURL *curl;
   CURLcode res=!CURLE_OK;
@@ -169,7 +177,7 @@ int download_simple (char* uri,char* path,int opt) {
   }
   fclose(bodyfile);
 #endif
-  fprintf(stderr, "\n");
+  fprintf(c_out, "\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
   return ret?0:-7;
