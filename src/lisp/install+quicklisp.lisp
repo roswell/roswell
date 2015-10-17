@@ -41,7 +41,7 @@
                      (declare (ignorable url follow-redirects quietly maximum-redirects))
                      (ros:roswell `("roswell-internal-use" "download"
                                     ,(funcall (find-symbol (string :urlstring) :ql-http)
-                                              (funcall (find-symbol (string :url) :ql-http) url)) ,file "2") :interactive *standard-output*)
+                                              (funcall (find-symbol (string :url) :ql-http) url)) ,file "2") *standard-output*)
                      (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                              (probe-file file)))))))
      (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))))
