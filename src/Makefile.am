@@ -30,7 +30,7 @@ noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 	$(WINE) ./ros$(EXEEXT) setup --no-core;./ros$(EXEEXT) ../scripts/man.ros $< $@
 
 if MANUAL_GENERATE
-  man1_MANS = ../documents/ros.1
+  man1_MANS = ../documents/ros.1 ../documents/ros-init.1
 endif
 
 CLEANFILES = gend.h $(man1_MANS)
