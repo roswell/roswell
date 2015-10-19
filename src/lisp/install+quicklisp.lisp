@@ -21,7 +21,8 @@
          (sb-posix:setgid (parse-integer gid)))
        (let ((uid (sb-posix:getenv "SUDO_UID")))
          (sb-posix:setuid (parse-integer uid))))
-     (load archive)
+     (let ((*standard-output* (make-broadcast-stream)))
+       (load archive))
      ;; use roswell to download everithing.
      (progn
        (setf (fdefinition (find-symbol (string :fetch) :qlqs-http))
@@ -44,4 +45,5 @@
                                               (funcall (find-symbol (string :url) :ql-http) url)) ,file "2") *standard-output*)
                      (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                              (probe-file file)))))))
-     (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path))))
+     (let ((*standard-output* (make-broadcast-stream)))
+       (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path)))))
