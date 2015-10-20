@@ -43,8 +43,8 @@
                      (ros:roswell `("roswell-internal-use" "download"
                                     ,(funcall (find-symbol (string :urlstring) :ql-http)
                                               (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
-                                  #+abcl :interactive ;; intend to fix problem on abcl from commit 4a60ea0
-                                  #-abcl *standard-output*)
+                                  (if (find :abcl *features*)
+                                      :interactive *standard-output*))
                      (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                              (probe-file file)))))))
      (let ((*standard-output* (make-broadcast-stream)))
