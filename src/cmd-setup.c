@@ -2,16 +2,20 @@
 
 extern char** argv_orig;
 
-#define CMD_SETUP_SYSTEM(sys,msg) { \
-    fprintf(stderr,"%s",msg);       \
-    ret=System(sys);                \
-    s(sys);                         \
-    if(ret) return ret;             \
+#define CMD_SETUP_SYSTEM(sys,msg) {	\
+  fprintf(stderr,"%s",msg);		\
+    ret=System(sys);			\
+    s(sys);				\
+    if(ret) {				\
+      lock_apply("setup",1);		\
+      return ret;			\
+    }					\
   }
 
 int cmd_setup(int argc,char **argv,struct sub_command* cmd) {
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
   int ret=1;
+  lock_apply("setup",0);
   char* sbcl_bin_version=get_opt("sbcl-bin.version",0);
   if(!sbcl_bin_version) {
     CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install sbcl-bin",NULL),"Installing sbcl-bin...\n");
@@ -23,6 +27,7 @@ int cmd_setup(int argc,char **argv,struct sub_command* cmd) {
 #endif
   if(argc==1)
     CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"Making core for Roswell...\n");
+  lock_apply("setup",1);
   return ret;
 }
 

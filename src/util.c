@@ -305,22 +305,30 @@ void signal_callback_handler(int signum) {
   exit(1);
 }
 
-char* atexit_delete=NULL;
-
+LVal atexit_delete=0;
+int setup_atexit=0;
 void atexit_handler(void) {
-  delete_file(atexit_delete);
-  s(atexit_delete);
+  LVal n,l;
+  for(l=atexit_delete;l;l=n) {
+    delete_file(firsts(l));
+    s(firsts(l));
+    n=rest(l);
+    dealloc(l);
+  }
 }
 
-void setup_signal_handler (char* file_to_delete) {
+void delete_at_exit(char* file_to_delete) {
 #ifndef HAVE_WINDOWS_H
-  atexit_delete=q(file_to_delete);
-  signal(SIGHUP,  signal_callback_handler);
-  signal(SIGINT,  signal_callback_handler);
-  signal(SIGPIPE, signal_callback_handler);
-  signal(SIGQUIT, signal_callback_handler);
-  signal(SIGTERM, signal_callback_handler);
-  atexit(atexit_handler);
+  atexit_delete=conss(q(file_to_delete),atexit_delete);
+  if(!setup_atexit) {
+    signal(SIGHUP,  signal_callback_handler);
+    signal(SIGINT,  signal_callback_handler);
+    signal(SIGPIPE, signal_callback_handler);
+    signal(SIGQUIT, signal_callback_handler);
+    signal(SIGTERM, signal_callback_handler);
+    atexit(atexit_handler);
+  }
+  setup_atexit=1;
 #endif
 }
 
@@ -340,4 +348,17 @@ void setup_uid(int euid_or_uid) {
     }
   }
 #endif
+}
+
+int lock_apply(char* symbol,int remove) {
+  char *p=s_cat(configdir(),q("tmp/"),NULL);
+  ensure_directories_exist(p),s(p);
+  p=s_cat(configdir(),q("tmp/lock."PACKAGE"."),q(symbol),NULL);
+#ifdef HAVE_WINDOWS_H
+#else
+  cond_printf(1,"%slock!:%s\n",remove?"un":"",symbol);
+  while(remove?rmdir(p):mkdir(p,0700));
+#endif
+  s(p);
+  return 0;
 }

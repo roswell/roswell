@@ -49,7 +49,7 @@ int start(struct install_options* param) {
   s(p);
 
   p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",".lock",NULL);
-  setup_signal_handler(p);
+  delete_at_exit(p);
   touch(p);
 
   s(p),s(home);
