@@ -50,39 +50,44 @@
                  '(pushnew :quicklisp-support-https *features*)
                  '(in-package #:ql-dist)
                  '(let ((*error-output* (make-broadcast-stream)))
-                   (defmethod install ((release release))
-                     (let ((archive (ensure-local-archive-file release))
-                           (output (relative-to (dist release)
-                                                (make-pathname :directory
-                                                               (list :relative "software"))))
-                           (tracking (install-metadata-file release)))
-                       (ensure-directories-exist output)
-                       (ensure-directories-exist tracking)
-                       (ros:roswell `("roswell-internal-use" "tar" "-xf" ,archive "-C" ,output))
-                       (ensure-directories-exist tracking)
-                       (with-open-file (stream tracking
-                                               :direction :output
-                                               :if-exists :supersede)
-                         (write-line (qenough (base-directory release)) stream))
-                       (let ((provided (provided-systems release))
-                             (dist (dist release)))
-                         (dolist (file (system-files release))
-                           (let ((system (find-system-in-dist (pathname-name file) dist)))
-                             (unless (member system provided)
-                               (error "FIND-SYSTEM-IN-DIST returned ~A but I expected one of ~A"
-                                      system provided))
-                             (let ((system-tracking (install-metadata-file system))
-                                   (system-file (merge-pathnames file
-                                                                 (base-directory release))))
-                               (ensure-directories-exist system-tracking)
-                               (unless (probe-file system-file)
-                                 (error "Release claims to have ~A, but I can't find it"
-                                        system-file))
-                               (with-open-file (stream system-tracking
-                                                       :direction :output
-                                                       :if-exists :supersede)
-                                 (write-line (qenough system-file)
-                                             stream))))))
-                       release))))))
+                   (when (and (find :win32 *features*)
+                              (find :sbcl *features*)
+                              (probe-file (merge-pathnames (format nil "impls/~A/windows/7za/9.20/7za.exe"
+                                                                   (ros:roswell '("roswell-internal-use""uname""-m") :string t))
+                                                           (ros::opt "homedir"))))
+                     (defmethod install ((release release))
+                       (let ((archive (ensure-local-archive-file release))
+                             (output (relative-to (dist release)
+                                                  (make-pathname :directory
+                                                                 (list :relative "software"))))
+                             (tracking (install-metadata-file release)))
+                         (ensure-directories-exist output)
+                         (ensure-directories-exist tracking)
+                         (ros:roswell `("roswell-internal-use" "tar" "-xf" ,archive "-C" ,output))
+                         (ensure-directories-exist tracking)
+                         (with-open-file (stream tracking
+                                                 :direction :output
+                                                 :if-exists :supersede)
+                           (write-line (qenough (base-directory release)) stream))
+                         (let ((provided (provided-systems release))
+                               (dist (dist release)))
+                           (dolist (file (system-files release))
+                             (let ((system (find-system-in-dist (pathname-name file) dist)))
+                               (unless (member system provided)
+                                 (error "FIND-SYSTEM-IN-DIST returned ~A but I expected one of ~A"
+                                        system provided))
+                               (let ((system-tracking (install-metadata-file system))
+                                     (system-file (merge-pathnames file
+                                                                   (base-directory release))))
+                                 (ensure-directories-exist system-tracking)
+                                 (unless (probe-file system-file)
+                                   (error "Release claims to have ~A, but I can't find it"
+                                          system-file))
+                                 (with-open-file (stream system-tracking
+                                                         :direction :output
+                                                         :if-exists :supersede)
+                                   (write-line (qenough system-file)
+                                               stream))))))
+                         release)))))))
      (let ((*standard-output* (make-broadcast-stream)))
        (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path)))))
