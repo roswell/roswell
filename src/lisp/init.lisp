@@ -117,6 +117,27 @@
                               (symbol-value symbol)))))
         t))))
 
+(defun take-lock (name)
+  #+sbcl(ignore-errors (sb-posix:mkdir path #o700))
+  #-sbcl t)
+
+(defun release-lock (name)
+  #+sbcl(loop :until (ignore-errors (sb-posix:rmdir path)))
+  #-sbcl t)
+
+(defmacro with-lock-held ((name &key oneshot) success &optional failure)
+  (let ((name- (gensym "name"))
+        (oneshot- (gensym "oneshot")))
+    `(let ((,name- ,name)
+           (,oneshot- ,oneshot))
+       (if (if ,oneshot-
+               (take-lock ,name-)
+               (or (loop until (take-lock ,name-))
+                   t))
+           (unwind-protect ,success
+             (release-lock name))
+           ,failure))))
+
 #+quicklisp
 (let ((path (merge-pathnames "local-projects/" (opt "homedir"))))
   (when (or (ignore-errors (probe-file path))
