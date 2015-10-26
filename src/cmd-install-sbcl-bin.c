@@ -42,7 +42,10 @@ int sbcl_bin_download(struct install_options* param) {
   char* home=configdir();
   char* arch=arch_(param);
   do {
-    param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
+    if (!(strcmp(arch, "armhf-linux")))
+      param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-","arm-linux",SLASH,NULL);
+    else
+      param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
     impls_sbcl_bin.uri=cat(SBCL_BIN_BASE_URI "sbcl-",param->version,
                            "-",arch,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);

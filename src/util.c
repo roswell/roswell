@@ -60,7 +60,7 @@ int delete_file(char* pathspec) {
   return ret==0;
 #else
 //  #error not implemented delete_file
-#endif  
+#endif
 }
 
 int rename_file(char* file,char* new_name) {
@@ -216,10 +216,10 @@ char* uname_m(void) {
     s(result);
     if(strcmp(result2,"0")!=0) {
       s(result2);
-      return q("armel");
+      return q("armhf");
     }else {
       s(result2);
-      return q("armhf");
+      return q("armel");
     }
   }
   return substitute_char('-','_',p2);
