@@ -35,11 +35,11 @@
             '(pushnew :quicklisp-support-https *features*)
             '(in-package #:ql-dist)
             '(let ((*error-output* (make-broadcast-stream)))
-              (when (and (loop for k in '(:win32 :windows :mswindows)
-                            thereis (find k *features*))
-                         (probe-file (merge-pathnames (format nil "impls/~A/windows/7za/9.20/7za.exe"
-                                                              (ros:roswell '("roswell-internal-use""uname""-m") :string t))
-                                                      (ros:opt "homedir"))))
+              (when (or (loop for k in '(:win32 :windows :mswindows)
+                           never (find k *features*))
+                        (probe-file (merge-pathnames (format nil "impls/~A/windows/7za/9.20/7za.exe"
+                                                             (ros:roswell '("roswell-internal-use""uname""-m") :string t))
+                                                     (ros:opt "homedir"))))
                 (defmethod install ((release release))
                   (let ((archive (ensure-local-archive-file release))
                         (output (relative-to (dist release)
