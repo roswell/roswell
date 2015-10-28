@@ -22,9 +22,10 @@ int quicklisp_setup(struct install_options* param) {
   char* exe_path=truename(argv_orig[0]);
   char* install_path=cat(q(home),"impls",SLASH,"ALL",SLASH,"ALL",SLASH,param->impl,SLASH,NULL);
   char* installed=cat(install_path,"setup.lisp",NULL);
-  char* init=s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL);
+  char* init=s_cat(lispdir(),q("init.lisp"),NULL);
 
-  if(!file_exist_p(installed)){
+  if(!file_newer_p(installed,init)) {
+    init=s_cat(q("(progn #-ros.init(cl:load \""),init,q("\"))"),NULL);
     {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
     {char* p[]={"-L","sbcl-bin"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
     {char* p[]={"--eval",init};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
