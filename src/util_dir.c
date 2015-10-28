@@ -147,6 +147,17 @@ int file_exist_p (char* path) {
 #endif
 }
 
+int file_newer_p(char * a,char* b) {
+#ifndef HAVE_WINDOWS_H
+  struct stat as,bs;
+  if(stat(b, &bs) != 0)
+    return 1;
+  return (stat(a, &as) == 0 && as.st_mtime >= bs.st_mtime);
+#else
+  return 0;
+#endif
+}
+
 int change_directory(const char* path) {
 #ifndef _WIN32
   return chdir(path);
