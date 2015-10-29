@@ -141,8 +141,8 @@ install_ecl () {
     PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
 }
 
-ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl90express/linux86/acl90express-linux-x86.bz2"
-ALLEGRO_DMG_URL="http://franz.com/ftp/pub/acl90express/macosx86/acl90express-macosx-x86.dmg"
+ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl100express/linux86/acl100express-linux-x86.bz2"
+ALLEGRO_DMG_URL="http://franz.com/ftp/pub/acl100express/macosx86/acl100express-macosx-x86.dmg"
 
 ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
 install_allegro () {
