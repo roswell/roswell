@@ -1,3 +1,14 @@
+roswell (0.0.3.50-1) unstable; urgency=low
+
+  * New: New subcommand wait are implemented. 'ros wait' will good to use with server application.
+  * Fix: install-for-ci.sh update link to acl version to 10.0.
+  * Fix: armhf platform fixed.(by Pavel)
+  * Improve: re-install quicklisp init file if roswell updated.
+  * Improve: hack quicklisp to use roswell to extract tar.gz archive.
+  * Improve: messages and documentations are written and reviewed. (by Masataro Asai)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 30 Oct 2015 11:04:08 +0900
+
 roswell (0.0.3.49-1) unstable; urgency=low
 
   * New: Now 'ros install sbcl' work on windows.
