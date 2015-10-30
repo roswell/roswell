@@ -20,18 +20,19 @@
   (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))
                        :direction :output :if-exists :supersede)
     (format out "~@{~s~^~%~}"
-            '(setf (fdefinition (find-symbol (string :fetch) :ql-http))
-              (lambda (url file &key (follow-redirects t) quietly
-                                  (maximum-redirects 10))
-                "Request URL and write the body of the response to FILE."
-                (declare (ignorable url follow-redirects quietly maximum-redirects))
-                (ros:roswell `("roswell-internal-use" "download"
-                                                      ,(funcall (find-symbol (string :urlstring) :ql-http)
-                                                                (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
-                             (if (find :abcl *features*)
-                                 :interactive *standard-output*))
-                (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
-                        (probe-file file))))
+            '(let ((*error-output* (make-broadcast-stream)))
+              (setf (fdefinition (find-symbol (string :fetch) :ql-http))
+               (lambda (url file &key (follow-redirects t) quietly
+                                   (maximum-redirects 10))
+                 "Request URL and write the body of the response to FILE."
+                 (declare (ignorable url follow-redirects quietly maximum-redirects))
+                 (ros:roswell `("roswell-internal-use" "download"
+                                                       ,(funcall (find-symbol (string :urlstring) :ql-http)
+                                                                 (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
+                              (if (find :abcl *features*)
+                                  :interactive *standard-output*))
+                 (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
+                         (probe-file file)))))
             '(pushnew :quicklisp-support-https *features*)
             '(in-package #:ql-dist)
             '(let ((*error-output* (make-broadcast-stream)))
