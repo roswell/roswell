@@ -7,7 +7,8 @@
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-           :ignore-shebang :roswell :exec :setenv :unsetenv))
+           :ignore-shebang :roswell :exec :setenv :unsetenv
+           :with-lock-held))
 
 (in-package :ros)
 (defvar *verbose* 0)
@@ -118,14 +119,20 @@
         t))))
 
 (defun take-lock (name)
-  #+sbcl(ignore-errors (sb-posix:mkdir path #o700))
-  #-sbcl t)
+  (let ((path (merge-pathnames "tmp/" (ros:opt "homedir"))))
+    (ensure-directories-exist path)
+    (setq path (merge-pathnames (format nil "lock.roswell.~A/" name) path))
+    #+sbcl(ignore-errors (sb-posix:mkdir path #o700))
+    #-sbcl t))
 
 (defun release-lock (name)
-  #+sbcl(loop :until (ignore-errors (sb-posix:rmdir path)))
-  #-sbcl t)
+  (let ((path (merge-pathnames "tmp/" (ros:opt "homedir"))))
+    (ensure-directories-exist path)
+    (setq path (merge-pathnames (format nil "lock.roswell.~A/" name) path))
+    #+sbcl(loop :until (ignore-errors (sb-posix:rmdir path)))
+    #-sbcl t))
 
-(defmacro with-lock-held ((name &key oneshot) success &optional failure)
+(defmacro with-lock-held ((name &key oneshot) &optional success failure)
   (let ((name- (gensym "name"))
         (oneshot- (gensym "oneshot")))
     `(let ((,name- ,name)
