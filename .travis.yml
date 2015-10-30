@@ -46,7 +46,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "valgrind" ]; then sudo apt-get install -qq valgrind > /dev/null; fi
 install:
   - if [ "$METHOD" = "brew" ]; then brew tap snmsts/roswell; fi
-  - if [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
 script:
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
@@ -62,7 +62,7 @@ script:
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
   - if  [ "$METHOD" = "ci" ]; then [`ros -q run 2>&1` == ""]; fi  
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
-  - if [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
-  - if [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "valgrind" ]; then ros setup; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
