@@ -125,10 +125,12 @@
                    (ensure-directories-exist (merge-pathnames "tmp/" (ros:opt "homedir")))))
 
 (defun take-lock (name)
+  (declare (ignorable name))
   #+sbcl(ignore-errors (sb-posix:mkdir (lock-path name) #o700))
   #-sbcl t)
 
 (defun release-lock (name)
+  (declare (ignorable name))
   #+sbcl(loop :until (ignore-errors (sb-posix:rmdir (lock-path name))))
   #-sbcl t)
 
