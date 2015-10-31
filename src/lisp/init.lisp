@@ -120,7 +120,7 @@
 
 (defun lock-path (name)
   (loop for c across " :/\\"
-     do (setf name (delete c name)))
+     do (setf name (remove c name)))
   (merge-pathnames (format nil "lock.roswell.~A/" name)
                    (ensure-directories-exist (merge-pathnames "tmp/" (ros:opt "homedir")))))
 

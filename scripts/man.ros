@@ -5,18 +5,7 @@ exec ros -Q -- $0 "$@"
 |#
 ;; ref:http://alpha.mixi.co.jp/entry/2007/10635/
 
-(let ((path (merge-pathnames "tmp/" (ros:opt "homedir"))))
-  (unwind-protect
-      (progn
-	#+sbcl
-	(progn
-	  (ensure-directories-exist path)
-	  (setq path (merge-pathnames "lock.roswell.man/" path))
-	  (loop :until (ignore-errors (sb-posix:mkdir path #o700))))
-	(ql:quickload '(:cl-ppcre) :silent t))
-    (progn
-      #+sbcl
-      (loop :until (ignore-errors (sb-posix:rmdir path))))))
+(ql:quickload :cl-ppcre)
 
 (defvar *matchlines* '())
 (defvar *category* nil)
