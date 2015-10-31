@@ -81,4 +81,5 @@ exec ros -Q -- $0 "$@"
                           for match = (cl-ppcre:scan-to-strings regex line)
                           when match
                           do (funcall func match)
-                            (return t))))))
+                            (return t))))
+    (format t "done ~A.~%" output)))
