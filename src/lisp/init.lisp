@@ -119,6 +119,8 @@
         t))))
 
 (defun lock-path (name)
+  (unless (stringp name)
+    (setq name (funcall (read-from-string "ql-http::urlstring") name)))
   (loop for c across " :/\\"
      do (setf name (remove c name)))
   (merge-pathnames (format nil "lock.roswell.~A/" name)
