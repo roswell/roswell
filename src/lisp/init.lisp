@@ -118,19 +118,19 @@
                               (symbol-value symbol)))))
         t))))
 
+(defun lock-path (name)
+  (loop for c across " :/\\"
+     do (setf name (delete c name)))
+  (merge-pathnames (format nil "lock.roswell.~A/" name)
+                   (ensure-directories-exist (merge-pathnames "tmp/" (ros:opt "homedir")))))
+
 (defun take-lock (name)
-  (let ((path (merge-pathnames "tmp/" (ros:opt "homedir"))))
-    (ensure-directories-exist path)
-    (setq path (merge-pathnames (format nil "lock.roswell.~A/" name) path))
-    #+sbcl(ignore-errors (sb-posix:mkdir path #o700))
-    #-sbcl t))
+  #+sbcl(ignore-errors (sb-posix:mkdir (lock-path name) #o700))
+  #-sbcl t)
 
 (defun release-lock (name)
-  (let ((path (merge-pathnames "tmp/" (ros:opt "homedir"))))
-    (ensure-directories-exist path)
-    (setq path (merge-pathnames (format nil "lock.roswell.~A/" name) path))
-    #+sbcl(loop :until (ignore-errors (sb-posix:rmdir path)))
-    #-sbcl t))
+  #+sbcl(loop :until (ignore-errors (sb-posix:rmdir (lock-path name))))
+  #-sbcl t)
 
 (defmacro with-lock-held ((name &key oneshot) &optional success failure)
   (let ((name- (gensym "name"))
@@ -142,7 +142,7 @@
                (or (loop until (take-lock ,name-))
                    t))
            (unwind-protect ,success
-             (release-lock name))
+             (release-lock ,name-))
            ,failure))))
 
 #+quicklisp
