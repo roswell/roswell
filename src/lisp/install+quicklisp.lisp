@@ -28,13 +28,28 @@
                  (declare (ignorable url follow-redirects quietly maximum-redirects))
                  (ros:with-lock-held (url :oneshot t)
                    (ros:roswell `("roswell-internal-use" "download"
-                                                       ,(funcall (find-symbol (string :urlstring) :ql-http)
-                                                                 (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
-                              (if (find :abcl *features*)
-                                  :interactive *standard-output*))
+                                                         ,(funcall (find-symbol (string :urlstring) :ql-http)
+                                                                   (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
+                                (if (find :abcl *features*)
+                                    :interactive *standard-output*))
                    (ros:with-lock-held (url)))
                  (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                          (probe-file file)))))
+            '(let* ((*error-output* (make-broadcast-stream))
+                    (compile-file* (find-symbol (string :compile-file*) :uiop/lisp-build))
+                    (origin (fdefinition compile-file*)))
+              (setf (fdefinition compile-file*)
+               (lambda (input-file &rest keys
+                        &key output-file warnings-file
+                          #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl
+                          &allow-other-keys)
+                 (declare (ignore
+                           output-file warnings-file
+                           #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl))
+                 (let ((name (namestring input-file)))
+                   (cl:print (list (namestring input-file) keys))
+                   (ros:with-lock-held (name)
+                     (apply origin input-file keys))))))
             '(pushnew :quicklisp-support-https *features*)
             '(in-package #:ql-dist)
             '(let ((*error-output* (make-broadcast-stream)))
