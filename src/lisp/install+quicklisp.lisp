@@ -35,22 +35,7 @@
                    (ros:with-lock-held (url)))
                  (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                          (probe-file file)))))
-            '(let* ((*error-output* (make-broadcast-stream))
-                    (compile-file* (find-symbol (string :compile-file*) :uiop/lisp-build))
-                    (origin (fdefinition compile-file*)))
-              (setf (fdefinition compile-file*)
-               (lambda (input-file &rest keys
-                        &key output-file warnings-file
-                          #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl
-                          &allow-other-keys)
-                 (declare (ignore
-                           output-file warnings-file
-                           #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl))
-                 (let ((name (namestring input-file)))
-                   (cl:print (list (namestring input-file) keys))
-                   (ros:with-lock-held (name)
-                     (apply origin input-file keys))))))
-            '(pushnew :quicklisp-support-https *features*)
+	    '(pushnew :quicklisp-support-https *features*)
             '(in-package #:ql-dist)
             '(let ((*error-output* (make-broadcast-stream)))
               (when (or (loop for k in '(:win32 :windows :mswindows)
