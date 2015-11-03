@@ -1,3 +1,10 @@
+roswell (0.0.3.51-1) unstable; urgency=low
+
+  * Improve: hack compile-file*.
+  * Fix: pararel compile groff files.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 03 Nov 2015 23:05:53 +0900
+
 roswell (0.0.3.50-1) unstable; urgency=low
 
   * New: New subcommand wait are implemented. 'ros wait' will good to use with server application.
