@@ -209,6 +209,10 @@ char* uname_m(void) {
     s(p2);
     return q("x86-64");
   }
+  if(strcmp(p2,"aarch64")==0) {
+    s(p2);
+    return q("arm64");
+  }
   if(strcmp(p2,"armv6l")==0 ||
      strcmp(p2,"armv7l")==0) {
     char* result=system_("readelf -A /proc/self/exe |grep Tag_ABI_VFP_args|wc -l");
