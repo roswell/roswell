@@ -28,7 +28,8 @@
     result))
 
 (defun sbcl-msys (argv)
-  (ros:roswell '("install msys2") :interactive nil)
+  (unless (ros:getenv "MSYSCON")
+    (ros:roswell '("install msys2") :interactive nil))
   (cons t argv))
 
 (defun sbcl-version (argv)

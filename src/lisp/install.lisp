@@ -111,9 +111,10 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (defun sh ()
   (or #+win32
-      (format nil "~A" (sb-ext:native-namestring
-                           (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-                                                    #+x86-64 "64" #-x86-64 "32") (homedir))))
+      (unless (ros:getenv "MSYSCON")
+	(format nil "~A" (sb-ext:native-namestring
+			  (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+						   #+x86-64 "64" #-x86-64 "32") (homedir)))))
       (which "bash")
       "sh"))
 #+win32
