@@ -115,16 +115,9 @@ int cmd_help(int argc, const char **argv) {
       }
     }
   }else {
-    LVal v;
-    for(v=dir;v;v=Next(v)) {
-      char* f=firsts(v);
-      int len=strlen(f)-4; /* ".ros" */
-      if (len>0 && strcmp(f+len,".ros")==0 && f[0]!='+') {
-        char* fname=cat(subcmds,SLASH,f);
-        if(strncmp(f,argv[1],strlen(argv[1]))==0)
-          proccmd_with_subcmd(fname,"help",argc,(char**)argv,top_options,top_commands);
-      }
-    }
+    char *cmd=s_cat(q("man"),q(" ros-"),q(argv[1]),NULL);
+    System(cmd);
+    q(cmd);
   }
   sL(dir);
   s(subcmds);
