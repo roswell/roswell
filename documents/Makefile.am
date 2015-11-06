@@ -4,7 +4,7 @@
 	$(WINE) ../src/ros$(EXEEXT) -L sbcl-bin ../scripts/man.ros $< $@
 
 if MANUAL_GENERATE
-  man1_MANS = ros.1 ros-init.1
+  man1_MANS = ros.1 ros-init.1 ros-setup.1
 endif
 
 CLEANFILES = $(man1_MANS)
