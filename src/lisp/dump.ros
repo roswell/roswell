@@ -94,18 +94,12 @@ exec ros -- $0 "$@"
       (format t "ros dump executable help~%")))
 
 (defvar *subcmds*
-  '(("output" "Create dump" dump-output)
-    #+(or sbcl ccl)("executable" "Create an executable" dump-executable)))
+  '(("output" dump-output)
+    #+(or sbcl ccl)("executable" dump-executable)))
 
 (defun main (subcmd cmd &rest r)
   (cond ((and (equal subcmd "main") r)
-         (let ((func (third (assoc (first r) *subcmds* :test 'equal))))
+         (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
            (if func
                (funcall func (rest r))
-               (format t "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))
-        ((or (equal subcmd "help") (not r))
-         (format t "Usage: ~A [OPTIONS] ~A SUBCMD [ARGS]~%"
-                 (ros:opt "argv0") cmd)
-         (loop :with len := (1+ (loop :for (cmd . nil) :in *subcmds* :maximize (length cmd)))
-            :for (cmd desc nil) :in *subcmds*
-            :do (format t "  ~VA ~A~%" len cmd desc)))))
+               (format t "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))))
