@@ -4,6 +4,8 @@ environment:
   global:
     MSYS2_BASEVER: 20150916
   matrix:
+    - MSYSTEM: MINGW32
+      METHOD: ci
     - MSYS2_ARCH: i686
       MSYS2_BITS: 32
       MSYSTEM: MINGW32
@@ -12,10 +14,6 @@ environment:
       MSYS2_BITS: 64
       MSYSTEM: MINGW64
       METHOD: cross
-    - MSYS2_ARCH: i686
-      MSYS2_BITS: 32
-      MSYSTEM: MINGW32
-      METHOD: ci
 
 install:
   - ps: If (($env:METHOD -eq "cross") -and  (Test-Path ("msys" + $env:MSYS2_BITS))){Write-Host "Using cached msys2"}
@@ -28,8 +26,12 @@ build_script:
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%
   - if "%METHOD%"=="cross" move src roswell
   - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.*
+  - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install"
 
 test_script:
+  - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros version"
+  - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros setup"
+  - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros install sbcl"
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
   - if "%METHOD%"=="cross" ros version
   - if "%METHOD%"=="cross" ros setup
