@@ -166,16 +166,14 @@ char* determin_impl(char* impl) {
       s(version);
     version=q("system");
   }
-
   if(!(impl && version)) {
     char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
-    char* ret;
+    int ret;
     if(impl) s(impl);
     impl=q(DEFAULT_IMPL);
     cond_printf(1,"cmd:%s\n",cmd);
-    ret=system_(cmd);
-    cond_printf(1,"ret:%s\n",ret);
-    s(ret);
+    ret=System(cmd);
+    cond_printf(1,"ret:%d\n",ret);
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);;
     version=get_opt(DEFAULT_IMPL".version",0);
