@@ -24,11 +24,10 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
 
   if(!file_exist_p(asdf3)) {
     char* cmd=cat(which(argv_orig[0])," install asdf3",NULL);
-    char* ret;
+    int ret;
     cond_printf(1,"cmd:%s\n",cmd);
-    ret=system_(cmd);
-    cond_printf(1,"ret:%s\n",ret);
-    s(ret);
+    ret=System(cmd);
+    cond_printf(1,"ret:%d\n",ret);
   }
   s(asdf3);
 
