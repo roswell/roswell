@@ -115,7 +115,12 @@ int cmd_help(int argc, const char **argv) {
       }
     }
   }else {
-    char *cmd=s_cat(q("man"),q(" ros-"),q(argv[1]),NULL);
+    char* cd=NULL;
+#ifdef HAVE_WINDOWS_H
+    change_directory(MAN_PATH);
+    cd=q(".");
+#endif
+    char *cmd=s_cat(q("man"),cd?s_cat2(q(" -M "),cd):q(""),q(" ros-"),q(argv[1]),NULL);
     System(cmd);
     q(cmd);
   }

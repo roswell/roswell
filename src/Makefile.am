@@ -1,4 +1,4 @@
-AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\"
+AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 roslisp_DATA = $(wildcard lisp/*.lisp) $(wildcard lisp/*.ros)
 
