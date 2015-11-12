@@ -82,7 +82,8 @@ exec ros -- $0 "$@"
          #'(lambda ()
              (setf ros:*argv* (rest sb-ext:*posix-argv*))
              (ros:run cmds))
-         :executable t)
+         :executable t
+         :save-runtime-options t)
         #+ccl
         (ccl:save-application
          out
