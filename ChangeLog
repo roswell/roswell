@@ -1,3 +1,12 @@
+roswell (0.0.3.52-1) unstable; urgency=low
+
+  * Improve: try support arm64.(just uname-> architecture)
+  * Improve: use msys2 are alredy running, use it.
+  * Improve: write some 'man' files.
+  * Fix: 'ros build script' now don't take default option for sbcl. (reported by noctuid)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 14 Nov 2015 19:02:06 +0900
+
 roswell (0.0.3.51-1) unstable; urgency=low
 
   * Improve: hack compile-file*.
