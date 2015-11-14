@@ -61,7 +61,7 @@ script:
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
   - if [ "$METHOD" = "ci" ]; then [`ros -q run 2>&1` == ""]; fi
-  - if [ "$METHOD" = "ci" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
+  - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
