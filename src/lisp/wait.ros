@@ -3,6 +3,10 @@
 #|Wait forever
 exec ros -Q -- $0 "$@"
 |#
+(defpackage :ros.sub.wait
+  (:use :cl))
+(in-package :ros.sub.wait)
+
 (defun main (&rest argv)
   (declare (ignorable argv))
   (loop (sleep 1)))

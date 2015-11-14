@@ -3,6 +3,9 @@
 #|launch emacs with slime
 exec ros -L sbcl-bin -- $0 "$@"
 |#
+(defpackage :ros.sub.emacs
+  (:use :cl))
+(in-package :ros.sub.emacs)
 
 (defun main (&rest argv)
   (let ((path (merge-pathnames "impls/ALL/ALL/quicklisp/slime-helper.el" (ros:opt "homedir"))))
