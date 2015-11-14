@@ -152,7 +152,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
     (error "GITHUB_OAUTH_TOKEN must be set"))
   (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
-  (asset-upload (first argv) (uiop:getenv "TRAVIS_TAG")))
+  (asset-upload (pathname (first argv)) (uiop:getenv "TRAVIS_TAG")))
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
