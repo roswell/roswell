@@ -50,5 +50,4 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                      (uiop:quit -1))
                  (error (e)
                    (format *error-output* "~&~A~%" e)
-                   (help)
                    (uiop:quit -1))))))))
