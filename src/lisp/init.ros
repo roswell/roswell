@@ -20,7 +20,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd))
   (cond ((and (equal subcmd "main") name)
-         (let (script-path template)
+         (let (script-path
+               template
+               (date (get-universal-time)))
            (when r (setq template name
                          name (first r)
                          r (cdr r)))
@@ -41,6 +43,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                            "#!/bin/sh"
                                            "#|-*- mode:lisp -*-|#"
                                            "#|" "exec ros -Q -- $0 \"$@\"" "|#"
+                                           (format nil "(defpackage :ros.script.~A.~A" name date)
+                                           "  (:use :cl))"
+                                           (format nil "(in-package :ros.script.~A.~A)" name date)
                                            "(defun main (&rest argv)"
                                            "  (declare (ignorable argv)))")
                                    (format t "~&Successfully generated: ~A~%" script-path)
