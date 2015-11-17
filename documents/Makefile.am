@@ -1,4 +1,4 @@
-#.NOTPARALLEL:
+.NOTPARALLEL:
 
 %.1: %.html ../src/ros$(EXEEXT) ../scripts/man.ros
 	$(WINE) ../src/ros$(EXEEXT) -L sbcl-bin ../scripts/man.ros $< $@
