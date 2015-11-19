@@ -9,6 +9,30 @@ char* sbcl_bin_extention(struct install_options* param) {
   return SBCL_BIN_EXTENTION;
 }
 
+void sbcl_bin_check_file(char* file) {
+  FILE* fp=fopen(file,"r");
+  int found=0,i,j;
+  if(fp!=NULL) {
+    char* str="sbcl";
+    char line[2000];
+    while(fgets(line,2000,fp) != NULL)
+      for(i=0,j=0;i<2000||line[i]!='\0';++i)
+        if(str[j]==line[i]) {
+          ++j;
+          if(str[j]=='\0') {
+            found=1;break;
+          }
+        }else j=0;
+  }else {
+    cond_printf(0,"File Open Error\n");
+    exit(1);
+  }
+  if(found!=0) {
+    cond_printf(0,"Invalid html(man in the middle attack?)\n");
+    exit(1);
+  }
+}
+
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
@@ -26,7 +50,7 @@ int sbcl_version_bin(struct install_options* param) {
       printf("Download failed (Code=%d)\n",ret);
       return 0;
     }
-
+    sbcl_bin_check_file(platforms_html);
     param->version=sbcl_bin(platforms_html);
     printf("Installing sbcl-bin/%s...\n",param->version);
   }else
