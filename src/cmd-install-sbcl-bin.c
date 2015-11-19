@@ -12,9 +12,8 @@ char* sbcl_bin_extention(struct install_options* param) {
 void sbcl_bin_check_file(char* file) {
   FILE* fp=fopen(file,"r");
   int found=0,i,j;
-  if(fp!=NULL) {
-    char* str="sbcl";
-    char line[2000];
+  char line[2000],*str="sbcl";
+  if(fp!=NULL)
     while(fgets(line,2000,fp) != NULL)
       for(i=0,j=0;i<2000 && line[i]!='\0';++i)
         if(str[j]==line[i]) {
@@ -23,11 +22,11 @@ void sbcl_bin_check_file(char* file) {
             found=1;break;
           }
         }else j=0;
-  }else {
+  else {
     cond_printf(0,"File Open Error\n");
     exit(1);
   }
-  if(found!=0) {
+  if(!found) {
     cond_printf(0,"Invalid html(man in the middle attack?)\n");
     exit(1);
   }
