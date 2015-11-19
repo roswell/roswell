@@ -16,7 +16,7 @@ void sbcl_bin_check_file(char* file) {
     char* str="sbcl";
     char line[2000];
     while(fgets(line,2000,fp) != NULL)
-      for(i=0,j=0;i<2000||line[i]!='\0';++i)
+      for(i=0,j=0;i<2000 && line[i]!='\0';++i)
         if(str[j]==line[i]) {
           ++j;
           if(str[j]=='\0') {
