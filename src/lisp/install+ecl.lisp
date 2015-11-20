@@ -14,8 +14,13 @@
                  :minute (parse-integer (fifth str))
                  :second 0))
 ;;(parse-date "22-Aug-2015 18:19  ")
+(defun ecl-msys (argv)
+  (unless (ros:getenv "MSYSCON")
+    (ros:roswell '("install msys2") :interactive nil))
+  (cons t argv))
 
-(defun ecl-get-version ()
+(defun ecl-version (argv)
+  (declare (ignorable argv))
   (let ((file (merge-pathnames "tmp/ecl.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
     (download "https://common-lisp.net/project/ecl/files/" file)
@@ -39,5 +44,10 @@
                              (plump:parse (merge-pathnames "tmp/ecl.html" (homedir))) "a"))))
            #+nil(target "current-release.tgz"))
       tgz-list)))
+
+(push `("ecl" . ,(list #+win32 ecl-msys
+                       'ecl-version
+                       ))
+      *install-cmds*)
 
 
