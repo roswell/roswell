@@ -98,7 +98,7 @@
                             (t default)))))
     (loop for (opt default . nil) in *ecl-options*
        do (with opt default)))
-  (print (cons t argv)))
+  (cons t argv))
 
 (defun ecl-download (argv)
   (if (or (not (probe-file (get-opt "download.archive")))
@@ -150,7 +150,7 @@
 
 (defun ecl-install (argv)
   (let* ((impl-path (get-opt "prefix"))
-         (src (namestring (namestring (merge-pathnames "src/" (get-opt "src")))))
+         (src (namestring (namestring (get-opt "src"))))
          (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
     (format t "~&Installing ~A/~A..." (getf argv :target) (get-opt "as"))
     (format t "~&prefix: ~s~%" impl-path)
