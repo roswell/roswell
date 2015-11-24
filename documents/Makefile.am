@@ -1,6 +1,9 @@
-.NOTPARALLEL:
+#.NOTPARALLEL:
 
-%.1: %.html ../src/ros$(EXEEXT) ../scripts/man.ros
+ros.1: ros.html ../src/ros$(EXEEXT) ../scripts/man.ros
+	$(WINE) ../src/ros$(EXEEXT) -L sbcl-bin ../scripts/man.ros $< $@
+
+%.1: %.html ../src/ros$(EXEEXT) ../scripts/man.ros ros.1
 	$(WINE) ../src/ros$(EXEEXT) -L sbcl-bin ../scripts/man.ros $< $@
 
 if MANUAL_GENERATE
