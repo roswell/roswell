@@ -118,7 +118,7 @@
 
 (defun clisp-install (argv)
   (let* ((impl-path (get-opt "prefix"))
-         (src (namestring (namestring (merge-pathnames "src/" (get-opt "src")))))
+         (src (namestring (merge-pathnames "src/" (get-opt "src"))))
          (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
     (format t "~&Installing ~A/~A..." (getf argv :target) (get-opt "as"))
     (format t "~&prefix: ~s~%" impl-path)
@@ -134,6 +134,19 @@
     (format *error-output* "done.~%"))
   (cons t argv))
 
+(defun clisp-clean (argv)
+  (format t "~&Cleaning~%")
+  (let ((src (namestring (merge-pathnames "src/" (get-opt "src")))))
+    (uiop/os:chdir src)
+    (format t "~&chdir ~A~%" src)
+    (let* ((out (make-broadcast-stream))
+           (*standard-output* (make-broadcast-stream
+                               out #+sbcl(make-instance 'count-line-stream))))
+      (uiop/run-program:run-program
+       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
+    (format t "done.~%"))
+  (cons t argv))
+
 (push `("clisp" . ,(list 'clisp-version
                          'clisp-argv-parse
                          'start
@@ -144,6 +157,7 @@
                          'clisp-config
                          'clisp-make
                          'clisp-install
+                         'clisp-clean
                          'setup))
       *install-cmds*)
 

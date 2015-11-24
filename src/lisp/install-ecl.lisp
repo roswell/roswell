@@ -166,6 +166,19 @@
     (format *error-output* "done.~%"))
   (cons t argv))
 
+(defun ecl-clean (argv)
+  (format t "~&Cleaning~%")
+  (let ((src (get-opt "src")))
+    (uiop/os:chdir src)
+    (format t "~&chdir ~A~%" src)
+    (let* ((out (make-broadcast-stream))
+           (*standard-output* (make-broadcast-stream
+                               out #+sbcl(make-instance 'count-line-stream))))
+      (uiop/run-program:run-program
+       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
+    (format t "done.~%"))
+  (cons t argv))
+
 (push `("ecl" . ,(list #+win32 ecl-msys
                        'ecl-version
                        'ecl-argv-parse
@@ -175,6 +188,7 @@
                        'ecl-config
                        'ecl-make
                        'ecl-install
+                       'ecl-clean
                        'setup
                        ))
       *install-cmds*)
