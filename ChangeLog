@@ -1,3 +1,11 @@
+roswell (0.0.3.53-1) unstable; urgency=low
+
+  * New: support installing ecl.
+  * Improve: show error message when download page are not include 'sbcl'.
+  * Change: 'ros init' make a file with package.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 26 Nov 2015 13:53:45 +0900
+
 roswell (0.0.3.52-1) unstable; urgency=low
 
   * Improve: try support arm64.(just uname-> architecture)
