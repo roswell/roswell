@@ -121,24 +121,14 @@ install_abcl () {
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
 
-ECL_TARBALL_URL="https://common-lisp.net/project/ecl/files/ecl-16.0.0.tgz"
-ECL_DIR="$LISP_IMPLS_DIR/ecl"
 install_ecl () {
     if [ `uname` = "Darwin" ]; then
         brew install ecl
+        PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
     else
-        if ! [ -f "$LISP_IMPLS_BIN/ecl" ]; then
-            fetch "$ECL_TARBALL_URL" "$HOME/ecl.tgz"
-            extract -z "$HOME/ecl.tgz" "$HOME/ecl-src"
-            cd $HOME/ecl-src
-            ./configure --prefix="$ECL_DIR"
-            make >/dev/null
-            make install >/dev/null
-            install_script "$LISP_IMPLS_BIN/ecl" \
-                           "exec \"$ECL_DIR/bin/ecl\" \"\$@\""
-        fi
+        ros install ecl
+        ros use ecl
     fi
-    PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
 }
 
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl100express/linux86/acl100express-linux-x86.bz2"
