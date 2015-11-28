@@ -43,6 +43,8 @@
   (let ((uname-m (uname-m)))
     (when (equal uname-m "x86-64")
       (setq uname-m "x86"))
+    (when (equal uname-m "armhf")
+      (setq uname-m "arm"))
     uname-m))
 
 (defun ccl-bin-argv-parse (argv)

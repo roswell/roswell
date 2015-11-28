@@ -5,7 +5,8 @@ char* ccl_binname(void) {
   char* _uname_m=uname_m();
   char* _uname=uname();
   if(strcmp(_uname,"linux")==0) {
-    ret=s_cat(ret,q("l"),NULL);
+    if(strcmp(_uname_m,"armhf")!=0)
+      ret=s_cat(ret,q("l"),NULL);
   }else if(strcmp(_uname,"windows")==0) {
     ret=s_cat(ret,q("w"),NULL);
   }else if(strcmp(_uname,"darwin")==0) {
@@ -14,7 +15,8 @@ char* ccl_binname(void) {
   if(strcmp(_uname_m,"x86-64")==0 ||
      strcmp(_uname_m,"x86")==0) {
     ret=s_cat(ret,q("x86"),NULL);
-  }
+  }else if(strcmp(_uname_m,"armhf")==0)
+    ret=s_cat(ret,q("arm"),NULL);
   ret=s_cat(ret,q("cl"),NULL);
   if(strcmp(_uname_m,"x86-64")==0)
     ret=s_cat(ret,q("64"),NULL);
