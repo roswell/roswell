@@ -1,7 +1,7 @@
 (in-package :ros.install)
 
 (defvar *sbcl-options*
-  '(("thread" t "Build SBCL without support for native threads")
+  `(("thread" ,(or #+(or x86 x86-64 arm64)t) "Build SBCL without support for native threads")
     ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
     ("ldb" nil "Include low-level debugger in the build")
     ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)")
