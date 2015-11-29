@@ -10,6 +10,10 @@ Makefile
 Makefile.in
 configure
 config.status
+config.h
+config.h.in
+install-sh
+missing
 compile
 aclocal.m4
 autom4te.cache
