@@ -317,7 +317,7 @@ void atexit_handler(void) {
     delete_file(firsts(l));
     s(firsts(l));
     n=rest(l);
-    dealloc(l);
+    dealloc((void*)l);
   }
 }
 
@@ -344,11 +344,13 @@ void setup_uid(int euid_or_uid) {
     gid_t gid=gid_str?atoi(gid_str):0;
 
     if(euid_or_uid) {
-      setegid(gid);
-      seteuid(uid);
+      if(!(setegid(gid)==0 &&
+	   seteuid(uid)==0))
+	cond_printf(0,"Error setegid/seteuid \n");
     }else {
-      setgid(gid);
-      setuid(uid);
+      if(!(setgid(gid)==0 &&
+	   setuid(uid)==0))
+	cond_printf(0,"Error setgid/setuid \n");
     }
   }
 #endif
