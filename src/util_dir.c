@@ -129,35 +129,6 @@ int directory_exist_p (char* path) {
 #endif
 }
 
-int file_exist_p (char* path) {
-#ifndef HAVE_WINDOWS_H
-  struct stat sb;
-  int ret=0;
-  if (stat(path, &sb) == 0 && S_ISREG(sb.st_mode)) {
-    ret=1;
-  }
-  return ret;
-#else
-  WIN32_FIND_DATA fd;
-  HANDLE dir=FindFirstFile(path,&fd);
-  if(dir==INVALID_HANDLE_VALUE)
-    return 0;
-  FindClose(dir);
-  return 1;
-#endif
-}
-
-int file_newer_p(char * a,char* b) {
-#ifndef HAVE_WINDOWS_H
-  struct stat as,bs;
-  if(stat(b, &bs) != 0)
-    return 1;
-  return (stat(a, &as) == 0 && as.st_mtime >= bs.st_mtime);
-#else
-  return 0;
-#endif
-}
-
 int change_directory(const char* path) {
 #ifndef _WIN32
   return chdir(path);

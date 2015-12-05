@@ -127,28 +127,32 @@ char* downcase(char* orig);
 char* append_trail_slash(char* str);
 char* escape_string(char* str);
 char* s_escape_string(char* str);
+char* lispdir(void);
+/*util_dir.c */
 char* homedir(void);
 char* configdir(void);
 char* subcmddir(void);
-char* lispdir(void);
 char* truename(const char* path);
 char* pathname_directory (char* path);
 char* file_namestring (char* path);
 int ensure_directories_exist (char* path);
 int directory_exist_p (char* path);
-int file_exist_p (char* path);
-int file_newer_p(char * a,char* b);
 int change_directory(const char* path);
 int delete_directory(char* pathspec,int recursive);
+/*util_file.c */
 int delete_file(char* pathspec);
 int rename_file(char* file,char* new_name);
 void touch(char* path);
+int file_exist_p (char* path);
+int file_newer_p(char * a,char* b);
+/*util_system.c */
 char* system_(char* cmd);
-int System(const char* command);
-char** parse_cmdline(char* cmdline,int *argc);
-int free_cmdline(char** argv);
 int system_redirect(const char* cmd,char* filename);
 int system_redirect_function(const char* cmd,Function1 f);
+int System(const char* command);
+
+char** parse_cmdline(char* cmdline,int *argc);
+int free_cmdline(char** argv);
 char* determin_impl(char* impl);
 char* uname(void);
 char* uname_m(void);

@@ -50,43 +50,6 @@ unsetenv(const char* name) {
 }
 #endif
 
-int delete_file(char* pathspec) {
-#ifndef HAVE_WINDOWS_H
-  char* cmd;
-  int ret;
-  cmd=s_cat2(q("rm -f "),q(pathspec));
-  ret=System(cmd);
-  s(cmd);
-  return ret==0;
-#else
-//  #error not implemented delete_file
-#endif
-}
-
-int rename_file(char* file,char* new_name) {
-#ifndef HAVE_WINDOWS_H
-  char* cmd;
-  int ret;
-  cmd=s_cat(q("mv "),q(file),q(" "),q(new_name),NULL);
-  ret=System(cmd);
-  s(cmd);
-  return ret==0;
-#else
-  return MoveFileEx(file,new_name,MOVEFILE_REPLACE_EXISTING);
-#endif
-}
-
-void touch(char* path) {
-  int ret;
-  cond_printf(1,"%s\n",path);
-#ifndef HAVE_WINDOWS_H
-  char* cmd=s_cat2(q("touch "),q(path));
-  ret=System(cmd);
-  s(cmd);
-#else
-#endif
-}
-
 char* s_decode(char* str) {
   int count,i,write,escape=0;
   char* ret;
@@ -167,9 +130,8 @@ char** parse_cmdline(char* cmdline,int *argc) {
 
 int free_cmdline(char** argv) {
   char** p;
-  for(p=argv;*p!=NULL;++p) {
+  for(p=argv;*p!=NULL;++p)
     dealloc(*p);
-  }
   dealloc(argv);
   return 1;
 }
