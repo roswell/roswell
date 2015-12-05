@@ -260,24 +260,33 @@
 (defun script (cmd arg &rest rest)
   (declare (ignorable cmd))
   (setf *argv* rest)
-  (if (probe-file arg)
-      (with-open-file (in arg)
-        (let ((line(read-line in)))
-          (push :ros.script *features*)
-          (funcall #+(or sbcl clisp) 'cl:load
-                   #-(or sbcl clisp) 'asdf::eval-input
-                   (make-concatenated-stream
-                    (make-string-input-stream
-                     (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (truename cl:*load-pathname*))~A" (merge-pathnames (make-pathname :defaults arg))
-                             (if (equal (subseq line 0 (min (length line) 2)) "#!")
-                                 "" line)))
-                    in
-                    (make-string-input-stream
-                     (if (eql cmd :script)
-                         "(cl:apply 'main ros:*argv*)"
-                         "(setf ros:*main* 'main)"))))
-          (setf *features* (remove :ros.script *features*))))
-      (format t "script ~S does not exist~%" arg)))
+  (flet ((body (in)
+           (let ((line(read-line in)))
+             (push :ros.script *features*)
+             (funcall #+(or sbcl clisp) 'cl:load
+                      #-(or sbcl clisp) 'asdf::eval-input
+                      (make-concatenated-stream
+                       (make-string-input-stream
+                        (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (ignore-errors (truename cl:*load-pathname*)))~A"
+                                (ignore-errors (merge-pathnames (make-pathname :defaults arg)))
+                                (if (equal (subseq line 0 (min (length line) 2)) "#!")
+                                    "" line)))
+                       in
+                       (make-string-input-stream
+                        (if (eql cmd :script)
+                            "(cl:apply 'main ros:*argv*)"
+                            "(setf ros:*main* 'main)"))))
+             (setf *features* (remove :ros.script *features*)))))
+    (if (streamp arg)
+        (body arg)
+        (if (probe-file arg)
+            (with-open-file (in arg)
+              (body in))
+            (format t "script ~S does not exist~%" arg)))))
+
+(defun stdin (cmd arg &rest rest)
+  (declare (ignorable arg cmd rest))
+  (apply #'script :script *standard-input* rest))
 
 (defun load (x file)
   (declare (ignore x))
