@@ -74,8 +74,8 @@ apt_unless_installed () {
     fi
 }
 
-CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.tar.bz2"
-CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/07/cmucl-2015-07-x86-linux.extra.tar.bz2"
+CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/11/cmucl-2015-11-x86-linux.tar.bz2"
+CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2015/11/cmucl-2015-11-x86-linux.extra.tar.bz2"
 CMU_DIR="$LISP_IMPLS_DIR/cmucl"
 install_cmucl () {
     if [ `uname` = "Darwin" ]; then
