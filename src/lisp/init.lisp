@@ -1,3 +1,20 @@
+
+#|
+
+The entry of all roswell commands.
+The true internal entry invoked by the C binary is ros:run.
+ (to see how this function is invoked, consult src/cmd-run-sbcl.c etc.)
+All roswell commands are dispatched from this function via the symbol lookup.
+
+This file contains many functions which can be otherwise delegated to UIOP,
+such as run-command, quit, getenv. However, these are not available for
+specific versions of stock factory-spec lisp implementations (e.g. old
+binaries installed from apt-get) because they do not necessarily come with
+latest asdf (especially asdf3).
+
+|#
+
+
 (cl:in-package :cl-user)
 
 (let ((*standard-output* (make-broadcast-stream)))
@@ -8,7 +25,8 @@
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :roswell :exec :setenv :unsetenv
-           :with-lock-held))
+           :with-lock-held)
+  (:documentation "Roswell backend."))
 
 (in-package :ros)
 (defvar *verbose* 0)
@@ -75,11 +93,12 @@
 
 (defun quit (&optional (return-code 0) &rest rest)
   (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
-    (ignore-errors(funcall (read-from-string "asdf::quit") ret))
-    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::exit") :code ret))
-    #+sbcl(ignore-errors(funcall (read-from-string "cl-user::quit") :unix-status ret))
-    #+clisp(ext:exit ret)
-    #+ccl(ccl:quit ret)))
+    (ignore-errors (funcall (read-from-string "asdf::quit") ret))
+    ;; below are for those environments which lacks neither asdf or uiop.
+    #+sbcl (ignore-errors (funcall (read-from-string "cl-user::exit") :code ret))
+    #+sbcl (ignore-errors (funcall (read-from-string "cl-user::quit") :unix-status ret))
+    #+clisp (ext:exit ret)
+    #+ccl (ccl:quit ret)))
 
 (defun run-program (args &key output)
   (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
@@ -293,6 +312,7 @@
   (cl:load file))
 
 (defun run (list)
+  "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
   (loop :for elt :in list
      :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
 
