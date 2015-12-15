@@ -256,9 +256,9 @@ int main (int argc,char **argv) {
   char* _help;
   /*options*/
   /* toplevel */
-  top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"Run the script with a shell wrapper CODE, e.g. rlwrap","CODE");
+  top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"Run "PACKAGE" with a shell wrapper CODE,","CODE");
   top_options=add_command(top_options,"image","-m",opt_top,1,0,"continue from Lisp image IMAGE","IMAGE");
-  top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"Run the script with a lisp impl NAME[/VERSION] if present, e.g. sbcl-bin, sbcl/1.2.16. Fails otherwise.","NAME");
+  top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"Run "PACKAGE" with a lisp impl NAME[/VERSION].","NAME");
   top_options=register_runtime_options(top_options);
 
   /* abbrevs */
