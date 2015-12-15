@@ -1,13 +1,12 @@
 #.NOTPARALLEL:
+../scripts/man$(EXEEXT): ../scripts/man.ros ../src/ros$(EXEEXT)
+	if [ $< -nt $@ ]; then $(WINE) ../src/ros$(EXEEXT) build $< ;else touch $@;fi
 
-ros.1: ros.html ../src/ros$(EXEEXT) ../scripts/man.ros
-	$(WINE) ../src/ros$(EXEEXT) -L sbcl-bin ../scripts/man.ros $< $@
-
-%.1: %.html ../src/ros$(EXEEXT) ../scripts/man.ros ros.1
-	$(WINE) ../src/ros$(EXEEXT) -L sbcl-bin ../scripts/man.ros $< $@
+%.1: %.html ../scripts/man$(EXEEXT)
+	if [ $< -nt $@ ]; then $(WINE) ../scripts/man$(EXEEXT) $< $@ ;else touch $@;fi
 
 if MANUAL_GENERATE
-  man1_MANS = ros.1 ros-init.1 ros-setup.1 ros-dump.1 ros-list.1
+  man1_MANS = ros.1 ros-init.1 ros-setup.1 ros-dump.1 ros-list.1 ../scripts/man$(EXEEXT)
 endif
 
 CLEANFILES = $(man1_MANS)
