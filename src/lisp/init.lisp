@@ -128,7 +128,8 @@
 
 (defun take-lock (name)
   (declare (ignorable name))
-  #+sbcl(ignore-errors (sb-posix:mkdir (lock-path name) #o700))
+  #+sbcl
+  (ignore-errors (sb-posix:mkdir (lock-path name) #o700))
   #-sbcl t)
 
 (defun release-lock (name)
@@ -143,7 +144,15 @@
            (,oneshot- ,oneshot))
        (if (if ,oneshot-
                (take-lock ,name-)
-               (or (loop until (take-lock ,name-))
+               (or (restart-bind ((force-release-lock
+                                   (lambda () (release-lock ,name-))
+                                    :report-function
+                                    (lambda (stream)
+                                      ;; fixme: is this correct?
+                                      (format stream
+                                              "Force removing the lockfile ~a ~
+                                              and continue" ,name-))))
+                     (loop until (take-lock ,name-)))
                    t))
            (unwind-protect ,success
              (release-lock ,name-))
