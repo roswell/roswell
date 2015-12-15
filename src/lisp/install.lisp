@@ -239,7 +239,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                             (asdf:oos 'asdf:load-op imp :force t))
                      (ql:quickload imp)))
                (when *build-hook*
-                 (format *error-output* "~&[~a/3] Processing build-hook.." (incf step) imp)
+                 (format *error-output* "~&[~a/3] Processing build-hook.." (incf step))
                  (funcall *build-hook*))
                (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
                                          roswell/ subdirectory of the system..." (incf step))
