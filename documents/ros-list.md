@@ -1,8 +1,6 @@
-# name
-
 ros-list - list the materials installed by roswell
 
-# synopsis
+# Synopsis
 
 **ros list [type] [options]**
 
@@ -11,7 +9,7 @@ ros-list - list the materials installed by roswell
 <!-- somecommand -->
 <!-- :description. end with a period. -->
 
-# description
+# Description
 
 **ros list** shows the list of the materials installed by roswell.
 
@@ -34,6 +32,3 @@ versions
 # SEE ALSO
 _sbcl_(1) _ros_(1)
 
-# Author
-
-SANO Masatoshi

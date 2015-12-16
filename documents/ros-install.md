@@ -1,8 +1,6 @@
-# name
-
 ros-install - Install lisp implementations or quicklisp system
 
-# synopsis
+# Synopsis
 
 **ros install** [name]
 
@@ -73,6 +71,3 @@ When the system comes with a **roswell script** created by _ros-init_(1) in the 
 # SEE ALSO
 _sbcl_(1), _ros_(1), _ros-list_(1), _ros-init_(1)
 
-# Author
-
-SANO Masatoshi

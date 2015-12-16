@@ -1,12 +1,10 @@
-# name
-
 Roswell - Common Lisp environment setup Utility
 
-# synopsis
+# Synopsis
 
-**ros** [**options**] [[_command_ [args...]] | [[--]script [args...]]]
+**ros** [**options**] `[[_command_ [args...]] | [[--]script [args...]]]`
 
-# description
+# Description
 
 Roswell is a command line tool for installing and managing Common Lisp implementations, as well as a scripting infrastructure for templating, writing, executing, compiling, distributing, downloading and installing ROSWELL-SCRIPTS written in Common Lisp.
 
@@ -14,7 +12,7 @@ Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implem
 
 Scripts installed by roswell will be system wide if appropriate directory is included in PATH.
 
-# subcommands
+# Subcommands
 
 In an order of utility/frequency.
 
@@ -74,7 +72,7 @@ help
 
   : Show the subcommand help.
 
-# options
+# Options
 
 Options are processed in left-to-right order.
 
@@ -191,41 +189,39 @@ ROSWELL_INSTALL_DIR
 
   : Specifies the install directory of roswell, defaulted to $HOME/.roswell . Roswell scripts are installed in $ROSWELL_INSTALL_DIR/bin .
 
-ROSWELL_HTML_TEST
-
-  : 
-
 ROSWELL_BRANCH
 
-  : 
+  : used for testing roswell itself.
 
 ROSWELL_REPO
 
-  : 
+  : used for testing roswell itself.
 
 LISP_IMPLS_DIR
 
-  : 
+  : used for testing roswell itself.
 
 LISP_IMPLS_BIN
 
-  : 
+  : used for testing roswell itself.
 
 ROSWELL_TARBALL_PATH
 
-  : 
+  : used for testing roswell itself.
 
 ROSWELL_URI
 
-  : 
+  : used for testing roswell itself.
+
+<!-- ROSWELL_HTML_TEST -->
+<!--  -->
+<!--   :  -->
 
 
 # Bugs
 
 Check out issues list (https://github.com/snmsts/roswell/issues)
+
 # SEE ALSO
 _sbcl_(1)
 
-# Author
-
-SANO Masatoshi

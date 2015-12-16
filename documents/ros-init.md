@@ -1,8 +1,6 @@
-# name
-
 ros-init - Create a roswell script (optionally based on a template)
 
-# synopsis
+# Synopsis
 
 **ros init [template]** name
 
@@ -12,7 +10,7 @@ template
 
   : Specify the name of a template.
 
-# description
+# Description
 
 Initialises [name].ros.
 
@@ -37,6 +35,3 @@ This is basically a shell script which immediately invokes Roswell by exec (see 
 # SEE ALSO
 _sbcl_(1) _ros_(1)
 
-# Author
-
-SANO Masatoshi

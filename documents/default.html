@@ -1,17 +1,17 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml"$if(lang)$ lang="$lang$" xml:lang="$lang$"$endif$$if(dir)$ dir="$dir$"$endif$>
+<!DOCTYPE html>
+<html$if(lang)$ lang="$lang$"$endif$$if(dir)$ dir="$dir$"$endif$>
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <meta name="generator" content="pandoc" />
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 $for(author-meta)$
-  <meta name="author" content="$author-meta$" />
+  <meta name="author" content="$author-meta$">
 $endfor$
 $if(date-meta)$
-  <meta name="date" content="$date-meta$" />
+  <meta name="dcterms.date" content="$date-meta$">
 $endif$
 $if(keywords)$
-  <meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$" />
+  <meta name="keywords" content="$for(keywords)$$keywords$$sep$, $endfor$">
 $endif$
   <title>$if(title-prefix)$$title-prefix$ – $endif$$pagetitle$</title>
   <style type="text/css">code{white-space: pre;}</style>
@@ -24,11 +24,14 @@ $highlighting-css$
   </style>
 $endif$
 $for(css)$
-  <link rel="stylesheet" href="$css$" type="text/css" />
+  <link rel="stylesheet" href="$css$">
 $endfor$
 $if(math)$
   $math$
 $endif$
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
 $for(header-includes)$
   $header-includes$
 $endfor$
@@ -38,23 +41,25 @@ $for(include-before)$
 $include-before$
 $endfor$
 $if(title)$
-<div id="$idprefix$header">
+<header>
 <h1 class="title">$title$</h1>
 $if(subtitle)$
 <h1 class="subtitle">$subtitle$</h1>
 $endif$
+<ul>
 $for(author)$
-<h2 class="author">$author$</h2>
+<li class="author">$author$</li>
 $endfor$
+</ul>
 $if(date)$
 <h3 class="date">$date$</h3>
 $endif$
-</div>
+</header>
 $endif$
 $if(toc)$
-<div id="$idprefix$TOC">
+<nav id="$idprefix$TOC">
 $toc$
-</div>
+</nav>
 $endif$
 $body$
 $for(include-after)$

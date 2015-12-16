@@ -15,7 +15,7 @@ PANDOC_AUTHORS="SANO Masatoshi"
 	pandoc -f markdown_phpextra -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) -V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
 
 %.html: %.md
-	pandoc -f markdown_phpextra -t html5 -V title="$*" -V author=$(PANDOC_AUTHORS) --template=default.html $< > $@
+	pandoc -f markdown_phpextra -t html5 -V title="$*(1)" -V pagetitle="$*(1)" -V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html $< > $@
 
 if MANUAL_GENERATE
   man1_MANS = $(shell ls *.md | sed s/md/1/g ; ls *.md | sed s/md/html/g)

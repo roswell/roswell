@@ -1,8 +1,6 @@
-# name
-
 ros-setup - install sbcl-bin and quicklisp
 
-# synopsis
+# Synopsis
 
 **ros setup**
 
@@ -11,7 +9,7 @@ ros-setup - install sbcl-bin and quicklisp
 <!-- somecommand -->
 <!-- :description. end with a period. -->
 
-# description
+# Description
 
 Runs some initial setup of roswell.
 
@@ -22,6 +20,3 @@ Runs some initial setup of roswell.
 # SEE ALSO
 _sbcl_(1) _ros_(1)
 
-# Author
-
-SANO Masatoshi

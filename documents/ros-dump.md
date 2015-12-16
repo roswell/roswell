@@ -1,8 +1,6 @@
-# name
-
 ros-dump - make a dumped image of a roswell script
 
-# synopsis
+# Synopsis
 
 **ros [options] dump** *type* args...
 
@@ -16,7 +14,7 @@ executable
 
   : Create an executable.
 
-# description
+# Description
 
 `ros-dump` creates a dumped lisp image of the state after processing all
 arguments passed.
@@ -45,7 +43,3 @@ and even between the same implementations with different versions.
 
 # SEE ALSO
 _sbcl_(1) _ros_(1)
-
-# Author
-
-SANO Masatoshi
