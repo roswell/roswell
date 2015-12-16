@@ -1,17 +1,49 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <!-- Time-stamp: "2015-11-07 22:16:28 snmsts"-->
-  </head>
-  <body>
-    <h1>NAME</h1>
-    <p>ros dump - make dump </p>
-    <h1>SYNOPSIS</h1>
-    <p class="pp"><b>ros</b>[<b>options</b>] <b>dump</b> <b>subcommand</b> args</p>
-    <h1>DESCRIPTION</h1>
-    <p class="pp hoge">make dump.</p>
-    <p class="tp">output:Create dump.</p>
-    <p class="tp">executable:Create an executable.</p>
-    <h1>ROS</h1>
-    <p>Part of the <u>ros<u>(1)</p>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ros-dump(1)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="ros.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">ros-dump(1)</h1>
+<ul>
+<li class="author">SANO Masatoshi</li>
+</ul>
+</header>
+<p>ros-dump - make a dumped image of a roswell script</p>
+<h1>Synopsis</h1>
+<p><strong>ros [options] dump</strong> <em>type</em> args...</p>
+<p>Where the types of subcommands are one of:</p>
+<dl>
+<dt>output</dt>
+<dd><p>Create a dump image.</p>
+</dd>
+<dt>executable</dt>
+<dd><p>Create an executable.</p>
+</dd>
+</dl>
+<h1>Description</h1>
+<p><code>ros-dump</code> creates a dumped lisp image of the state after processing all arguments passed.</p>
+<p>Specifing <code>output</code> results in just an image which results in the same lisp state when loading the image. The image can be loaded by <code>ros -m IMAGE</code>. Standard roswell subcommands and additional arguments to the script are also available, for example <code>ros run</code> to resume with a repl, or <code>--restart FUNC</code> to call a specific function, leaving some flexibility.</p>
+<p>In contrast, when a script is dumped with <code>executable</code>, the dumped image becomes an self-contained executable binary which implies <code>--restart main</code>.</p>
+<p>In both cases, the global environment (e.g. global binding to a special variable such as <code>*package*</code>) is the environment which was effective when the script was dumped.</p>
+<p>There might be a limitation regarding this feature depending on the lisp implementation roswell is configured to use at the time of building. Also, the dumped image is not compatible between the different implementations and even between the same implementations with different versions.</p>
+<!-- # options -->
+
+<!--  -->
+
+<!-- # Environmental Variables -->
+
+
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1) <em>ros</em>(1)</p>
+</body>
 </html>

@@ -1,15 +1,53 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <!-- Time-stamp: "2015-05-05 11:45:38 snmsts"-->
-  </head>
-  <body>
-    <h1>NAME</h1>
-    <p>ros init - create roswell file[s] </p>
-    <h1>SYNOPSIS</h1>
-    <p class="pp"><b>ros</b> <b>init</b> [<b>template</b>] name</p>
-    <h1>DESCRIPTION</h1>
-    <p class="pp hoge"><b>ros</b> <b>init</b> will make name.ros if invoked without template.</p>
-    <h1>ROS</h1>
-    <p>Part of the <u>ros<u>(1)</p>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ros-init(1)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="ros.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">ros-init(1)</h1>
+<ul>
+<li class="author">SANO Masatoshi</li>
+</ul>
+</header>
+<p>ros-init - Create a roswell script (optionally based on a template)</p>
+<h1>Synopsis</h1>
+<p><strong>ros init [template]</strong> name</p>
+<!-- # subcommands -->
+
+
+<dl>
+<dt>template</dt>
+<dd>Specify the name of a template.
+</dd>
+</dl>
+<h1>Description</h1>
+<p>Initialises [name].ros.</p>
+<p>The default template is something like:</p>
+<pre><code>#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 &quot;$@&quot;
+|#
+(defun main (&amp;rest argv)
+  (declare (ignorable argv)))</code></pre>
+<p>This is basically a shell script which immediately invokes Roswell by exec (see <em>sh(1)</em>). Roswell loads the same script as an input, skips multi-line comments, reads the rest of the file as a Common Lisp program, and finally invokes a function main with command-line arguments.</p>
+<!-- # options -->
+
+<!--  -->
+
+<!-- # Environmental Variables -->
+
+
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1) <em>ros</em>(1)</p>
+</body>
 </html>

@@ -1,0 +1,40 @@
+.TH "ros-init" "1" "" "" ""
+.nh \" Turn off hyphenation by default.
+.PP
+ros\-init \- Create a roswell script (optionally based on a template)
+.SH Synopsis
+.PP
+\f[B]ros init [template]\f[] name
+.TP
+.B template
+Specify the name of a template.
+.RS
+.RE
+.SH Description
+.PP
+Initialises [name].ros.
+.PP
+The default template is something like:
+.IP
+.nf
+\f[C]
+#!/bin/sh
+#|\-*\-\ mode:lisp\ \-*\-|#
+#|
+exec\ ros\ \-Q\ \-\-\ $0\ "$\@"
+|#
+(defun\ main\ (&rest\ argv)
+\ \ (declare\ (ignorable\ argv)))
+\f[]
+.fi
+.PP
+This is basically a shell script which immediately invokes Roswell by
+exec (see \f[I]sh(1)\f[]).
+Roswell loads the same script as an input, skips multi\-line comments,
+reads the rest of the file as a Common Lisp program, and finally invokes
+a function main with command\-line arguments.
+.SH SEE ALSO
+.PP
+\f[I]sbcl\f[](1) \f[I]ros\f[](1)
+.SH AUTHORS
+SANO Masatoshi.

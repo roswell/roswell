@@ -1,27 +1,193 @@
+<!DOCTYPE html>
 <html>
-  <head>
-    <!-- Time-stamp: "2015-05-05 11:45:38 snmsts"-->
-  </head>
-  <body>
-    <h1>NAME</h1>
-    <p>Roswell - Common Lisp environment setup Utility</p>
-    <h1>SYNOPSIS</h1>
-    <p class="pp"><b>ros</b>[<b>options</b>][[<u>command</u> [args...]]|[[--]script [args...]]]</p>
-    <h1>DESCRIPTION</h1>
-    <p class="pp hoge">Roswell is a command line tool to install and manage Common Lisp implementations damn easily.</p>
-    <h1>OPTIONS</h1>
-    <p class="tp">--version:Prints the Roswell version</p>
-    <p class="tp">-m,--image:Specify image file name</p>
-    <h1>ROS COMMANDS</h1>
-    <p class="tp">install:Download archive and build it for roswell environment.</p>
-    <p class="tp">setup:Initial setup</p>
-    <p class="tp">config:Get and Set options for Roswell</p>
-    <p class="tp">version:Show the roswell version information</p>
-    <p class="tp">help:Show Command help</p>
-    <p class="tp">run:Run repl</p>
-    <h1>SEE ALSO</h1>
-    <p><u>sbcl<u>(1)</p>
-    <h1>Author</h1>
-    <p>SANO Masatoshi</p>
-  </body>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ros(1)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="ros.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">ros(1)</h1>
+<ul>
+<li class="author">SANO Masatoshi</li>
+</ul>
+</header>
+<p>Roswell - Common Lisp environment setup Utility</p>
+<h1>Synopsis</h1>
+<p><strong>ros</strong> [<strong>options</strong>] <code>[[_command_ [args...]] | [[--]script [args...]]]</code></p>
+<h1>Description</h1>
+<p>Roswell is a command line tool for installing and managing Common Lisp implementations, as well as a scripting infrastructure for templating, writing, executing, compiling, distributing, downloading and installing ROSWELL-SCRIPTS written in Common Lisp.</p>
+<p>Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implementations. For further details see <em>ros-install(1)</em>.</p>
+<p>Scripts installed by roswell will be system wide if appropriate directory is included in PATH.</p>
+<h1>Subcommands</h1>
+<p>In an order of utility/frequency.</p>
+<dl>
+<dt>install</dt>
+<dd><p>Install a given implementation (e.g. sbcl, ccl) or a system (e.g. alexandria) for roswell environment. See <em>ros-install(1)</em>.</p>
+</dd>
+<dt>init [name[.ros]]</dt>
+<dd><p>Create a new ros script</p>
+</dd>
+<dt>dump [executable|output] [script]</dt>
+<dd><p>Dump an image of the script for the faster startup or to make an executable.</p>
+</dd>
+<dt>build</dt>
+<dd><p>Make an executable from the script.</p>
+</dd>
+<dt>run</dt>
+<dd><p>Initiate REPL</p>
+</dd>
+<dt>use</dt>
+<dd><p>Change the default implementation used by roswell.</p>
+</dd>
+<dt>list</dt>
+<dd><p>List the various informations.</p>
+</dd>
+<dt>config</dt>
+<dd><p>Get and set the options.</p>
+</dd>
+<dt>setup</dt>
+<dd><p>Run the initial setup</p>
+</dd>
+<dt>emacs</dt>
+<dd><p>Launch emacs with slime.</p>
+</dd>
+<dt>wait</dt>
+<dd><p>Wait forever, used for daemonizing the script.</p>
+</dd>
+<dt>delete</dt>
+<dd><p>Delete an installed implementation.</p>
+</dd>
+<dt>version</dt>
+<dd><p>Show the roswell version information.</p>
+</dd>
+<dt>help</dt>
+<dd><p>Show the subcommand help.</p>
+</dd>
+</dl>
+<h1>Options</h1>
+<p>Options are processed in left-to-right order.</p>
+<dl>
+<dt>-w CODE --wrap CODE</dt>
+<dd><p>Run the script with a shell wrapper CODE, e.g. rlwrap</p>
+</dd>
+<dt>-m IMAGE --image IMAGE</dt>
+<dd><p>Continue from Lisp image IMAGE</p>
+</dd>
+<dt>-L NAME --lisp NAME</dt>
+<dd><p>Run the script with a lisp impl NAME[/VERSION] if present, e.g. sbcl-bin, sbcl/1.2.16. Fails otherwise.</p>
+</dd>
+<dt>-l FILE --load FILE</dt>
+<dd><p>Load a lisp file FILE while building</p>
+</dd>
+<dt>-S X --source-registry X</dt>
+<dd><p>Override the source registry of asdf systems.</p>
+</dd>
+<dt>-s SYSTEM --system SYSTEM</dt>
+<dd><p>Load the asdf SYSTEM while building.</p>
+</dd>
+<dt>--load-system SYSTEM</dt>
+<dd><p>Same as above (buildapp compatibility)</p>
+</dd>
+<dt>-p PACKAGE --package PACKAGE</dt>
+<dd><p>Change the current package to PACKAGE</p>
+</dd>
+<dt>-sp SP --system-package SP</dt>
+<dd><p>Combination of -s SP and -p SP</p>
+</dd>
+<dt>-e FORM --eval FORM</dt>
+<dd><p>Evaluate FORM while building</p>
+</dd>
+<dt>--require MODULE</dt>
+<dd><p>require MODULE while building</p>
+</dd>
+<dt>-q --quit</dt>
+<dd><p>quit lisp here</p>
+</dd>
+<dt>-r FUNC --restart FUNC</dt>
+<dd><p>the build image restarts from calling FUNC</p>
+</dd>
+<dt>-E FUNC --entry FUNC</dt>
+<dd><p>the build image restarts from calling (FUNC argv).</p>
+</dd>
+<dt>-i FORM --init FORM</dt>
+<dd><p>evaluate FORM after the restart.</p>
+</dd>
+<dt>-ip FORM --print FORM</dt>
+<dd><p>evaluate and princ FORM after the restart</p>
+</dd>
+<dt>-iw FORM --write FORM</dt>
+<dd><p>evaluate and write FORM after the restart</p>
+</dd>
+<dt>-F FORM --final FORM</dt>
+<dd><p>evaluate FORM before dumping the IMAGE</p>
+</dd>
+<dt>-R --rc</dt>
+<dd><p>try to read /etc/rosrc, ~/.roswell/init.lisp</p>
+</dd>
+<dt>+R --no-rc</dt>
+<dd><p>skip /etc/rosrc, ~/.roswell/init.lisp</p>
+</dd>
+<dt>-Q --quicklisp</dt>
+<dd><p>load quicklisp (default)</p>
+</dd>
+<dt>+Q --no-quicklisp</dt>
+<dd><p>do not load quicklisp</p>
+</dd>
+<dt>-v --verbose</dt>
+<dd><p>be quite verbose while building</p>
+</dd>
+<dt>--quiet</dt>
+<dd><p>suppress output while building (default)</p>
+</dd>
+<dt>--test</dt>
+<dd><p>for test purpose</p>
+</dd>
+<dt>dynamic-space-size=[size in MB]</dt>
+<dd><p>SBCL specific. The argument is passed to SBCL by <code>--dynamic-space-size</code></p>
+</dd>
+</dl>
+<h1>Environmental Variables</h1>
+<dl>
+<dt>ROSWELL_INSTALL_DIR</dt>
+<dd><p>Specifies the install directory of roswell, defaulted to $HOME/.roswell . Roswell scripts are installed in $ROSWELL_INSTALL_DIR/bin .</p>
+</dd>
+<dt>ROSWELL_BRANCH</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>ROSWELL_REPO</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>LISP_IMPLS_DIR</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>LISP_IMPLS_BIN</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>ROSWELL_TARBALL_PATH</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>ROSWELL_URI</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+</dl>
+<!-- ROSWELL_HTML_TEST -->
+
+<!--  -->
+
+<!--   :  -->
+
+
+
+<h1>Bugs</h1>
+<p>Check out issues list (https://github.com/snmsts/roswell/issues)</p>
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1)</p>
+</body>
 </html>

@@ -10,7 +10,7 @@ It now has evolved into a fullstack environment for common lisp web development,
 
 This software is still beta. Basic interfaces are fixed, we believe it works well on Unix-like platforms like Linux, Mac OS X and FreeBSD, but some parts are not implemented, not stable on other OSes yet.
 
-Checkout [issue lists](https://github.com/snmsts/roswell/issues) if you have interest in what's lacking.
+Checkout [issues list](https://github.com/snmsts/roswell/issues) if you have interest in what's lacking.
 
 ## Installation, Dependency & Usage
 
@@ -139,7 +139,7 @@ Factorial 10 = 3628800
 
 - [fukamachi/legion/circle.yml](https://github.com/fukamachi/legion/blob/master/circle.yml)
 
-## Why we named it 'roswell'?
+## Naming Origin 'roswell'
 From &lsquo;[made with secret alien technology](http://www.lisperati.com/logo.html)&rsquo;.
 
 I felt making it easier to use Lisp for people is a kind of making opportunity for humanbeings to mingle with alien technology. I recall &lsquo;roswell incident&rsquo; by the concept. I'm not sure what you feel.
