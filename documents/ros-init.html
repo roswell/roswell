@@ -1,0 +1,25 @@
+<h1>name</h1>
+<p>ros-init - Create a roswell script (optionally based on a template)</p>
+<h1>synopsis</h1>
+<p><strong>ros init [template]</strong> name</p>
+<!-- # subcommands -->
+
+
+template
+<p>:Specify the name of a template.</p>
+<h1>description</h1>
+<p>Initialises [name].ros.</p>
+<p>The default template is something like:</p>
+<p><code>#!/bin/sh #|-*- mode:lisp -*-|# #| exec ros -Q -- $0 &quot;$@&quot; |# (defun main (&amp;rest argv)   (declare (ignorable argv)))</code></p>
+<p>This is basically a shell script which immediately invokes Roswell by exec (see <em>sh(1)</em>). Roswell loads the same script as an input, skips multi-line comments, reads the rest of the file as a Common Lisp program, and finally invokes a function main with command-line arguments.</p>
+<!-- # options -->
+
+<!--  -->
+
+<!-- # Environmental Variables -->
+
+
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1) <em>ros</em>(1)</p>
+<h1>Author</h1>
+<p>SANO Masatoshi</p>

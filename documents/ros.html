@@ -1,0 +1,119 @@
+<h1>name</h1>
+<p>Roswell - Common Lisp environment setup Utility</p>
+<h1>synopsis</h1>
+<p><strong>ros</strong> [<strong>options</strong>] [[<em>command</em> [args...]] | [[--]script [args...]]]</p>
+<h1>description</h1>
+Roswell is a command line tool for installing and managing Common
+Lisp implementations, as well as a scripting infrastructure for templating, writing,
+executing, compiling, distributing, downloading and installing
+<p>ROSWELL-SCRIPTS written in Common Lisp.</p>
+Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implementations.
+<p>For further details see <em>ros-install(1)</em>.</p>
+<p>Scripts installed by roswell will be system wide if appropriate directory is included in PATH.</p>
+<h1>subcommands</h1>
+<p>In an order of utility/frequency.</p>
+install
+<p>:Install a given implementation (e.g. sbcl, ccl) or a system (e.g. alexandria) for roswell environment. See <em>ros-install(1)</em>.</p>
+init [name[.ros]]
+<p>:Create a new ros script</p>
+dump [executable|output] [script]
+<p>:Dump an image of the script for the faster startup or to make an executable.</p>
+build
+<p>:Make an executable from the script.</p>
+run
+<p>:Initiate REPL</p>
+use
+<p>:Change the default implementation used by roswell.</p>
+list
+<p>:List the various informations.</p>
+config
+<p>:Get and set the options.</p>
+setup
+<p>:Run the initial setup</p>
+emacs
+<p>:Launch emacs with slime.</p>
+wait
+<p>:Wait forever, used for daemonizing the script.</p>
+delete
+<p>:Delete an installed implementation.</p>
+version
+<p>:Show the roswell version information.</p>
+help
+<p>:Show the subcommand help.</p>
+<h1>options</h1>
+<p>Options are processed in left-to-right order.</p>
+-w CODE --wrap CODE
+<p>:Run the script with a shell wrapper CODE, e.g. rlwrap</p>
+-m IMAGE --image IMAGE
+<p>:Continue from Lisp image IMAGE</p>
+-L NAME --lisp NAME
+<p>:Run the script with a lisp impl NAME[/VERSION] if present, e.g. sbcl-bin, sbcl/1.2.16. Fails otherwise.</p>
+-l FILE --load FILE
+<p>:Load a lisp file FILE while building</p>
+-S X --source-registry X
+<p>:Override the source registry of asdf systems.</p>
+-s SYSTEM --system SYSTEM
+<p>:Load the asdf SYSTEM while building.</p>
+--load-system SYSTEM
+<p>:Same as above (buildapp compatibility)</p>
+-p PACKAGE --package PACKAGE
+<p>:Change the current package to PACKAGE</p>
+-sp SP --system-package SP
+<p>:Combination of -s SP and -p SP</p>
+-e FORM --eval FORM
+<p>:Evaluate FORM while building</p>
+--require MODULE
+<p>:require MODULE while building</p>
+-q --quit
+<p>:quit lisp here</p>
+-r FUNC --restart FUNC
+<p>:the build image restarts from calling FUNC</p>
+-E FUNC --entry FUNC
+<p>:the build image restarts from calling (FUNC argv).</p>
+-i FORM --init FORM
+<p>:evaluate FORM after the restart.</p>
+-ip FORM --print FORM
+<p>:evaluate and princ FORM after the restart</p>
+-iw FORM --write FORM
+<p>:evaluate and write FORM after the restart</p>
+-F FORM --final FORM
+<p>:evaluate FORM before dumping the IMAGE</p>
+-R --rc
+<p>:try to read /etc/rosrc, ~/.roswell/init.lisp</p>
++R --no-rc
+<p>:skip /etc/rosrc, ~/.roswell/init.lisp</p>
+-Q --quicklisp
+<p>:load quicklisp (default)</p>
++Q --no-quicklisp
+<p>:do not load quicklisp</p>
+-v --verbose
+<p>:be quite verbose while building</p>
+--quiet
+<p>:suppress output while building (default)</p>
+--test
+<p>:for test purpose</p>
+dynamic-space-size=[size in MB]
+<p>:SBCL specific. The argument is passed to SBCL by <code>--dynamic-space-size</code></p>
+<h1>Environmental Variables</h1>
+ROSWELL_INSTALL_DIR
+<p>:Specifies the install directory of roswell, defaulted to $HOME/.roswell . Roswell scripts are installed in $ROSWELL_INSTALL_DIR/bin .</p>
+ROSWELL_HTML_TEST
+<p>:</p>
+ROSWELL_BRANCH
+<p>:</p>
+ROSWELL_REPO
+<p>:</p>
+LISP_IMPLS_DIR
+<p>:</p>
+LISP_IMPLS_BIN
+<p>:</p>
+ROSWELL_TARBALL_PATH
+<p>:</p>
+ROSWELL_URI
+<p>:</p>
+<h1>Bugs</h1>
+<p>Check out issues list (https://github.com/snmsts/roswell/issues)</p>
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1)</p>
+<h1>Author</h1>
+<p>SANO Masatoshi</p>
