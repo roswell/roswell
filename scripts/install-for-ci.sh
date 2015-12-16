@@ -191,6 +191,12 @@ case "$LISP" in
         ;;
 esac
 
+if [ "$ROSWELL_LATEST_ASDF" ]; then
+    echo "Installing the latest ASDF..."
+    fetch "https://common-lisp.net/project/asdf/asdf.lisp" "$HOME/asdf.lisp"
+    echo "(load \"$HOME/asdf.lisp\")" > "$ROSWELL_DIR/init.lisp"
+fi
+
 echo "Installing $LISP..."
 case "$LISP" in
     clisp)
