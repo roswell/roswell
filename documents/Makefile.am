@@ -3,11 +3,19 @@
 # TODO : fetch from https://github.com/snmsts/roswell/wiki and convert all
 # wiki pages (mediawiki format or markdown) to html or man
 
+
+# see also:
+# http://pandoc.org/README.html#using-variables-in-templates
+# https://github.com/jgm/pandoc-templates/blob/master/default.man
+
+# separated by semicolons
+PANDOC_AUTHORS="SANO Masatoshi"
+
 %.1: %.md
-	pandoc -f markdown_phpextra -t man $<  > $@
+	pandoc -f markdown_phpextra -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) -V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
 
 %.html: %.md
-	pandoc -f markdown_phpextra -t html5 $< > $@
+	pandoc -f markdown_phpextra -t html5 -V title="$*" author=$(PANDOC_AUTHORS) $< > $@
 
 if MANUAL_GENERATE
   man1_MANS = $(shell ls *.md | sed s/md/1/g) $(shell ls *.md | sed s/md/html/g)
