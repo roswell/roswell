@@ -1,12 +1,31 @@
-<h1>name</h1>
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ros(1)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="ros.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">ros(1)</h1>
+<ul>
+<li class="author">SANO Masatoshi</li>
+</ul>
+</header>
 <p>Roswell - Common Lisp environment setup Utility</p>
-<h1>synopsis</h1>
-<p><strong>ros</strong> [<strong>options</strong>] [[<em>command</em> [args...]] | [[--]script [args...]]]</p>
-<h1>description</h1>
+<h1>Synopsis</h1>
+<p><strong>ros</strong> [<strong>options</strong>] <code>[[_command_ [args...]] | [[--]script [args...]]]</code></p>
+<h1>Description</h1>
 <p>Roswell is a command line tool for installing and managing Common Lisp implementations, as well as a scripting infrastructure for templating, writing, executing, compiling, distributing, downloading and installing ROSWELL-SCRIPTS written in Common Lisp.</p>
 <p>Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implementations. For further details see <em>ros-install(1)</em>.</p>
 <p>Scripts installed by roswell will be system wide if appropriate directory is included in PATH.</p>
-<h1>subcommands</h1>
+<h1>Subcommands</h1>
 <p>In an order of utility/frequency.</p>
 <dl>
 <dt>install</dt>
@@ -52,7 +71,7 @@
 <dd><p>Show the subcommand help.</p>
 </dd>
 </dl>
-<h1>options</h1>
+<h1>Options</h1>
 <p>Options are processed in left-to-right order.</p>
 <dl>
 <dt>-w CODE --wrap CODE</dt>
@@ -131,4 +150,44 @@
 <dd><p>for test purpose</p>
 </dd>
 <dt>dynamic-space-size=[size in MB]</dt>
-<dd><p>SBCL specific. The a
+<dd><p>SBCL specific. The argument is passed to SBCL by <code>--dynamic-space-size</code></p>
+</dd>
+</dl>
+<h1>Environmental Variables</h1>
+<dl>
+<dt>ROSWELL_INSTALL_DIR</dt>
+<dd><p>Specifies the install directory of roswell, defaulted to $HOME/.roswell . Roswell scripts are installed in $ROSWELL_INSTALL_DIR/bin .</p>
+</dd>
+<dt>ROSWELL_BRANCH</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>ROSWELL_REPO</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>LISP_IMPLS_DIR</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>LISP_IMPLS_BIN</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>ROSWELL_TARBALL_PATH</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+<dt>ROSWELL_URI</dt>
+<dd><p>used for testing roswell itself.</p>
+</dd>
+</dl>
+<!-- ROSWELL_HTML_TEST -->
+
+<!--  -->
+
+<!--   :  -->
+
+
+
+<h1>Bugs</h1>
+<p>Check out issues list (https://github.com/snmsts/roswell/issues)</p>
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1)</p>
+</body>
+</html>
