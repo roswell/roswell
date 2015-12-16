@@ -17,10 +17,12 @@ PANDOC_AUTHORS="SANO Masatoshi"
 %.html: %.md
 	pandoc -f markdown_phpextra+backtick_code_blocks -t html5 -V title="$*(1)" -V pagetitle="$*(1)" -V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html $< > $@
 
-if MANUAL_GENERATE
-  man1_MANS = $(shell ls *.md | sed s/md/1/g ; ls *.md | sed s/md/html/g)
-endif
+man1_MANS = $(shell ls *.md | sed s/md/1/g ; ls *.md | sed s/md/html/g)
 
 CLEANFILES = $(man1_MANS)
 
+if MANUAL_GENERATE
 all: $(man1_MANS)
+else
+all:
+endif

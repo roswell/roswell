@@ -2,7 +2,7 @@ Roswell - Common Lisp environment setup Utility
 
 # Synopsis
 
-**ros** [**options**] `[[_command_ [args...]] | [[--]script [args...]]]`
+**ros** [**options**] `[[command [args...]] | [[--]script [args...]]]`
 
 # Description
 
@@ -223,5 +223,6 @@ ROSWELL_URI
 Check out issues list (https://github.com/snmsts/roswell/issues)
 
 # SEE ALSO
-_sbcl_(1)
+_sbcl_(1) _ros-dump_(1) _ros-init_(1) _ros-install_(1) _ros-list_(1) _ros-setup_(1)
+
 
