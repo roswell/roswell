@@ -1,17 +1,19 @@
 # name
 
-ros-XXX - XXXXXX
+ros-setup - install sbcl-bin and quicklisp
 
 # synopsis
 
-**ros [options] XXX** args...
+**ros setup**
 
 <!-- # subcommands -->
 
-somecommand
-:description. end with a period.
+<!-- somecommand -->
+<!-- :description. end with a period. -->
 
 # description
+
+Runs some initial setup of roswell.
 
 <!-- # options -->
 <!--  -->
