@@ -2,7 +2,7 @@ Roswell - Common Lisp environment setup Utility
 
 # Synopsis
 
-**ros** [**options**] `[[_command_ [args...]] | [[--]script [args...]]]`
+**ros** [**options**] `[[command [args...]] | [[--]script [args...]]]`
 
 # Description
 
