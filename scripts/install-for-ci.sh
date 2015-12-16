@@ -229,6 +229,10 @@ case "$LISP" in
         ;;
 esac
 
+if [ "$ROSWELL_LATEST_ASDF" ]; then
+    ros setup
+fi
+
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
                 (lisp-implementation-version)
