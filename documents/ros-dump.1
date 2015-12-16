@@ -1,0 +1,52 @@
+.SH name
+.PP
+ros\-dump \- make a dumped image of a roswell script
+.SH synopsis
+.PP
+\f[B]ros [options] dump\f[] \f[I]type\f[] args...
+.PP
+Where the types of subcommands are one of:
+output
+.PP
+:Create a dump image.
+executable
+.PP
+:Create an executable.
+.SH description
+\f[C]ros\-dump\f[] creates a dumped lisp image of the state after
+processing all
+.PP
+arguments passed.
+Specifing \f[C]output\f[] results in just an image which results in the
+same lisp
+state when loading the image.
+The image can be loaded by \f[C]ros\ \-m\ IMAGE\f[].
+Standard roswell subcommands and additional arguments to the script
+are also available, for example \f[C]ros\ run\f[] to resume with a repl,
+or
+.PP
+\f[C]\-\-restart\ FUNC\f[] to call a specific function, leaving some
+flexibility.
+In contrast, when a script is dumped with \f[C]executable\f[], the
+dumped image
+.PP
+becomes an self\-contained executable binary which implies
+\f[C]\-\-restart\ main\f[].
+In both cases, the global environment (e.g.
+global binding to a special
+variable such as \f[C]*package*\f[]) is the environment which was
+effective when
+.PP
+the script was dumped.
+There might be a limitation regarding this feature depending on the lisp
+implementation roswell is configured to use at the time of building.
+Also,
+the dumped image is not compatible between the different implementations
+.PP
+and even between the same implementations with different versions.
+.SH SEE ALSO
+.PP
+\f[I]sbcl\f[](1) \f[I]ros\f[](1)
+.SH Author
+.PP
+SANO Masatoshi
