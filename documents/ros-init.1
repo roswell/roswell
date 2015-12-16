@@ -15,8 +15,18 @@ Specify the name of a template.
 Initialises [name].ros.
 .PP
 The default template is something like:
-.PP
-\f[C]#!/bin/sh\ #|\-*\-\ mode:lisp\ \-*\-|#\ #|\ exec\ ros\ \-Q\ \-\-\ $0\ "$\@"\ |#\ (defun\ main\ (&rest\ argv)\ \ \ (declare\ (ignorable\ argv)))\f[]
+.IP
+.nf
+\f[C]
+#!/bin/sh
+#|\-*\-\ mode:lisp\ \-*\-|#
+#|
+exec\ ros\ \-Q\ \-\-\ $0\ "$\@"
+|#
+(defun\ main\ (&rest\ argv)
+\ \ (declare\ (ignorable\ argv)))
+\f[]
+.fi
 .PP
 This is basically a shell script which immediately invokes Roswell by
 exec (see \f[I]sh(1)\f[]).

@@ -31,21 +31,11 @@
 </dd>
 </dl>
 <h1>Description</h1>
-<code>ros-dump</code> creates a dumped lisp image of the state after processing all
-<p>arguments passed.</p>
-Specifing <code>output</code> results in just an image which results in the same lisp
-state when loading the image. The image can be loaded by <code>ros -m IMAGE</code>. Standard roswell subcommands and additional arguments to the script
-are also available, for example <code>ros run</code> to resume with a repl, or
-<p><code>--restart FUNC</code> to call a specific function, leaving some flexibility.</p>
-In contrast, when a script is dumped with <code>executable</code>, the dumped image
-<p>becomes an self-contained executable binary which implies <code>--restart main</code>.</p>
-In both cases, the global environment (e.g. global binding to a special
-variable such as <code>*package*</code>) is the environment which was effective when
-<p>the script was dumped.</p>
-There might be a limitation regarding this feature depending on the lisp
-implementation roswell is configured to use at the time of building. Also,
-the dumped image is not compatible between the different implementations
-<p>and even between the same implementations with different versions.</p>
+<p><code>ros-dump</code> creates a dumped lisp image of the state after processing all arguments passed.</p>
+<p>Specifing <code>output</code> results in just an image which results in the same lisp state when loading the image. The image can be loaded by <code>ros -m IMAGE</code>. Standard roswell subcommands and additional arguments to the script are also available, for example <code>ros run</code> to resume with a repl, or <code>--restart FUNC</code> to call a specific function, leaving some flexibility.</p>
+<p>In contrast, when a script is dumped with <code>executable</code>, the dumped image becomes an self-contained executable binary which implies <code>--restart main</code>.</p>
+<p>In both cases, the global environment (e.g. global binding to a special variable such as <code>*package*</code>) is the environment which was effective when the script was dumped.</p>
+<p>There might be a limitation regarding this feature depending on the lisp implementation roswell is configured to use at the time of building. Also, the dumped image is not compatible between the different implementations and even between the same implementations with different versions.</p>
 <!-- # options -->
 
 <!--  -->

@@ -18,37 +18,31 @@ Create an executable.
 .RS
 .RE
 .SH Description
+.PP
 \f[C]ros\-dump\f[] creates a dumped lisp image of the state after
-processing all
+processing all arguments passed.
 .PP
-arguments passed.
 Specifing \f[C]output\f[] results in just an image which results in the
-same lisp
-state when loading the image.
+same lisp state when loading the image.
 The image can be loaded by \f[C]ros\ \-m\ IMAGE\f[].
-Standard roswell subcommands and additional arguments to the script
-are also available, for example \f[C]ros\ run\f[] to resume with a repl,
-or
-.PP
+Standard roswell subcommands and additional arguments to the script are
+also available, for example \f[C]ros\ run\f[] to resume with a repl, or
 \f[C]\-\-restart\ FUNC\f[] to call a specific function, leaving some
 flexibility.
+.PP
 In contrast, when a script is dumped with \f[C]executable\f[], the
-dumped image
-.PP
-becomes an self\-contained executable binary which implies
+dumped image becomes an self\-contained executable binary which implies
 \f[C]\-\-restart\ main\f[].
-In both cases, the global environment (e.g.
-global binding to a special
-variable such as \f[C]*package*\f[]) is the environment which was
-effective when
 .PP
-the script was dumped.
+In both cases, the global environment (e.g.
+global binding to a special variable such as \f[C]*package*\f[]) is the
+environment which was effective when the script was dumped.
+.PP
 There might be a limitation regarding this feature depending on the lisp
 implementation roswell is configured to use at the time of building.
-Also,
-the dumped image is not compatible between the different implementations
-.PP
-and even between the same implementations with different versions.
+Also, the dumped image is not compatible between the different
+implementations and even between the same implementations with different
+versions.
 .SH SEE ALSO
 .PP
 \f[I]sbcl\f[](1) \f[I]ros\f[](1)
