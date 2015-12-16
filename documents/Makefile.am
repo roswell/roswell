@@ -1,12 +1,16 @@
-#.NOTPARALLEL:
-../scripts/man$(EXEEXT): ../scripts/man.ros ../src/ros$(EXEEXT)
-	if [ $< -nt $@ ]; then $(WINE) ../src/ros$(EXEEXT) build $< ;else touch $@;fi
 
-%.1: %.html ../scripts/man$(EXEEXT)
-	if [ $< -nt $@ ]; then $(WINE) ../scripts/man$(EXEEXT) $< $@ ;else touch $@;fi
+
+# TODO : fetch from https://github.com/snmsts/roswell/wiki and convert all
+# wiki pages (mediawiki format or markdown) to html or man
+
+%.1: %.md
+	pandoc -f markdown_phpextra -t man $<  > $@
+
+%.html: %.md
+	pandoc -f markdown_phpextra -t html5 $< > $@
 
 if MANUAL_GENERATE
-  man1_MANS = ros.1 ros-init.1 ros-setup.1 ros-dump.1 ros-list.1 ../scripts/man$(EXEEXT)
+  man1_MANS = $(shell ls *.md | sed s/md/1/g) $(shell ls *.md | sed s/md/html/g)
 endif
 
 CLEANFILES = $(man1_MANS)
