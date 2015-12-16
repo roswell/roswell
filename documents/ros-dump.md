@@ -42,4 +42,4 @@ and even between the same implementations with different versions.
 <!-- # Environmental Variables -->
 
 # SEE ALSO
-_sbcl_(1) _ros_(1)
+_sbcl_(1) _ros_(1) _ros-init_(1)
