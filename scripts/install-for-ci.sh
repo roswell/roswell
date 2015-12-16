@@ -115,14 +115,14 @@ install_abcl () {
 
         fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
         extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
-	java -version 2>&1 |grep version |grep 1\.8 >/dev/null
-	if [ $? -eq 0 ]; then
+        java -version 2>&1 |grep version |grep 1\.8 >/dev/null
+        if [ $? -eq 0 ]; then
             install_script "$LISP_IMPLS_BIN/abcl" \
-			   "exec $java -Xmx4g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
-	else
-	    install_script "$LISP_IMPLS_BIN/abcl" \
-			   "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
-	fi
+                "exec $java -Xmx4g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+        else
+            install_script "$LISP_IMPLS_BIN/abcl" \
+                "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+        fi
     fi
     PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
 }
@@ -191,6 +191,12 @@ case "$LISP" in
         ;;
 esac
 
+if [ "$ROSWELL_LATEST_ASDF" ]; then
+    echo "Installing the latest ASDF..."
+    fetch "https://common-lisp.net/project/asdf/asdf.lisp" "$HOME/asdf.lisp"
+    echo "(load \"$HOME/asdf.lisp\")" > "$ROSWELL_DIR/init.lisp"
+fi
+
 echo "Installing $LISP..."
 case "$LISP" in
     clisp)
@@ -222,6 +228,10 @@ case "$LISP" in
         ros use $LISP
         ;;
 esac
+
+if [ "$ROSWELL_LATEST_ASDF" ]; then
+    ros setup
+fi
 
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
