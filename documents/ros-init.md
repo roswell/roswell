@@ -9,7 +9,8 @@ ros-init - Create a roswell script (optionally based on a template)
 <!-- # subcommands -->
 
 template
-:Specify the name of a template.
+
+  : Specify the name of a template.
 
 # description
 

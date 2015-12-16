@@ -9,7 +9,8 @@ ros-XXX - XXXXXX
 <!-- # subcommands -->
 
 somecommand
-:description. end with a period.
+
+  : description. end with a period.
 
 # description
 

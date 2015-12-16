@@ -5,8 +5,11 @@
 <!-- # subcommands -->
 
 
-name
-<p>:a name specifying a lisp implementation/version, or a quicklisp system.</p>
+<dl>
+<dt>name</dt>
+<dd>a name specifying a lisp implementation/version, or a quicklisp system.
+</dd>
+</dl>
 <h1>Installing a Lisp Implementation</h1>
 <p>When the <code>name</code> matches to one of the supported implementations of roswell, it fetch and download the implementation. It is not automatically set as the default implementation to use. For setting the default lisp implementation, use <em>ros-use(1)</em>.</p>
 <p>For example, the following command download the latest sbcl binary from sbcl.com. Note that this may be different freom the default binary installed by roswell, called <code>sbcl-bin</code>. <code>sbcl-bin</code> is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.</p>

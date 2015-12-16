@@ -9,10 +9,12 @@ ros-dump - make a dumped image of a roswell script
 Where the types of subcommands are one of:
 
 output
-:Create a dump image.
+
+  : Create a dump image.
 
 executable
-:Create an executable.
+
+  : Create an executable.
 
 # description
 

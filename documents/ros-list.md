@@ -16,13 +16,16 @@ ros-list - list the materials installed by roswell
 **ros list** shows the list of the materials installed by roswell.
 
 installed
-:List implementations that already installed
+
+  : List implementations that already installed
 
 dump
-:List dumped
+
+  : List dumped
 
 versions
-:List installable versions(experimental)
+
+  : List installable versions(experimental)
 
 <!-- # options -->
 <!--  -->

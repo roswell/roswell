@@ -9,7 +9,8 @@ ros-install - Install lisp implementations or quicklisp system
 <!-- # subcommands -->
 
 name
-:a name specifying a lisp implementation/version, or a quicklisp system.
+
+  : a name specifying a lisp implementation/version, or a quicklisp system.
 
 # Installing a Lisp Implementation
 
