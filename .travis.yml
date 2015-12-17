@@ -74,4 +74,4 @@ after_success:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git config user.email "doc@example.com"; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git config user.name "Travis-CI"; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git commit -a -m "[ci skip] documents update";git push; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}@github.com/snmsts/roswell.git" master > /dev/null 2>&1
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}@github.com/snmsts/roswell.git" master > /dev/null 2>&1; fi
