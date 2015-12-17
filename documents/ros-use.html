@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>ros-use(1)</title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="ros.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<header>
+<h1 class="title">ros-use(1)</h1>
+<ul>
+<li class="author">SANO Masatoshi</li>
+</ul>
+</header>
+<p>ros-use - sets the default implementation used by roswell</p>
+<h1>synopsis</h1>
+<p><strong>ros [options] use</strong> impl[/version]</p>
+<p>impl : The name of an implementation which is already installed. New implementations can be downloaded by <em>ros-install</em>(1). The list of installed implementations is available in <em>ros-list</em>(1).</p>
+<p>version: : The version specifier. The string representation of the version (e.g. <major>.<minor>) depends on each implementation and roswell generally follows the representation used by the implementation.</p>
+<!-- # subcommands -->
+
+
+<!-- somecommand -->
+
+<!--   : description. end with a period. -->
+
+
+<h1>description</h1>
+<p><code>ros use</code> sets the default implementation used by roswell. It is by default <code>sbcl-bin</code>, which is a stable and well-tested version of sbcl.</p>
+<!-- # options -->
+
+<!--  -->
+
+<!-- # Environmental Variables -->
+
+
+<h1>SEE ALSO</h1>
+<p><em>sbcl</em>(1), <em>ros</em>(1), <em>ros-install</em>(1), <em>ros-list</em>(1)</p>
+</body>
+</html>
