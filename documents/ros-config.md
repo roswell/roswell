@@ -1,16 +1,21 @@
 
-ros-config - 
-# synopsis
+ros-config - get and set options
+# Synopsis
 
-**ros [options] config** args...
+**ros [options] config** [SUBCOMMAND ARGS...]
 
-<!-- # subcommands -->
+# Description
 
-<!-- somecommand -->
+Without any arguments, it shows all variables and it's value.
+
+show VAR
  
-<!--   : description. end with a period. -->
+  : set the VALUE to the TARGET.
 
-# description
+
+set VAR VALUE
+ 
+  : set the VALUE to the TARGET.
 
 <!-- # options -->
 <!--  -->

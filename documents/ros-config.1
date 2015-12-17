@@ -1,11 +1,23 @@
 .TH "ros-config" "1" "" "" ""
 .nh \" Turn off hyphenation by default.
 .PP
-ros\-config \-
-.SH synopsis
+ros\-config \- get and set options
+.SH Synopsis
 .PP
-\f[B]ros [options] config\f[] args...
-.SH description
+\f[B]ros [options] config\f[] [SUBCOMMAND ARGS...]
+.SH Description
+.PP
+Without any arguments, it shows all variables and it\[aq]s value.
+.TP
+.B show VAR
+set the VALUE to the TARGET.
+.RS
+.RE
+.TP
+.B set VAR VALUE
+set the VALUE to the TARGET.
+.RS
+.RE
 .SH SEE ALSO
 .PP
 \f[I]ros\f[](1)
