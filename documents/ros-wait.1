@@ -4,8 +4,23 @@
 ros\-wait \-
 .SH synopsis
 .PP
-\f[B]ros [options] wait\f[] args...
-.SH description
+\f[B]ros [options] wait\f[]
+.SH Description
+.PP
+Wait forever after processing the options.
+.PP
+Useful when the application should work as a background/daemonized
+application.
+.SH Usecase
+.PP
+This loads and launches a clack application and wait for the request
+from the client.
+.IP
+.nf
+\f[C]
+$\ ros\ \-sp\ clack\ \-l\ app.lisp\ \-e\ \[aq](clack:clackup)\[aq]\ wait
+\f[]
+.fi
 .SH SEE ALSO
 .PP
 \f[I]ros\f[](1)

@@ -2,7 +2,7 @@
 ros-wait - 
 # synopsis
 
-**ros [options] wait** args...
+**ros [options] wait**
 
 <!-- # subcommands -->
 
@@ -10,7 +10,17 @@ ros-wait -
  
 <!--   : description. end with a period. -->
 
-# description
+# Description
+
+Wait forever after processing the options.
+
+Useful when the application should work as a background/daemonized application.
+
+# Usecase
+
+This loads and launches a clack application and wait for the request from the client.
+
+    $ ros -sp clack -l app.lisp -e '(clack:clackup)' wait
 
 <!-- # options -->
 <!--  -->

@@ -20,7 +20,7 @@
 </header>
 <p>ros-wait -</p>
 <h1>synopsis</h1>
-<p><strong>ros [options] wait</strong> args...</p>
+<p><strong>ros [options] wait</strong></p>
 <!-- # subcommands -->
 
 
@@ -29,7 +29,12 @@
 <!--   : description. end with a period. -->
 
 
-<h1>description</h1>
+<h1>Description</h1>
+<p>Wait forever after processing the options.</p>
+<p>Useful when the application should work as a background/daemonized application.</p>
+<h1>Usecase</h1>
+<p>This loads and launches a clack application and wait for the request from the client.</p>
+<pre><code>$ ros -sp clack -l app.lisp -e &#39;(clack:clackup)&#39; wait</code></pre>
 <!-- # options -->
 
 <!--  -->
