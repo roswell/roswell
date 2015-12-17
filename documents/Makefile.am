@@ -11,8 +11,10 @@
 # separated by semicolons
 PANDOC_AUTHORS="SANO Masatoshi"
 
+if MANUAL_GENERATE
 %.1: %.md
 	pandoc -f markdown_phpextra+backtick_code_blocks -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) -V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
+endif
 
 %.html: %.md
 	pandoc -f markdown_phpextra+backtick_code_blocks -t html5 -V title="$*(1)" -V pagetitle="$*(1)" -V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html $< > $@
