@@ -49,7 +49,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
 script:
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then sh bootstrap;./configure --enable-manual-generation;make;sudo make install; fi
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then sh bootstrap;./configure --enable-manual-generation;make clean;make;sudo make install; fi
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.go \) -type f|xargs wc -l -c; fi
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
@@ -70,6 +70,8 @@ script:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
 
 after_success:
-  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then openssl aes-256-cbc -K $encrypted_c834feb0c77a_key -iv $encrypted_c834feb0c77a_iv -in travis-roswell.enc -out deploy.key -d; fi
-  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then cp deploy.key ~/.ssh/;chmod 600 ~/.ssh/deploy.key; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git status; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git config user.email "doc@example.com"; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git config user.name "Travis-CI"; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ]; then git commit -a -m "[ci skip] documents update";git push; fi
+  - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}@github.com/snmsts/roswell.git" master > /dev/null 2>&1
