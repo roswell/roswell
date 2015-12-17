@@ -1,15 +1,25 @@
 .TH "ros-setup" "1" "" "" ""
 .nh \" Turn off hyphenation by default.
 .PP
-ros\-setup \- install sbcl\-bin and quicklisp
+ros\-setup \- setup the backend of roswell
 .SH Synopsis
 .PP
 \f[B]ros setup\f[]
 .SH Description
 .PP
-Runs some initial setup of roswell.
+\f[B]ros setup\f[] initializes roswell.
+The process includes the following steps:
+.IP \[bu] 2
+Downloading the default stable lisp implementation (sbcl\-bin) to
+\f[C]ROSWELL_INSTALL_DIR\f[].
+.IP \[bu] 2
+Installing quicklisp to \f[C]ROSWELL_INSTALL_DIR\f[].
+.IP \[bu] 2
+On Windows, install 7zip to \f[C]ROSWELL_INSTALL_DIR\f[].
+.IP \[bu] 2
+Making the core image of roswell itself.
 .SH SEE ALSO
 .PP
-\f[I]sbcl\f[](1) \f[I]ros\f[](1)
+\f[I]sbcl\f[](1), \f[I]ros\f[](1), section Environmental Variables
 .SH AUTHORS
 SANO Masatoshi.
