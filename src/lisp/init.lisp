@@ -24,8 +24,8 @@ latest asdf (especially asdf3).
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-           :ignore-shebang :roswell :exec :setenv :unsetenv
-           :with-lock-held)
+           :ignore-shebang :ensure-using-downloaded-asdf
+           :roswell :exec :setenv :unsetenv :with-lock-held)
   (:documentation "Roswell backend."))
 
 (in-package :ros)
@@ -207,6 +207,13 @@ latest asdf (especially asdf3).
 (compile 'shebang-reader)
 (defun ignore-shebang ()
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
+
+(defvar *downloaded-asdf-loaded* nil)
+(defun ensure-using-downloaded-asdf ()
+  (unless *downloaded-asdf-loaded*
+    (ros:roswell '("install" "asdf3"))
+    (cl:load (merge-pathnames "lisp/asdf3.lisp" (opt "homedir")))
+    (setf *downloaded-asdf-loaded* t)))
 
 (defun roswell (args &optional (output :string) trim)
   (let* ((a0 (funcall (or #+win32(lambda (x) (substitute #\\ #\/ x)) #'identity)
