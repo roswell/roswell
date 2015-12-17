@@ -1,8 +1,9 @@
 
-ros-run - 
-# synopsis
+ros-run - start a REPL
+# Synopsis
 
-**ros [options] run** args...
+**ros [options] run**
+
 
 <!-- # subcommands -->
 
@@ -10,7 +11,10 @@ ros-run -
  
 <!--   : description. end with a period. -->
 
-# description
+# Description
+
+Processes the given options and start a REPL using the currently effective
+lisp implementation set by _ros-use_(1).
 
 <!-- # options -->
 <!--  -->
