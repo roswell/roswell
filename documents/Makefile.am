@@ -8,7 +8,7 @@
 # http://pandoc.org/README.html#using-variables-in-templates
 # https://github.com/jgm/pandoc-templates/blob/master/default.man
 
-man1_MANS = ros.1 ros-dump.1 ros-init.1 ros-install.1 ros-list.1 ros-setup.1
+man1_MANS = ros.1 ros-dump.1 ros-init.1 ros-install.1 ros-list.1 ros-setup.1 ros-config.1 ros-delete.1 ros-emacs.1 ros-run.1 ros-use.1 ros-wait.1
 HTMLS = $(man1_MANS:.1=.html)
 
 if MANUAL_GENERATE
