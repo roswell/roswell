@@ -1,5 +1,9 @@
 general:
 
+dependencies:
+  pre:
+      - sudo apt-get update; sudo apt-get install pandoc
+
 test:
   post:
     - sh bootstrap
