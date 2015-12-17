@@ -12,7 +12,7 @@ ros-emacs - launch Emacs with Slime
 
 # Description
 
-Launches Emacs with a Slime buffer opened, which is connected to the back-end lisp implementation of roswell.
+Launches Emacs with a Slime(https://common-lisp.net/project/slime/) buffer opened, which is connected to the back-end lisp implementation of roswell.
 Additional arguments are passed to emacs.
 
 <!-- # options -->
