@@ -53,7 +53,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
       (case
           (handler-case (read-from-string subcmd)
             (error () ;; subcmd = "" or something not recognized
-              (format t "Usage: ~A [OPTIONS] ~A [subcmd params]| impl/version ~%"
+              (format t "Usage: ~A [OPTIONS] ~A [--dump] TARGETS... ~%~
+                            where eachtarget is either <impl>[/<version>] or a dump name"
                       (ros:opt "argv0") cmd)))
         (--dump
          (delete-dump r))
