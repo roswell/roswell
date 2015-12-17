@@ -208,13 +208,6 @@ latest asdf (especially asdf3).
 (defun ignore-shebang ()
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
-(defvar *downloaded-asdf-loaded* nil)
-(defun ensure-using-downloaded-asdf ()
-  (unless *downloaded-asdf-loaded*
-    (ros:roswell '("install" "asdf3"))
-    (cl:load (merge-pathnames "lisp/asdf3.lisp" (opt "homedir")))
-    (setf *downloaded-asdf-loaded* t)))
-
 (defun roswell (args &optional (output :string) trim)
   (let* ((a0 (funcall (or #+win32(lambda (x) (substitute #\\ #\/ x)) #'identity)
                       (if (zerop (length (opt "wargv0")))
@@ -224,6 +217,13 @@ latest asdf (especially asdf3).
     (if trim
         (remove #\Newline (remove #\Return ret))
         ret)))
+
+(defvar *downloaded-asdf-loaded* nil)
+(defun ensure-using-downloaded-asdf ()
+  (unless *downloaded-asdf-loaded*
+    (roswell '("install" "asdf3"))
+    (cl:load (merge-pathnames "lisp/asdf3.lisp" (opt "homedir")))
+    (setf *downloaded-asdf-loaded* t)))
 
 (let ((symbol (read-from-string "asdf::*user-cache*"))
       (impl (substitute #\- #\/ (second (assoc "impl" (ros-opts) :test 'equal)))))
