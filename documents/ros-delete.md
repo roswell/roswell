@@ -1,8 +1,8 @@
 
 ros-delete - 
-# synopsis
+# Synopsis
 
-**ros [options] delete** args...
+**ros [options] delete** [--dump] targets...
 
 <!-- # subcommands -->
 
@@ -10,10 +10,14 @@ ros-delete -
  
 <!--   : description. end with a period. -->
 
-# description
+# Description
 
-<!-- # options -->
-<!--  -->
+Delete the specified installed targets from roswell.  A target can be an
+implementation/version, or a name of the dumped image saved by roswell when
+--dump is specified.
+
+<!-- # Options -->
+
 <!-- # Environmental Variables -->
 
 # SEE ALSO

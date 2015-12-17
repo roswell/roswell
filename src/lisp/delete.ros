@@ -50,21 +50,24 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
     (let* ((default (config "default.lisp"))
            (verstring (format nil "~A.version" default))
            (config (format nil "~A/~A" default (config verstring))))
-      (cond ((and (equal subcmd "main") r)
-             (cond ((equal (first r) "dump")
-                    (delete-dump (rest r)))
-                   (t  (let* ((impl-name (first r))
-                              (path (merge-pathnames (format nil "impls/~A/~A/~A/"
-                                                             (uname-m) (uname) impl-name)
-                                                     (homedir))))
-                         (unless (position :up (pathname-directory path))
-                           (cond ((probe-file path)
-                                  (uiop/filesystem:delete-directory-tree path :validate t)
-                                  (format t "~&~A was deleted successfully.~%" impl-name)
-                                  (when (equal impl-name config)
-                                    (format t "~&clear config ~S~%" verstring)
-                                    (setf (config verstring) "")))
-                                 (t (format *error-output* "~&~A is not installed yet.~%" impl-name))))))))
-            ((or (equal subcmd "help") (not r))
-             (format t "Usage: ~A [OPTIONS] ~A [subcmd params]| impl/version ~%"
-                     (ros:opt "argv0") cmd))))))
+      (case
+          (handler-case (read-from-string subcmd)
+            (error () ;; subcmd = "" or something not recognized
+              (format t "Usage: ~A [OPTIONS] ~A [subcmd params]| impl/version ~%"
+                      (ros:opt "argv0") cmd)))
+        (--dump
+         (delete-dump r))
+        (otherwise
+         (loop for impl-name in r
+               do
+            (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/"
+                                                 (uname-m) (uname) impl-name)
+                                         (homedir))))
+              (unless (find :up (pathname-directory path))
+                (cond ((probe-file path)
+                       (uiop/filesystem:delete-directory-tree path :validate t)
+                       (format t "~&~A was deleted successfully.~%" impl-name)
+                       (when (equal impl-name config)
+                         (format t "~&clear config ~S~%" verstring)
+                         (setf (config verstring) "")))
+                      (t (format *error-output* "~&~A is not installed yet.~%" impl-name)))))))))))
