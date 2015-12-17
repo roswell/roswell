@@ -1,0 +1,28 @@
+.TH "ros-use" "1" "" "" ""
+.nh \" Turn off hyphenation by default.
+.PP
+ros\-use \- sets the default implementation used by roswell
+.SH synopsis
+.PP
+\f[B]ros [options] use\f[] impl[/version]
+.PP
+impl : The name of an implementation which is already installed.
+New implementations can be downloaded by \f[I]ros\-install\f[](1).
+The list of installed implementations is available in
+\f[I]ros\-list\f[](1).
+.PP
+version: : The version specifier.
+The string representation of the version (e.g.
+.) depends on each implementation and roswell generally follows the
+representation used by the implementation.
+.SH description
+.PP
+\f[C]ros\ use\f[] sets the default implementation used by roswell.
+It is by default \f[C]sbcl\-bin\f[], which is a stable and well\-tested
+version of sbcl.
+.SH SEE ALSO
+.PP
+\f[I]sbcl\f[](1), \f[I]ros\f[](1), \f[I]ros\-install\f[](1),
+\f[I]ros\-list\f[](1)
+.SH AUTHORS
+SANO Masatoshi.

@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>ros-setup(1)</title>
+  <title>ros-emacs(1)</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="ros.css">
   <!--[if lt IE 9]>
@@ -13,30 +13,24 @@
 </head>
 <body>
 <header>
-<h1 class="title">ros-setup(1)</h1>
+<h1 class="title">ros-emacs(1)</h1>
 <ul>
 <li class="author">SANO Masatoshi</li>
 </ul>
 </header>
-<p>ros-setup - setup the backend of roswell</p>
+<p>ros-emacs - launch Emacs with Slime</p>
 <h1>Synopsis</h1>
-<p><strong>ros setup</strong></p>
+<p><strong>ros [options] emacs</strong> [ARGS...]</p>
 <!-- # subcommands -->
 
 
 <!-- somecommand -->
 
-<!-- :description. end with a period. -->
+<!--   : description. end with a period. -->
 
 
 <h1>Description</h1>
-<p><strong>ros setup</strong> initializes roswell. The process includes the following steps:</p>
-<ul>
-<li>Downloading the default stable lisp implementation (sbcl-bin) to <code>ROSWELL_INSTALL_DIR</code>.</li>
-<li>Installing quicklisp to <code>ROSWELL_INSTALL_DIR</code>.</li>
-<li>On Windows, install 7zip to <code>ROSWELL_INSTALL_DIR</code>.</li>
-<li>Making the core image of roswell itself.</li>
-</ul>
+<p>Launches Emacs with a Slime buffer opened, which is connected to the back-end lisp implementation of roswell. Additional arguments are passed to emacs.</p>
 <!-- # options -->
 
 <!--  -->
@@ -45,6 +39,6 @@
 
 
 <h1>SEE ALSO</h1>
-<p><em>sbcl</em>(1), <em>ros</em>(1), section Environmental Variables</p>
+<p><em>ros</em>(1), <em>emacs</em>(1)</p>
 </body>
 </html>
