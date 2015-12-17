@@ -58,7 +58,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
         (--dump
          (delete-dump r))
         (otherwise
-         (loop for impl-name in r
+         (loop for impl-name in (cons subcmd r)
                do
             (let ((path (merge-pathnames (format nil "impls/~A/~A/~A/"
                                                  (uname-m) (uname) impl-name)
