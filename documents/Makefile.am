@@ -13,7 +13,7 @@ HTMLS = $(man1_MANS:.1=.html)
 
 if MANUAL_GENERATE
 # separated by semicolons
-PANDOC_AUTHORS="Masataro Asai"
+PANDOC_AUTHORS="Roswell Project Team"
 %.1: %.md
 	pandoc -f markdown_phpextra+backtick_code_blocks -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
 	-V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
