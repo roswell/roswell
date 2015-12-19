@@ -1,4 +1,4 @@
-#||#
+#!/bin/sh
 #|-*- mode:lisp -*-|#
 #|install roswell
 exec ros -Q +R -L sbcl-bin -- $0 "$@"
