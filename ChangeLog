@@ -1,3 +1,13 @@
+roswell (0.0.3.54-1) unstable; urgency=low
+
+  * New: `ros:ensure-using-downloaded-asdf` are introduced.
+  * New: Use the latest ASDF for CI when $ROSWELL_LATEST_ASDF is true.
+  * Change: Use pandoc to to generate documents man and html.
+  * Improve: Better support for armv7l.
+  * Improve: More documentation.(by Masataro Asai)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 19 Dec 2015 20:55:22 +0900
+
 roswell (0.0.3.53-1) unstable; urgency=low
 
   * New: support installing ecl.
