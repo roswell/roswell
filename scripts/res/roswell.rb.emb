@@ -9,7 +9,7 @@ class Roswell < Formula
   depends_on "automake" => :build
   def install
     system "sh", "bootstrap"
-    system "./configure", "--enable-manual-generation", "--prefix=#{prefix}"
+    system "./configure", "--prefix=#{prefix}"
     system "make", "install"
   end
 
