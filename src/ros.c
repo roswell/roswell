@@ -291,18 +291,12 @@ int main (int argc,char **argv) {
   struct opts** opts=&global_opt;
   unset_opt(opts,"program");
   s(path);
-  int tty=_isatty(_fileno(stdin));
   if(argc==1) {
     char* tmp[]={"help"};
-    if(tty)
-      proccmd(1,tmp,top_options,top_commands);
+    proccmd(1,tmp,top_options,top_commands);
   }else {
     int i;
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
-  }
-  if(!tty) {
-    char* tmp[]={"--stdin","run","-q","--"};
-    proccmd(4,tmp,top_options,top_commands);
   }
   if(get_opt("program",0)) {
     char* tmp[]={"run","-q","--"};

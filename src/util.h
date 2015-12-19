@@ -19,8 +19,6 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#define _fileno(x) fileno(x)
-#define _isatty(x) isatty(x)
 #else
 #include <windows.h>
 #include <shellapi.h>
