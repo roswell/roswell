@@ -1,0 +1,78 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Not yet
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
+|#
+(unless (find-package :ros.install)
+  (load (make-pathname
+	 :defaults *load-pathname*
+	 :name "install" :type "lisp")))
+
+(unless (find-package :ros.script.asdf.3659540511)
+  (defpackage :ros.script.asdf.3659540511
+    (:use :cl :ros.install))
+  (eval (read-from-string "(defparameter ros.script.asdf.3659540511::*load-time* t)")))
+
+(in-package :ros.script.asdf.3659540511)
+
+(when *load-time*
+  (defparameter *load-time* nil)
+  (ros:quicklisp :environment nil)
+  (ql:quickload :cl-html-parse :silent t)
+  
+  (defun asdf-get-version ()
+    (let (result
+	  (file (merge-pathnames "tmp/asdf.html" (ros.install::homedir))))
+      (format *error-output* "Checking version to install....~%")
+      (unless (and (probe-file file)
+		   (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+	(ros.install::download "https://github.com/fare/asdf/releases.atom" file))
+      (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
+	(net.html.parser:parse-html
+	 in
+	 :callbacks
+	 (list (cons :link (lambda (arg)
+			     (let* ((href (getf (cdr (car arg)) :href)))
+			       (and (eql (aref href 0) #\/)
+				    (not (find #\% href))
+				    (push (subseq href (1+(position #\/ href :from-end t))) result))))))
+	 :callback-only t))
+      (nreverse result)))
+
+  (defvar *subcommands*
+    '(("install" . install)
+      ("use" . use)
+      ("list" . list-)))
+
+  (defun install (&optional version &rest r)
+    (declare (ignorable r))
+    (setf version (or version (first (asdf-get-version))))
+    (let ((url (format nil "https://github.com/fare/asdf/archive/~A.tar.gz" version))
+	  (file (merge-pathnames (format nil "archives/asdf-~A.tar.gz" version) (ros.install::homedir)))
+	  (src (merge-pathnames "src/" (ros.install::homedir))))
+      (unless (probe-file file)
+	(ros.install::download url file))
+      (ros.install::expand file src)
+      (let* ((src (merge-pathnames (format nil "src/asdf-~A/" version) (ros.install::homedir)))
+	     (cmd (list (ros.install::sh) "-lc" (format nil "cd ~S;~A"
+							(#+win32 mingw-namestring #-win32 princ-to-string src)
+							"make"))))
+	(uiop/os:chdir src)
+	(format t "~&chdir ~A~%" src)
+	(format t "~&~S~%" cmd)
+	(uiop/run-program:run-program cmd :output t :ignore-error-status nil))))
+
+  (defun use (&rest r)
+    (declare (ignorable r))
+    )
+
+  (defun list- (&rest r)
+    (declare (ignorable r))
+    (dolist (i (asdf-get-version))
+      (format t "~A~%" i)))
+  (defun main (? asdf &optional subcmd &rest argv)
+    (declare (ignorable ? asdf argv))
+    (if subcmd
+	(let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
+	  (apply fun argv))
+	(format t "secret.~A~%" *package*))))
