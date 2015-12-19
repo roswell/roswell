@@ -8,7 +8,6 @@ env:
   matrix:
     - METHOD=documents
     - METHOD=valgrind XCFLAGS="-g -O0"
-    - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - METHOD=brew
     - METHOD=test LISP=sbcl/1.1.14
     - METHOD=ci LISP=sbcl
@@ -19,9 +18,10 @@ env:
     - METHOD=ci LISP=ccl-bin
     - METHOD=ci LISP=cmucl
     - METHOD=ci LISP=sbcl-bin
+    - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
 os:
-  - linux
   - osx
+  - linux
 matrix:
   exclude:
     - os: osx
@@ -39,7 +39,7 @@ before_install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ "$METHOD" = "brew" ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && ([ "$METHOD" = "brew" ] || [ "$METHOD" = "documents" ]); then sudo apt-get install -qq pandoc; fi
-  - if [ "$TRAVIS_OS_NAME" = "osx" ] || [ "$METHOD" = "brew" ]; then brew update;brew --env;brew config; fi
+  - if ([ "$TRAVIS_OS_NAME" = "osx" ] && ([ "$METHOD" = "ci" ] || [ "$METHOD" = "test" ])) || [ "$METHOD" = "brew" ]; then brew update;brew --env;brew config; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ]; then sudo apt-get install -qq lcab > /dev/null; fi
