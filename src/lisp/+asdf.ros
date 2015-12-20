@@ -53,14 +53,24 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
       (unless (probe-file file)
 	(ros.install::download url file))
       (ros.install::expand file src)
-      (let* ((src (merge-pathnames (format nil "src/asdf-~A/" version) (ros.install::homedir)))
+      (let* ((src (merge-pathnames (format nil "asdf-~A/" version) src))
 	     (cmd (list (ros.install::sh) "-lc" (format nil "cd ~S;~A"
 							(#+win32 mingw-namestring #-win32 princ-to-string src)
 							"make"))))
 	(uiop/os:chdir src)
 	(format t "~&chdir ~A~%" src)
 	(format t "~&~S~%" cmd)
-	(uiop/run-program:run-program cmd :output t :ignore-error-status nil))))
+	(uiop/run-program:run-program cmd :output t :ignore-error-status nil)
+	(let ((built (merge-pathnames "build/asdf.lisp" src)))
+	  (if (probe-file built)
+	      (progn
+		(uiop/stream:copy-file
+		 built
+		 (ensure-directories-exist
+		  (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version)
+				   (ros.install::homedir))))
+		(ros:roswell `("config" "set" "asdf.version" ,version)))
+	      (error "build fail asdf ~A~%" 'version))))))
 
   (defun use (&rest r)
     (declare (ignorable r))
