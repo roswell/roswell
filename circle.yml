@@ -2,7 +2,8 @@ general:
 
 dependencies:
   pre:
-      - sudo apt-get update; sudo apt-get install pandoc
+      - sudo apt-get update
+      - sudo apt-get -qq install pandoc
 
 test:
   post:
