@@ -187,33 +187,9 @@ dynamic-space-size=[size in MB]
 
 # Environmental Variables
 
-ROSWELL_INSTALL_DIR
+ROSWELL_HOME
 
-  : Specifies the install directory of roswell, defaulted to $HOME/.roswell . Roswell scripts are installed in $ROSWELL_INSTALL_DIR/bin .
-
-ROSWELL_BRANCH
-
-  : used for testing roswell itself.
-
-ROSWELL_REPO
-
-  : used for testing roswell itself.
-
-LISP_IMPLS_DIR
-
-  : used for testing roswell itself.
-
-LISP_IMPLS_BIN
-
-  : used for testing roswell itself.
-
-ROSWELL_TARBALL_PATH
-
-  : used for testing roswell itself.
-
-ROSWELL_URI
-
-  : used for testing roswell itself.
+  : Specifies the home directory of roswell, defaulted to $HOME on Unix platform .
 
 <!-- ROSWELL_HTML_TEST -->
 <!--  -->
