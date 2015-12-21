@@ -8,17 +8,18 @@
 # http://pandoc.org/README.html#using-variables-in-templates
 # https://github.com/jgm/pandoc-templates/blob/master/default.man
 
-man1_MANS = ros.1 ros-dump.1 ros-init.1 ros-install.1 ros-list.1 ros-setup.1 ros-config.1 ros-delete.1 ros-emacs.1 ros-run.1 ros-use.1 ros-wait.1
-HTMLS = $(man1_MANS:.1=.html)
+MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md
+man1_MANS = $(MDS:%.md=man/%.1)
+HTMLS = $(MDS:%.md=html/%.html)
 
 if MANUAL_GENERATE
 # separated by semicolons
 PANDOC_AUTHORS="Roswell Project Team"
-%.1: %.md
+man/%.1: %.md
 	pandoc -f markdown_phpextra+backtick_code_blocks -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
 	-V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
 
-%.html: %.md
+html/%.html: %.md
 	pandoc -f markdown_phpextra+backtick_code_blocks -t html5 -V title="$*(1)" -V pagetitle="$*(1)" \
 	-V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html $< > $@
 
