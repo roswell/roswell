@@ -26,6 +26,9 @@ matrix:
   exclude:
     - os: osx
       METHOD: cross
+branches:
+  except:
+      - /^v[0-9]/
 
 # addons:
 #   apt:
