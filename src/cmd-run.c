@@ -188,6 +188,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   set_opt(&local_opt,"argv0",argv_orig[0],0);
   set_opt(&local_opt,"wargv0",which(argv_orig[0]),0);
   set_opt(&local_opt,"homedir",config,0);
+  set_opt(&local_opt,"asdf",get_opt("asdf.version",0),0);
   if(rc) {
     char* init=s_cat(configdir(),q("init.lisp"),NULL);
 #ifdef _WIN32

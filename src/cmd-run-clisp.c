@@ -20,10 +20,10 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char *bin;
   int issystem=(strcmp("system",version)==0);
   int simple=0;
-  char *asdf3= cat(home,"lisp",SLASH,"asdf3.lisp",NULL);
+  char *asdf3= get_opt("asdf.version",0);
 
   if(!file_exist_p(asdf3)) {
-    char* cmd=cat(which(argv_orig[0])," install asdf3",NULL);
+    char* cmd=cat(which(argv_orig[0])," asdf install",NULL);
     int ret;
     cond_printf(1,"cmd:%s\n",cmd);
     ret=System(cmd);

@@ -51,8 +51,8 @@ latest asdf (especially asdf3).
   (second (assoc param (ros-opts) :test 'equal)))
 
 (or
- (ignore-errors #-asdf (require :asdf))
- (ignore-errors (cl:load (merge-pathnames "lisp/asdf3.lisp" (opt "homedir")))))
+ (ignore-errors (cl:load (merge-pathnames (format nil "lisp/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
+ (ignore-errors #-asdf (require :asdf) #+asdf t))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -221,8 +221,11 @@ latest asdf (especially asdf3).
 (defvar *downloaded-asdf-loaded* nil)
 (defun ensure-using-downloaded-asdf ()
   (unless *downloaded-asdf-loaded*
-    (roswell '("install" "asdf3"))
-    (cl:load (merge-pathnames "lisp/asdf3.lisp" (opt "homedir")))
+    (roswell '("ros" "asdf" "install"))
+    (cl:load
+     (merge-pathnames
+      (format nil "lisp/~A/asdf.lisp"
+	      (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
     (setf *downloaded-asdf-loaded* t)))
 
 (let ((symbol (read-from-string "asdf::*user-cache*"))
