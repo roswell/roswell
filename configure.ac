@@ -61,4 +61,14 @@ AC_ARG_ENABLE([manual_generation],
    esac],[])
 AM_CONDITIONAL(MANUAL_GENERATE,[test x$manual_generate = x"true"])
 
+# html file generation switch
+AC_ARG_ENABLE([html_generation],
+  [AC_HELP_STRING([--enable-html-generation],[generate html if enabled])],
+  [case "${enableval}" in
+    yes) html_generate=true ;;
+    no)  html_generate=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-html-generate]) ;;
+   esac],[])
+AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
+
 AC_OUTPUT

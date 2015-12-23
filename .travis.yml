@@ -52,7 +52,7 @@ install:
   - if [ "$TRAVIS_OS_NAME" = "linux" ] && [ x$TRAVIS_TAG != x ] && [ "$METHOD" = "cross" ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
 script:
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then sh bootstrap;./configure --enable-manual-generation;make clean;make;sudo make install; fi
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_OS_NAME" = "linux" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make clean;make;sudo make install; fi
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.go \) -type f|xargs wc -l -c; fi
   - if [ "$METHOD" = "cross" ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
