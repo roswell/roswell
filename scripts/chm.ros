@@ -1,0 +1,38 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(defvar *current-path* (make-pathname :defaults *load-pathname*
+				      :name nil :type nil))
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (with-open-file (o (ensure-directories-exist
+		      (merge-pathnames "../documents/roswell.hhp" *current-path*))
+		     :direction :output
+		     :if-exists :supersede
+		     :if-does-not-exist :create)
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+	    '("[OPTIONS]"
+	      "Compatibility=1.1 or later"
+	      "Compiled file=roswell.chm"
+	      "Contents file=roswell.hhc"
+	      "Default topic=html\\ros.html"
+	      "Display compile progress=No"
+	      "Index file=roswell.hhk"
+	      "Language=0x411 Japanese (Japan)"
+	      ""
+	      ""
+	      "[FILES]"))
+    (loop for f in (directory
+		    (merge-pathnames "../documents/html/*.html" 
+				     *current-path*))
+       do (format o "html\\~A~A~A"
+		  (file-namestring f)
+		  #\Return #\Newline))
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+	    '(""
+	      "[INFOTYPES]"
+	      ""))))
+
+     
