@@ -51,7 +51,7 @@ latest asdf (especially asdf3).
   (second (assoc param (ros-opts) :test 'equal)))
 
 (or
- (ignore-errors (cl:load (merge-pathnames (format nil "lisp/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
+ (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
  (ignore-errors #-asdf (require :asdf) #+asdf t))
 
 #+(and unix sbcl) ;; from swank

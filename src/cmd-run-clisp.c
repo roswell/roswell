@@ -22,7 +22,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   int simple=0;
   char *asdf3= get_opt("asdf.version",0);
 
-  if(!file_exist_p(asdf3)) {
+  if(!asdf3) {
     char* cmd=cat(which(argv_orig[0])," asdf install",NULL);
     int ret;
     cond_printf(1,"cmd:%s\n",cmd);
