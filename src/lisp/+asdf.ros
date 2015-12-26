@@ -72,9 +72,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 		(ros:roswell `("config" "set" "asdf.version" ,version)))
 	      (error "build fail asdf ~A~%" 'version))))))
 
-  (defun use (&rest r)
+  (defun use (version &rest r)
     (declare (ignorable r))
-    )
+    (if (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version)
+				     (ros.install::homedir)))
+	(ros:roswell `("config" "set" "asdf.version" ,version))
+	(error "~A not installed" version)))
 
   (defun list- (&rest r)
     (declare (ignorable r))
