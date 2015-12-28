@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|Not yet
+#|manage asdf version
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 (unless (find-package :ros.install)
