@@ -335,10 +335,15 @@ latest asdf (especially asdf3).
   (loop :for elt :in list
      :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
 
-(push :ros.init *features*)
 
 #+clisp
-(loop
-   with *package* = (find-package :cl-user)
-   for i in ext:*args*
-   do (cl:eval (cl:read-from-string i)))
+(unless (find :ros.init *features*)
+  (push :ros.init *features*)
+  (loop
+     with *package* = (find-package :cl-user)
+     for i in ext:*args*
+     do (cl:eval (cl:read-from-string i))))
+
+(unless (find :ros.init *features*)
+  (push :ros.init *features*))
+
