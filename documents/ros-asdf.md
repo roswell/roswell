@@ -2,7 +2,7 @@
 ros-asdf - 
 # synopsis
 
-**ros [options] asdf** args...
+**ros [options] asdf [subcommand]**
 
 <!-- # subcommands -->
 
@@ -11,6 +11,8 @@ ros-asdf -
 <!--   : description. end with a period. -->
 
 # description
+
+**ros asdf** install and manage ASDF(https://common-lisp.net/project/asdf/)
 
 <!-- # options -->
 <!--  -->
