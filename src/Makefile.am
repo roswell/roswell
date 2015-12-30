@@ -1,6 +1,6 @@
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
-roslisp_DATA = $(wildcard lisp/*.lisp) $(wildcard lisp/*.ros)
+roslisp_DATA = $(wildcard *.lisp) $(wildcard *.ros)
 
 gend.h: FORCE
 	printf "#define ROS_COMPILE_ENVIRONMENT \"%s\"\n" "`$(CC) --version|head -n 1`" > $@.tmp
