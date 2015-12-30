@@ -24,6 +24,7 @@ build_script:
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%
   - if "%METHOD%"=="cross" mkdir roswell
   - if "%METHOD%"=="cross" mkdir roswell\lisp
+  - if "%METHOD%"=="cross" copy src\ros.exe roswell
   - if "%METHOD%"=="cross" copy src\*.lisp roswell\lisp
   - if "%METHOD%"=="cross" copy src\*.ros  roswell\lisp
   - if "%METHOD%"=="cross" move documents roswell
