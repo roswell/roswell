@@ -5,34 +5,101 @@ exec ros -Q -- $0 "$@"
 |#
 (defvar *current-path* (make-pathname :defaults *load-pathname*
 				      :name nil :type nil))
+
+(defun hhp ()
+  (with-open-file (o (ensure-directories-exist
+                      (merge-pathnames "../documents/roswell.hhp" *current-path*))
+                     :direction :output
+                     :if-exists :supersede
+                     :if-does-not-exist :create)
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+            '("[OPTIONS]"
+              "Compatibility=1.1 or later"
+              "Compiled file=roswell.chm"
+              "Contents file=roswell.hhc"
+              "Default topic=html\\ros.html"
+              "Display compile progress=No"
+              "Index file=roswell.hhk"
+              "Language=0x411 Japanese (Japan)"
+              ""
+              ""
+              "[FILES]"))
+    (loop for f in (directory
+                    (merge-pathnames "../documents/html/*.html"
+                                     *current-path*))
+       do (format o "html\\~A~A~A"
+                  (file-namestring f)
+                  #\Return #\Newline))
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+            '(""
+              "[INFOTYPES]"
+              ""))))
+
+(defun hhk ()
+  (with-open-file (o (ensure-directories-exist
+                      (merge-pathnames "../documents/roswell.hhk" *current-path*))
+                     :direction :output
+                     :if-exists :supersede
+                     :if-does-not-exist :create)
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+            '("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">"
+              "<HTML>"
+              "<HEAD>"
+              "<meta name=\"GENERATOR\" content=\"Microsoft&reg; HTML Help Workshop 4.1\">"
+              "<!-- Sitemap 1.0 -->"
+              "</HEAD><BODY>"
+              "<UL>"))
+    (loop for f in (directory
+                    (merge-pathnames "../documents/html/*.html"
+                                     *current-path*))
+       do (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+                  `("<LI> <OBJECT type=\"text/sitemap\">"
+                    ,(format nil "<param name=\"Name\" value=\"~A\">" (pathname-name f))
+                    ,(format nil "<param name=\"Name\" value=\"~A(1)\">" (pathname-name f))
+                    ,(format nil "<param name=\"Local\" value=\"html\\~A\">" (file-namestring f))
+                    "</OBJECT>")))
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+            '(""
+              "</UL>"
+              "</BODY></HTML>"))))
+
+(defun hhc ()
+  (with-open-file (o (ensure-directories-exist
+                      (merge-pathnames "../documents/roswell.hhc" *current-path*))
+                     :direction :output
+                     :if-exists :supersede
+                     :if-does-not-exist :create)
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+            '("<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML//EN\">"
+              "<HTML>"
+              "<HEAD>"
+              "<meta name=\"GENERATOR\" content=\"Microsoft&reg; HTML Help Workshop 4.1\">"
+              "<!-- Sitemap 1.0 -->"
+              "</HEAD><BODY>"
+              "<OBJECT type=\"text/site properties\">"
+              "<param name=\"ImageType\" value=\"Folder\">"
+              "</OBJECT>"
+              "<UL>"
+              "<LI> <OBJECT type=\"text/sitemap\">"
+              "<param name=\"Name\" value=\"man\">"
+              "</OBJECT>"
+              "<UL>"))
+    (loop for f in (directory
+                    (merge-pathnames "../documents/html/*.html"
+                                     *current-path*))
+       do (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+                  `("<LI> <OBJECT type=\"text/sitemap\">"
+                    ,(format nil "<param name=\"Name\" value=\"~A\">" (pathname-name f))
+                    ,(format nil "<param name=\"Local\" value=\"html\\~A\">" (file-namestring f))
+                    "</OBJECT>")))
+    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
+            '(""
+              "</UL>"
+              "</UL>"
+              "</BODY></HTML>"))))
+
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (with-open-file (o (ensure-directories-exist
-		      (merge-pathnames "../documents/roswell.hhp" *current-path*))
-		     :direction :output
-		     :if-exists :supersede
-		     :if-does-not-exist :create)
-    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
-	    '("[OPTIONS]"
-	      "Compatibility=1.1 or later"
-	      "Compiled file=roswell.chm"
-	      "Contents file=roswell.hhc"
-	      "Default topic=html\\ros.html"
-	      "Display compile progress=No"
-	      "Index file=roswell.hhk"
-	      "Language=0x411 Japanese (Japan)"
-	      ""
-	      ""
-	      "[FILES]"))
-    (loop for f in (directory
-		    (merge-pathnames "../documents/html/*.html" 
-				     *current-path*))
-       do (format o "html\\~A~A~A"
-		  (file-namestring f)
-		  #\Return #\Newline))
-    (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
-	    '(""
-	      "[INFOTYPES]"
-	      ""))))
-
-     
+  (hhp)
+  (hhk)
+  (hhc))
