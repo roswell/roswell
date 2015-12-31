@@ -57,7 +57,7 @@ install:
   - if [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
-  - if [ $METHOD = brew ]; then brew tap snmsts/roswell; fi
+  - if [ $METHOD = brew ]; then brew tap roswell/roswell; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
 script:
@@ -83,6 +83,6 @@ after_success:
   - if [ "$METHOD" = "documents" ]; then git config user.name "Travis-CI"; fi
   - if [ "$METHOD" = "documents" ]; then git checkout master;git add -u;git add documents/man/* documents/html/*; fi
   - if [ "$METHOD" = "documents" ]; then git commit -m "[ci skip] documents update"; fi
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/snmsts/roswell.git" master > /dev/null 2>&1; fi
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" master > /dev/null 2>&1; fi
   - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
   - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
