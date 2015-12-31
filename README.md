@@ -1,7 +1,7 @@
 # Roswell - Common Lisp environment setup Utility.
 
-[![Build Status](https://travis-ci.org/snmsts/roswell.svg?branch=master)](https://travis-ci.org/snmsts/roswell)
-[![Circle CI](https://circleci.com/gh/snmsts/roswell/tree/master.svg?style=svg)](https://circleci.com/gh/snmsts/roswell/tree/master)
+[![Build Status](https://travis-ci.org/roswell/roswell.svg?branch=master)](https://travis-ci.org/roswell/roswell)
+[![Circle CI](https://circleci.com/gh/roswell/roswell/tree/master.svg?style=svg)](https://circleci.com/gh/roswell/roswell/tree/master)
 [![Build status](https://ci.appveyor.com/api/projects/status/ubs9la7881yarjjg?svg=true)](https://ci.appveyor.com/project/snmsts/roswell)
 [![Quicklisp](http://quickdocs.org/badge/roswell.svg)](http://quickdocs.org/roswell/)
 
@@ -10,16 +10,16 @@ It now has evolved into a fullstack environment for common lisp web development,
 
 This software is still beta. Basic interfaces are fixed, we believe it works well on Unix-like platforms like Linux, Mac OS X and FreeBSD, but some parts are not implemented, not stable on other OSes yet.
 
-Checkout [issues list](https://github.com/snmsts/roswell/issues) if you have interest in what's lacking.
+Checkout [issues list](https://github.com/roswell/roswell/issues) if you have interest in what's lacking.
 
 ## Installation, Dependency & Usage
 
-See our [github wiki](https://github.com/snmsts/roswell/wiki).
+See our [github wiki](https://github.com/roswell/roswell/wiki).
 We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
 
 ## Features
 
-[Feature comparison is available!](https://github.com/snmsts/roswell/wiki/0.-What's-the-Difference%3F)
+[Feature comparison is available!](https://github.com/roswell/roswell/wiki/0.-What's-the-Difference%3F)
 
 * Implementation Manager (similar to CIM)
 * Scripting environment (similar to cl-launch)
@@ -160,7 +160,7 @@ SANO Masatoshi (snmsts@gmail.com)
  * Eitaro Fukamachi (e.arrows@gmail.com) for naming this project.
 
 ## Project
- * https://github.com/snmsts/roswell
+ * https://github.com/roswell/roswell
 
 ## License
 Licensed under the MIT License.
