@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/roswell/roswell.svg?branch=master)](https://travis-ci.org/roswell/roswell)
 [![Circle CI](https://circleci.com/gh/roswell/roswell/tree/master.svg?style=svg)](https://circleci.com/gh/roswell/roswell/tree/master)
-[![Build status](https://ci.appveyor.com/api/projects/status/ubs9la7881yarjjg?svg=true)](https://ci.appveyor.com/project/snmsts/roswell)
+[![Build status](https://ci.appveyor.com/api/projects/status/7jq0392ffqb4i3yn?svg=true)](https://ci.appveyor.com/project/snmsts/roswell-en89n)
 [![Quicklisp](http://quickdocs.org/badge/roswell.svg)](http://quickdocs.org/roswell/)
 
 Roswell started as a command line tool to install and manage Common Lisp implementations damn easily.
