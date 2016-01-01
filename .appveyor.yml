@@ -24,21 +24,26 @@ build_script:
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%
   - if "%METHOD%"=="cross" mkdir roswell
   - if "%METHOD%"=="cross" mkdir roswell\lisp
+  - if "%METHOD%"=="cross" mkdir roswell\documents
+  - if "%METHOD%"=="cross" mkdir roswell\documents\html
   - if "%METHOD%"=="cross" copy src\ros.exe roswell
   - if "%METHOD%"=="cross" copy src\*.lisp roswell\lisp
   - if "%METHOD%"=="cross" copy src\*.ros  roswell\lisp
-  - if "%METHOD%"=="cross" move documents roswell
-  - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/*.*
+  - if "%METHOD%"=="cross" copy documents\html\*.html roswell\documents\html
+  - if "%METHOD%"=="cross" copy scripts\chm.ros roswell\documents
+  - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
+  - if "%METHOD%"=="cross" ros version
+  - if "%METHOD%"=="cross" ros setup
+  - if "%METHOD%"=="cross" ros version=t run
+  - if "%METHOD%"=="cross" ros documents\chm.ros
+  - if "%METHOD%"=="cross" "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" documents\roswell.hhp
+  - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install"
 
 test_script:
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros version"
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros setup"
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros install sbcl"
-  - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
-  - if "%METHOD%"=="cross" ros version
-  - if "%METHOD%"=="cross" ros setup
-  - if "%METHOD%"=="cross" ros version=t run
   - if "%METHOD%"=="cross" ros config
   - if "%METHOD%"=="cross" ros install sbcl
 #  - ros install sbcl
