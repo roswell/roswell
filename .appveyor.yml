@@ -45,6 +45,7 @@ test_script:
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros version"
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros setup"
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros install sbcl"
+  - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
   - if "%METHOD%"=="cross" ros config
   - if "%METHOD%"=="cross" ros install sbcl
 #  - ros install sbcl
