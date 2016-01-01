@@ -4,8 +4,8 @@ Priority: optional
 Maintainer: Masatoshi SANO <snmsts@gmail.com>
 Build-Depends: debhelper (>= 9)
 Standards-Version: 3.9.5
-Homepage: https://github.com/snmsts/roswell
-Vcs-Git: https://github.com/snmsts/roswell.git
+Homepage: https://github.com/roswell/roswell
+Vcs-Git: https://github.com/roswell/roswell.git
 
 Package: roswell
 Architecture: any

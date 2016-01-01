@@ -34,7 +34,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         body)))))
 
 (defun main (&rest argv)
-  (let* ((url (get-newest-url "snmsts/roswell" :master (equal (first argv) "master")))
+  (let* ((url (get-newest-url "roswell/roswell" :master (equal (first argv) "master")))
          (sha256 (sha256-from-url url))
          (version (if (first argv) "version \"9.9.9.9\"" "")))
     (format t "url:~A~%sha256:~A~%" url sha256)

@@ -1,9 +1,9 @@
 class Roswell < Formula
-  homepage "https://github.com/snmsts/roswell/"
+  homepage "https://github.com/roswell/roswell/"
   url "<% @var url %>"
   sha256 "<% @var sha256 %>"
   <% @var version %>
-  head "https://github.com/snmsts/roswell.git"
+  head "https://github.com/roswell/roswell.git"
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
