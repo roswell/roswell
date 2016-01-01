@@ -36,7 +36,7 @@ The name can be a name of the implementation, or a version of the implementation
 
     $ ros install sbcl/1.2.14
 
-There might be some _hidden_ implementation that are not listed here --- they are in the alpha quality, but try the one you like or watch the website (https://github.com/snmsts/roswell).
+There might be some _hidden_ implementation that are not listed here --- they are in the alpha quality, but try the one you like or watch the website (https://github.com/roswell/roswell).
 
     $ ros install ccl
     $ ros install abcl

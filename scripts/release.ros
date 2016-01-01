@@ -12,7 +12,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (use-package :sn.github.release)
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)
-(defvar *owner* "snmsts")
+(defvar *owner* "roswell")
 (defvar *repo* "roswell")
 
 (defun find-version ()
@@ -128,7 +128,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                       (uiop/run-program:run-program
                                        "git tag |tail -n 1" :output :string))))
           (print (funcall (read-from-string "sn.github.release::release-create")
-                          "snmsts" "roswell" tag :name tag))))))
+                          "roswell" "roswell" tag :name tag))))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
   (ignore-errors

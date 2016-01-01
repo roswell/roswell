@@ -47,7 +47,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         (format t "done ~%"))))
 
 (defun fetch-upstream (&optional (output *pwd*))
-  (let* ((url (get-newest-url "snmsts/roswell"))
+  (let* ((url (get-newest-url "roswell/roswell"))
          (path (merge-pathnames (subseq url (1+ (position #\/ url :from-end t))) output)))
     (download url path)
     path))

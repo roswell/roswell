@@ -170,7 +170,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                       (pathname-type from))))))
     (format *error-output* "~&~A~%" to)
     (uiop/stream:copy-file from to)
-    ;; Experimented on 0.0.3.38 but it has some problem. see https://github.com/snmsts/roswell/issues/53
+    ;; Experimented on 0.0.3.38 but it has some problem. see https://github.com/roswell/roswell/issues/53
     #+nil(if (equalp (pathname-type from) "ros")
              (ros:roswell `("build" ,from "-o" ,to) :interactive nil)
              (uiop/stream:copy-file from to))
