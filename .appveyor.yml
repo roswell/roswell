@@ -36,7 +36,7 @@ build_script:
   - if "%METHOD%"=="cross" ros setup
   - if "%METHOD%"=="cross" ros version=t run
   - if "%METHOD%"=="cross" ros documents\chm.ros
-  - if "%METHOD%"=="cross" "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" documents\roswell.hhp
+  - if "%METHOD%"=="cross" "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" documents\roswell.hhp || copy nul nul > nul
   - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install"
 
