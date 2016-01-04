@@ -45,7 +45,9 @@ latest asdf (especially asdf3).
   (or *ros-opts*
       (setf *ros-opts*
             (let((*read-eval*))
-              (read-from-string (getenv "ROS_OPTS"))))))
+              (or (ignore-errors (read-from-string (getenv "ROS_OPTS")))
+                  '()
+                  )))))
 
 (defun opt (param)
   (second (assoc param (ros-opts) :test 'equal)))

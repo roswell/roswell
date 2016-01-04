@@ -6,10 +6,10 @@
 (ros:quicklisp :environment nil)
 
 (unless (find-package :uiop)
-  (ql:quickload :uiop :silent t))
+  #+quicklisp(ql:quickload :uiop :silent t))
 
 (unless (find-package :net.html.parser)
-  (ql:quickload :cl-html-parse :silent t))
+  #+quicklisp(ql:quickload :cl-html-parse :silent t))
 
 (defpackage :ros.install
   (:use :cl)
