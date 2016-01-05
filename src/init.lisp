@@ -46,8 +46,7 @@ latest asdf (especially asdf3).
       (setf *ros-opts*
             (let((*read-eval*))
               (or (ignore-errors (read-from-string (getenv "ROS_OPTS")))
-                  '()
-                  )))))
+                  '())))))
 
 (defun opt (param)
   (second (assoc param (ros-opts) :test 'equal)))
@@ -179,21 +178,25 @@ latest asdf (especially asdf3).
              (release-lock ,name-))
            ,failure))))
 
-(ignore-errors
-  (let* ((*error-output* (make-broadcast-stream))
-	 (compile-file* (find-symbol (string :compile-file*) :uiop/lisp-build))
-	 (origin (fdefinition compile-file*)))
-    (setf (fdefinition compile-file*)
-	  (lambda (input-file &rest keys
-		   &key output-file warnings-file
-		     #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl
-		     &allow-other-keys)
-	    (declare (ignore
-		      output-file warnings-file
-		      #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl))
-	    (let ((name (namestring input-file)))
-	      (ros:with-lock-held (name)
-		(apply origin input-file keys)))))))
+(eval-when (:execute)
+  (ignore-errors
+    (let* ((*error-output* (make-broadcast-stream))
+           (compile-file* (find-symbol (string :compile-file*) :uiop/lisp-build))
+           (origin (fdefinition compile-file*)))
+      (unless (get compile-file* :roswell-modified)
+        (setf (fdefinition compile-file*)
+              (lambda (input-file &rest keys
+                       &key output-file warnings-file
+                         #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl
+                         &allow-other-keys)
+                (declare (ignore
+                          output-file warnings-file
+                          #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl))
+                (let ((name (namestring input-file)))
+                  (ros:with-lock-held (name)
+                    (apply origin input-file keys)))))
+        (setf (get compile-file* :roswell-modified) t))
+      (get compile-file* :roswell-modified))))
 
 #+quicklisp
 (let ((path (merge-pathnames "local-projects/" (opt "homedir"))))

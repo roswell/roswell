@@ -1,7 +1,9 @@
 (cl:in-package :cl-user)
 
+#-asdf
 (require :asdf)
-#+sbcl(require :sb-posix)
+#+sbcl
+(require :sb-posix)
 
 (ros:quicklisp :environment nil)
 
@@ -133,7 +135,7 @@
               target version)
       (return-from start (cons nil argv)))
     (when (install-running-p argv)
-      (format t "It seems there are another ongoing installation process for ~A/~A somewhere in the system.\n"
+      (format t "It seems there are another ongoing installation process for ~A/~A somewhere in the system.~%"
               target version)
       (return-from start (cons nil argv)))
     (ensure-directories-exist (merge-pathnames (format nil "tmp/~A-~A/" target version) (homedir)))
