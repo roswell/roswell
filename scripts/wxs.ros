@@ -1,0 +1,10 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros -Q -- $0 "$@"
+|#
+(defpackage :ros.script.wxs.3661242446
+  (:use :cl))
+(in-package :ros.script.wxs.3661242446)
+(defun main (&rest argv)
+  (declare (ignorable argv)))
