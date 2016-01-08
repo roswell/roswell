@@ -25,7 +25,7 @@ latest asdf (especially asdf3).
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :ensure-using-downloaded-asdf
-           :roswell :exec :setenv :unsetenv :with-lock-held)
+           :roswell :exec :setenv :unsetenv :with-lock-held :version)
   (:documentation "Roswell backend."))
 
 (in-package :ros)
@@ -268,6 +268,11 @@ latest asdf (especially asdf3).
 
 (setf (fdefinition 'load-system)
       #'system)
+
+(defvar *version-cache* nil)
+(defun version ()
+  (or *version-cache*
+      (setf *version-cache* (roswell '("roswell-internal-use" "version") :string t))))
 
 (defun package (cmd arg &rest rest)
   (declare (ignorable cmd rest))
