@@ -17,7 +17,7 @@ code {
   color: #145214; }
 
 pre {
-  background-color: #bababa;
+  background-color: #b9b9b9;
   padding-left: 1em;
   padding-right: 1em;
   padding-top: 0.7em;
@@ -30,5 +30,3 @@ dl {
   padding-left: 2em; }
   dl dt {
     font-weight: bold; }
-
-/*# sourceMappingURL=ros.css.map */
