@@ -1,6 +1,24 @@
-
-
 .author {
-    font-size : smaller;
-    font-style : italic;
-}
+  font-size: smaller;
+  font-style: italic; }
+
+body {
+  padding-left: 2em;
+  background-color: lightgrey; }
+
+a {
+  color: limegreen; }
+  a:visited {
+    color: #28a428; }
+  a:hover {
+    color: #5bd75b; }
+
+code {
+  color: #145214; }
+
+dl {
+  padding-left: 2em; }
+  dl dt {
+    font-weight: bold; }
+
+/*# sourceMappingURL=ros.css.map */
