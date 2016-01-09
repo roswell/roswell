@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# currently just a stub.
+# would it be possible to generate the completion from the roswell scripts by themselves?
+
+# https://www.debian-administration.org/article/317/An_introduction_to_bash_completion_part_2
+
+_ros() 
+{
+    local cur prev opts
+    COMPREPLY=()
+    cur="${COMP_WORDS[COMP_CWORD]}"
+    prev="${COMP_WORDS[COMP_CWORD-1]}"
+    opts="--help --verbose --version"
+
+    if [[ ${cur} == -* ]] ; then
+        COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+        return 0
+    fi
+}
+complete -F _ros ros
