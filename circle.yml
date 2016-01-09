@@ -3,7 +3,7 @@ general:
 dependencies:
   pre:
       - sudo apt-get update
-      - sudo apt-get -qq install pandoc
+      - sudo apt-get -qq install pandoc ruby-sass
 
 test:
   post:
