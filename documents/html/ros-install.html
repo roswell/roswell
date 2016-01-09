@@ -62,7 +62,7 @@ $ ...</code></pre>
 <p>If the specified name does not match any of the implementations, roswell tries to find a quicklisp system of the given name.</p>
 <pre><code>$ ros install alexandria</code></pre>
 <p>After compiling and loading the system, it funcalls <code>ros:*build-hook*</code> special variable with no argument, if some function is set during the compilation/load.</p>
-<p>When the system comes with a <strong>roswell script</strong> created by <em>ros-init</em>(1) in the subdirectory <code>roswell</code>, the scripts are installed into <strong>ROSWELL_INSTALL_DIR/bin</strong>. Setting the path to this directory makes those scripts available from the shell command line.</p>
+<p>When the system comes with a <strong>roswell script</strong> created by <em><a href="ros-init.html">ros-init</a></em>(1) in the subdirectory <code>roswell</code>, the scripts are installed into <strong>ROSWELL_INSTALL_DIR/bin</strong>. Setting the path to this directory makes those scripts available from the shell command line.</p>
 <pre><code>$ ros install qlot
 System &#39;qlot&#39; found. Loading the system..
 Processing build-hook..
@@ -73,6 +73,7 @@ Attempting to install the scripts in roswell/ subdirectory of the system...
 $ qlot
 Usage: qlot [install | update | bundle | exec shell-args..]</code></pre>
 <h1>SEE ALSO</h1>
-<p><em>sbcl</em>(1), <em>ros</em>(1), <em>ros-list</em>(1), <em>ros-init</em>(1)</p>
+<p><em>sbcl</em>(1), <em><a href="ros.html">ros</a></em>(1), <em><a href="ros-list.html">ros-list</a></em>(1), <em><a href="ros-init.html">ros-init</a></em>(1)</p>
+<p>_</p>
 </body>
 </html>

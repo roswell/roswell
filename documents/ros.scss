@@ -1,0 +1,33 @@
+.author {
+    font-size : smaller;
+    font-style : italic;
+}
+
+body {
+    padding-left: 2em;
+    background-color: lightgrey;
+}
+
+$link-color: limegreen;
+
+a {
+    color: $link-color;
+    &:visited {
+        color: darken( $link-color, 10% );
+    }
+    &:hover {
+        color: lighten( $link-color, 10% );
+    }
+}
+
+code {
+    color: darken( $link-color, 30% );
+}
+
+dl {
+    padding-left: 2em;
+    dt {
+        font-weight:bold;
+    }
+}
+

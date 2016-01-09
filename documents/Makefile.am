@@ -18,11 +18,18 @@ man/%.1: %.md
 endif
 
 if HTML_GENERATE
-HTMLS = $(MDS:%.md=html/%.html)
+HTMLS = $(MDS:%.md=html/%.html) html/ros.css
 html/%.html: %.md
 	which pandoc
+# awk hack --- check every underlined words for its corresponding md file, replacing it to an appropriate markdown link to html file if it exist (e.g. _ros-use_ -> check ros-use.md -> [ros-use](ros-use.html) )
+# special care should be made regarding checking the existence of the file; 
+	awk 'BEGIN{RS="_"; ORS="_"} {target=$$0;gsub("`","",target);if(system("[ -e \""target".md\" ]") == 0){print "["$$1"]("$$1".html)"}else{print $$0}}' < $< | \
 	pandoc -f markdown_phpextra+backtick_code_blocks -t html5 -V title="$*(1)" -V pagetitle="$*(1)" \
-	-V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html $< > $@
+	-V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html > $@
+
+html/%.css: %.scss
+	which scss
+	scss $< $@
 endif
 
 all: $(man1_MANS) $(HTMLS)

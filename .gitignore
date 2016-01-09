@@ -24,3 +24,5 @@ scripts/roswell*
 scripts/homebrew
 *~
 #*
+/documents/.sass-cache/
+/documents/html/ros.css.map
