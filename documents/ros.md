@@ -10,7 +10,7 @@ Roswell - Common Lisp environment setup Utility
 
 Roswell is a command line tool for installing and managing Common Lisp implementations, as well as a scripting infrastructure for templating, writing, executing, compiling, distributing, downloading and installing ROSWELL-SCRIPTS written in Common Lisp.
 
-Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implementations. For further details see _ros-install(1)_.
+Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implementations. For further details see _ros-install_(1).
 
 Scripts installed by roswell will be system wide if appropriate directory is included in PATH.
 
@@ -20,7 +20,7 @@ In an order of utility/frequency.
 
 install
 
-  : Install a given implementation (e.g. sbcl, ccl) or a system (e.g. alexandria) for roswell environment. See _ros-install(1)_.
+  : Install a given implementation (e.g. sbcl, ccl) or a system (e.g. alexandria) for roswell environment. See _ros-install_(1).
 
 init [name[.ros]]
 
