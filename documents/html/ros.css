@@ -16,6 +16,16 @@ a {
 code {
   color: #145214; }
 
+pre {
+  background-color: #bababa;
+  padding-left: 1em;
+  padding-right: 1em;
+  padding-top: 0.7em;
+  padding-bottom: 1.5em;
+  border-radius: 4px; }
+  pre code {
+    color: #145214; }
+
 dl {
   padding-left: 2em; }
   dl dt {
