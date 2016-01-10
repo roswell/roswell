@@ -31,21 +31,32 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                 (1+ (parse-integer (subseq v (1+ pos)))))
         v)))
 
-(defun edit-configure-ac ()
-  (let ((file (with-open-file (in (merge-pathnames "configure.ac" *project-path*)
-                                  :direction :input)
+(defun edit-file (path match replace version &key test)
+  (let ((file (with-open-file (in path :direction :input)
                 (loop for line = (read-line in nil nil)
                    while line
-       for match = (nth-value 1 (cl-ppcre:scan-to-strings "^AC_INIT\\([^,]*,\\[([^,]*)\\]" line))
-       collect (if match
-                   (cl-ppcre:regex-replace "^(AC_INIT\\([^,]*,\\[)([^,]*)(\\].*)$" line
-                                           (format nil "\\{1}~A\\{3}" *new-version*))
-                   line))
-                )))
-    (with-open-file (out (merge-pathnames "configure.ac" *project-path*)
-                         :direction :output :if-exists :supersede)
-      (dolist (line file)
-        (format out "~A~%" line)))))
+                   for match- = (nth-value 1 (cl-ppcre:scan-to-strings match line))
+                   collect (if match-
+                               (cl-ppcre:regex-replace replace line
+                                                       (format nil "\\{1}~A\\{3}" version))
+                               line)))))
+    (if test
+        file
+        (with-open-file (out path :direction :output :if-exists :supersede)
+          (dolist (line file)
+            (format out "~A~%" line))))))
+
+(defun edit-configure-ac (&optional (version *new-version*) test)
+  (edit-file (merge-pathnames "configure.ac" *project-path*)
+             "^AC_INIT\\([^,]*,\\[([^,]*)\\]"
+             "^(AC_INIT\\([^,]*,\\[)([^,]*)(\\].*)$"
+             version :test test))
+
+(defun edit-roswell-asd (&optional (version *new-version*) test)
+  (edit-file (merge-pathnames "roswell.asd" *project-path*)
+             "^[ ]*:version[ ]*\"[^,]*\"[ ]*$"
+             "^([ ]*:version[ ]*\")([^\"]*)(\".*)$"
+             version :test test))
 
 (defun x (cmd)
   (string-right-trim
@@ -105,30 +116,32 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (force-output)
   (edit-change-log)
   (edit-configure-ac)
+  (edit-roswell-asd)
   (show-how-to-release))
 
 (defun release (argv)
   (declare (ignore argv))
-  (if (not (uiop:getenv "GITHUB_OAUTH_TOKEN"))
-      (error "GITHUB_OAUTH_TOKEN must be set")
-      (let ((version (find-version)))
-        (mapc
-         #'uiop:run-program
-         `("git add ChangeLog configure.ac"
-           ,(format nil "git commit -m \"bump version to ~A\"" version)
-           "git checkout release"
-           "git merge master"
-           ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
-           "git push --tags"
-           "git push --all"
-           "git checkout master"))
-        (load (merge-pathnames "../sn.github/sn.github.asd" *project-path*))
-        (ql:quickload :sn.github :silent t)
-        (let ((tag (string-right-trim (format nil"~%")
-                                      (uiop/run-program:run-program
-                                       "git tag |tail -n 1" :output :string))))
-          (print (funcall (read-from-string "sn.github.release::release-create")
-                          "roswell" "roswell" tag :name tag))))))
+  #+nil
+  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
+    (error "GITHUB_OAUTH_TOKEN must be set"))
+  (let ((version (find-version)))
+    (mapc
+     #'uiop:run-program
+     `("git add ChangeLog configure.ac roswell.asd"
+       ,(format nil "git commit -m \"bump version to ~A\"" version)
+       "git checkout release"
+       "git merge master"
+       ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
+       "git push --tags"
+       "git push --all"
+       "git checkout master")))
+  #+nil(load (merge-pathnames "../sn.github/sn.github.asd" *project-path*))
+  #+nil(ql:quickload :sn.github :silent t)
+  #+nil(let ((tag (string-right-trim (format nil"~%")
+                                     (uiop/run-program:run-program
+                                      "git tag |tail -n 1" :output :string))))
+         (print (funcall (read-from-string "sn.github.release::release-create")
+                         "roswell" "roswell" tag :name tag))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
   (ignore-errors
