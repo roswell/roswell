@@ -8,7 +8,7 @@
 (in-package :roswell-asd)
 
 (defsystem roswell
-  :version "0.0.3.54"
+  :version "0.0.3.55"
   :author "SANO Masatoshi"
   :license "MIT"
   :depends-on ()
