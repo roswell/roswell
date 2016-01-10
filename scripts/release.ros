@@ -121,9 +121,6 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun release (argv)
   (declare (ignore argv))
-  #+nil
-  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
-    (error "GITHUB_OAUTH_TOKEN must be set"))
   (let ((version (find-version)))
     (mapc
      #'uiop:run-program
@@ -134,14 +131,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push --tags"
        "git push --all"
-       "git checkout master")))
-  #+nil(load (merge-pathnames "../sn.github/sn.github.asd" *project-path*))
-  #+nil(ql:quickload :sn.github :silent t)
-  #+nil(let ((tag (string-right-trim (format nil"~%")
-                                     (uiop/run-program:run-program
-                                      "git tag |tail -n 1" :output :string))))
-         (print (funcall (read-from-string "sn.github.release::release-create")
-                         "roswell" "roswell" tag :name tag))))
+       "git checkout master"))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
   (ignore-errors
@@ -167,9 +157,20 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
   (asset-upload (pathname (first argv)) (uiop:getenv "TRAVIS_TAG")))
 
+(defun debian (argv)
+  (declare (ignore argv))
+  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
+    (error "GITHUB_OAUTH_TOKEN must be set"))
+  (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
+  (loop for i in (directory (make-pathname
+                             :type :wild :name :wild
+                             :defaults (merge-pathnames "scripts/debian/" *project-path*)))
+     when (pathname-name i)
+     do (asset-upload (pathname i) (uiop:getenv "TRAVIS_TAG"))))
+
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(release prepare github)
+  (let ((subcmd (find subcmd '(release prepare github debian)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))

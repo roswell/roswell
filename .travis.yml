@@ -83,6 +83,7 @@ script:
 after_success:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
   - if [ "$METHOD" = "documents" ]; then git branch;git status; fi
   - if [ "$METHOD" = "documents" ]; then git config user.email "doc@example.com"; fi
   - if [ "$METHOD" = "documents" ]; then git config user.name "Travis-CI"; fi
