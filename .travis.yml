@@ -7,6 +7,7 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
     - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
+    - METHOD=debian
     - METHOD=documents
     - METHOD=valgrind XCFLAGS="-g -O0"
     - METHOD=brew
@@ -26,6 +27,8 @@ matrix:
   exclude:
     - os: osx
       env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
+    - os: osx
+      env: METHOD=debian
     - os: osx
       env: METHOD=documents
     - os: osx
@@ -54,6 +57,7 @@ before_install:
 install:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; fi
+  - if [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
   - if [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
@@ -65,7 +69,7 @@ script:
   - if [ "$METHOD" = "documents" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make clean;make;sudo make install; fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
-  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ]; then sh bootstrap;CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
+  - if [ "$METHOD" = "debian" ] ||[ "$METHOD" = "test" ] || [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ]; then sh bootstrap;CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
   - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
   - if [ "$METHOD" = "test" ]; then ros install $LISP; fi
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
@@ -74,6 +78,7 @@ script:
   - if [ "$METHOD" = "test" ] || [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
   - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
+  - if [ "$METHOD" = "debian" ]; then ros ./scripts/debian.ros; fi
 
 after_success:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
