@@ -39,6 +39,9 @@ _ros()
             COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) ) ;;
         install|config|help|use|list|dump|delete)
             # espects these commands output completion candidates to the stdout
+            # quality:
+            # WORKS WELL: install (impl names)
+            # NOT: config, help, use, list, dump, delete
             COMPREPLY=( $(compgen -W "$(ros $prev 2> /dev/null)" -- ${cur}) ) ;;
         *)
             if [[ $cur == [+-]* ]]
