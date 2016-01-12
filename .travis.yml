@@ -69,7 +69,7 @@ script:
   - if [ "$METHOD" = "documents" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make clean;make;sudo make install; fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
-  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then \
+  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then
        sh bootstrap;CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
   - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
   - if [ "$METHOD" = "test" ]; then ros install $LISP; fi
@@ -90,7 +90,7 @@ after_success:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then cd ~/lisp/homebrew-roswell/; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then git add roswell.rb; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then git commit -m v`ros roswell-internal-use version`; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then \
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/homebrew-roswell.git" master > /dev/null 2>&1; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
@@ -98,7 +98,7 @@ after_success:
   - if [ "$METHOD" = "documents" ]; then git branch;git status; fi
   - if [ "$METHOD" = "documents" ]; then git checkout master;git add -u;git add documents/man/* documents/html/*; fi
   - if [ "$METHOD" = "documents" ]; then git commit -m "[ci skip] documents update"; fi
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then \
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" master > /dev/null 2>&1; fi
   - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
   - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
