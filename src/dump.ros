@@ -4,22 +4,18 @@
 exec ros -- $0 "$@"
 |#
 
+#-ros.util
+(load (make-pathname
+       :defaults *load-pathname*
+       :name "util" :type "lisp"))
+
 (defpackage :ros.dump
-  (:use :cl))
+  (:use :cl :ros.util))
 (in-package :ros.dump)
 
 (unless (find-package :uiop)
   #-quicklisp(require :uiop)
   #+quicklisp(ql:quickload :uiop :silent t))
-
-(defun homedir ()
-  (ros:opt "homedir"))
-
-(defun uname ()
-  (ros:roswell '("roswell-internal-use uname") :string t))
-
-(defun uname-m ()
-  (ros:roswell '("roswell-internal-use uname -m") :string t))
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"

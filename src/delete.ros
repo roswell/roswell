@@ -6,9 +6,15 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (when (cl:find-package :ros.sub.delete)
   (push :ros.sub.delete *features*))
+
+#-ros.util
+(load (make-pathname
+       :defaults *load-pathname*
+       :name "util" :type "lisp"))
+
 #-ros.sub.delete
 (defpackage :ros.sub.delete
-  (:use :cl))
+  (:use :cl :ros.util))
 (in-package :ros.sub.delete)
 #-ros.sub.delete
 (ros:quicklisp :environment nil)
@@ -19,21 +25,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 #-ros.sub.delete
 (progn
-  (defun homedir ()
-    (ros:opt "homedir"))
-  (defun uname ()
-    (ros:roswell '("roswell-internal-use uname") :string t))
-
-  (defun uname-m ()
-    (ros:roswell '("roswell-internal-use uname -m") :string t))
-
-  (defun config (c)
-    (ros:roswell (list "config show" c) :string t))
-
-  (defun (setf config) (a b)
-    (ros:roswell (list "config" b a) :string t)
-    a)
-
   (defun delete-dump (params)
     (declare (ignorable params))
     (let ((path (make-pathname :name (second params)

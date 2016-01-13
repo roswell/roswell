@@ -6,6 +6,12 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (when (cl:find-package :ros.sub.list)
   (push :ros.sub.list *features*))
+
+#-ros.util
+(load (make-pathname
+       :defaults *load-pathname*
+       :name "util" :type "lisp"))
+
 #-ros.sub.list
 (defpackage :ros.sub.list
   (:use :cl))
@@ -19,15 +25,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (unless (find-package :net.html.parser)
   (ql:quickload :cl-html-parse :silent t))
 
-#-ros.sub.list
-(defun homedir ()
-  (ros:opt "homedir"))
-#-ros.sub.list
-(defun uname ()
-  (ros:roswell '("roswell-internal-use uname") :string t))
-#-ros.sub.list
-(defun uname-m ()
-  (ros:roswell '("roswell-internal-use uname -m") :string t))
 #-ros.sub.list
 (defun impl (imp)
   (ros:roswell `(,(format nil "roswell-internal-use impl ~A" (or imp ""))) :string t))
