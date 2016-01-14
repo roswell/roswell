@@ -5,36 +5,24 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 |#
 
 (cl:in-package :cl-user)
+
+#-ros.util
+(load (make-pathname
+       :defaults *load-pathname*
+       :name "util" :type "lisp"))
+
 (when (cl:find-package :ros.use)
   (push :ros.use *features*))
 
 #-ros.use
 (defpackage :ros.use
-  (:use :cl))
+  (:use :cl :ros.util))
 
 (in-package :ros.use)
-#-ros.use
-(defun config (&rest argv)
-  (ros:roswell `("config" "set" ,@argv) :string t))
+
 #-ros.use
 (defun main (subcmd impl/version &rest argv)
   (declare (ignore subcmd impl/version))
-  (if (and argv
-	   (ignore-errors
-	     (ros:roswell `("-L" ,(first argv) "version=t" "run"))))
-      (let* ((pos (position #\/ (first argv)))
-	     (lisp (if pos
-		       (subseq (first argv) 0 pos)
-		       (first argv))))
-	(if pos
-	    (progn
-	      (config "default.lisp" lisp)
-	      (config (format nil "~A.version" lisp)
-		      (subseq (first argv) (1+ pos))))
-	    (config (if (digit-char-p (aref lisp 0))
-			(format nil "~A.version" (ros:roswell `("config" "show" "default.lisp") :string t))
-			"default.lisp")
-		    lisp)))
-      (progn
-	(format *error-output* "Error to use '~A'~%" (first argv))
-	(ros:quit 1))))
+  (unless (use (first argv))
+    (format *error-output* "Error to use '~A'~%" (first argv))
+    (ros:quit 1)))

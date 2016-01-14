@@ -15,19 +15,14 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.sub.list
 (defpackage :ros.sub.list
   (:use :cl))
+
 (in-package :ros.sub.list)
-#-ros.sub.list
-(ros:quicklisp :environment nil)
-#-ros.sub.list
-(unless (find-package :uiop)
-  (ql:quickload :uiop :silent t))
+
 #-ros.sub.list
 (unless (find-package :net.html.parser)
   (ql:quickload :cl-html-parse :silent t))
 
-#-ros.sub.list
-(defun impl (imp)
-  (ros:roswell `(,(format nil "roswell-internal-use impl ~A" (or imp ""))) :string t))
+
 #-ros.sub.list
 (defun list-impls (impl &key function params)
   (declare (ignorable params))
@@ -40,6 +35,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                :type :wild))))
     (mapcar function
             dir)))
+
 #-ros.sub.list
 (progn
   (export
