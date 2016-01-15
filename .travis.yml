@@ -78,7 +78,7 @@ script:
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
-  - if [ "$METHOD" = "test" ]; then ros t/roswell.ros ;fi
+  - if [ "$METHOD" = "test" ]; then ros setup; ros t/roswell.ros ;fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
   - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/debian.ros; fi

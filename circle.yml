@@ -8,7 +8,7 @@ dependencies:
 test:
   post:
     - sh bootstrap
-    - ./configure --enable-manual-generation
+    - ./configure
     - make -j4
     - sudo make install
     - ros version
