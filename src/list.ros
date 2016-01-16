@@ -37,8 +37,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
    (defun installed (&rest r)
      (cond
        ((null r)
-        (format t "detail shown by~%~A list installed [implementation]~2%implementations:~%"
-                (ros:opt "argv0"))
+        (format *error-output* "Installed implementations:~%")
+        (finish-output *error-output*)
         (let ((dir (directory
                     (make-pathname
                      :defaults (merge-pathnames
@@ -46,7 +46,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                 (homedir))
                      :name :wild
                      :type :wild))))
-          (mapc (lambda (d) (format t "    ~A~%" (first (last (pathname-directory d)))))  dir)))
+          (mapc (lambda (d) (format t "~A~%" (first (last (pathname-directory d)))))  dir))
+        (finish-output *standard-output*)
+        (format *error-output* "~%For further details on each implementation: ros list installed [implementation]~2%"))
        ((probe-file
          (merge-pathnames
           (format nil "impls/~A/~A/~A" (uname-m) (uname) (first r))
