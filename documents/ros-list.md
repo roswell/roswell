@@ -13,17 +13,22 @@ ros-list - list the materials installed by roswell
 
 **ros list** shows the list of the materials installed by roswell.
 
-installed
+installed [IMPL]
 
-  : List implementations that already installed
+  : List the implementations that have been already installed. Optionally
+  providing IMPL shows the installed versions of the implementation.
 
-dump
+dump [IMPL]
 
-  : List dumped
+  : List the internal dumped images that are compatible with IMPL. When
+  IMPL is ommited, it is defaulted to the current lisp implementation in
+  use. Images are in `$ROSWELL_INSTALL_DIR/impl/.../dump/`.
 
-versions
+versions [IMPL]
 
-  : List installable versions(experimental)
+  : List the installable versions for IMPL. When IMPL is ommited, it is
+  defaulted to the current lisp implementation in use. This feature
+  is experimental.
 
 <!-- # options -->
 <!--  -->
