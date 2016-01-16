@@ -22,7 +22,12 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 
 #-ros.use
 (defun main (subcmd impl/version &rest argv)
-  (declare (ignore subcmd impl/version))
-  (unless (use (first argv))
-    (format *error-output* "Error to use '~A'~%" (first argv))
-    (ros:quit 1)))
+  (declare (ignorable subcmd impl/version))
+  (if (null argv)
+      (progn
+        (format *error-output* "Possible target candidates:~%")
+        (finish-output *error-output*)
+        (ros:roswell `("list" "installed") *standard-output*))
+      (unless (use (first argv))
+        (format *error-output* "Error: unable to use '~A'~%" (first argv))
+        (ros:quit 1))))
