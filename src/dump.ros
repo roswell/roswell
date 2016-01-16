@@ -23,12 +23,14 @@ exec ros -- $0 "$@"
                    (homedir)))
 
 (defun dump-output (params &optional force)
-  (flet ((dump (path &optional mode)
+  (flet ((%dump (path &optional mode)
            (if (and (not force)
                     (probe-file path))
+               ;; idea??
+               ;; (y-or-n-p "Output file exists. Overwrite? [Y,n]")
                (if (eql mode :normal)
-                   (format t "dump ~s already exists~%" (pathname-name path))
-                   (format t "file ~s already exists~%" path))
+                   (format *error-output* "dump ~s already exists~%" (pathname-name path))
+                   (format *error-output* "file ~s already exists~%" path))
                (progn
                  #+sbcl
                  (sb-ext:save-lisp-and-die path)
@@ -36,18 +38,16 @@ exec ros -- $0 "$@"
                  (ccl:save-application path)))))
     (cond
       ((null params)
-       (format t "Usage: ~A [OPTIONS] dump output [-f] [-o] name~%"
-               (ros:opt "argv0")))
+       (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (ros:opt "argv0")))
       ((equal "-f" (first params))
        (dump-output (rest params) t))
       ((equal "-o" (first params))
        (if (> (length params) 1)
-           (dump (second params))
-           (format t "you should specify a filename where the image is dumped.~%")))
-      (t (let ((path (merge-pathnames (format nil "~A.core"
-                                              (first params))
+           (%dump (second params))
+           (format *error-output* "Missing the pathname for an image.~%")))
+      (t (let ((path (merge-pathnames (format nil "~A.core" (first params))
                                       (dump-dir))))
-           (dump (ensure-directories-exist path) :normal))))))
+           (%dump (ensure-directories-exist path) :normal))))))
 
 (defun dump-executable (params)
   (if params
@@ -88,15 +88,17 @@ exec ros -- $0 "$@"
              (setf ros:*argv* (rest (ccl::command-line-arguments)))
              (ros:run cmds))
          :prepend-kernel t))
-      (format t "ros dump executable help~%")))
+      (format *error-output* "Usage: ros dump executable help~%")))
 
 (defvar *subcmds*
   '(("output" dump-output)
-    #+(or sbcl ccl)("executable" dump-executable)))
+    #+(or sbcl ccl)
+    ("executable" dump-executable)))
 
 (defun main (subcmd cmd &rest r)
   (cond ((and (equal subcmd "main") r)
          (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
            (if func
                (funcall func (rest r))
-               (format t "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))))
+               (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))
+        (t (format t "~{~a~%~}" (mapcar #'car *subcmds*)))))
