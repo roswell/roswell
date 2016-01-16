@@ -19,11 +19,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.sub.list)
 
 #-ros.sub.list
-(unless (find-package :net.html.parser)
-  (ql:quickload :cl-html-parse :silent t))
-
-
-#-ros.sub.list
 (defun list-impls (impl &key function params)
   (declare (ignorable params))
   (let ((dir (directory
