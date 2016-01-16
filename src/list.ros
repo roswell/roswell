@@ -14,7 +14,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 #-ros.sub.list
 (defpackage :ros.sub.list
-  (:use :cl))
+  (:use :cl :ros.util))
 
 (in-package :ros.sub.list)
 
