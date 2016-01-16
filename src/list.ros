@@ -91,28 +91,12 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                 (dolist (v (funcall cmd))
                   (format t "~A~%" v)))))))))
 
-
-#-ros.sub.list
-(setf (get 'installed :doc) "List implementations that already installed"
-      (get 'dump :doc) "List dumped"
-      (get 'versions :doc) "List installable versions(experimental)")
-
 #-ros.sub.list
 (defun main (subcmd cmd &rest r)
   (declare (ignorable cmd))
-  (cond ((or (equal subcmd "help") (not r))
-         (format t "Usage: ~A ~A [type] [options]~2%~20ADescription~%"
-                 (ros:opt "argv0")
-                 (cond ((equal subcmd "help")
-                        (first r))
-                       ((not r)
-                        cmd))
-                 "Types:")
-         (do-external-symbols (i (find-package :ros.sub.list))
-           (format t "~(~20A~)~A~&" i (or (get i :doc) ""))))
-        (t (let* ((*read-eval*)
-                  (symbol (read-from-string (first r)))
-                  (f (ignore-errors (fdefinition symbol))))
-             (if (and f (eql :external (nth-value 1 (find-symbol (string symbol)))))
-                 (apply f (rest r))
-                 (format t "not suppported type for list~%"))))))
+  (let* ((*read-eval*)
+         (symbol (read-from-string (first r)))
+         (f (ignore-errors (fdefinition symbol))))
+    (if (and f (eql :external (nth-value 1 (find-symbol (string symbol)))))
+        (apply f (rest r))
+        (format *error-output* "not suppported type for list~%"))))
