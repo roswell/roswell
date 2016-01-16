@@ -3,18 +3,20 @@
 #|Create new ros script
 exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
+
+#-ros.util
+(load (make-pathname
+       :defaults *load-pathname*
+       :name "util" :type "lisp"))
+
 (when (cl:find-package :ros.sub.init)
   (push :ros.sub.init *features*))
+
 #-ros.sub.init
 (defpackage :ros.sub.init
   (:use :cl))
-(in-package :ros.sub.init)
 
-#-ros.sub.init
-(ros:quicklisp :environment nil)
-#-ros.sub.init ;; sbcl-bin is old enough not to include UIOP on some OSes like Mac OS X.
-(unless (find-package :uiop)
-  (ql:quickload :uiop :silent t))
+(in-package :ros.sub.init)
 
 #-ros.sub.init
 (defun main (subcmd cmd &optional name &rest r)
