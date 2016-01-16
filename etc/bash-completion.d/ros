@@ -20,6 +20,7 @@ _ros()
 
     subcommands="install config setup version help run wait use list init emacs dump delete build"
     subcommands_caserule=$(echo $subcommands | sed 's/ /|/g')
+
     case $prev in
         # initially thought emacs has some default shell complete, but it turned out it doesnt
         # therefore the default completion suffices
@@ -37,18 +38,27 @@ _ros()
         build)
             # complete filenames
             COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) ) ;;
-        install|config|help|use|list|dump|delete)
-            # espects these commands output completion candidates to the stdout
-            # quality:
-            # WORKS WELL: install (impl names)
-            # NOT: config, help, use, list, dump, delete
-            COMPREPLY=( $(compgen -W "$(ros $prev 2> /dev/null)" -- ${cur}) ) ;;
         *)
             if [[ $cur == [+-]* ]]
             then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
-            else
+            elif [[ $prev == ros ]]
+            then
                 COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+            else
+                # espects these commands output completion candidates to the stdout
+                # see src/CONTRIBUTING.md
+                case $prev in
+                    config|dump|install|delete|list|installed|versions|use)
+                        if [ -z $cur ]
+                        then
+                            COMPREPLY=( $(compgen -W "$($COMP_LINE 2> /dev/null)" -- ${cur}) )
+                        else
+                            partial=$(echo $COMP_LINE | cut -d' ' -f-$(($COMP_CWORD)))
+                            COMPREPLY=( $(compgen -W "$($partial 2> /dev/null)" -- ${cur}) )
+                        fi
+                        ;;
+                esac
             fi
             ;;
     esac
@@ -56,3 +66,4 @@ _ros()
 }
 
 complete -F _ros ros
+# trap _ros DEBUG
