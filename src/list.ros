@@ -60,14 +60,15 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                     :params r)))))
   (export
    (defun dump (&rest params)
-     (format t "preserved dump lists for ~A:~%" (impl (first params)))
-     (format t "~{  ~A~%~}" (mapcar #'pathname-name
-                                    (directory (make-pathname :name :wild
-                                                              :type "core"
-                                                              :defaults
-                                                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                                                       (uname-m) (uname) (impl (first params)))
-                                                                               (homedir))))))))
+     (format *error-output* "List of dumped images for ~A:~%" (impl (first params)))
+     (format t "~{~A~%~}"
+             (mapcar #'pathname-name
+                     (directory (make-pathname :name :wild
+                                               :type "core"
+                                               :defaults
+                                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                                        (uname-m) (uname) (impl (first params)))
+                                                                (homedir))))))))
   (export
    (defun versions (&rest params)
      (format *error-output* "installable version for impl ~A:~%" (first params))
