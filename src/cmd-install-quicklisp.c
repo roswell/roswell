@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "cmd-install.h"
 #include "opt.h"
 

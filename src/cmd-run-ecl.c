@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {

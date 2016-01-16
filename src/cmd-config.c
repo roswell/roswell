@@ -1,11 +1,16 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 int cmd_config(int argc,char **argv,struct sub_command* cmd) {
   char* home=configdir();
   char* path=cat(home,"config",NULL);
   if(argc==1) {
-    printf("local:\n");
+    fprintf(stderr,"local:\n");
     print_opts(global_opt);
+    fprintf(stderr,"\nPossible subcommands:\n");
+    fflush(stderr);
+    printf("set\n");
+    printf("show\n");
   }else {
     struct opts* opt=global_opt;
     struct opts** opts=&opt;
@@ -18,7 +23,7 @@ int cmd_config(int argc,char **argv,struct sub_command* cmd) {
         set_opt(opts, argv[2],(char*)argv[3],0);
         save_opts(path,opt);
       }else if (strcmp(argv[1],"show")==0) {
-        printf("%s\n",_get_opt(opt,argv[2]));
+        fprintf(stderr,"%s\n",_get_opt(opt,argv[2]));
       }else {
         set_opt(opts, argv[1],(char*)argv[2],0);
         save_opts(path,opt);

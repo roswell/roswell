@@ -14,14 +14,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 #-ros.sub.list
 (defpackage :ros.sub.list
-  (:use :cl))
+  (:use :cl :ros.util))
 
 (in-package :ros.sub.list)
-
-#-ros.sub.list
-(unless (find-package :net.html.parser)
-  (ql:quickload :cl-html-parse :silent t))
-
 
 #-ros.sub.list
 (defun list-impls (impl &key function params)
@@ -42,8 +37,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
    (defun installed (&rest r)
      (cond
        ((null r)
-        (format t "detail shown by~%~A list installed [implementation]~2%implementations:~%"
-                (ros:opt "argv0"))
+        (format *error-output* "Installed implementations:~%")
+        (finish-output *error-output*)
         (let ((dir (directory
                     (make-pathname
                      :defaults (merge-pathnames
@@ -51,7 +46,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                 (homedir))
                      :name :wild
                      :type :wild))))
-          (mapc (lambda (d) (format t "    ~A~%" (first (last (pathname-directory d)))))  dir)))
+          (mapc (lambda (d) (format t "~A~%" (first (last (pathname-directory d)))))  dir))
+        (finish-output *standard-output*)
+        (format *error-output* "~%For further details on each implementation: ros list installed [implementation]~2%"))
        ((probe-file
          (merge-pathnames
           (format nil "impls/~A/~A/~A" (uname-m) (uname) (first r))
@@ -63,58 +60,49 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                     :params r)))))
   (export
    (defun dump (&rest params)
-     (format t "preserved dump lists for ~A:~%" (impl (first params)))
-     (format t "~{  ~A~%~}" (mapcar #'pathname-name
-                                    (directory (make-pathname :name :wild
-                                                              :type "core"
-                                                              :defaults
-                                                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                                                       (uname-m) (uname) (impl (first params)))
-                                                                               (homedir))))))))
+     (format *error-output* "List of dumped images for ~A:~%" (impl (first params)))
+     (format t "~{~A~%~}"
+             (mapcar #'pathname-name
+                     (directory (make-pathname :name :wild
+                                               :type "core"
+                                               :defaults
+                                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                                        (uname-m) (uname) (impl (first params)))
+                                                                (homedir))))))))
   (export
    (defun versions (&rest params)
-     (format *error-output* "installable version for impl ~A:~%" (first params))
-     (let ((path (and (first params)
-                      (or (probe-file (make-pathname
-                                       :defaults *load-pathname*
-                                       :type "lisp"
-                                       :name (format nil "install-~A" (first params))))
-                          (probe-file (make-pathname
-                                       :defaults *load-pathname*
-                                       :type "lisp"
-                                       :name (format nil "install+~A" (first params))))))))
-       (when path
-         (ros:script nil (make-pathname :defaults *load-pathname* :name "install" :type "lisp"))
-         (load path)
-         (let ((cmd (read-from-string "ros.install::*list-cmd*")))
-           (and (boundp cmd)
-                (symbol-value cmd)
-                (setq cmd (cdr (assoc (first params) (symbol-value cmd) :test 'equal)))
-                (dolist (v (funcall cmd))
-                  (format t "~A~%" v)))))))))
-
-
-#-ros.sub.list
-(setf (get 'installed :doc) "List implementations that already installed"
-      (get 'dump :doc) "List dumped"
-      (get 'versions :doc) "List installable versions(experimental)")
+     ;; Experimental?
+     (destructuring-bind (impl version) (parse-version-spec (impl (first params)))
+       (format *error-output* "Installable versions for ~A:~%" impl)
+       (let ((path (or (probe-file (make-pathname
+                                    :defaults *load-pathname*
+                                    :type "lisp"
+                                    :name (format nil "install-~A" impl)))
+                       (probe-file (make-pathname
+                                    :defaults *load-pathname*
+                                    :type "lisp"
+                                    :name (format nil "install+~A" impl))))))
+         (when path
+           (ros:script nil (make-pathname :defaults *load-pathname* :name "install" :type "lisp"))
+           (load path)
+           (let ((cmd (read-from-string "ros.install::*list-cmd*")))
+             (and (boundp cmd)
+                  (symbol-value cmd)
+                  (setq cmd (cdr (assoc (first params) (symbol-value cmd) :test 'equal)))
+                  (dolist (v (funcall cmd))
+                    (format t "~A~%" v))))))))))
 
 #-ros.sub.list
 (defun main (subcmd cmd &rest r)
   (declare (ignorable cmd))
-  (cond ((or (equal subcmd "help") (not r))
-         (format t "Usage: ~A ~A [type] [options]~2%~20ADescription~%"
-                 (ros:opt "argv0")
-                 (cond ((equal subcmd "help")
-                        (first r))
-                       ((not r)
-                        cmd))
-                 "Types:")
-         (do-external-symbols (i (find-package :ros.sub.list))
-           (format t "~(~20A~)~A~&" i (or (get i :doc) ""))))
-        (t (let* ((*read-eval*)
-                  (symbol (read-from-string (first r)))
-                  (f (ignore-errors (fdefinition symbol))))
-             (if (and f (eql :external (nth-value 1 (find-symbol (string symbol)))))
-                 (apply f (rest r))
-                 (format t "not suppported type for list~%"))))))
+  (if (null r)
+      (progn
+        (format *error-output* "Possible subcommands:~%")
+        (finish-output *error-output*)
+        (format t "installed~%dump~%versions~%"))
+      (let* ((*read-eval*)
+             (symbol (read-from-string (first r)))
+             (f (ignore-errors (fdefinition symbol))))
+        (if (and f (eql :external (nth-value 1 (find-symbol (string symbol)))))
+            (apply f (rest r))
+            (format *error-output* "not suppported type for list~%")))))

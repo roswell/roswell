@@ -9,20 +9,32 @@ ros\-list \- list the materials installed by roswell
 .PP
 \f[B]ros list\f[] shows the list of the materials installed by roswell.
 .TP
-.B installed
-List implementations that already installed
+.B installed [IMPL]
+List the implementations that have been already installed.
+Optionally
 .RS
 .RE
+.PP
+providing IMPL shows the installed versions of the implementation.
 .TP
-.B dump
-List dumped
+.B dump [IMPL]
+List the internal dumped images that are compatible with IMPL.
+When
 .RS
 .RE
+.PP
+IMPL is ommited, it is defaulted to the current lisp implementation in
+use.
+Images are in \f[C]$ROSWELL_INSTALL_DIR/impl/.../dump/\f[].
 .TP
-.B versions
-List installable versions(experimental)
+.B versions [IMPL]
+List the installable versions for IMPL.
+When IMPL is ommited, it is
 .RS
 .RE
+.PP
+defaulted to the current lisp implementation in use.
+This feature is experimental.
 .SH SEE ALSO
 .PP
 \f[I]sbcl\f[](1) \f[I]ros\f[](1)

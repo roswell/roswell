@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 #include "cmd-install.h"
 static int in_resume=0;

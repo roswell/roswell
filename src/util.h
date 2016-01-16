@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #ifndef __UTIL_H__
 #define __UTIL_H__
 #ifdef HAVE_CONFIG_H

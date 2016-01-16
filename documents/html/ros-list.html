@@ -32,16 +32,23 @@
 <h1>Description</h1>
 <p><strong>ros list</strong> shows the list of the materials installed by roswell.</p>
 <dl>
-<dt>installed</dt>
-<dd><p>List implementations that already installed</p>
-</dd>
-<dt>dump</dt>
-<dd><p>List dumped</p>
-</dd>
-<dt>versions</dt>
-<dd><p>List installable versions(experimental)</p>
+<dt>installed [IMPL]</dt>
+<dd>List the implementations that have been already installed. Optionally
 </dd>
 </dl>
+<p>providing IMPL shows the installed versions of the implementation.</p>
+<dl>
+<dt>dump [IMPL]</dt>
+<dd>List the internal dumped images that are compatible with IMPL. When
+</dd>
+</dl>
+<p>IMPL is ommited, it is defaulted to the current lisp implementation in use. Images are in <code>$ROSWELL_INSTALL_DIR/impl/.../dump/</code>.</p>
+<dl>
+<dt>versions [IMPL]</dt>
+<dd>List the installable versions for IMPL. When IMPL is ommited, it is
+</dd>
+</dl>
+<p>defaulted to the current lisp implementation in use. This feature is experimental.</p>
 <!-- # options -->
 
 <!--  -->

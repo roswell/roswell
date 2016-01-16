@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 static int count=0;

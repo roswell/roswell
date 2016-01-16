@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "util.h"
 
 int delete_file(char* pathspec) {

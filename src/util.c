@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "util.h"
 
 void cond_printf(int v,char* format,...) {
