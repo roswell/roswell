@@ -9,12 +9,19 @@ MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md ros
 # separated by semicolons
 PANDOC_AUTHORS="Roswell Project Team"
 
-if MANUAL_GENERATE
+if MANUAL_INSTALL
 man1_MANS = $(MDS:%.md=man/%.1)
+endif
+
+if MANUAL_GENERATE
 man/%.1: %.md
 	which pandoc
 	pandoc -f markdown_phpextra+backtick_code_blocks -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
 	-V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
+
+CLEANFILES = $(man1_MANS) $(HTMLS)
+else
+CLEANFILES = $(HTMLS)
 endif
 
 if HTML_GENERATE
@@ -33,4 +40,3 @@ html/%.css: %.scss
 endif
 
 all: $(man1_MANS) $(HTMLS)
-CLEANFILES = $(man1_MANS) $(HTMLS)
