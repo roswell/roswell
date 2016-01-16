@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 void free_opts(struct opts* opt) {

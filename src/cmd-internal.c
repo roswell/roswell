@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 LVal internal_commands=(LVal)NULL;

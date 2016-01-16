@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 int extract(const char *filename, int do_extract, int flags,const char* outputpath) {

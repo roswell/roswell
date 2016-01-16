@@ -1,3 +1,4 @@
+/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 int cmd_config(int argc,char **argv,struct sub_command* cmd) {
