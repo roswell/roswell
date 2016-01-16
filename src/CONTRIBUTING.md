@@ -1,5 +1,19 @@
 
 
+# modifying the scripts
+
+The changes you make to the source will not be effective immediately, until you issue a command `ros setup`.
+
+The reason behind this is as follows:
+
+Some of the roswell scripts under this directory contains feature directives such as `#-ros.sub.use` .
+
+These scripts are compiled and dumped into the roswell binary in .roswell/impls/.../dump/roswell.core .
+During the development, 
+the core may reload the source, but due to #-ros.sub.X, some definitions is not going to be redefined.
+
+This inconveniency is sacrificed for the faster startup of roswell.
+By skipping certain function definitions, rereading such files become faster.
 
 # output style convention
 
