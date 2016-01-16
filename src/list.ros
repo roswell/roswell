@@ -71,25 +71,26 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                                                 (homedir))))))))
   (export
    (defun versions (&rest params)
-     (format *error-output* "installable version for impl ~A:~%" (first params))
-     (let ((path (and (first params)
-                      (or (probe-file (make-pathname
-                                       :defaults *load-pathname*
-                                       :type "lisp"
-                                       :name (format nil "install-~A" (first params))))
-                          (probe-file (make-pathname
-                                       :defaults *load-pathname*
-                                       :type "lisp"
-                                       :name (format nil "install+~A" (first params))))))))
-       (when path
-         (ros:script nil (make-pathname :defaults *load-pathname* :name "install" :type "lisp"))
-         (load path)
-         (let ((cmd (read-from-string "ros.install::*list-cmd*")))
-           (and (boundp cmd)
-                (symbol-value cmd)
-                (setq cmd (cdr (assoc (first params) (symbol-value cmd) :test 'equal)))
-                (dolist (v (funcall cmd))
-                  (format t "~A~%" v)))))))))
+     ;; Experimental?
+     (destructuring-bind (impl version) (parse-version-spec (impl (first params)))
+       (format *error-output* "Installable versions for ~A:~%" impl)
+       (let ((path (or (probe-file (make-pathname
+                                    :defaults *load-pathname*
+                                    :type "lisp"
+                                    :name (format nil "install-~A" impl)))
+                       (probe-file (make-pathname
+                                    :defaults *load-pathname*
+                                    :type "lisp"
+                                    :name (format nil "install+~A" impl))))))
+         (when path
+           (ros:script nil (make-pathname :defaults *load-pathname* :name "install" :type "lisp"))
+           (load path)
+           (let ((cmd (read-from-string "ros.install::*list-cmd*")))
+             (and (boundp cmd)
+                  (symbol-value cmd)
+                  (setq cmd (cdr (assoc (first params) (symbol-value cmd) :test 'equal)))
+                  (dolist (v (funcall cmd))
+                    (format t "~A~%" v))))))))))
 
 #-ros.sub.list
 (defun main (subcmd cmd &rest r)

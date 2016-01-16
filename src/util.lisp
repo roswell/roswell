@@ -4,7 +4,7 @@
 
 (defpackage :ros.util
   (:use :cl)
-  (:export :uname :uname-m :homedir :config :use :impl))
+  (:export :uname :uname-m :homedir :config :use :impl :parse-version-spec))
 
 (in-package :ros.util)
 
