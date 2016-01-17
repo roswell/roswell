@@ -1,6 +1,20 @@
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 roslisp_DATA = $(wildcard *.lisp) $(wildcard *.ros)
+bashcompletiondir = /etc/bash_completion.d
+zshcompletiondir  = /etc/zsh/functions
+
+if BASH_COMPLETION_INSTALL
+bashcompletion_DATA = ../scripts/completions/ros
+../scripts/completions/ros: ../scripts/completions/ros-completion.bash
+	cp $< $@
+endif
+
+if ZSH_COMPLETION_INSTALL
+zshcompletion_DATA = ../scripts/completions/_ros
+../scripts/completions/_ros: ../scripts/completions/ros-completion.zsh
+	cp $< $@
+endif
 
 gend.h: FORCE
 	printf "#define ROS_COMPILE_ENVIRONMENT \"%s\"\n" "`$(CC) --version|head -n 1`" > $@.tmp
@@ -26,7 +40,7 @@ ros_SOURCES = ros.c opt.c download.c archive.c html.c \
 	cmd-setup.c
 noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 
-CLEANFILES = gend.h
+CLEANFILES = gend.h $(bashcompletion_DATA) $(zshcompletion_DATA)
 
 FORCE:
 .PHONY: FORCE

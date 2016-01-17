@@ -80,4 +80,22 @@ AC_ARG_ENABLE([html_generation],
    esac],[])
 AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
+AC_ARG_ENABLE([bash_completion_install],
+  [AC_HELP_STRING([--enable-bash-completion-install],[install bash completion if enabled])],
+  [case "${enableval}" in
+    yes) bash_completion_install=true ;;
+    no)  bash_completion_install=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-bash-completion-install]) ;;
+   esac],[])
+AM_CONDITIONAL(BASH_COMPLETION_INSTALL,[test x$bash_completion_install = x"true"])
+
+AC_ARG_ENABLE([zsh_completion_install],
+  [AC_HELP_STRING([--enable-zsh-completion-install],[install zsh completion if enabled])],
+  [case "${enableval}" in
+    yes) zsh_completion_install=true ;;
+    no)  zsh_completion_install=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-zsh-completion-install]) ;;
+   esac],[])
+AM_CONDITIONAL(ZSH_COMPLETION_INSTALL,[test x$zsh_completion_install = x"true"])
+
 AC_OUTPUT
