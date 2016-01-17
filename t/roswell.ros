@@ -5,7 +5,7 @@ exec ros -- $0 "$@"
 |#
 (in-package :cl-user)
 (ros:quicklisp)
-(ql:quickload '(:prove :trivial-shell) :silent t)
+(ql:quickload '(:prove :uiop) :silent t)
 
 (defpackage t.roswell
   (:use :cl :prove))
@@ -14,8 +14,12 @@ exec ros -- $0 "$@"
 
 (defun ! (r &optional expected)
   (if expected
-      (is (string-trim (format nil " ~%") (trivial-shell:shell-command r)) expected)
-      (ok (multiple-value-list (trivial-shell:shell-command r)) r)))
+      (is (string-trim #.(format nil " ~%")
+                       (uiop:run-program r :output :string))
+          expected r)
+      (ok (ignore-errors
+            (or (uiop:run-program r) t))
+          r)))
 
 (setf *default-reporter* :list)
 (plan nil)
