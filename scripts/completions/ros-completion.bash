@@ -41,7 +41,7 @@ _ros()
             return 124
             # default completion
             ;;
-        build)
+        build|-l|--load|-S|--source-registry|--rc)
             # complete filenames
             COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) ) ;;
         *)
