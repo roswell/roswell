@@ -7,17 +7,16 @@
 
 _ros() 
 {
-    local cur prev opts
+    local cur prev opts sopts
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    opts="--help -w --wrap -m --image -L --lisp -l --load -S
-    --source-registry --load-system -p --package -sp --system-package -e
-    --eval --require -q --quit -r --restart -E --entry -i --init -ip
-    --print -iw --write -F --final -R --rc +R --no-rc -Q --quicklisp +Q
-    --no-quicklisp -v --verbose --quiet --test"
-
+    opts="--help --wrap --image --lisp --load --source-registry --load-system
+    --package --system-package --eval --require --quit --restart --entry --init
+    --print --write --final --rc --no-rc --quicklisp --no-quicklisp --verbose
+    --quiet --test"
+    sopts="-w -m -L -l -S -p -sp -e -q -r -E -i -ip -iw -F -R +R -Q +Q -v"
     subcommands="install config setup version help run wait use list init emacs dump delete build"
     subcommands_caserule=$(echo $subcommands | sed 's/ /|/g')
 
@@ -41,16 +40,27 @@ _ros()
             return 124
             # default completion
             ;;
-        build|-l|--load|-S|--source-registry|--rc)
+        build)
             # complete filenames
-            COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) ) ;;
+            _filedir 'ros'
+            ;;
+        -l|--load)
+            _filedir '@(lisp|lsp|l)'
+            ;;
+        -S|--source-registry)
+            # it should be multiple pathes which are separated by ':'
+            ;;
         *)
-            if [[ $cur == [+-]* ]]
+            if [[ $cur == --* ]]
             then
                 COMPREPLY=( $(compgen -W "${opts}" -- ${cur}) )
+            elif [[ $cur == [+-]* ]]
+            then
+                COMPREPLY=( $(compgen -W "${sopts}" -- ${cur}) )
             elif [[ $prev == ros ]]
             then
-                COMPREPLY=( $(compgen -W "${subcommands}" -- ${cur}) )
+                _filedir 'ros'
+                COMPREPLY+=( $(compgen -W "${subcommands}" -- ${cur}))
             else
                 # espects these commands output completion candidates to the stdout
                 # see src/CONTRIBUTING.md
