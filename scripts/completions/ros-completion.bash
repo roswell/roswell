@@ -31,6 +31,9 @@ _ros()
         -L|--lisp)
             COMPREPLY=( $(compgen -W "$(ros list installed 2> /dev/null)" -- ${cur}) )
             ;;
+        -m|--image)
+            COMPREPLY=( $(compgen -W "$(ros list dump 2> /dev/null)" -- ${cur}) )
+            ;;
         setup|version|init|run|emacs|wait)
             # these commands provide only the default completion
             # it takes no arguments and it does some real jobs
