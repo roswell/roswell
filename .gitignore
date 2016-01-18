@@ -22,6 +22,8 @@ depcomp
 config.log
 scripts/roswell*
 scripts/homebrew
+scripts/completions/ros
+scripts/completions/_ros
 *~
 #*
 /documents/.sass-cache/
