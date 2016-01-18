@@ -34,9 +34,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
        (mapc (lambda (d)
                (let ((impl (first (last (pathname-directory d)))))
                  (format t "~A~%" impl)
-                 (finish-output)
-                 (ros:roswell `("list" "installed" ,impl) *error-output*)
-                 (finish-output *error-output*)))
+                 (ros:roswell `("list" "installed" ,impl))))
              dir)))
     (t
      (dolist (impl/version r)
