@@ -19,19 +19,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.sub.list)
 
 #-ros.sub.list
-(defun list-impls (impl &key function params)
-  (declare (ignorable params))
-  (let ((dir (directory
-              (make-pathname
-               :defaults (merge-pathnames
-                          (format nil "impls/~A/~A/~A/" (uname-m) (uname) impl)
-                          (homedir))
-               :name :wild
-               :type :wild))))
-    (mapcar function
-            dir)))
-
-#-ros.sub.list
 (progn
   (export
    (defun installed (&rest r)
@@ -46,18 +33,35 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                 (homedir))
                      :name :wild
                      :type :wild))))
-          (mapc (lambda (d) (format t "~A~%" (first (last (pathname-directory d)))))  dir))
-        (finish-output *standard-output*)
-        (format *error-output* "~%For further details on each implementation: ros list installed [implementation]~2%"))
-       ((probe-file
-         (merge-pathnames
-          (format nil "impls/~A/~A/~A" (uname-m) (uname) (first r))
-          (homedir)))
-        (list-impls (first r)
-                    :function (lambda (d) (format t "~A/~A~%"
-                                                  (first r)
-                                                  (first (last (pathname-directory d)))))
-                    :params r)))))
+          (mapc (lambda (d)
+                  (let ((impl (first (last (pathname-directory d)))))
+                    (format t "~A~%" impl)
+                    (finish-output)
+                    (ros:roswell `("list" "installed" ,impl) *error-output*)
+                    (finish-output *error-output*)))
+                dir)))
+       (t
+        (dolist (impl/version r)
+          (destructuring-bind (impl version) (parse-version-spec impl/version)
+            (if version
+                (if (probe-file (merge-pathnames
+                                 (format nil "impls/~A/~A/~A/~A" (uname-m) (uname) impl version)
+                                 (homedir)))
+                    (format t "~a~%" impl/version)
+                    (format *error-output* "~a is not installed~%" impl/version))
+                (progn
+                  (format *error-output* "~%Installed versions of ~a:~%" impl)
+                  (finish-output *error-output*)
+                  (let ((dir (directory
+                              (make-pathname
+                               :defaults (merge-pathnames
+                                          (format nil "impls/~A/~A/~A/" (uname-m) (uname) impl)
+                                          (homedir))
+                               :name :wild
+                               :type :wild))))
+                    (mapc (lambda (d)
+                            (format t "~{~A~^/~}~%" (last (pathname-directory d) 2)))
+                          dir))))))))))
   (export
    (defun dump (&rest params)
      (format *error-output* "List of dumped images for ~A:~%" (impl (first params)))
