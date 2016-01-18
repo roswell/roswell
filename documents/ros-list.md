@@ -13,7 +13,7 @@ ros-list - list the materials installed by roswell
 
 **ros list** shows the list of the materials installed by roswell.
 
-installed [IMPL]
+installed [ [ IMPL | IMPL/VERSION ]...]
 
   : List the implementations that have been already installed. Optionally
   providing IMPL shows the installed versions of the implementation.

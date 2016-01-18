@@ -28,6 +28,12 @@ _ros()
         #     # in /usr/share/bash-completion/bash_completion
         #     _command_offset $((COMP_CWORD-1))
         #     ;;
+        -L|--lisp)
+            COMPREPLY=( $(compgen -W "$(ros list installed 2> /dev/null)" -- ${cur}) )
+            ;;
+        -m|--image)
+            COMPREPLY=( $(compgen -W "$(ros list dump 2> /dev/null)" -- ${cur}) )
+            ;;
         setup|version|init|run|emacs|wait)
             # these commands provide only the default completion
             # it takes no arguments and it does some real jobs
@@ -35,7 +41,7 @@ _ros()
             return 124
             # default completion
             ;;
-        build)
+        build|-l|--load|-S|--source-registry|--rc)
             # complete filenames
             COMPREPLY=( $(compgen -A file -o filenames -- ${cur}) ) ;;
         *)
@@ -57,6 +63,9 @@ _ros()
                             partial=$(echo $COMP_LINE | cut -d' ' -f-$(($COMP_CWORD)))
                             COMPREPLY=( $(compgen -W "$($partial 2> /dev/null)" -- ${cur}) )
                         fi
+                        ;;
+                    *)
+                        return 124
                         ;;
                 esac
             fi
