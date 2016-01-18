@@ -1,6 +1,13 @@
 #-asdf
 (require :asdf)
 
+#|
+
+This file is a stub.
+Roswell will be asdf-loadable in the future
+
+|#
+
 (in-package :cl-user)
 
 (defpackage roswell-asd
