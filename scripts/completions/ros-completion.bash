@@ -64,6 +64,9 @@ _ros()
                             COMPREPLY=( $(compgen -W "$($partial 2> /dev/null)" -- ${cur}) )
                         fi
                         ;;
+                    *)
+                        return 124
+                        ;;
                 esac
             fi
             ;;
