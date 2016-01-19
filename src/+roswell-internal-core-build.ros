@@ -1,8 +1,12 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
-exec ros -Q -L sbcl-bin -- $0 "$@"
+exec ros -Q -L sbcl-bin -m roswell -- $0 "$@"
 |#
+
+#-ros.util
+(ros:util)
+
 (defun main (&rest argv)
   (declare (ignorable argv))
   #-win32(ignore-errors
@@ -13,8 +17,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
              (sb-posix:setuid (parse-integer uid))))
   (ros:roswell `("-L sbcl-bin --eval "
                  #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
-                 ,@(loop :for i :in (directory (make-pathname :defaults *load-pathname* :name :wild))
+                 ,@(loop :for i :in (append (directory (make-pathname :defaults *load-pathname* :name :wild))
+                                            (directory (merge-pathnames "cmds/*.ros" (ros.util:homedir))))
                       :collect (format nil "--load ~A " i))
                  " dump output -f roswell")
                t nil))
-
