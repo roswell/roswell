@@ -26,7 +26,7 @@ have the latest asdf, and this file has a workaround for this.
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-           :ignore-shebang :ensure-using-downloaded-asdf
+           :ignore-shebang :ensure-using-downloaded-asdf :util
            :roswell :exec :setenv :unsetenv :with-lock-held :version)
   (:documentation "Roswell backend."))
 
@@ -139,6 +139,11 @@ have the latest asdf, and this file has a workaround for this.
             (set symbol (cons (merge-pathnames "local-projects/" (opt "homedir"))
                               (symbol-value symbol)))))
         t))))
+
+(defun util ()
+  (cl:load (make-pathname
+         :defaults #.*load-pathname*
+         :name "util" :type "lisp")))
 
 (defun lock-path (name)
   (unless (stringp name)
