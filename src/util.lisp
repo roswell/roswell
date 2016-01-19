@@ -27,6 +27,16 @@
   (ros:roswell (list "config" b a) :string t)
   a)
 
+(defun version ()
+  (ros:roswell '("roswell-internal-use" "version") :string t))
+
+(defvar *version*
+  `(
+    :roswell ,(version)
+    :lisp ,(lisp-implementation-type)
+    :version ,(lisp-implementation-version)
+    :date ,(get-universal-time)))
+
 (defun parse-version-spec (string)
   "Parse the given version specification string and returns a list of strings (LISP VERSION).
 If it does not contain a version substring, VERSION becomes a null.
