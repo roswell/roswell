@@ -13,8 +13,11 @@
 (unless (find-package :net.html.parser)
   #+quicklisp(ql:quickload :cl-html-parse :silent t))
 
+#-ros.util
+(ros:util)
+
 (defpackage :ros.install
-  (:use :cl)
+  (:use :cl :ros.util)
   (:export :*build-hook*))
 
 (in-package :ros.install)
@@ -53,17 +56,6 @@
 (defun line-number (stream)
   (format (count-line-stream-base stream) "~&~6d " (count-line-stream-count stream)))
 
-(defun uname ()
-  (ros:roswell '("roswell-internal-use uname") :string t))
-
-(defun uname-m ()
-  (ros:roswell '("roswell-internal-use uname -m") :string t))
-
-(defun which (cmd)
-  (let ((result (ros:roswell (list "roswell-internal-use which" cmd) :string t)))
-    (unless (zerop (length result))
-      result)))
-
 (defun date (&optional (universal-time (get-universal-time)))
   (multiple-value-bind (second minute hour date month year day daylight time-zone)
       (decode-universal-time universal-time)
@@ -83,9 +75,6 @@
 
 (defun save-opt (item val)
   (ros:roswell `("config" "set" ,item ,val)))
-
-(defun homedir ()
-  (make-pathname :defaults (ros:opt "homedir")))
 
 ;;end here from util/opts.c
 
@@ -143,14 +132,6 @@
       (setup-signal-handler p)
       (with-open-file (o p :direction :probe :if-does-not-exist :create))))
   (cons t argv))
-
-(defun download (uri file &key proxy)
-  (declare (ignorable proxy))
-  (ros:roswell `("roswell-internal-use" "download" ,uri ,file) :interactive nil))
-
-(defun expand (archive dest &key verbose)
-  (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
-               (or #-win32 :interactive nil) nil))
 
 (defun setup (argv)
   (save-opt "default.lisp" (getf argv :target))

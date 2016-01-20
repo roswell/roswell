@@ -4,7 +4,8 @@
 
 (defpackage :ros.util
   (:use :cl)
-  (:export :uname :uname-m :homedir :config :use :impl :parse-version-spec))
+  (:export :uname :uname-m :homedir :config :use :impl :which
+           :parse-version-spec :download :expand))
 
 (in-package :ros.util)
 
@@ -19,6 +20,19 @@
 
 (defun impl (imp)
   (ros:roswell `("roswell-internal-use" "impl" ,(or imp "")) :string t))
+
+(defun which (cmd)
+  (let ((result (ros:roswell (list "roswell-internal-use which" cmd) :string t)))
+    (unless (zerop (length result))
+      result)))
+
+(defun download (uri file &key proxy)
+  (declare (ignorable proxy))
+  (ros:roswell `("roswell-internal-use" "download" ,uri ,file) :interactive nil))
+
+(defun expand (archive dest &key verbose)
+  (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
+               (or #-win32 :interactive nil) nil))
 
 (defun config (c)
   (ros:roswell (list "config show" c) :string t))
