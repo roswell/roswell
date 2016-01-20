@@ -8,9 +8,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
   (push :ros.sub.delete *features*))
 
 #-ros.util
-(load (make-pathname
-       :defaults *load-pathname*
-       :name "util" :type "lisp"))
+(ros:util)
 
 #-ros.sub.delete
 (defpackage :ros.sub.delete

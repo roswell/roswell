@@ -5,9 +5,7 @@ exec ros -- $0 "$@"
 |#
 
 #-ros.util
-(load (make-pathname
-       :defaults *load-pathname*
-       :name "util" :type "lisp"))
+(ros:util)
 
 (defpackage :ros.dump
   (:use :cl :ros.util))

@@ -7,9 +7,7 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 (cl:in-package :cl-user)
 
 #-ros.util
-(load (make-pathname
-       :defaults *load-pathname*
-       :name "util" :type "lisp"))
+(ros:util)
 
 (when (cl:find-package :ros.use)
   (push :ros.use *features*))
