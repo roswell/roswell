@@ -19,7 +19,7 @@ _ros()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    local -A opts=(
+    declare -a opts=(
         [long]="--help --wrap --image --lisp --load --source-registry --load-system
                 --package --system-package --eval --require --quit --restart --entry --init
                 --print --write --final --rc --no-rc --quicklisp --no-quicklisp --verbose
@@ -64,7 +64,7 @@ _ros()
                     ;;
                 build)
                     # complete filenames
-                    _filedir 'ros'
+                    COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ) $(compgen -d -S / -- ${cur}) )
                     ;;
                 config|dump|install|delete|list|installed|versions|use)
                     if [ -z $cur ]
@@ -93,7 +93,7 @@ _ros()
             COMPREPLY=( $(compgen -W "$(ros list dump $lisp 2> /dev/null)" -- ${cur}) )
             ;;
         -l|--load)
-            _filedir '@(lisp|lsp|l)'
+            COMPREPLY=( $(compgen -f -- ${cur} | grep -e '.*\.lisp' -e '.*\.l' -e '.*\.lsp' ) $(compgen -d -S / -- ${cur}) )
             ;;
         -S|--source-registry)
             # it should be multiple pathes which are separated by ':'
@@ -103,10 +103,11 @@ _ros()
             then
                 COMPREPLY=( $(compgen -W "${opts[*]}" -- ${cur}) )
             elif [[ $cur == [+-]* ]]
+            COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ) $(compgen -d -S / -- ${cur}) )
             then
                 COMPREPLY=( $(compgen -W "${opts[short]}" -- ${cur}) )
             else
-                _filedir 'ros'
+                COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ) $(compgen -d -S / -- ${cur}) )
                 COMPREPLY+=( $(compgen -W "${subcommands}" -- ${cur}))
             fi
             ;;
