@@ -12,28 +12,30 @@ __contains_word () {
     done
 }
 
+__roswell_nospace() {
+    type compopt &>/dev/null && compopt -o nospace
+}
+
 _ros() 
 {
-    local cur prev opts i lisp
+    local cur prev opts i lisp opts_take_two opts_long opts_short
     COMPREPLY=()
     cur="${COMP_WORDS[COMP_CWORD]}"
     prev="${COMP_WORDS[COMP_CWORD-1]}"
 
-    declare -a opts=(
-        [long]="--help --wrap --image --lisp --load --source-registry --load-system
+    opts_take_two="-w --wrap -m --image -L --lisp -l --load -S --source-registry -s --system
+                   --load-system -p --package -sp --system-package -e --eval --require -r --restart
+                   -E --entry -i --init -ip --print --write -iw -F --final"
+    opts_long="--help --wrap --image --lisp --load --source-registry --load-system
                 --package --system-package --eval --require --quit --restart --entry --init
                 --print --write --final --rc --no-rc --quicklisp --no-quicklisp --verbose
                 --quiet --test"
-        [short]="-w -m -L -l -S -p -sp -e -q -r -E -i -ip -iw -F -R +R -Q +Q -v"
-        [take_two]="-w --wrap -m --image -L --lisp -l --load -S --source-registry -s --system
-                   --load-system -p --package -sp --system-package -e --eval --require -r --restart
-                   -E --entry -i --init -ip --print --write -iw -F --final"
-    )
+    opts_short="-w -m -L -l -S -p -sp -e -q -r -E -i -ip -iw -F -R +R -Q +Q -v"
     subcommands="install config setup version help run wait use list init emacs dump delete build"
     subcommands_caserule=$(echo $subcommands | sed 's/ /|/g')
 
     for ((i=1; i < COMP_CWORD; i++)); do
-        if __contains_word "${COMP_WORDS[i]}" ${opts[take_two]}
+        if __contains_word "${COMP_WORDS[i]}" ${opts_take_two}
         then
             case "${COMP_WORDS[i]}" in
                 -L|--lisp)
@@ -41,7 +43,7 @@ _ros()
                     ;;
             esac
             (( i++ ))
-        elif __contains_word "${COMP_WORDS[i]}" ${opts[*]}
+        elif __contains_word "${COMP_WORDS[i]}" ${opts_short} ${opts_long}
         then
             :
         elif ((i = COMP_CWORD - 1));
@@ -101,13 +103,23 @@ _ros()
         *)
             if [[ $cur == --* ]]
             then
-                COMPREPLY=( $(compgen -W "${opts[*]}" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "${opts_long}" -- ${cur}) )
             elif [[ $cur == [+-]* ]]
             then
-                COMPREPLY=( $(compgen -W "${opts[short]}" -- ${cur}) )
+                COMPREPLY=( $(compgen -W "${opts_short}" -- ${cur}) )
             else
-                COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ) $(compgen -d -S / -- ${cur}) )
+                local LASTCHAR=' '
+                COMPREPLY=( $(compgen -o plusdirs -f -X '!*.ros' -- ${cur} ))
+                if [ ${#COMPREPLY[@]} = 1 ]; then
+                    [ -d "$COMPREPLY" ] && LASTCHAR=/
+                    COMPREPLY=$(printf %q%s "$COMPREPLY" "$LASTCHAR")
+                else
+                    for ((i=0; i < ${#COMPREPLY[@]}; i++)); do
+                        [ -d "${COMPREPLY[$i]}" ] && COMPREPLY[$i]=${COMPREPLY[$i]}/
+                    done
+                fi
                 COMPREPLY+=( $(compgen -W "${subcommands}" -- ${cur}))
+                [[ $COMPREPLY = */ ]] && __roswell_nospace
             fi
             ;;
     esac
