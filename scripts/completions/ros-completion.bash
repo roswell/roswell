@@ -103,7 +103,6 @@ _ros()
             then
                 COMPREPLY=( $(compgen -W "${opts[*]}" -- ${cur}) )
             elif [[ $cur == [+-]* ]]
-            COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ) $(compgen -d -S / -- ${cur}) )
             then
                 COMPREPLY=( $(compgen -W "${opts[short]}" -- ${cur}) )
             else
