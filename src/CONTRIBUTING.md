@@ -15,6 +15,21 @@ the core may reload the source, but due to #-ros.sub.X, some definitions is not 
 This inconveniency is sacrificed for the faster startup of roswell.
 By skipping certain function definitions, rereading such files become faster.
 
+# code structure
+
+Control flow of running C-level subcommands (does not require lisp: e.g. `ros install sbcl`)
+
+* ros.c
+* other C source files
+
+Control flow of running lisp-level subcommands (requires lisp)
+
+* ros.c
+* cmd-run-[IMPL].c
+* init.lisp: function `run` --- The entry of all roswell commands
+* init.lisp: other functions such as `load`, `system-package`
+* XXX.ros --- subcommand implementations
+
 # output style convention
 
 When the number of arguments were insufficient and more subcommands are
