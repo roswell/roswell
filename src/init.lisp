@@ -349,6 +349,7 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun run (list)
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
+  (setf *random-state* (make-random-state t))
   (loop :for elt :in list
      :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
 
