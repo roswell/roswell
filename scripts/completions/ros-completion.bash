@@ -1,7 +1,4 @@
-#!/bin/bash
-
-# currently just a stub.
-# would it be possible to generate the completion from the roswell scripts by themselves?
+# bash completion for Roswell                              -*- shell-script -*-
 
 # https://www.debian-administration.org/article/317/An_introduction_to_bash_completion_part_2
 
@@ -10,6 +7,20 @@ __contains_word () {
     for w in "$@"; do
         [[ $w = "$word" ]] && return
     done
+}
+
+__roswell_file () {
+    COMPREPLY=( $(compgen -o plusdirs -f -X $1 -- ${cur} ))
+    if [ ${#COMPREPLY[@]} = 1 ]; then
+        if [ -d "$COMPREPLY" ]; then
+            COMPREPLY=$(printf %q/ "$COMPREPLY")
+        fi
+    else
+        for ((i=0; i < ${#COMPREPLY[@]}; i++)); do
+            [ -d "${COMPREPLY[$i]}" ] && COMPREPLY[$i]=${COMPREPLY[$i]}/
+        done
+    fi
+    [[ $COMPREPLY = */ ]] && __roswell_nospace
 }
 
 __roswell_nospace() {
@@ -66,7 +77,7 @@ _ros()
                     ;;
                 build)
                     # complete filenames
-                    COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ) $(compgen -d -S / -- ${cur}) )
+                    COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ))
                     ;;
                 config|dump|install|delete|list|installed|versions|use)
                     if [ -z $cur ]
@@ -95,7 +106,7 @@ _ros()
             COMPREPLY=( $(compgen -W "$(ros list dump $lisp 2> /dev/null)" -- ${cur}) )
             ;;
         -l|--load)
-            COMPREPLY=( $(compgen -f -- ${cur} | grep -e '.*\.lisp' -e '.*\.l' -e '.*\.lsp' ) $(compgen -d -S / -- ${cur}) )
+            __roswell_file '!*.+(lisp|lsp|l)'
             ;;
         -S|--source-registry)
             # it should be multiple pathes which are separated by ':'
@@ -108,18 +119,8 @@ _ros()
             then
                 COMPREPLY=( $(compgen -W "${opts_short}" -- ${cur}) )
             else
-                local LASTCHAR=' '
-                COMPREPLY=( $(compgen -o plusdirs -f -X '!*.ros' -- ${cur} ))
-                if [ ${#COMPREPLY[@]} = 1 ]; then
-                    [ -d "$COMPREPLY" ] && LASTCHAR=/
-                    COMPREPLY=$(printf %q%s "$COMPREPLY" "$LASTCHAR")
-                else
-                    for ((i=0; i < ${#COMPREPLY[@]}; i++)); do
-                        [ -d "${COMPREPLY[$i]}" ] && COMPREPLY[$i]=${COMPREPLY[$i]}/
-                    done
-                fi
+                __roswell_file '!*.ros'
                 COMPREPLY+=( $(compgen -W "${subcommands}" -- ${cur}))
-                [[ $COMPREPLY = */ ]] && __roswell_nospace
             fi
             ;;
     esac
