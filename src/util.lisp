@@ -35,11 +35,11 @@
                (or #-win32 :interactive nil) nil))
 
 (defun config (c)
-  (ros:roswell (list "config show" c) :string t))
+  (ros:roswell (list "config" "show" c) :string t))
 
-(defun (setf config) (a b)
-  (ros:roswell (list "config" b a) :string t)
-  a)
+(defun (setf config) (val item)
+  (ros:roswell (list "config" "set" item val) :string t)
+  val)
 
 (defun version ()
   (ros:roswell '("roswell-internal-use" "version") :string t))
