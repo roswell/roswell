@@ -3,23 +3,26 @@
 #|manage asdf version
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
+
+#-ros.util
+(ros:util)
+
 (unless (find-package :ros.install)
-  (load (make-pathname
-	 :defaults *load-pathname*
-	 :name "install" :type "lisp")))
+  (ros:util "install%"))
 
-(unless (find-package :ros.script.asdf.3659540511)
-  (defpackage :ros.script.asdf.3659540511
-    (:use :cl :ros.install))
-  (eval (read-from-string "(defparameter ros.script.asdf.3659540511::*load-time* t)")))
+(if (find-package :ros.sub.asdf)
+    (push :ros.sub.asdf *features*)
+    (defpackage :ros.sub.asdf
+      (:use :cl :ros.install)))
 
-(in-package :ros.script.asdf.3659540511)
+(in-package :ros.sub.asdf)
 
-(when *load-time*
-  (defparameter *load-time* nil)
+#-ros.sub.asdf
+(progn
   (ros:quicklisp :environment nil)
+
   (ql:quickload :cl-html-parse :silent t)
-  
+
   (defun asdf-get-version ()
     (let (result
 	  (file (merge-pathnames "tmp/asdf.html" (ros.install::homedir))))
@@ -41,7 +44,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
   (defvar *subcommands*
     '(("install" . install)
-      ("use" . use)
+      ("use" . asdf-use)
       ("list" . list-)))
 
   (defun install (&optional version &rest r)
@@ -69,23 +72,24 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 		 (ensure-directories-exist
 		  (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version)
 				   (ros.install::homedir))))
-		(ros:roswell `("config" "set" "asdf.version" ,version)))
+                (setf (config "asdf.version") version))
 	      (error "build fail asdf ~A~%" 'version))))))
 
-  (defun use (version &rest r)
+  (defun asdf-use (version &rest r)
     (declare (ignorable r))
     (if (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version)
 				     (ros.install::homedir)))
-	(ros:roswell `("config" "set" "asdf.version" ,version))
-	(error "~A not installed" version)))
+        (setf (config "asdf.version") version)
+        (error "~A not installed" version)))
 
   (defun list- (&rest r)
     (declare (ignorable r))
     (dolist (i (asdf-get-version))
       (format t "~A~%" i)))
+
   (defun main (? asdf &optional subcmd &rest argv)
     (declare (ignorable ? asdf argv))
     (if subcmd
-	(let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
-	  (apply fun argv))
-	(format t "secret.~A~%" *package*))))
+        (let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
+          (apply fun argv))
+        (format t "secret.~A~%" *package*))))
