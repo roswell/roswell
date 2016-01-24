@@ -54,7 +54,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew --env;brew config; fi
-  - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew doctor; fi  
+  - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
