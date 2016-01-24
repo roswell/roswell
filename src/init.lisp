@@ -140,10 +140,10 @@ have the latest asdf, and this file has a workaround for this.
                               (symbol-value symbol)))))
         t))))
 
-(defun util ()
+(defun util (&optional (name "util"))
   (cl:load (make-pathname
          :defaults #.*load-pathname*
-         :name "util" :type "lisp")))
+         :name name :type "lisp")))
 
 (defun lock-path (name)
   (unless (stringp name)
@@ -363,4 +363,3 @@ have the latest asdf, and this file has a workaround for this.
 
 (unless (find :ros.init *features*)
   (push :ros.init *features*))
-
