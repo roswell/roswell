@@ -5,7 +5,7 @@
 (defpackage :ros.util
   (:use :cl)
   (:export :uname :uname-m :homedir :config :use :impl :which
-           :parse-version-spec :download :expand))
+           :parse-version-spec :download :expand :sh))
 
 (in-package :ros.util)
 
@@ -40,6 +40,15 @@
 (defun (setf config) (val item)
   (ros:roswell (list "config" "set" item val) :string t)
   val)
+
+(defun sh ()
+  (or #+win32
+      (unless (ros:getenv "MSYSCON")
+	(format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
+			  (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+						   #+x86-64 "64" #-x86-64 "32") (homedir)))))
+      (which "bash")
+      "sh"))
 
 (defun version ()
   (ros:roswell '("roswell-internal-use" "version") :string t))
