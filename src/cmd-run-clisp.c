@@ -88,8 +88,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     arg[paramc++]=q("-on-error");
     arg[paramc++]=q("exit");
   }
-  if (!(program || script))
-    arg[paramc++]=q("-repl");
+  arg[paramc++]=q("-repl");
   if(!simple) {
     arg[paramc++]=s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL);
     if(quicklisp) {

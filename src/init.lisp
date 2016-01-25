@@ -110,9 +110,7 @@ have the latest asdf, and this file has a workaround for this.
         #+sbcl(funcall (read-from-string "sb-ext:run-program")
                        (first args) (mapcar #'princ-to-string (rest args))
                        :output out)
-        #+clisp(let ((asdf:*verbose-out* out))
-                 (format t "run-program:~s~%" (list (first args) :arguments (mapcar #'princ-to-string (rest args))))
-                 (asdf:run-shell-command (format nil "~{~A~^ ~}" args))))))
+        #+clisp(ext:run-shell-command (format nil "~{~A~^ ~}" args :output output)))))
 
 (defun exec (args)
   #+(and unix sbcl)
@@ -240,9 +238,9 @@ have the latest asdf, and this file has a workaround for this.
 	      (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
     (setf *downloaded-asdf-loaded* t)))
 
-(let ((symbol (read-from-string "asdf::*user-cache*"))
+(let ((symbol (ignore-errors(read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (second (assoc "impl" (ros-opts) :test 'equal)))))
-  (when (boundp symbol)
+  (when (and symbol (boundp symbol))
     (cond ((listp (symbol-value symbol))
            (set symbol (append (symbol-value symbol) (list impl))))
           ((pathnamep (symbol-value symbol))
@@ -265,12 +263,14 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun system (cmd args &rest rest)
   (declare (ignorable cmd rest))
+  #-asdf
+  (error "Can't find asdf to load system")
   (loop for ar = args then (subseq ar (1+ p))
      for p = (position #\, ar)
      for arg = (if p (subseq ar 0 p) ar)
      do (if (find :quicklisp *features*)
             (funcall (read-from-string "ql:quickload") arg :silent t)
-            (asdf:operate 'asdf:load-op arg))
+            #+asdf(asdf:operate 'asdf:load-op arg))
      while p))
 
 (setf (fdefinition 'load-system)
