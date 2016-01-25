@@ -13,7 +13,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (if (find-package :ros.sub.asdf)
     (push :ros.sub.asdf *features*)
     (defpackage :ros.sub.asdf
-      (:use :cl :ros.install)))
+      (:use :cl :ros.util)))
 
 (in-package :ros.sub.asdf)
 
