@@ -73,9 +73,6 @@
         (setf (second found) val)
         (push (list item val) *opts*))))
 
-(defun save-opt (item val)
-  (ros:roswell `("config" "set" ,item ,val)))
-
 ;;end here from util/opts.c
 
 (defvar *install-cmds* nil)
@@ -134,8 +131,8 @@
   (cons t argv))
 
 (defun setup (argv)
-  (save-opt "default.lisp" (getf argv :target))
-  (save-opt (format nil "~A.version" (getf argv :target)) (get-opt "as"))
+  (setf (config "default.lisp") (getf argv :target)
+        (config (format nil "~A.version" (getf argv :target))) (get-opt "as"))
   (cons t argv))
 
 (defun install-script (from)
