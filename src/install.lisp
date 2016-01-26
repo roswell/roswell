@@ -4,9 +4,7 @@
 exec ros -Q +R -L sbcl-bin -- $0 "$@"
 |#
 
-(load (make-pathname
-       :defaults *load-pathname*
-       :name "install%"))
+(ros:util "install%")
 
 (in-package :ros.install)
 
