@@ -23,7 +23,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (ros:roswell `("-L sbcl-bin --eval "
                  #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
                  ,@(loop :for i :in (append (directory (make-pathname :defaults *load-pathname* :name :wild))
-                                            (directory (merge-pathnames "cmds/*.ros" (ros.util:homedir))))
+                                            (directory (merge-pathnames "cmds/*.ros" (homedir))))
                       :collect (format nil "--load ~A " i))
                  " dump output -f roswell")
                t nil))
