@@ -22,7 +22,7 @@
   (ros:roswell `("roswell-internal-use" "impl" ,(or imp "")) :string t))
 
 (defun which (cmd)
-  (let ((result (ros:roswell (list "roswell-internal-use which" cmd) :string t)))
+  (let ((result (ros:roswell (list "roswell-internal-use" "which" cmd) :string t)))
     (unless (zerop (length result))
       result)))
 
