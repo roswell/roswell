@@ -1,6 +1,4 @@
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
-roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
-roslisp_DATA = $(wildcard *.lisp) $(wildcard *.ros) ../scripts/completions/ros-completion.bash ../scripts/completions/ros-completion.zsh
 bashcompletiondir = /etc/bash_completion.d
 zshcompletiondir  = /etc/zsh/functions
 

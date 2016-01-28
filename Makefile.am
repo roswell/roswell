@@ -1,4 +1,4 @@
-SUBDIRS = src documents
+SUBDIRS = lisp src documents
 debian:
 	ros scripts/debian.ros
 prepare-release:
