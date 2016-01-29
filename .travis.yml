@@ -54,6 +54,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew --env;brew config; fi
+  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew tap homebrew/dupes; fi #work arround https://github.com/Linuxbrew/linuxbrew/issues/742#issuecomment-176486281
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
@@ -99,9 +100,9 @@ after_success:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
   - if [ "$METHOD" = "documents" ]; then git branch;git status; fi
-  - if [ "$METHOD" = "documents" ]; then git checkout master;git add -u;git add documents/man/* documents/html/*; fi
+  - if [ "$METHOD" = "documents" ]; then git checkout $TRAVIS_BRANCH;git add -u;git add documents/man/* documents/html/*; fi
   - if [ "$METHOD" = "documents" ]; then git commit -m "[ci skip] documents update"; fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
-       git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" master > /dev/null 2>&1; fi
+       git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
   - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
   - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
