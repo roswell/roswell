@@ -27,8 +27,8 @@ build_script:
   - if "%METHOD%"=="cross" mkdir roswell\documents
   - if "%METHOD%"=="cross" mkdir roswell\documents\html
   - if "%METHOD%"=="cross" copy src\ros.exe roswell
-  - if "%METHOD%"=="cross" copy src\*.lisp roswell\lisp
-  - if "%METHOD%"=="cross" copy src\*.ros  roswell\lisp
+  - if "%METHOD%"=="cross" copy lisp\*.lisp roswell\lisp
+  - if "%METHOD%"=="cross" copy lisp\*.ros  roswell\lisp
   - if "%METHOD%"=="cross" copy documents\html\*.html roswell\documents\html
   - if "%METHOD%"=="cross" copy scripts\chm.ros roswell\documents
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
