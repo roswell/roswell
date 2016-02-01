@@ -6,7 +6,7 @@
 [![Quicklisp](http://quickdocs.org/badge/roswell.svg)](http://quickdocs.org/roswell/)
 
 Roswell started as a command line tool to install and manage Common Lisp implementations damn easily.
-It now has evolved into a fullstack environment for common lisp web development, testing, code sharing and app distribution which might push the CL community to a whole new level.
+It now has evolved into a fullstack environment for Common Lisp development, testing, code sharing and app distribution which might push the CL community to a whole new level.
 
 This software is still beta. Basic interfaces are fixed, we believe it works well on Unix-like platforms like Linux, Mac OS X and FreeBSD, but some parts are not implemented, not stable on other OSes yet.
 
