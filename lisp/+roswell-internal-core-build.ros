@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
-exec ros -Q -L sbcl-bin -- $0 "$@"
+exec ros -Q -L sbcl-bin -m roswell -- $0 "$@"
 |#
 
 #-ros.util
@@ -12,6 +12,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :sub.internal-core-build)
 
+#-ros.sub.internal-core-build
 (defun main (&rest argv)
   (declare (ignorable argv))
   #-win32(ignore-errors
@@ -20,10 +21,20 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
              (sb-posix:setgid (parse-integer gid)))
            (let ((uid (sb-posix:getenv "SUDO_UID")))
              (sb-posix:setuid (parse-integer uid))))
-  (ros:roswell `("-L sbcl-bin --eval "
-                 #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
-                 ,@(loop :for i :in (append (directory (make-pathname :defaults *load-pathname* :name :wild))
-                                            (directory (merge-pathnames "cmds/*.ros" (homedir))))
-                      :collect (format nil "--load ~A " i))
-                 " dump output -f roswell")
-               t nil))
+  (let ((dir (append (directory (make-pathname :defaults *load-pathname* :name :wild))
+                     (directory (merge-pathnames "cmds/*.ros" (homedir))))))
+    (unless (ignore-errors
+              (when (> (parse-integer (ros.util:version :date))
+                       (loop for i in dir
+                          maximize (file-write-date i)))
+                (format *error-output* "up to date. stop~%")
+                t))
+      (ros:roswell `("-L" "sbcl-bin" "--eval"
+                          #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
+                          ,@(loop :for i :in dir
+                               :collect "--load"
+                          :collect (format nil "~A" i))
+                          " dump output -f roswell")
+                   t nil))))
+
+(push :ros.sub.internal-core-build *features*)

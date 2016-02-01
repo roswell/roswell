@@ -12,7 +12,7 @@ int cmd_uname (int argc,char **argv,struct sub_command* cmd) {
   if(argc==1) {
     printf("%s\n",uname());
   }else if(argc==2) {
-    if(strcmp(argv[1],"-m")==0)
+    if(strncmp(argv[1],"-m",2)==0)
       printf("%s\n",uname_m());
   }
   return 0;
@@ -42,7 +42,29 @@ int cmd_impl (int argc,char **argv,struct sub_command* cmd) {
 }
 
 int cmd_internal_version (int argc,char **argv,struct sub_command* cmd) {
-  printf("%s\n",PACKAGE_VERSION);
+  if(argc==1) {
+    printf("%s\n",PACKAGE_VERSION);
+  }else if (argc==2) {
+    char* ev=NULL;
+    if(strncmp(argv[1],"date",4)==0) {
+      ev= "date";
+    }else if (strncmp(argv[1],"lisp",4)==0) {
+      ev= "version";
+    }else if (strncmp(argv[1],"dump",4)==0) {
+      ev= "roswell";
+    }
+    if(ev) {
+      char *cmd=cat("(progn(format t\"~A~%\"(or(ignore-errors(getf(symbol-value(read-from-string \"ros.util::*version*\")) :",ev,
+                    "))(ros:quit 1))) (ros:quit 0))",NULL);
+      {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      {char* p[]={"-L","sbcl-bin"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      {char* p[]={"-m","roswell"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      {char* p[]={"--eval",cmd};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      {char* p[]={"run"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      s(cmd);
+    }else
+      return 1;
+  }
   return 0;
 }
 

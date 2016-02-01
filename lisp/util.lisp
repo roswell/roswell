@@ -5,7 +5,7 @@
 (defpackage :ros.util
   (:use :cl)
   (:export :uname :uname-m :homedir :config :use :impl :which
-           :parse-version-spec :download :expand :sh))
+           :parse-version-spec :download :expand :sh :version))
 
 (in-package :ros.util)
 
@@ -50,8 +50,9 @@
       (which "bash")
       "sh"))
 
-(defun version ()
-  (ros:roswell '("roswell-internal-use" "version") :string t))
+(defun version (&optional (opt ""))
+  (ros:roswell (list "roswell-internal-use" "version"
+                     (string-downcase opt)) :string t))
 
 (defvar *version*
   `(
