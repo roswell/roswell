@@ -35,7 +35,7 @@
                    (ros:with-lock-held (url)))
                  (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
                          (probe-file file)))))
-	    '(pushnew :quicklisp-support-https *features*)
+            '(pushnew :quicklisp-support-https *features*)
             '(in-package #:ql-dist)
             '(let ((*error-output* (make-broadcast-stream)))
               (when (or (loop for k in '(:win32 :windows :mswindows)

@@ -5,7 +5,7 @@
     (download "https://common-lisp.net/project/armedbear/releases/" file)
     (with-output-to-string (*standard-output*)
       (funcall (intern (string :quickload) :ql)
-	       :plump))
+               :plump))
     (let* ((the-newest "current-release.tgz")
            (tgz-list
             (sort

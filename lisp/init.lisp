@@ -235,7 +235,7 @@ have the latest asdf, and this file has a workaround for this.
     (cl:load
      (merge-pathnames
       (format nil "lisp/~A/asdf.lisp"
-	      (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
+              (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
     (setf *downloaded-asdf-loaded* t)))
 
 (let ((symbol (ignore-errors(read-from-string "asdf::*user-cache*")))
