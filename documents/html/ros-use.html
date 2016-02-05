@@ -22,7 +22,15 @@
 <h1>synopsis</h1>
 <p><strong>ros [options] use</strong> impl[/version]</p>
 <p>impl : The name of an implementation which is already installed. New implementations can be downloaded by <em><a href="ros-install.html">ros-install</a></em>(1). The list of installed implementations is available in <em><a href="ros-list.html">ros-list</a></em>(1).</p>
-<p>version: : The version specifier. The string representation of the version (e.g. <major>.<minor>) depends on each implementation and roswell generally follows the representation used by the implementation.</p>
+<p>version: : The version specifier. The string representation of the version (e.g. <major>.<minor>) depends on each implementation and roswell generally follows the representation used by the implementation. In addition, <em>a special version name &quot;system&quot;</em> tells roswell to use the implementation that is installed in your system, which should be in PATH.</p>
+<h1>example</h1>
+<p>ros use sbcl : use the latest SBCL among several versions of SBCLs installed by <em><a href="ros-install.html">ros-install</a></em>. This is compiled from the source, which may take some time to install but allows SLIME to jump to the implementation source code.</p>
+<p>ros use sbcl-bin : use the latest stable SBCL binary downloaded from vendor's website. Roswell uses this by default. <code>sbcl-bin</code> tends to be an older version compared to <code>sbcl</code>, but surely newer than your <em>apt-get</em> installed counterpart!</p>
+<p>ros use sbcl/1.3.1 : use the compiled SBCL 1.3.1.</p>
+<p>ros use sbcl-bin/1.3.1 : use the prebuilt SBCL 1.3.1.</p>
+<p>ros use sbcl/system : use the SBCL available in the PATH.</p>
+<p>ros use ccl : use the CCL compiled from the source. Same set of version specifiers as for SBCL can be applied.</p>
+<p>Roswell also supports <em>abcl</em>, <em>acl</em>, <em>clisp</em>, <em>cmu</em> and <em>ecl</em>.</p>
 <!-- # subcommands -->
 
 
@@ -31,8 +39,6 @@
 <!--   : description. end with a period. -->
 
 
-<h1>description</h1>
-<p><code>ros use</code> sets the default implementation used by roswell. It is by default <code>sbcl-bin</code>, which is a stable and well-tested version of sbcl.</p>
 <!-- # options -->
 
 <!--  -->

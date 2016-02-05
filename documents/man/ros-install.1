@@ -12,14 +12,15 @@ a name specifying a lisp implementation/version, or a quicklisp system.
 .RE
 .SH Installing a Lisp Implementation
 .PP
-When the \f[C]name\f[] matches to one of the supported implementations
-of roswell, it fetch and download the implementation.
-It is not automatically set as the default implementation to use.
-For setting the default lisp implementation, use \f[I]ros\-use(1)\f[].
+When the \f[C]name\f[] matches to one of the supported implementations,
+it fetches, downloads and installs it to one of the internal directory
+managed by roswell (~/.roswell, or \f[C]ROSWELL_INSTALL_DIR\f[]).
+In order to use the installed implementation, you have to run
+\f[I]ros\-use(1)\f[].
 .PP
-For example, the following command download the latest sbcl binary from
+For example, the following command downloads the latest sbcl binary from
 sbcl.com.
-Note that this may be different freom the default binary installed by
+Note that this may be different from the default binary installed by
 roswell, called \f[C]sbcl\-bin\f[].
 \f[C]sbcl\-bin\f[] is a stable and well\-tested version of the sbcl
 binary which is supposed to be a little older than the latest sbcl.
@@ -51,9 +52,8 @@ sbcl\-bin
 \f[]
 .fi
 .PP
-The name can be a name of the implementation, or a version of the
-implementation prepended with the name separated by a slash (/).
-The ones ending with \f[C]\-bin\f[] ususally do not have these variants.
+The name can be optionally followed by a slash \f[C]/\f[] and a version
+of the implementation.
 .IP
 .nf
 \f[C]
@@ -88,8 +88,8 @@ After compiling and loading the system, it funcalls
 function is set during the compilation/load.
 .PP
 When the system comes with a \f[B]roswell script\f[] created by
-\f[I]ros\-init\f[](1) in the subdirectory \f[C]roswell\f[], the scripts
-are installed into \f[B]ROSWELL_INSTALL_DIR/bin\f[].
+\f[I]ros\-init\f[](1) in the subdirectory \f[C]roswell\f[], they are
+installed into \f[B]ROSWELL_INSTALL_DIR/bin\f[].
 Setting the path to this directory makes those scripts available from
 the shell command line.
 .IP

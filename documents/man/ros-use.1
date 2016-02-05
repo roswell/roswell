@@ -15,11 +15,34 @@ version: : The version specifier.
 The string representation of the version (e.g.
 .) depends on each implementation and roswell generally follows the
 representation used by the implementation.
-.SH description
+In addition, \f[I]a special version name "system"\f[] tells roswell to
+use the implementation that is installed in your system, which should be
+in PATH.
+.SH example
 .PP
-\f[C]ros\ use\f[] sets the default implementation used by roswell.
-It is by default \f[C]sbcl\-bin\f[], which is a stable and well\-tested
-version of sbcl.
+ros use sbcl : use the latest SBCL among several versions of SBCLs
+installed by \f[I]ros\-install\f[].
+This is compiled from the source, which may take some time to install
+but allows SLIME to jump to the implementation source code.
+.PP
+ros use sbcl\-bin : use the latest stable SBCL binary downloaded from
+vendor\[aq]s website.
+Roswell uses this by default.
+\f[C]sbcl\-bin\f[] tends to be an older version compared to
+\f[C]sbcl\f[], but surely newer than your \f[I]apt\-get\f[] installed
+counterpart!
+.PP
+ros use sbcl/1.3.1 : use the compiled SBCL 1.3.1.
+.PP
+ros use sbcl\-bin/1.3.1 : use the prebuilt SBCL 1.3.1.
+.PP
+ros use sbcl/system : use the SBCL available in the PATH.
+.PP
+ros use ccl : use the CCL compiled from the source.
+Same set of version specifiers as for SBCL can be applied.
+.PP
+Roswell also supports \f[I]abcl\f[], \f[I]acl\f[], \f[I]clisp\f[],
+\f[I]cmu\f[] and \f[I]ecl\f[].
 .SH SEE ALSO
 .PP
 \f[I]sbcl\f[](1), \f[I]ros\f[](1), \f[I]ros\-install\f[](1),

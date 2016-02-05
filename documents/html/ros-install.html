@@ -30,8 +30,8 @@
 </dd>
 </dl>
 <h1>Installing a Lisp Implementation</h1>
-<p>When the <code>name</code> matches to one of the supported implementations of roswell, it fetch and download the implementation. It is not automatically set as the default implementation to use. For setting the default lisp implementation, use <em>ros-use(1)</em>.</p>
-<p>For example, the following command download the latest sbcl binary from sbcl.com. Note that this may be different freom the default binary installed by roswell, called <code>sbcl-bin</code>. <code>sbcl-bin</code> is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.</p>
+<p>When the <code>name</code> matches to one of the supported implementations, it fetches, downloads and installs it to one of the internal directory managed by roswell (~/.roswell, or <code>ROSWELL_INSTALL_DIR</code>). In order to use the installed implementation, you have to run <em>ros-use(1)</em>.</p>
+<p>For example, the following command downloads the latest sbcl binary from sbcl.com. Note that this may be different from the default binary installed by roswell, called <code>sbcl-bin</code>. <code>sbcl-bin</code> is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.</p>
 <pre><code>$ ros install sbcl</code></pre>
 <p>When invoked without a name, it prints the list of installable implementations. (Not to be confused with <code>ros list installed</code>, which shows the implementations already installed.)</p>
 <pre><code>Usage: ros install impl [OPTIONS]
@@ -45,7 +45,7 @@ sbcl
 clisp
 ccl-bin
 sbcl-bin</code></pre>
-<p>The name can be a name of the implementation, or a version of the implementation prepended with the name separated by a slash (/). The ones ending with <code>-bin</code> ususally do not have these variants.</p>
+<p>The name can be optionally followed by a slash <code>/</code> and a version of the implementation.</p>
 <pre><code>$ ros install sbcl/1.2.14</code></pre>
 <p>There might be some <em>hidden</em> implementation that are not listed here --- they are in the alpha quality, but try the one you like or watch the website (https://github.com/roswell/roswell).</p>
 <pre><code>$ ros install ccl
@@ -62,7 +62,7 @@ $ ...</code></pre>
 <p>If the specified name does not match any of the implementations, roswell tries to find a quicklisp system of the given name.</p>
 <pre><code>$ ros install alexandria</code></pre>
 <p>After compiling and loading the system, it funcalls <code>ros:*build-hook*</code> special variable with no argument, if some function is set during the compilation/load.</p>
-<p>When the system comes with a <strong>roswell script</strong> created by <em><a href="ros-init.html">ros-init</a></em>(1) in the subdirectory <code>roswell</code>, the scripts are installed into <strong>ROSWELL_INSTALL_DIR/bin</strong>. Setting the path to this directory makes those scripts available from the shell command line.</p>
+<p>When the system comes with a <strong>roswell script</strong> created by <em><a href="ros-init.html">ros-init</a></em>(1) in the subdirectory <code>roswell</code>, they are installed into <strong>ROSWELL_INSTALL_DIR/bin</strong>. Setting the path to this directory makes those scripts available from the shell command line.</p>
 <pre><code>$ ros install qlot
 System &#39;qlot&#39; found. Loading the system..
 Processing build-hook..
