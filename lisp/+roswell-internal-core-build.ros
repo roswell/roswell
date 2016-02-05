@@ -29,7 +29,7 @@ exec ros -Q -L sbcl-bin -m roswell -- $0 "$@"
                           maximize (file-write-date i)))
                 (format *error-output* "up to date. stop~%")
                 t))
-      (ros:roswell `("-L" "sbcl-bin" "--eval"
+      (ros:roswell `("-L " "sbcl-bin " "--eval "
                           #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
                           ,@(loop :for i :in dir
                                :collect "--load"
