@@ -25,15 +25,21 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (progn
   (defun delete-dump (params)
     (declare (ignorable params))
-    (let ((path (make-pathname :name (second params)
-                               :type "core"
-                               :defaults
-                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                        (uname-m) (uname) (first params))
-                                                (homedir)))))
+    (let* ((impl (and (second params) (ros.util:parse-version-spec (second params))))
+           (name (first params))
+           path)
+      (let ((lisp (if (first impl) (first impl) (ros.util:config "default.lisp"))))
+        (setf impl (format nil "~A/~A" lisp
+                           (or (second impl) (ros.util:config (format nil "~A.version" lisp))))))
+      (setf path (make-pathname :name name
+                                :type "core"
+                                :defaults
+                                (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                         (uname-m) (uname) impl)
+                                                 (homedir))))
       (if (probe-file path)
           (delete-file path)
-          (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" (first params) (second params)))))
+          (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
 
   (defun main (subcmd cmd &rest r)
     (let* ((default (config "default.lisp"))
