@@ -5,12 +5,17 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/7jq0392ffqb4i3yn?svg=true)](https://ci.appveyor.com/project/snmsts/roswell-en89n)
 [![Quicklisp](http://quickdocs.org/badge/roswell.svg)](http://quickdocs.org/roswell/)
 
-Roswell started as a command line tool to install and manage Common Lisp implementations damn easily.
-It now has evolved into a fullstack environment for Common Lisp development, testing, code sharing and app distribution which might push the CL community to a whole new level.
+Roswell is a Lisp implementation installer/manager, launcher, and much more!
 
-This software is still beta. Basic interfaces are fixed, we believe it works well on Unix-like platforms like Linux, Mac OS X and FreeBSD, but some parts are not implemented, not stable on other OSes yet.
+Roswell started out as a command-line tool with the aim to make installing and managing Common Lisp implementations really simple and easy.
 
-Checkout [issues list](https://github.com/roswell/roswell/issues) if you have interest in what's lacking.
+Roswell has now evolved into a full-stack environment for Common Lisp development, and has many features that makes it easy to test, share, and distribute your Lisp applications.
+With Roswell, we aim to push the Common Lisp community to a whole new level of productivity.
+
+Roswell is still in beta. Despite this, the basic interfaces are stable and not likely to change. Roswell currently works well on Unix-like platforms such as Linux, Mac OS X and FreeBSD.
+Roswell also works on other operating systems, but currently some parts or features might be missing or unstable.
+
+Checkout [issues list](https://github.com/roswell/roswell/issues) if you are interested in what's lacking.
 
 ## Installation, Dependency & Usage
 
@@ -93,7 +98,7 @@ Options:
     SBCL 1.2.15
     $ ros use sbcl/1.2.3        # change the default implementation
 
-The list of supported implementation is growing further!
+The list of supported implementations continues to grow!
 
 ### Scripting with Roswell
 
