@@ -4,8 +4,9 @@
 
 (defpackage :ros.util
   (:use :cl)
+  (:shadow :list)
   (:export :uname :uname-m :homedir :config :use :impl :which
-           :parse-version-spec :download :expand :sh :version))
+           :parse-version-spec :download :expand :sh :version :chdir))
 
 (in-package :ros.util)
 
@@ -22,7 +23,7 @@
   (ros:roswell `("roswell-internal-use" "impl" ,(or imp "")) :string t))
 
 (defun which (cmd)
-  (let ((result (ros:roswell (list "roswell-internal-use" "which" cmd) :string t)))
+  (let ((result (ros:roswell `("roswell-internal-use" "which" ,cmd) :string t)))
     (unless (zerop (length result))
       result)))
 
@@ -35,11 +36,16 @@
                (or #-win32 :interactive nil) nil))
 
 (defun config (c)
-  (ros:roswell (list "config" "show" c) :string t))
+  (ros:roswell `("config" "show" ,c) :string t))
 
 (defun (setf config) (val item)
-  (ros:roswell (list "config" "set" item val) :string t)
+  (ros:roswell `("config" "set" ,item ,val) :string t)
   val)
+
+(defun chdir (dir &optional (verbose t))
+  (funcall (intern (string :chdir) :uiop/os) dir)
+  (when verbose
+    (format t "~&chdir ~A~%" dir)))
 
 (defun sh ()
   (or #+win32
@@ -51,8 +57,8 @@
       "sh"))
 
 (defun version (&optional (opt ""))
-  (ros:roswell (list "roswell-internal-use" "version"
-                     (string-downcase opt)) :string t))
+  (ros:roswell `("roswell-internal-use" "version"
+                   ,(string-downcase opt)) :string t))
 
 (defvar *version*
   `(
@@ -72,10 +78,10 @@ ccl-bin      -> (\"ccl-bin\" nil)
 "
   (let ((pos (position #\/ string)))
     (if pos
-        (list (subseq string 0 pos) (subseq string (1+ pos)))
+        `(,(subseq string 0 pos) ,(subseq string (1+ pos)))
         (if (digit-char-p (aref string 0))
-            (list nil string)
-            (list string nil)))))
+            `(nil ,string)
+            `(,string nil)))))
 
 (defun use (arg)
   "Parse the lisp version string (such as ccl-bin/1.11) and set it to the correct config slot(s)"
