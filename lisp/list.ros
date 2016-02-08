@@ -72,6 +72,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (defun versions (&rest params)
   ;; Experimental?
   (destructuring-bind (impl version) (parse-version-spec (impl (first params)))
+    (declare (ignore version))
     (format *error-output* "Installable versions for ~A:~%" impl)
     (let ((path (or (probe-file (make-pathname
                                  :defaults *load-pathname*
@@ -93,7 +94,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 #-ros.sub.list
 (defun main (subcmd cmd &rest r)
-  (declare (ignorable cmd))
+  (declare (ignorable subcmd cmd))
   (if (null r)
       (progn
         (format *error-output* "Possible subcommands:~%")

@@ -15,6 +15,7 @@ exec ros -- $0 "$@"
   #-quicklisp(require :uiop)
   #+quicklisp(ql:quickload :uiop :silent t))
 
+(mapc #'unintern '(dump-dir dump-output dump-executable main))
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
                            (uname-m) (uname) (ros:opt "impl"))

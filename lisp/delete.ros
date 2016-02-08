@@ -42,6 +42,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
           (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
 
   (defun main (subcmd cmd &rest r)
+    (declare (ignore cmd))
     (let* ((default (config "default.lisp"))
            (verstring (format nil "~A.version" default))
            (config (format nil "~A/~A" default (config verstring))))
