@@ -308,12 +308,12 @@ void setup_uid(int euid_or_uid) {
 
     if(euid_or_uid) {
       if(!(setegid(gid)==0 &&
-	   seteuid(uid)==0))
-	cond_printf(0,"Error setegid/seteuid \n");
+           seteuid(uid)==0))
+        cond_printf(0,"Error setegid/seteuid \n");
     }else {
       if(!(setgid(gid)==0 &&
-	   setuid(uid)==0))
-	cond_printf(0,"Error setgid/setuid \n");
+           setuid(uid)==0))
+        cond_printf(0,"Error setgid/setuid \n");
     }
   }
 #endif

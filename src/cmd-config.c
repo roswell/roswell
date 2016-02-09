@@ -23,7 +23,7 @@ int cmd_config(int argc,char **argv,struct sub_command* cmd) {
         set_opt(opts, argv[2],(char*)argv[3],0);
         save_opts(path,opt);
       }else if (strcmp(argv[1],"show")==0) {
-        fprintf(stderr,"%s\n",_get_opt(opt,argv[2]));
+        fprintf(stdout,"%s\n",_get_opt(opt,argv[2]));
       }else {
         set_opt(opts, argv[1],(char*)argv[2],0);
         save_opts(path,opt);

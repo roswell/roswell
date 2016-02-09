@@ -3,14 +3,14 @@
 
 extern char** argv_orig;
 
-#define CMD_SETUP_SYSTEM(sys,msg) {	\
-  fprintf(stderr,"%s",msg);		\
-    ret=System(sys);			\
-    s(sys);				\
-    if(ret) {				\
-      lock_apply("setup",1);		\
-      return ret;			\
-    }					\
+#define CMD_SETUP_SYSTEM(sys,msg) {\
+    fprintf(stderr,"%s",msg);      \
+    ret=System(sys);               \
+    s(sys);                        \
+    if(ret) {                      \
+      lock_apply("setup",1);       \
+      return ret;                  \
+    }                              \
   }
 
 int cmd_setup(int argc,char **argv,struct sub_command* cmd) {

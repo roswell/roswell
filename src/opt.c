@@ -52,18 +52,18 @@ struct opts* load_opts(const char* path) {
     cur->next=NULL;
     for(i=0,mode=0,last=0;i<1024&&buf[i]!='\0';++i) {
       if(buf[i]=='\t'||buf[i]=='\n') {
-	switch (mode++) {
-	case 0:
-	  cur->name=subseq(buf,last,i);
-	  break;
-	case 1:
-	  cur->type=buf[i-1]-'0';
-	  break;
-	case 2:
-	  cur->value=subseq(buf,last,i);
-	  break;
-	}
-	last=i+1;
+        switch (mode++) {
+        case 0:
+          cur->name=subseq(buf,last,i);
+          break;
+        case 1:
+          cur->type=buf[i-1]-'0';
+          break;
+        case 2:
+          cur->value=subseq(buf,last,i);
+          break;
+        }
+        last=i+1;
       }
     }
   }
