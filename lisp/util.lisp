@@ -4,8 +4,7 @@
 
 (defpackage :ros.util
   (:use :cl)
-  (:shadow :list)
-  (:export :uname :uname-m :homedir :config :use :impl :which
+  (:export :uname :uname-m :homedir :config :use :impl :which :list%
            :parse-version-spec :download :expand :sh :version :chdir))
 
 (in-package :ros.util)
@@ -41,6 +40,10 @@
 (defun (setf config) (val item)
   (ros:roswell `("config" "set" ,item ,val) :string t)
   val)
+
+(defun list% (&rest params)
+  (string-right-trim #.(format nil "~A" #\Newline)
+                     (ros:roswell `("list" ,@params) :string nil)))
 
 (defun chdir (dir &optional (verbose t))
   (funcall (intern (string :chdir) :uiop/os) dir)
