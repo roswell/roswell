@@ -12,6 +12,7 @@ env:
     - METHOD=test LISP=sbcl-bin
     - METHOD=valgrind XCFLAGS="-g -O0"
     - METHOD=brew
+    - METHOD=brew WORKARROUND=true
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
@@ -34,6 +35,8 @@ matrix:
       env: METHOD=documents
     - os: osx
       env: METHOD=valgrind XCFLAGS="-g -O0"
+    - os: osx
+      env: METHOD=brew WORKARROUND=true
 
 #branches:
 #  except:
@@ -54,7 +57,7 @@ before_install:
   - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew --env;brew config; fi
-  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew tap homebrew/dupes; fi #work arround https://github.com/Linuxbrew/linuxbrew/issues/742#issuecomment-176486281
+  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ] && [ $WORKARROUND = true ]; then brew tap homebrew/dupes; fi #work arround https://github.com/Linuxbrew/linuxbrew/issues/742#issuecomment-176486281
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
