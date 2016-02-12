@@ -24,7 +24,7 @@
     (download "https://common-lisp.net/project/ecl/files/" file)
     (with-output-to-string (*standard-output*)
       (funcall (intern (string :quickload) :ql)
-	       :plump))
+               :plump))
     (let* ((the-newest "current-release.tgz")
            (tgz-list
             (sort
@@ -127,8 +127,7 @@
     (let* ((src (get-opt "src"))
            (cmd (format nil "./configure '--prefix=~A'" (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-      (uiop/os:chdir src)
-      (format t "~&chdir ~A~%" src)
+      (ros.util:chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -143,8 +142,7 @@
     (let* ((src (namestring (get-opt "src")))
            (cmd (format nil "make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-      (uiop/os:chdir src)
-      (format t "~&chdir ~A~%" src)
+      (ros.util:chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -156,8 +154,7 @@
     (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
-    (uiop/os:chdir src)
-    (format t "~&chdir ~A~%" src)
+    (ros.util:chdir src)
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
@@ -169,8 +166,7 @@
 (defun ecl-clean (argv)
   (format t "~&Cleaning~%")
   (let ((src (get-opt "src")))
-    (uiop/os:chdir src)
-    (format t "~&chdir ~A~%" src)
+    (ros.util:chdir src nil)
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
