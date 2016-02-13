@@ -25,8 +25,7 @@
       (let* ((cmd (format nil "./configure '--prefix=~A'" 
                           (ensure-directories-exist(merge-pathnames (format nil "lib/~A/~A/~A/~A/" (uname-m) (uname) "ffcall" *ffcall-version*) (homedir)))))
              (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/os:chdir expand-dir)
-        (format t "~&chdir ~A~%" expand-dir)
+        (ros.util:chdir expand-dir)
         (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
     (format t "~&make~%")
     (with-open-file (out (ensure-directories-exist
