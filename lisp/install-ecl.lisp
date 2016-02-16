@@ -4,20 +4,6 @@
 (defvar *ecl-options*
   '())
 
-(defun parse-date (str)
-  (setq str (string-trim " " str)
-        str (substitute #\: #\- str)
-        str (substitute #\: #\space str))
-  (setq str (split-sequence:split-sequence #\: str))
-  (make-instance 'simple-date-time:date-time
-                 :day (parse-integer (first str))
-                 :month (simple-date-time::from-short-month-name (second str))
-                 :year (parse-integer (third str))
-                 :hour (parse-integer (fourth str))
-                 :minute (parse-integer (fifth str))
-                 :second 0))
-;;(parse-date "22-Aug-2015 18:19  ")
-
 (defun ecl-get-version ()
   (let ((file (merge-pathnames "tmp/ecl.html" (homedir))))
     (format *error-output* "Checking version to install....~%")

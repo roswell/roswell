@@ -141,3 +141,17 @@
              (ros:roswell `("build" ,from "-o" ,to) :interactive nil)
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
+
+(defun parse-date (str)
+  (setq str (string-trim " " str)
+        str (substitute #\: #\- str)
+        str (substitute #\: #\space str))
+  (setq str (split-sequence:split-sequence #\: str))
+  (make-instance 'simple-date-time:date-time
+                 :day (parse-integer (first str))
+                 :month (simple-date-time::from-short-month-name (second str))
+                 :year (parse-integer (third str))
+                 :hour (parse-integer (fourth str))
+                 :minute (parse-integer (fifth str))
+                 :second 0))
+;;(parse-date "22-Aug-2015 18:19  ")
