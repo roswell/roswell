@@ -34,7 +34,7 @@
           (format t "7zip already setup~%")
         (progn
           (format t "archive=~A extract ~A~%" archive *7za-archive*)
-          (ros.install::download *7za-archive* (ensure-directories-exist archive))
+          (download *7za-archive* (ensure-directories-exist archive))
           (unzip archive (ensure-directories-exist prefix)))))
   (cons t argv)))
 
