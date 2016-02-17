@@ -98,7 +98,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
       global_opt=*opts;
     }
     s(l),s(r);
-    return proccmd(argc-1,&(argv[1]),option,command);
+    return 1+proccmd(argc-1,&(argv[1]),option,command);
   }else {
     char* tmp[]={"help"};
     LVal p;
