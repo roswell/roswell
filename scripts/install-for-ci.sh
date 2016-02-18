@@ -185,6 +185,10 @@ case "$LISP" in
     ccl)
         LISP=ccl-bin
         ;;
+    ccl32)
+        LISP=ccl-bin
+        ros config set ccl.bit 32
+        ;;
     # 'sbcl-bin' is the default
     "")
         LISP=sbcl-bin
@@ -222,10 +226,6 @@ case "$LISP" in
         ;;
     sbcl-bin)
         ros use $LISP
-        ;;
-    ccl32)
-        ros install ccl-bin
-        ros config set ccl.bit 32
         ;;
     *)
         ros install $LISP
