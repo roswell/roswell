@@ -6,6 +6,7 @@ env:
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
+    - METHOD=ci LISP=ccl32
     - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - METHOD=debian
     - METHOD=documents
@@ -19,7 +20,6 @@ env:
     - METHOD=ci LISP=alisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl
-    - METHOD=ci LISP=ccl32
     - METHOD=ci LISP=cmucl
     - METHOD=ci LISP=sbcl-bin
 os:
