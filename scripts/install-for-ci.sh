@@ -187,6 +187,7 @@ case "$LISP" in
         ;;
     ccl32)
         LISP=ccl-bin
+        apt_unless_installed libc6-i386
         ros config set ccl.bit 32
         ;;
     # 'sbcl-bin' is the default
