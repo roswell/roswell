@@ -223,6 +223,10 @@ case "$LISP" in
     sbcl-bin)
         ros use $LISP
         ;;
+    ccl32)
+        ros install ccl-bin
+        ros config set ccl.bit 32
+        ;;
     *)
         ros install $LISP
         ros use $LISP
