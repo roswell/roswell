@@ -30,11 +30,11 @@ exec ros -Q -L sbcl-bin -m roswell -- $0 "$@"
                 (format *error-output* "up to date. stop~%")
                 t))
       (ros:roswell `("-L " "sbcl-bin " "--eval "
-                          #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
-                          ,@(loop :for i :in dir
-                               :collect "--load"
-                          :collect (format nil "~A" i))
-                          " dump output -f roswell")
+			   #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
+			   ,@(loop :for i :in dir
+				:collect "--load"
+				:collect (format nil "~A" i))
+			   " dump output -f roswell")
                    t nil))))
 
 (push :ros.sub.internal-core-build *features*)

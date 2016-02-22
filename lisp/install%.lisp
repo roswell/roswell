@@ -34,8 +34,8 @@
                :initform `((700 . line-number)(10 . #\.))
                :accessor count-line-stream-print-char)
    (count-char :initarg :count-char
-                :initform #\NewLine
-                :reader count-line-stream-count-char)
+	       :initform #\NewLine
+	       :reader count-line-stream-count-char)
    (count :initform -1
           :accessor count-line-stream-count)))
 #+sbcl

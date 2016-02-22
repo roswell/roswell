@@ -9,15 +9,15 @@
 
 (defvar *7za-archive* "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
 (defun 7za ()
-    (let* ((pos (position #\/ *7za-archive* :from-end t))
-           (pos2 (when pos
-                   (position #\/ *7za-archive* :from-end t :end pos)))
-           (pos3 (if pos2
-                     (position #\/ *7za-archive* :from-end t :end pos2)
+  (let* ((pos (position #\/ *7za-archive* :from-end t))
+	 (pos2 (when pos
+		 (position #\/ *7za-archive* :from-end t :end pos)))
+	 (pos3 (if pos2
+		   (position #\/ *7za-archive* :from-end t :end pos2)
                    0))
-           (version (when pos2 (subseq *7za-archive* (1+ pos3) pos2)))
-           (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
-      (values (merge-pathnames "7za.exe" prefix) version)))
+	 (version (when pos2 (subseq *7za-archive* (1+ pos3) pos2)))
+	 (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
+    (values (merge-pathnames "7za.exe" prefix) version)))
 
 (defun unzip (path output-path)
   (zip:unzip
@@ -32,11 +32,11 @@
            (archive (merge-pathnames (format nil "archives/~A-~A.zip" "7za" version) (homedir))))
       (if (probe-file (merge-pathnames "7za.exe" prefix))
           (format t "7zip already setup~%")
-        (progn
-          (format t "archive=~A extract ~A~%" archive *7za-archive*)
-          (download *7za-archive* (ensure-directories-exist archive))
-          (unzip archive (ensure-directories-exist prefix)))))
-  (cons t argv)))
+	  (progn
+	    (format t "archive=~A extract ~A~%" archive *7za-archive*)
+	    (download *7za-archive* (ensure-directories-exist archive))
+	    (unzip archive (ensure-directories-exist prefix)))))
+    (cons t argv)))
 
 (push `("7zip" . ,'(setup-7za)) *install-cmds*)
 

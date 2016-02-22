@@ -18,9 +18,6 @@
       (setf (getf argv :version) (first (abcl-bin-get-version)))))
   (cons t argv))
 
-#+nil("1.3.3" "1.3.2" "1.3.1" "1.3.0" "1.2.1" "1.2.0" "1.1.1" "1.1.0" "1.1.0.2"
-         "1.1.0.1" "1.0.1" "1.0.0" "0.27.0" "0.26.2" "0.26.1" "0.25.0" "0.24.0"
-         "0.23.1")
 ;;"https://common-lisp.net/project/armedbear/releases/1.3.3/abcl-bin-1.3.3.tar.gz"
 
 (defun abcl-bin-argv-parse (argv)

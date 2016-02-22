@@ -18,10 +18,10 @@
            (format *error-output* "Download ~a~%" (file-namestring path))
            (force-output *error-output*)
            (when (or (not (probe-file path))
-                   (get-opt "download.force"))
-               (download
-                (format nil "http://kent.dl.sourceforge.net/project/msys2/Base/~A/msys2-base-~A-~A.tar.xz"
-                        *msys2-arch* *msys2-arch* *msys2-basever*) path))
+		     (get-opt "download.force"))
+	     (download
+	      (format nil "http://kent.dl.sourceforge.net/project/msys2/Base/~A/msys2-base-~A-~A.tar.xz"
+		      *msys2-arch* *msys2-arch* *msys2-basever*) path))
            (format t " done.~%")
            (expand path
                    (ensure-directories-exist

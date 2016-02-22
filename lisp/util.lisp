@@ -54,21 +54,21 @@
   (or #+win32
       (unless (ros:getenv "MSYSCON")
 	(format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
-			  (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-						   #+x86-64 "64" #-x86-64 "32") (homedir)))))
+				 (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+							  #+x86-64 "64" #-x86-64 "32") (homedir)))))
       (which "bash")
       "sh"))
 
 (defun version (&optional (opt ""))
   (ros:roswell `("roswell-internal-use" "version"
-                   ,(string-downcase opt)) :string t))
+					,(string-downcase opt)) :string t))
 
 (defvar *version*
   `(
     :roswell ,(version)
-    :lisp ,(lisp-implementation-type)
-    :version ,(lisp-implementation-version)
-    :date ,(get-universal-time)))
+	     :lisp ,(lisp-implementation-type)
+	     :version ,(lisp-implementation-version)
+	     :date ,(get-universal-time)))
 
 (defun parse-version-spec (string)
   "Parse the given version specification string and returns a list of strings (LISP VERSION).
