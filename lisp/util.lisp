@@ -28,6 +28,7 @@
 
 (defun download (uri file &key proxy)
   (declare (ignorable proxy))
+  (ensure-directories-exist file)
   (ros:roswell `("roswell-internal-use" "download" ,uri ,file) :interactive nil))
 
 (defun expand (archive dest &key verbose)
