@@ -126,7 +126,7 @@
         (config (format nil "~A.version" (getf argv :target))) (get-opt "as"))
   (cons t argv))
 
-(defun install-script (from)
+(defun install-ros (from)
   (let ((to (ensure-directories-exist
              (make-pathname
               :defaults (merge-pathnames "bin/" (homedir))

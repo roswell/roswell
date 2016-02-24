@@ -50,7 +50,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                                             :defaults (merge-pathnames "subcmd/" (homedir))
                                             :name (pathname-name sub)
                                             :type (pathname-type sub)))
-           (install-script sub))
+           (install-ros sub))
           ((or (ql-dist:find-system imp)
                (ql:where-is-system imp)
                (and (setq imp (format nil "roswell-install-~A" imp))
@@ -81,7 +81,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                              (length scripts) (mapcar #'pathname-name scripts))
                      (format t "~&No roswell scripts found.~%"))
                  (dolist (from scripts)
-                   (install-script from))))))
+                   (install-ros from))))))
           (t (error "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" imp)))))
