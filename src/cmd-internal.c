@@ -68,14 +68,18 @@ int cmd_internal_version (int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-int cmd_internal_core_extention (int argc,char **argv,struct sub_command* cmd) {
-  if(0){
+char* core_extention(char *impl) {
+  if(strncmp("ccl",impl,3)==0) {
     char* binname=get_opt("ccl.bit",0);
     binname = ccl_binname(binname?binname:"");
-    printf("%s\n",binname);
-    s(binname);
-  }else
-    printf("core\n");
+    return binname;
+  }
+  return q("core");
+}
+
+int cmd_internal_core_extention (int argc,char **argv,struct sub_command* cmd) {
+  if (argc==2)
+    printf("%s\n",core_extention(argv[1]));
   return 0;
 }
 
