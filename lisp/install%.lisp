@@ -141,6 +141,19 @@
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
 
+(defun install-script (path body)
+  (declare (ignorable path body))
+  #-win32
+  (progn
+    (with-open-file (o path
+                       :direction :output
+                       :if-exists :supersede
+                       :if-does-not-exist :create)
+      (format o "#!/bin/sh~%~A" body))
+    (sb-posix:chmod path #o755))
+  #+win32
+  (progn))
+
 (defun parse-date (str)
   (setq str (string-trim " " str)
         str (substitute #\: #\- str)
