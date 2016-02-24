@@ -5,7 +5,8 @@
 (defpackage :ros.util
   (:use :cl)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
-           :parse-version-spec :download :expand :sh :version :chdir))
+           :parse-version-spec :download :expand :sh :version :chdir
+           :core-extention))
 
 (in-package :ros.util)
 
@@ -34,6 +35,9 @@
 (defun expand (archive dest &key verbose)
   (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
                (or #-win32 :interactive nil) nil))
+
+(defun core-extention (&optional (impl (ros:opt "impl")))
+  (ros:roswell `("roswell-internal-use" "core-extention" ,impl) :string t))
 
 (defun config (c)
   (ros:roswell `("config" "show" ,c) :string t))

@@ -59,15 +59,16 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 #-ros.sub.list
 (defun dump (&rest params)
-  (format *error-output* "List of dumped images for ~A:~%" (impl (first params)))
-  (format t "~{~A~%~}"
-          (mapcar #'pathname-name
-                  (directory (make-pathname :name :wild
-                                            :type "core"
-                                            :defaults
-                                            (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                                     (uname-m) (uname) (impl (first params)))
-                                                             (homedir)))))))
+  (let ((impl (impl (first params))))
+    (format *error-output* "List of dumped images for ~A:~%" impl)
+    (format t "~{~A~%~}"
+            (mapcar #'pathname-name
+                    (directory (make-pathname :name :wild
+                                              :type (ros.util:core-extention impl)
+                                              :defaults
+                                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                                       (uname-m) (uname) impl)
+                                                               (homedir))))))))
 #-ros.sub.list
 (defun versions (&rest params)
   ;; Experimental?

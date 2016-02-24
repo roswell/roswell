@@ -44,7 +44,7 @@ exec ros -- $0 "$@"
        (if (> (length params) 1)
            (%dump (second params))
            (format *error-output* "Missing the pathname for an image.~%")))
-      (t (let ((path (merge-pathnames (format nil "~A.core" (first params))
+      (t (let ((path (merge-pathnames (format nil "~A.~A" (first params) (ros.util:core-extention))
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
