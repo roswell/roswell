@@ -29,6 +29,7 @@ struct run_impl_t impls_to_run[]={
   {"clisp32",&cmd_run_clisp},
   {"ecl",&cmd_run_ecl},
   {"abcl",&cmd_run_abcl},
+  {"abcl-bin",&cmd_run_abcl},
   {"cmu",&cmd_run_cmu},
   {"cmucl",&cmd_run_cmu},
   {"acl",&cmd_run_acl},

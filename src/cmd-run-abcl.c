@@ -20,11 +20,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   int paramc=0;
   char *bin;
   int issystem=(strcmp("system",version)==0);
-  if(issystem) {
-    bin=truename(which("abcl"));
-  }else {
-    bin=cat(impl_path,SLASH,"bin",SLASH,"abcl",EXE_EXTENTION,NULL);
-  }
+  bin=issystem?truename(which("abcl")):cat(impl_path,SLASH,"abcl",EXE_EXTENTION,NULL);
   s(arch),s(os);
   if(abcl_version)
     offset+=2;
