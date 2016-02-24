@@ -1,6 +1,6 @@
 
 (in-package :ros.install)
-(ql:quickload '(:plump :simple-date-time :split-sequence) :silent t)
+(ql:quickload '(:plump :simple-date-time :split-sequence :cl-ppcre) :silent t)
 
 (defun abcl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))
@@ -20,6 +20,9 @@
 
 ;;"https://common-lisp.net/project/armedbear/releases/1.3.3/abcl-bin-1.3.3.tar.gz"
 
+(defun abcl-bin-impl ()
+  (merge-pathnames (format nil "impls/~A/~A/abcl-bin/" (uname-m) (uname)) (homedir)))
+
 (defun abcl-bin-argv-parse (argv)
   (set-opt "as" (getf argv :version))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
@@ -29,7 +32,7 @@
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos 
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
+  (set-opt "prefix" (abcl-bin-impl))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (cons t argv))
 
@@ -48,19 +51,43 @@
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
   (expand 
    (get-opt "download.archive")
-   (ensure-directories-exist (merge-pathnames (format nil "impls/~A/~A/abcl-bin/" (uname-m) (uname)) (homedir))))
-  (let ((path (merge-pathnames (format nil "impls/~A/~A/abcl-bin/~A/" (uname-m) (uname) (get-opt "as")) (homedir))))
+   (ensure-directories-exist (abcl-bin-impl)))
+  (let ((path (merge-pathnames (format nil "~A/" (get-opt "as")) (abcl-bin-impl))))
     (and (probe-file path)
          (uiop/filesystem:delete-directory-tree 
           path :validate t)))
   (ql-impl-util:rename-directory
-   (merge-pathnames (format nil "impls/~A/~A/abcl-bin/abcl-bin-~A/" (uname-m) (uname) (getf argv :version)) (homedir))
-   (merge-pathnames (format nil "impls/~A/~A/abcl-bin/~A/" (uname-m) (uname) (get-opt "as")) (homedir)))
+   (merge-pathnames (format nil "abcl-bin-~A/" (getf argv :version)) (abcl-bin-impl))
+   (merge-pathnames (format nil "~A/" (get-opt "as")) (abcl-bin-impl)))
   (cons t argv))
+
+(defun abcl-bin-script (argv)
+  (cons
+   (let ((java (ros.util:which "java"))
+         (dir (merge-pathnames (format nil "~A/" (get-opt "as")) (abcl-bin-impl))))
+     (when (and java)
+       (install-script
+        (merge-pathnames "abcl" dir)
+        (format
+         nil
+         (if (not (zerop (length
+                          (remove-if-not
+                           (lambda ($)
+                             (and (cl-ppcre:scan "version" $)
+                                  (cl-ppcre:scan "1\\.8" $)))
+                           (split-sequence:split-sequence
+                            #\Newline
+                            (nth-value 1(uiop:run-program "java -version"  :error-output :string)))))))
+             "exec ~A -Xmx4g -cp \"~Aabcl-contrib.jar\" -jar \"~:*~Aabcl.jar\" \"\$@\""
+             "exec ~A -Xmx4g -XX:MaxPermSize=1g -cp \"~Aabcl-contrib.jar\" -jar \"~:*~Aabcl.jar\" \"\$@\"")
+         java dir)))
+     t)
+   argv))
 
 (push `("abcl-bin" . (abcl-bin-version
                       abcl-bin-argv-parse
                       abcl-bin-download
                       abcl-bin-expand
+                      abcl-bin-script
                       setup))
       *install-cmds*)
