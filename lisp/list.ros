@@ -103,7 +103,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
         (format t "installed~%dump~%versions~%"))
       (let* ((*read-eval*)
              (symbol (read-from-string (first r)))
-             (f (ignore-errors (fdefinition symbol))))
+             (f (and (eql (symbol-package symbol) #.*package*)
+                     (not (eql symbol 'main))
+                     (ignore-errors (fdefinition symbol)))))
         (if f
             (apply f (rest r))
             (format *error-output* "not suppported type for list~%")))))
