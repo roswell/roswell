@@ -97,34 +97,20 @@ install_cmucl () {
     PATH="$LISP_IMPLS_BIN:$PATH" ros use cmucl/system
 }
 
-ABCL_TARBALL_URL="https://common-lisp.net/project/armedbear/releases/1.3.3/abcl-bin-1.3.3.tar.gz"
-ABCL_DIR="$LISP_IMPLS_DIR/abcl"
 install_abcl () {
-    if ! [ -f "$LISP_IMPLS_BIN/abcl" ]; then
-        java=$(which java)
-        if [ "$java" = "" ]; then
-            if apt_installed_p "openjdk-7-jre"; then
-                java="/usr/lib/jvm/java-7-openjdk/bin/java"
-            elif apt_installed_p "openjdk-6-jre"; then
-                java="/usr/lib/jvm/java-6-openjdk/bin/java"
-            else
-                sudo apt-get install "openjdk-7-jre"
-                java="/usr/lib/jvm/java-7-openjdk/bin/java"
-            fi
-        fi
-
-        fetch "$ABCL_TARBALL_URL" "$HOME/abcl.tar.gz"
-        extract -z "$HOME/abcl.tar.gz" "$ABCL_DIR"
-        java -version 2>&1 |grep version |grep 1\.8 >/dev/null
-        if [ $? -eq 0 ]; then
-            install_script "$LISP_IMPLS_BIN/abcl" \
-                "exec $java -Xmx4g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+    java=$(which java)
+    if [ "$java" = "" ]; then
+        if apt_installed_p "openjdk-7-jre"; then
+            java="/usr/lib/jvm/java-7-openjdk/bin/java"
+        elif apt_installed_p "openjdk-6-jre"; then
+            java="/usr/lib/jvm/java-6-openjdk/bin/java"
         else
-            install_script "$LISP_IMPLS_BIN/abcl" \
-                "exec $java -Xmx4g -XX:MaxPermSize=1g -cp \"$ABCL_DIR/abcl-contrib.jar\" -jar \"$ABCL_DIR/abcl.jar\" \"\$@\""
+            sudo apt-get install "openjdk-7-jre"
+            java="/usr/lib/jvm/java-7-openjdk/bin/java"
         fi
     fi
-    PATH="$LISP_IMPLS_BIN:$PATH" ros use abcl/system
+    PATH="$java:$PATH" ros install abcl-bin
+    ros use abcl-bin
 }
 
 install_ecl () {
