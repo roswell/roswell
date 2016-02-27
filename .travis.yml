@@ -1,4 +1,4 @@
-language: common-lisp
+language: c
 sudo: required
 env:
   global:
@@ -6,7 +6,6 @@ env:
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
-    - METHOD=ci LISP=ccl32
     - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - METHOD=debian
     - METHOD=documents
@@ -15,6 +14,7 @@ env:
     - METHOD=brew
     - METHOD=brew WORKARROUND=true
     - METHOD=ci LISP=sbcl/1.1.14
+    - METHOD=ci LISP=ccl32
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=clisp
