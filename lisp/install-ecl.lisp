@@ -4,48 +4,19 @@
 (defvar *ecl-options*
   '())
 
+(defvar *ecl-base-uri* "https://common-lisp.net/project/ecl/files/release/")
+
 (defun ecl-get-version ()
   (let ((file (merge-pathnames "tmp/ecl.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
-    (download "https://common-lisp.net/project/ecl/files/" file)
-    (with-output-to-string (*standard-output*)
-      (funcall (intern (string :quickload) :ql)
-               :plump))
-    (let* ((the-newest "current-release.tgz")
-           (tgz-list
-            (sort
-             (delete nil
-                     (mapcar (lambda (x)
-                               (let* ((str (plump:get-attribute x "href"))
-                                      (len (length str)))
-                                 (when (equal (subseq str (if (plusp (- len 3))
-                                                              (- len 3)
-                                                              0))
-                                              "tgz")
-                                   (cons str
-                                         (parse-date (plump:text
-                                                      (plump:next-element
-                                                       (plump:parent x))))))))
-                             (plump:get-elements-by-tag-name
-                              (plump:parse (merge-pathnames "tmp/ecl.html" (homedir))) "a")))
-             'simple-date-time:date-time> :key 'cdr))
-           timestamp)
-      (setq tgz-list (delete-if (lambda (x)
-                                  (when (equal (first x) the-newest)
-                                    (setq timestamp (cdr x)))
-                                  (not (eql (mismatch "ecl" (first x)) 3))) tgz-list))
-      (when timestamp
-        (let (find)
-          (setq tgz-list (delete-if (lambda (x)
-                                      (when (simple-date-time:date-time= (cdr x) timestamp)
-                                        (setq find x)))
-                                    tgz-list))
-          (when find
-            (push find tgz-list))))
-      (mapcar (lambda (x)
-                (let ((str (car x)))
-                  (subseq str 4 (- (length str) 4))))
-              tgz-list))))
+    (download *ecl-base-uri* file)
+    (loop
+       for x in (plump:get-elements-by-tag-name
+                 (plump:parse (merge-pathnames "tmp/ecl.html" (homedir))) "a")
+       for text = (plump:text x)
+       for href = (plump:get-attribute x "href")
+       when (eql #\/(aref text (1- (length text))))
+       collect (subseq href 0 (1- (length href))))))
 
 (defun ecl-msys (argv)
   (unless (ros:getenv "MSYSCON")
@@ -70,7 +41,7 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" "https://common-lisp.net/project/ecl/files/ecl-"
+  (set-opt "download.uri" (format nil "~@{~A~}" *ecl-base-uri* (getf argv :version) "/ecl-"
                                   (getf argv :version) ".tgz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
