@@ -136,7 +136,7 @@ install_allegro () {
             mkdir -p $ALLEGRO_DIR
             mount_dir=`hdiutil attach $HOME/acl.dmg | awk -F '\t' 'END{print $NF}'`
             cp -r $mount_dir/AllegroCLexpress.app/Contents/Resources/ $ALLEGRO_DIR/
-            mv $LISP_IMPLS_DIR/Resources $LISP_IMPLS_DIR/acl
+            # mv $LISP_IMPLS_DIR/Resources $LISP_IMPLS_DIR/acl
             hdiutil detach "$mount_dir"
             install_script "$LISP_IMPLS_BIN/alisp" \
                 "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
