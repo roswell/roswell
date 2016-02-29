@@ -63,7 +63,7 @@ before_install:
 
 install:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
-  - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; fi
+  - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
   - if [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
