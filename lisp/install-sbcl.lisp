@@ -1,5 +1,29 @@
 (in-package :ros.install)
 
+#|
+:sb-show
+:sb-after-xc-core
+:sb-show-assem
+:sb-qshow
+:sb-fluid
+:sb-dyncount
+:sb-hash-table-debug
+:sb-futex
+:sb-safepoint
+:sb-thruption
+:sb-wtimer
+
+:cycle-counter
+:complex-float-vops
+:float-eql-vops
+:inline-constants
+:restore-fs-segment-register-from-tls
+:ud2-breakpoints
+:32x16-divide
+:long-float
+:largefile
+|#
+
 (defvar *sbcl-options*
   `(("thread" ,(or #+(or x86 x86-64 arm64)t) "Build SBCL without support for native threads")
     ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
