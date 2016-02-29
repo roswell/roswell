@@ -35,32 +35,26 @@
       (setf (getf argv :version) (first (ccl-bin-get-version)))))
   (cons t argv))
 
-(defun uname% ()
-  (let ((uname (uname)))
-    uname))
+(defvar *ccl-uname-m-alist*
+  '(("x86-64" . "x86")
+    ("armhf" . "arm")))
 
-(defun uname-m% ()
-  (let ((uname-m (uname-m)))
-    (when (equal uname-m "x86-64")
-      (setq uname-m "x86"))
-    (when (equal uname-m "armhf")
-      (setq uname-m "arm"))
-    uname-m))
+(defun ccl-uname-m ()
+  (or (cdr (assoc (uname-m) *ccl-uname-m-alist* :test 'equal))
+      (uname-m)))
 
 (defun ccl-bin-argv-parse (argv)
-  (let ((uname (uname%))
-        (uname-m (uname-m%)))
+  (let ((uname (uname))
+        (ccl-uname-m (ccl-uname-m)))
     (set-opt "as" (getf argv :version))
     (when (position "--without-install" (getf argv :argv) :test 'equal)
       (set-opt "without-install" t))
     (set-opt "download.uri" (format nil "~@{~A~}" "http://ccl.clozure.com/ftp/pub/release/"
-                                    (getf argv :version) "/ccl-" (getf argv :version) "-" uname uname-m (if (equal uname "windows")
-                                                                                                            ".zip"".tar.gz")))
+                                    (getf argv :version) "/ccl-" (getf argv :version) "-" uname ccl-uname-m (if (equal uname "windows")
+                                                                                                                ".zip"".tar.gz")))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                   (when pos 
                                     (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-    (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" uname-m uname (getf argv :target) (get-opt "as")) (homedir)))
-    (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
     (cons t argv)))
 
 (defun ccl-bin-download (argv)
@@ -76,16 +70,15 @@
 
 (defun ccl-bin-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
-  (#-win32 expand #+win32 zip:unzip
-           (get-opt "download.archive")
-           (ensure-directories-exist (merge-pathnames (format nil "impls/~A/~A/ccl-bin/" (uname-m) (uname%)) (homedir))))
-  (let ((path (merge-pathnames (format nil "impls/~A/~A/ccl-bin/~A/" (uname-m) (uname%) (get-opt "as")) (homedir))))
+  (let* ((impls (merge-pathnames (format nil "impls/~A/~A/ccl-bin/" (uname-m) (uname)) (homedir)))
+         (path (merge-pathnames (format nil "~A/" (get-opt "as")) impls)))
+    (#-win32 expand #+win32 zip:unzip (get-opt "download.archive") (ensure-directories-exist impls))
     (and (probe-file path)
          (uiop/filesystem:delete-directory-tree 
-          path :validate t)))
-  (ql-impl-util:rename-directory
-   (merge-pathnames (format nil "impls/~A/~A/ccl-bin/ccl/" (uname-m) (uname%)) (homedir))
-   (merge-pathnames (format nil "impls/~A/~A/ccl-bin/~A/" (uname-m) (uname%) (get-opt "as")) (homedir)))
+          path :validate t))
+    (ql-impl-util:rename-directory
+     (merge-pathnames (format nil "ccl/") impls)
+     (merge-pathnames (format nil "~A/" (get-opt "as")) impls)))
   (cons t argv))
 
 (defun ccl-bin-help (argv)

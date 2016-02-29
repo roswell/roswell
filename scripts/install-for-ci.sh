@@ -1,5 +1,7 @@
 #!/bin/sh
 
+set -e
+
 log () {
     echo "$ $1"
     echo `$1`
