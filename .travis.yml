@@ -5,7 +5,20 @@ env:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
-
+  matrix:
+    - METHOD=brew
+    - METHOD=brew WORKARROUND=true
+    - METHOD=ci LISP=sbcl/1.1.14
+    - METHOD=ci LISP=ccl32
+    - METHOD=ci LISP=sbcl
+    - METHOD=ci LISP=ecl
+    - METHOD=ci LISP=clisp
+    - METHOD=ci LISP=alisp
+    - METHOD=ci LISP=abcl
+    - METHOD=ci LISP=ccl
+    - METHOD=ci LISP=cmucl
+    - METHOD=ci LISP=sbcl-bin
+  
 os:
   - osx
   - linux
@@ -13,34 +26,18 @@ os:
 matrix:
   include:
     - sudo: required
+      os: linux
       env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - sudo: required
+      os: linux
       env: METHOD=debian
     - sudo: required
+      os: linux
       env: METHOD=documents
     - sudo: required
+      os: linux
       env: METHOD=valgrind XCFLAGS="-g -O0"
-    - env: METHOD=brew
-    - env: METHOD=brew WORKARROUND=true
-    - env: METHOD=ci LISP=sbcl/1.1.14
-    - env: METHOD=ci LISP=ccl32
-    - env: METHOD=ci LISP=sbcl
-    - env: METHOD=ci LISP=ecl
-    - env: METHOD=ci LISP=clisp
-    - env: METHOD=ci LISP=alisp
-    - env: METHOD=ci LISP=abcl
-    - env: METHOD=ci LISP=ccl
-    - env: METHOD=ci LISP=cmucl
-    - env: METHOD=ci LISP=sbcl-bin
   exclude:
-    - os: osx
-      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
-    - os: osx
-      env: METHOD=debian
-    - os: osx
-      env: METHOD=documents
-    - os: osx
-      env: METHOD=valgrind XCFLAGS="-g -O0"
     - os: osx
       env: METHOD=brew WORKARROUND=true
 
@@ -60,7 +57,8 @@ before_install:
   - date
   - if [ $METHOD = cross ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
   - if [ $METHOD = cross ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
-  - if [ $TRAVIS_OS_NAME = linux ]; then sudo apt-get -qq update --force-yes > /dev/null; fi
+  - if [ $METHOD = cross ] || [ $METHOD = debian ] || [ $METHOD = documents ] || [ $METHOD = valgrind ]; then
+       sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew --env;brew config; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ] && [ $WORKARROUND = true ]; then brew tap homebrew/dupes; fi #work arround https://github.com/Linuxbrew/linuxbrew/issues/742#issuecomment-176486281
