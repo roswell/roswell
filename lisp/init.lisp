@@ -38,10 +38,12 @@ have the latest asdf, and this file has a workaround for this.
 
 ;; small tools
 (defun getenv (x)
-  #+sbcl(sb-posix:getenv x)
-  #+clisp(ext:getenv x)
+  #+abcl(extensions:getenv x)
   #+ccl(ccl:getenv x)
-  #-(or sbcl clisp ccl) (funcall (read-from-string "asdf::getenv") x))
+  #+clisp(ext:getenv x)
+  #+ecl(ext:getenv x)
+  #+sbcl(sb-posix:getenv x)
+  #-(or abcl ecl ccl clisp sbcl) (funcall (read-from-string "asdf::getenv") x))
 
 (defun ros-opts ()
   (or *ros-opts*
