@@ -1,30 +1,38 @@
 language: c
-sudo: required
+sudo: false
 env:
   global:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=master
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
-  matrix:
-    - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
-    - METHOD=debian
-    - METHOD=documents
-    - METHOD=valgrind XCFLAGS="-g -O0"
-    - METHOD=brew
-    - METHOD=brew WORKARROUND=true
-    - METHOD=ci LISP=sbcl/1.1.14
-    - METHOD=ci LISP=ccl32
-    - METHOD=ci LISP=sbcl
-    - METHOD=ci LISP=ecl
-    - METHOD=ci LISP=clisp
-    - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=abcl
-    - METHOD=ci LISP=ccl
-    - METHOD=ci LISP=cmucl
-    - METHOD=ci LISP=sbcl-bin
+
+matrix:
+  include:
+    - sudo: required
+      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
+    - sudo: required
+      env: METHOD=debian
+    - sudo: required
+      env: METHOD=documents
+    - sudo: required
+      env: METHOD=valgrind XCFLAGS="-g -O0"
+    - env: METHOD=brew
+    - env: METHOD=brew WORKARROUND=true
+    - env: METHOD=ci LISP=sbcl/1.1.14
+    - env: METHOD=ci LISP=ccl32
+    - env: METHOD=ci LISP=sbcl
+    - env: METHOD=ci LISP=ecl
+    - env: METHOD=ci LISP=clisp
+    - env: METHOD=ci LISP=alisp
+    - env: METHOD=ci LISP=abcl
+    - env: METHOD=ci LISP=ccl
+    - env: METHOD=ci LISP=cmucl
+    - env: METHOD=ci LISP=sbcl-bin
+
 os:
   - osx
   - linux
+
 matrix:
   exclude:
     - os: osx
