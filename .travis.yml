@@ -9,7 +9,6 @@ env:
     - METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - METHOD=debian
     - METHOD=documents
-    - METHOD=test LISP=sbcl-bin
     - METHOD=valgrind XCFLAGS="-g -O0"
     - METHOD=brew
     - METHOD=brew WORKARROUND=true
@@ -76,15 +75,13 @@ script:
   - if [ "$METHOD" = "documents" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make clean;make;sudo make install; fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --verbose --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
-  - if [ "$METHOD" = "test" ] || [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then
+  - if [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then
        sh bootstrap;CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
   - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
-  - if [ "$METHOD" = "test" ]; then ros install $LISP; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros -s prove-asdf -s quri-test -e "(asdf:test-system :quri-test)"; fi
-  - if [ "$METHOD" = "test" ]; then ros setup; ros t/roswell.ros ;fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
   - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/debian.ros; fi
