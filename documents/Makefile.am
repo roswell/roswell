@@ -1,4 +1,4 @@
-# TODO : fetch from https://github.com/snmsts/roswell/wiki and convert all
+# TODO : fetch from https://github.com/roswell/roswell/wiki and convert all
 # wiki pages (mediawiki format or markdown) to html or man
 
 # see also:
@@ -16,7 +16,7 @@ endif
 if MANUAL_GENERATE
 man/%.1: %.md
 	which pandoc
-	pandoc -f markdown_phpextra+backtick_code_blocks -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
+	pandoc -f markdown_github+backtick_code_blocks -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
 	-V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
 
 CLEANFILES = $(man1_MANS) $(HTMLS)
