@@ -25,11 +25,12 @@
 |#
 
 (defvar *sbcl-options*
-  `(("thread" ,(or #+(or x86 x86-64 arm64)t) "Build SBCL without support for native threads")
-    ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib")
-    ("ldb" nil "Include low-level debugger in the build")
-    ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)")
-    ("simd-pack" nil "Enable SIMD intrinsics")))
+  ;;(name default description sb-prefix)
+  `(("thread" ,(or #+(or x86 x86-64 arm64) t) "Build SBCL without support for native threads" t)
+    ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib" t)
+    ("ldb" nil "Include low-level debugger in the build" t)
+    ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)" t)
+    ("simd-pack" nil "Enable SIMD intrinsics" t)))
 
 (defun sbcl-get-version ()
   (let (result
@@ -86,8 +87,8 @@
                       (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
                             ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) nil)
                             (t default)))))
-    (loop for (opt default . nil) in *sbcl-options*
-       do (with opt default)))
+    (loop for (name default description sb-prefix) in *sbcl-options*
+       do (with name default)))
   (cons t argv))
 
 (defun sbcl-start (argv)
@@ -143,8 +144,8 @@
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
     (format out "~s"
             `(lambda (list)
-               (dolist (i ',(loop for (name . nil) in *sbcl-options*
-                               collect (list (read-from-string (format nil ":sb-~A" name)) (get-opt name))))
+               (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
+                               collect (list (read-from-string (format nil ":~A~A" (if sb-prefix "sb-" "") name)) (get-opt name))))
                  (if (second i)
                      (pushnew (first i) list)
                      (setf list (remove (first i) list))))
@@ -318,13 +319,13 @@
     (format t "sbcl install options~%")
     (fmt "as" "nickname" "install non-default optioned version of SBCL")
     (fmt "install" t "Download archive")
-    (dolist (e *sbcl-options*)
-      (apply #'fmt e)))
+    (loop for (name default description sb-prefix) in *sbcl-options*
+       do (fmt name default description)))
   (cons t argv))
 
-(push `("sbcl" . ,(list #+win32 'sbcl-msys
-                        'sbcl-version
+(push `("sbcl" . ,(list 'sbcl-version
                         'sbcl-argv-parse
+                        #+win32 'sbcl-msys
                         'sbcl-start
                         'start
                         'sbcl-download
