@@ -45,9 +45,10 @@ matrix:
 #  except:
 #      - /^v[0-9]/
 
-# addons:
-#   apt:
-#     packages:
+addons:
+  apt:
+    packages:
+      - libc6-i386
 #      - gcc-multilib
 #      - gcc-mingw-w64-i686
 #      - binutils-mingw-w64-i686
