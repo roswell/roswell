@@ -82,13 +82,14 @@
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
-  (labels ((with (opt default)
-             (set-opt opt
-                      (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
-                            ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) nil)
-                            (t default)))))
+  (labels ((with (opt)
+             (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) (set-opt opt t))
+                   ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) (set-opt opt :false)))))
     (loop for (name default description sb-prefix) in *sbcl-options*
-       do (with name default)))
+       do
+         (when default
+           (set-opt name (eql default t)))
+         (with name)))
   (cons t argv))
 
 (defun sbcl-start (argv)
@@ -145,7 +146,9 @@
     (format out "~s"
             `(lambda (list)
                (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
-                               collect (list (read-from-string (format nil ":~A~A" (if sb-prefix "sb-" "") name)) (get-opt name))))
+                               when (get-opt name)
+                               collect (list (read-from-string (format nil ":~A~A" (if sb-prefix "sb-" "") name))
+                                             (eql t (get-opt name)))))
                  (if (second i)
                      (pushnew (first i) list)
                      (setf list (remove (first i) list))))
