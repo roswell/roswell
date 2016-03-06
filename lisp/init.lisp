@@ -94,7 +94,8 @@ have the latest asdf, and this file has a workaround for this.
   #+sbcl(funcall (read-from-string "sb-posix:setenv") name value 1)
   #+ccl(ccl:setenv name value t)
   #+clisp(system::setenv name value)
-  #+cmucl(unix:unix-setenv name value 1)
+  #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-setenv")))))
+           (when f (funcall f name value 1)))
   value)
 
 (defun unsetenv (name)
@@ -102,7 +103,8 @@ have the latest asdf, and this file has a workaround for this.
   #+sbcl(funcall (read-from-string "sb-posix:unsetenv") name)
   #+ccl(ccl:unsetenv name)
   #+clisp(system::setenv name nil)
-  #+cmucl(unix:unix-unsetenv name)
+  #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-unsetenv")))))
+           (when f (funcall f name)))
   nil)
 
 (defun quit (&optional (return-code 0) &rest rest)
