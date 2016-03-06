@@ -97,10 +97,7 @@ have the latest asdf, and this file has a workaround for this.
   #+clisp(system::setenv name nil))
 
 (defun quit (&optional (return-code 0) &rest rest)
-  (let ((ret (or (and (numberp return-code) return-code)
-                 (and (null return-code) 1)
-                 (first rest)
-                 0)))
+  (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
     (ignore-errors (funcall (read-from-string "asdf::quit") ret))
     ;; below are for those environments which lacks neither asdf or uiop.
     #+sbcl (ignore-errors (funcall (read-from-string "cl-user::exit") :code ret))
