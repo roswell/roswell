@@ -1,9 +1,6 @@
 (in-package :ros.install)
 
 #|
-:sb-show
-:sb-after-xc-core
-:sb-show-assem
 :sb-qshow
 :sb-fluid
 :sb-dyncount
@@ -30,7 +27,10 @@
     ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib" t)
     ("ldb" nil "Include low-level debugger in the build" t)
     ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)" t)
-    ("simd-pack" nil "Enable SIMD intrinsics" t)))
+    ("simd-pack" nil "Enable SIMD intrinsics" t)
+    ("show" nil "Use the extra debugging information" t)
+    ("after-xc-core" nil "controls whether the build process produces an after-xc.core file." t)
+    ("show-assem" nil "Enable extra debugging output" t)))
 
 (defun sbcl-get-version ()
   (let (result
