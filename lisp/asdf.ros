@@ -13,11 +13,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
       (:use :cl :ros.util)))
 
 (in-package :ros.sub.asdf)
+(ros:quicklisp :environment nil)
+(unless (find-package :plump)
+  (ql:quickload '(:plump) :silent t))
 
 #-ros.sub.asdf
 (progn
-  (ros:quicklisp :environment nil)
-  (ql:quickload '(:plump) :silent t)
   (defun asdf-get-version ()
     (let ((file (merge-pathnames "tmp/asdf.html" (homedir))))
       (format *error-output* "Checking version to install....~%")
