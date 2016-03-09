@@ -42,7 +42,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                    (format out "~@{~A~%~}"
                                            "#!/bin/sh"
                                            "#|-*- mode:lisp -*-|#"
-                                           "#|" "exec ros -Q -- $0 \"$@\"" "|#"
+                                           "#| <Put a one-line description here>"
+                                           "exec ros -Q -- $0 \"$@\"" "|#"
                                            (format nil "(defpackage :ros.script.~A.~A" name date)
                                            "  (:use :cl))"
                                            (format nil "(in-package :ros.script.~A.~A)" name date)
