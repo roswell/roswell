@@ -48,7 +48,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                            "  (:use :cl))"
                                            (format nil "(in-package :ros.script.~A.~A)" name date)
                                            "(defun main (&rest argv)"
-                                           "  (declare (ignorable argv)))")
+                                           "  (declare (ignorable argv)))"
+                                           ";;; vim: set ft=lisp lisp:")
                                    (format t "~&Successfully generated: ~A~%" script-path)
                                    t))
                              #+sbcl (sb-posix:chmod script-path #o700))
