@@ -1,8 +1,6 @@
 (in-package :ros.install)
 
 #|
-:sb-qshow
-:sb-fluid
 :sb-dyncount
 :sb-hash-table-debug
 :sb-futex
@@ -30,7 +28,10 @@
     ("simd-pack" nil "Enable SIMD intrinsics" t)
     ("show" nil "Use the extra debugging information" t)
     ("after-xc-core" nil "controls whether the build process produces an after-xc.core file." t)
-    ("show-assem" nil "Enable extra debugging output" t)))
+    ("show-assem" nil "Enable extra debugging output" t)
+    ("qshow" nil "Compile the C runtime with support for low-level debugging output" t)
+    ("fluid" nil "Setting this makes SBCL more \"fluid\"" t)
+    ))
 
 (defun sbcl-get-version ()
   (let (result
