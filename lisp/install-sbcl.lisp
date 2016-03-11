@@ -1,35 +1,36 @@
 (in-package :ros.install)
 
 #|
-:cycle-counter
-:complex-float-vops
-:float-eql-vops
+:sb-source-locations
+:sb-unicode
+:sb-test
+:sb-doc
 :inline-constants
-:restore-fs-segment-register-from-tls
-:ud2-breakpoints
-:32x16-divide
-:long-float
-:largefile
+:package-local-nicknames
+:ieee-floating-point
 |#
 
 (defvar *sbcl-options*
   ;;(name default description sb-prefix)
-  `(("thread" ,(or #+(or x86 x86-64 arm64) t) "Build SBCL without support for native threads" t)
-    ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib" t)
-    ("ldb" nil "Include low-level debugger in the build" t)
-    ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)" t)
-    ("simd-pack" nil "Enable SIMD intrinsics" t)
-    ("show" nil "Use the extra debugging information" t)
+  `(("thread" ,(or #+(or x86 x86-64 arm64) t) "Build SBCL without support for native threads." t)
+    ("core-compression" t "Build SBCL without support for compressed cores and without a dependency on zlib." t)
+    ("ldb" nil "Include low-level debugger in the build." t)
+    ("xref-for-internals" nil "Include XREF information for SBCL internals (increases core size by 5-6MB)." t)
+    ("simd-pack" nil "Enable SIMD intrinsics." t)
+    ("show" nil "Use the extra debugging information." t)
     ("after-xc-core" nil "controls whether the build process produces an after-xc.core file." t)
-    ("show-assem" nil "Enable extra debugging output" t)
-    ("qshow" nil "Compile the C runtime with support for low-level debugging output" t)
-    ("fluid" nil "Setting this makes SBCL more \"fluid\"" t)
-    ("dyncount" nil "Enable code for collecting statistics This code is probably pretty stale" t)
-    ("hash-table-debug" nil "Enable detecting concurrent accesses to the same hash-table. somewhat too eager" t)
+    ("show-assem" nil "Enable extra debugging output." t)
+    ("qshow" nil "Compile the C runtime with support for low-level debugging output." t)
+    ("eval" nil "Support for a full evaluator." t)
+    ("fasteval" nil "Support for a different evaluator (interpreter)." t)
+    ("fluid" nil "Setting this makes SBCL more \"fluid\"." t)
+    ("dyncount" nil "Enable code for collecting statistics This code is probably pretty stale." t)
+    ("hash-table-debug" nil "Enable detecting concurrent accesses to the same hash-table. somewhat too eager." t)
     ("safepoint" nil "Synchronization between threads using safepoints instead of signals." t)
-    ("thruption" nil "Compiling with safepoints, the INTERRUPT-THREAD mechanism can also use safepoints" t)
+    ("thruption" nil "Compiling with safepoints, the INTERRUPT-THREAD mechanism can also use safepoints." t)
     ("wtimer" nil "Compiling with safepoints and thruptions,replace setitimer with a background thread." t)
-    ))
+    ("ud2-breakpoints" nil "use the UD2 instruction which generates SIGILL instead." nil)
+    ("32x16-divide" nil "affects the definition of a lot of things in bignum.lisp.not needed for X86." nil)))
 
 (defun sbcl-get-version ()
   (let (result
