@@ -19,17 +19,17 @@
 </ul>
 </header>
 <p>Roswell - Common Lisp environment setup Utility</p>
-<h1>Synopsis</h1>
+<h1 id="synopsis">Synopsis</h1>
 <ul>
 <li><strong>ros</strong> [<strong>options</strong>] <code>[command [args...]</code></li>
 <li><strong>ros</strong> [<strong>options</strong>] <code>[--]script [args...]</code></li>
 <li><strong>ros</strong> [<strong>options</strong>] &lt; script.ros</li>
 </ul>
-<h1>Description</h1>
+<h1 id="description">Description</h1>
 <p>Roswell is a command line tool for installing and managing Common Lisp implementations, as well as a scripting infrastructure for templating, writing, executing, compiling, distributing, downloading and installing ROSWELL-SCRIPTS written in Common Lisp.</p>
 <p>Currently roswell supports sbcl, ccl, clisp and ecl as its supported lisp implementations. For further details see <em><a href="ros-install.html">ros-install</a></em>(1).</p>
 <p>Scripts installed by roswell will be system wide if appropriate directory is included in PATH.</p>
-<h1>Subcommands</h1>
+<h1 id="subcommands">Subcommands</h1>
 <p>In an order of utility/frequency.</p>
 <dl>
 <dt>install</dt>
@@ -75,7 +75,7 @@
 <dd><p>Show the subcommand help.</p>
 </dd>
 </dl>
-<h1>Options</h1>
+<h1 id="options">Options</h1>
 <p>Options are processed in left-to-right order.</p>
 <dl>
 <dt>-w CODE --wrap CODE</dt>
@@ -157,23 +157,20 @@
 <dd><p>SBCL specific. The argument is passed to SBCL by <code>--dynamic-space-size</code></p>
 </dd>
 </dl>
-<h1>Environmental Variables</h1>
+<h1 id="environmental-variables">Environmental Variables</h1>
 <dl>
 <dt>ROSWELL_HOME</dt>
 <dd>Specifies the home directory of roswell, defaulted to $HOME on Unix platform .
 </dd>
 </dl>
 <!-- ROSWELL_HTML_TEST -->
-
 <!--  -->
-
 <!--   :  -->
 
 
-
-<h1>Bugs</h1>
+<h1 id="bugs">Bugs</h1>
 <p>Check out issues list (https://github.com/roswell/roswell/issues)</p>
-<h1>SEE ALSO</h1>
+<h1 id="see-also">SEE ALSO</h1>
 <p><em>sbcl</em>(1) <em><a href="ros-dump.html">ros-dump</a></em>(1) <em><a href="ros-init.html">ros-init</a></em>(1) <em><a href="ros-install.html">ros-install</a></em>(1) <em><a href="ros-list.html">ros-list</a></em>(1) <em><a href="ros-setup.html">ros-setup</a></em>(1)</p>
 <p>_</p>
 </body>

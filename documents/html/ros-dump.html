@@ -19,10 +19,10 @@
 </ul>
 </header>
 <p>ros-dump - make a dumped image of a roswell script</p>
-<h1>Synopsis</h1>
+<h1 id="synopsis">Synopsis</h1>
 <p><strong>ros [options] dump</strong> <code>TYPE</code> args...</p>
 <p>Where <code>TYPE</code> is one of:</p>
-<h2>output [-f] [-o OUTPUT] [OPTIONS...] NAME</h2>
+<h2 id="output--f--o-output-options...-name">output [-f] [-o OUTPUT] [OPTIONS...] NAME</h2>
 <p>Specifing <code>output</code> saves the current lisp state to an image. It loads the roswell script <code>NAME</code> and also processes other options <code>options...</code> available to roswell.</p>
 <p>The output file is by default written to an internal directory of roswell, i.e., somewhere under <code>$ROSWELL_INSTALL_DIR</code> deduced by the current implementation, its version and the given NAME.</p>
 <p>When the output file already exists, the command fails with an error code.</p>
@@ -35,28 +35,22 @@
 <dd><p>Force output when the output already exists.</p>
 </dd>
 </dl>
-<h2>executable</h2>
+<h2 id="executable">executable</h2>
 <p>In contrast, when a script is dumped with <code>executable</code>, the dumped image becomes an self-contained executable binary which implies <code>--restart main</code>. The output file is deduced from <code>NAME</code> and is written in the current directory.</p>
 <p>This feature is SBCL and CCL only.</p>
-<h1>Description</h1>
+<h1 id="description">Description</h1>
 <p><code>ros-dump</code> creates a dumped lisp image of the state after processing all arguments passed.</p>
 <p>In both types, the global environment (e.g. global binding to a special variable such as <code>*package*</code>) is the environment which was effective when the script was dumped.</p>
 <!-- Fixme: what kind of? this is unnecessarily retracting the users from using this feature -->
-
 <!-- There might be a limitation regarding this feature depending on the lisp -->
-
 <!-- implementation used by roswell at the time of building.   -->
-
 
 <p>The dumped image is not compatible between the different implementations and even between the same implementations with different versions.</p>
 <!-- # options -->
-
 <!--  -->
-
 <!-- # Environmental Variables -->
 
-
-<h1>SEE ALSO</h1>
+<h1 id="see-also">SEE ALSO</h1>
 <p><em>sbcl</em>(1) <em><a href="ros.html">ros</a></em>(1) <em><a href="ros-init.html">ros-init</a></em>(1) _</p>
 </body>
 </html>

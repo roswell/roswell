@@ -19,17 +19,16 @@
 </ul>
 </header>
 <p>ros-install - Install lisp implementations or quicklisp system</p>
-<h1>Synopsis</h1>
+<h1 id="synopsis">Synopsis</h1>
 <p><strong>ros install</strong> [name]</p>
 <!-- # subcommands -->
-
 
 <dl>
 <dt>name</dt>
 <dd>a name specifying a lisp implementation/version, or a quicklisp system.
 </dd>
 </dl>
-<h1>Installing a Lisp Implementation</h1>
+<h1 id="installing-a-lisp-implementation">Installing a Lisp Implementation</h1>
 <p>When the <code>name</code> matches to one of the supported implementations, it fetches, downloads and installs it to one of the internal directory managed by roswell (~/.roswell, or <code>ROSWELL_INSTALL_DIR</code>). In order to use the installed implementation, you have to run <em>ros-use(1)</em>.</p>
 <p>For example, the following command downloads the latest sbcl binary from sbcl.com. Note that this may be different from the default binary installed by roswell, called <code>sbcl-bin</code>. <code>sbcl-bin</code> is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.</p>
 <pre><code>$ ros install sbcl</code></pre>
@@ -52,13 +51,10 @@ sbcl-bin</code></pre>
 $ ros install abcl
 $ ...</code></pre>
 <!-- # options -->
-
 <!--  -->
-
 <!-- # Environmental Variables -->
 
-
-<h1>Installing a quicklisp system and the bundled roswell scripts</h1>
+<h1 id="installing-a-quicklisp-system-and-the-bundled-roswell-scripts">Installing a quicklisp system and the bundled roswell scripts</h1>
 <p>If the specified name does not match any of the implementations, roswell tries to find a quicklisp system of the given name.</p>
 <pre><code>$ ros install alexandria</code></pre>
 <p>After compiling and loading the system, it funcalls <code>ros:*build-hook*</code> special variable with no argument, if some function is set during the compilation/load.</p>
@@ -72,7 +68,7 @@ Attempting to install the scripts in roswell/ subdirectory of the system...
 
 $ qlot
 Usage: qlot [install | update | bundle | exec shell-args..]</code></pre>
-<h1>SEE ALSO</h1>
+<h1 id="see-also">SEE ALSO</h1>
 <p><em>sbcl</em>(1), <em><a href="ros.html">ros</a></em>(1), <em><a href="ros-list.html">ros-list</a></em>(1), <em><a href="ros-init.html">ros-init</a></em>(1)</p>
 <p>_</p>
 </body>

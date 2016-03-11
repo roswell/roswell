@@ -18,14 +18,13 @@
 <li class="author">Roswell Project Team</li>
 </ul>
 </header>
-<p>ros-delete -</p>
-<h1>synopsis</h1>
+<p>ros-delete - # synopsis</p>
 <p><strong>ros delete</strong> ARGS...</p>
 <p>Slightly complex arguments.</p>
-<h2>ros delete dump IMAGES...</h2>
+<h2 id="ros-delete-dump-images...">ros delete dump IMAGES...</h2>
 <p>Whem ARGS starts with <code>dump</code>, it considers the remaining args as the names for the dumped images. It then deletes the image with the given name, if it exists.</p>
 <p>The deletion happens only to the images compatible with the current lisp implementation/version. For example, when ccl-bin/1.10 and sbcl-bin/1.3.1 both have images named X, and if the current lisp in use is sbcl-bin/1.3.1, then <code>ros delete dump X</code> removes sbcl-bin/1.3.1/X only.</p>
-<h2>ros delete IMPLS...</h2>
+<h2 id="ros-delete-impls...">ros delete IMPLS...</h2>
 <p>When the first argument is not <code>dump</code>, then the arguments are treated as a list of installed implementations.</p>
 <p>If a name of some implementation is given without version specifiers, e.g. sbcl-bin, then it removes all instances (versions) of sbcl-bin.</p>
 <p>If a version is specified, then it removes only the specified instance.</p>
@@ -33,16 +32,12 @@
 
 <!--   : description. end with a period. -->
 
-
-<h1>description</h1>
+<h1 id="description">description</h1>
 <!-- # options -->
-
 <!--  -->
-
 <!-- # Environmental Variables -->
 
-
-<h1>SEE ALSO</h1>
+<h1 id="see-also">SEE ALSO</h1>
 <p><em><a href="ros.html">ros</a></em>(1) _</p>
 </body>
 </html>
