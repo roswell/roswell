@@ -1,13 +1,6 @@
 (in-package :ros.install)
 
 #|
-:sb-dyncount
-:sb-hash-table-debug
-:sb-futex
-:sb-safepoint
-:sb-thruption
-:sb-wtimer
-
 :cycle-counter
 :complex-float-vops
 :float-eql-vops
@@ -31,6 +24,11 @@
     ("show-assem" nil "Enable extra debugging output" t)
     ("qshow" nil "Compile the C runtime with support for low-level debugging output" t)
     ("fluid" nil "Setting this makes SBCL more \"fluid\"" t)
+    ("dyncount" nil "Enable code for collecting statistics This code is probably pretty stale" t)
+    ("hash-table-debug" nil "Enable detecting concurrent accesses to the same hash-table. somewhat too eager" t)
+    ("safepoint" nil "Synchronization between threads using safepoints instead of signals." t)
+    ("thruption" nil "Compiling with safepoints, the INTERRUPT-THREAD mechanism can also use safepoints" t)
+    ("wtimer" nil "Compiling with safepoints and thruptions,replace setitimer with a background thread." t)
     ))
 
 (defun sbcl-get-version ()
