@@ -1,12 +1,12 @@
 .TH "ros" "1" "" "" ""
 .nh \" Turn off hyphenation by default.
 .PP
-Roswell \- Common Lisp environment setup Utility
+Roswell - Common Lisp environment setup Utility
 .SH Synopsis
 .IP \[bu] 2
 \f[B]ros\f[] [\f[B]options\f[]] \f[C][command\ [args...]\f[]
 .IP \[bu] 2
-\f[B]ros\f[] [\f[B]options\f[]] \f[C][\-\-]script\ [args...]\f[]
+\f[B]ros\f[] [\f[B]options\f[]] \f[C][--]script\ [args...]\f[]
 .IP \[bu] 2
 \f[B]ros\f[] [\f[B]options\f[]] < script.ros
 .SH Description
@@ -14,11 +14,11 @@ Roswell \- Common Lisp environment setup Utility
 Roswell is a command line tool for installing and managing Common Lisp
 implementations, as well as a scripting infrastructure for templating,
 writing, executing, compiling, distributing, downloading and installing
-ROSWELL\-SCRIPTS written in Common Lisp.
+ROSWELL-SCRIPTS written in Common Lisp.
 .PP
 Currently roswell supports sbcl, ccl, clisp and ecl as its supported
 lisp implementations.
-For further details see \f[I]ros\-install\f[](1).
+For further details see \f[I]ros-install\f[](1).
 .PP
 Scripts installed by roswell will be system wide if appropriate
 directory is included in PATH.
@@ -30,81 +30,81 @@ In an order of utility/frequency.
 Install a given implementation (e.g.
 sbcl, ccl) or a system (e.g.
 alexandria) for roswell environment.
-See \f[I]ros\-install\f[](1).
+See \f[I]ros-install\f[](1).
 .RS
 .RE
 .TP
 .B init [name[.ros]]
 Create a new ros script.
-\f[C]\&.ros\f[] is optional, and is added automaticaly.
-See \f[I]ros\-init\f[].
+\f[C].ros\f[] is optional, and is added automaticaly.
+See \f[I]ros-init\f[].
 .RS
 .RE
 .TP
 .B dump [executable|output] [script]
 Dump an image of the script for the faster startup or to make an
 executable.
-See \f[I]ros\-dump\f[].
+See \f[I]ros-dump\f[].
 .RS
 .RE
 .TP
 .B build
 Make an executable from the script.
-See \f[I]ros\-build\f[].
+See \f[I]ros-build\f[].
 .RS
 .RE
 .TP
 .B run
 Initiate REPL.
-See \f[I]ros\-run\f[].
+See \f[I]ros-run\f[].
 .RS
 .RE
 .TP
 .B use
 Change the default implementation used by roswell.
-See \f[I]ros\-use\f[].
+See \f[I]ros-use\f[].
 .RS
 .RE
 .TP
 .B list
 List the various informations.
-See \f[I]ros\-list\f[].
+See \f[I]ros-list\f[].
 .RS
 .RE
 .TP
 .B config
 Get and set the options.
-See \f[I]ros\-config\f[].
+See \f[I]ros-config\f[].
 .RS
 .RE
 .TP
 .B setup
 Run the initial setup.
-See \f[I]ros\-setup\f[].
+See \f[I]ros-setup\f[].
 .RS
 .RE
 .TP
 .B emacs
 Launch emacs with slime.
-See \f[I]ros\-emacs\f[].
+See \f[I]ros-emacs\f[].
 .RS
 .RE
 .TP
 .B wait
 Wait forever, used for daemonizing the script.
-See \f[I]ros\-wait\f[].
+See \f[I]ros-wait\f[].
 .RS
 .RE
 .TP
 .B delete
 Delete an installed implementation.
-See \f[I]ros\-delete\f[].
+See \f[I]ros-delete\f[].
 .RS
 .RE
 .TP
 .B version
 Show the roswell version information.
-See \f[I]ros\-version\f[].
+See \f[I]ros-version\f[].
 .RS
 .RE
 .TP
@@ -114,139 +114,139 @@ Show the subcommand help.
 .RE
 .SH Options
 .PP
-Options are processed in left\-to\-right order.
+Options are processed in left-to-right order.
 .TP
-.B \-w CODE \-\-wrap CODE
+.B -w CODE --wrap CODE
 Run the script with a shell wrapper CODE, e.g.
 rlwrap
 .RS
 .RE
 .TP
-.B \-m IMAGE \-\-image IMAGE
+.B -m IMAGE --image IMAGE
 Continue from Lisp image IMAGE
 .RS
 .RE
 .TP
-.B \-L NAME \-\-lisp NAME
+.B -L NAME --lisp NAME
 Run the script with a lisp impl NAME[/VERSION] if present, e.g.
-sbcl\-bin, sbcl/1.2.16.
+sbcl-bin, sbcl/1.2.16.
 Fails otherwise.
 .RS
 .RE
 .TP
-.B \-l FILE \-\-load FILE
+.B -l FILE --load FILE
 Load a lisp file FILE while building
 .RS
 .RE
 .TP
-.B \-S X \-\-source\-registry X
+.B -S X --source-registry X
 Override the source registry of asdf systems.
 .RS
 .RE
 .TP
-.B \-s SYSTEM \-\-system SYSTEM
+.B -s SYSTEM --system SYSTEM
 Load the asdf SYSTEM while building.
 .RS
 .RE
 .TP
-.B \-\-load\-system SYSTEM
+.B --load-system SYSTEM
 Same as above (buildapp compatibility)
 .RS
 .RE
 .TP
-.B \-p PACKAGE \-\-package PACKAGE
+.B -p PACKAGE --package PACKAGE
 Change the current package to PACKAGE
 .RS
 .RE
 .TP
-.B \-sp SP \-\-system\-package SP
-Combination of \-s SP and \-p SP
+.B -sp SP --system-package SP
+Combination of -s SP and -p SP
 .RS
 .RE
 .TP
-.B \-e FORM \-\-eval FORM
+.B -e FORM --eval FORM
 Evaluate FORM while building
 .RS
 .RE
 .TP
-.B \-\-require MODULE
+.B --require MODULE
 require MODULE while building
 .RS
 .RE
 .TP
-.B \-q \-\-quit
+.B -q --quit
 quit lisp here
 .RS
 .RE
 .TP
-.B \-r FUNC \-\-restart FUNC
+.B -r FUNC --restart FUNC
 the build image restarts from calling FUNC
 .RS
 .RE
 .TP
-.B \-E FUNC \-\-entry FUNC
+.B -E FUNC --entry FUNC
 the build image restarts from calling (FUNC argv).
 .RS
 .RE
 .TP
-.B \-i FORM \-\-init FORM
+.B -i FORM --init FORM
 evaluate FORM after the restart.
 .RS
 .RE
 .TP
-.B \-ip FORM \-\-print FORM
+.B -ip FORM --print FORM
 evaluate and princ FORM after the restart
 .RS
 .RE
 .TP
-.B \-iw FORM \-\-write FORM
+.B -iw FORM --write FORM
 evaluate and write FORM after the restart
 .RS
 .RE
 .TP
-.B \-F FORM \-\-final FORM
+.B -F FORM --final FORM
 evaluate FORM before dumping the IMAGE
 .RS
 .RE
 .TP
-.B \-R \-\-rc
+.B -R --rc
 try to read /etc/rosrc, ~/.roswell/init.lisp
 .RS
 .RE
 .TP
-.B +R \-\-no\-rc
+.B +R --no-rc
 skip /etc/rosrc, ~/.roswell/init.lisp
 .RS
 .RE
 .TP
-.B \-Q \-\-quicklisp
+.B -Q --quicklisp
 load quicklisp (default)
 .RS
 .RE
 .TP
-.B +Q \-\-no\-quicklisp
+.B +Q --no-quicklisp
 do not load quicklisp
 .RS
 .RE
 .TP
-.B \-v \-\-verbose
+.B -v --verbose
 be quite verbose while building
 .RS
 .RE
 .TP
-.B \-\-quiet
+.B --quiet
 suppress output while building (default)
 .RS
 .RE
 .TP
-.B \-\-test
+.B --test
 for test purpose
 .RS
 .RE
 .TP
-.B dynamic\-space\-size=[size in MB]
+.B dynamic-space-size=[size in MB]
 SBCL specific.
-The argument is passed to SBCL by \f[C]\-\-dynamic\-space\-size\f[]
+The argument is passed to SBCL by \f[C]--dynamic-space-size\f[]
 .RS
 .RE
 .SH Environmental Variables
@@ -261,7 +261,7 @@ platform .
 Check out issues list (https://github.com/roswell/roswell/issues)
 .SH SEE ALSO
 .PP
-\f[I]sbcl\f[](1) \f[I]ros\-dump\f[](1) \f[I]ros\-init\f[](1)
-\f[I]ros\-install\f[](1) \f[I]ros\-list\f[](1) \f[I]ros\-setup\f[](1)
+\f[I]sbcl\f[](1) \f[I]ros-dump\f[](1) \f[I]ros-init\f[](1)
+\f[I]ros-install\f[](1) \f[I]ros-list\f[](1) \f[I]ros-setup\f[](1)
 .SH AUTHORS
 Roswell Project Team.
