@@ -66,3 +66,6 @@ Exit code 2:
 
 Roswell encountered an unexpected error.
 
+As of release 0.0.4.57, numeric value returned by a user-provided "main"
+function will also returned as the exit status.
+
