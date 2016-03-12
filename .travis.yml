@@ -111,5 +111,7 @@ after_success:
   - if [ "$METHOD" = "documents" ]; then git commit -m "[ci skip] documents update"; fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
+       (git log -n 1 --oneline|grep "bump version to") && printf "it's a commit for release!!"; fi
   - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
   - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
