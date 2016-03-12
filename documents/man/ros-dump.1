@@ -1,13 +1,13 @@
 .TH "ros-dump" "1" "" "" ""
 .nh \" Turn off hyphenation by default.
 .PP
-ros-dump - make a dumped image of a roswell script
+ros\-dump \- make a dumped image of a roswell script
 .SH Synopsis
 .PP
 \f[B]ros [options] dump\f[] \f[C]TYPE\f[] args...
 .PP
 Where \f[C]TYPE\f[] is one of:
-.SS output [-f] [-o OUTPUT] [OPTIONS...] NAME
+.SS output [\-f] [\-o OUTPUT] [OPTIONS...] NAME
 .PP
 Specifing \f[C]output\f[] saves the current lisp state to an image.
 It loads the roswell script \f[C]NAME\f[] and also processes other
@@ -20,33 +20,33 @@ the current implementation, its version and the given NAME.
 When the output file already exists, the command fails with an error
 code.
 .PP
-The image can be loaded by \f[C]ros\ -m\ IMAGE\f[].
+The image can be loaded by \f[C]ros\ \-m\ IMAGE\f[].
 When restarting from the image, standard roswell subcommands and
 additional arguments to the script are also available, for example
-\f[C]ros\ run\f[] to resume with a repl, or \f[C]--restart\ FUNC\f[] to
-call a specific function, leaving some flexibility.
+\f[C]ros\ run\f[] to resume with a repl, or \f[C]\-\-restart\ FUNC\f[]
+to call a specific function, leaving some flexibility.
 .TP
-.B \f[C]-o\ OUTPUT\f[]
+.B \f[C]\-o\ OUTPUT\f[]
 The image is written to \f[C]OUTPUT\f[] instead of the default location.
 .RS
 .RE
 .TP
-.B \f[C]-f\f[]
+.B \f[C]\-f\f[]
 Force output when the output already exists.
 .RS
 .RE
 .SS executable
 .PP
 In contrast, when a script is dumped with \f[C]executable\f[], the
-dumped image becomes an self-contained executable binary which implies
-\f[C]--restart\ main\f[].
+dumped image becomes an self\-contained executable binary which implies
+\f[C]\-\-restart\ main\f[].
 The output file is deduced from \f[C]NAME\f[] and is written in the
 current directory.
 .PP
 This feature is SBCL and CCL only.
 .SH Description
 .PP
-\f[C]ros-dump\f[] creates a dumped lisp image of the state after
+\f[C]ros\-dump\f[] creates a dumped lisp image of the state after
 processing all arguments passed.
 .PP
 In both types, the global environment (e.g.
@@ -57,6 +57,6 @@ The dumped image is not compatible between the different implementations
 and even between the same implementations with different versions.
 .SH SEE ALSO
 .PP
-\f[I]sbcl\f[](1) \f[I]ros\f[](1) \f[I]ros-init\f[](1)
+\f[I]sbcl\f[](1) \f[I]ros\f[](1) \f[I]ros\-init\f[](1)
 .SH AUTHORS
 Roswell Project Team.

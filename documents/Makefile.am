@@ -32,11 +32,11 @@ html/%.html: %.md
 # special care should be made regarding checking the existence of the file; 
 	awk 'BEGIN{RS="_"; ORS="_"} {target=$$0;gsub("`","",target);if(system("[ -e \""target".md\" ]") == 0){print "["$$1"]("$$1".html)"}else{print $$0}}' < $< | \
 	pandoc -f markdown -t html5 -V title="$*(1)" -V pagetitle="$*(1)" \
-	-V css=ros.css -V author=$(PANDOC_AUTHORS) --template=default.html > $@
+	-V css=../ros.css -V author=$(PANDOC_AUTHORS) --template=default.html > $@
 
-html/%.css: %.scss
-	which scss
-	scss $< $@
+# html/%.css: %.scss
+# 	which scss
+# 	scss $< $@
 endif
 
 all: $(man1_MANS) $(HTMLS)
