@@ -6,5 +6,5 @@ prepare-release:
 release:
 	ros scripts/release.ros release
 test:
-	ros t/roswell.ros
+	run-prove roswell-test.asd
 .PHONY: debian prepare-release test

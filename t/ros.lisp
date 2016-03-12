@@ -6,6 +6,26 @@
   (:shadowing-import-from :ros :run))
 (in-package :roswell-test)
 
+(ql:quickload :uiop)
+
+(defun ! (r &optional expected)
+  (if expected
+      (is (string-trim #.(format nil " ~%")
+                       (uiop:run-program r :output :string))
+          expected r)
+      (ok (ignore-errors
+            (or (uiop:run-program r) t))
+          r)))
+
+(defun !-tree (tree)
+  (labels ((rec (current stack)
+             (mapcar (lambda (child)
+                       (if (consp child)
+                           (rec child (cons (car current) stack))
+                           (! (format nil "~{~a~^ ~}" (reverse (list* child (car current) stack)) ))))
+                     (cdr current))))
+    (rec tree nil)))
+
 (plan nil)
 
 (ok (getenv "USER") "(getenv \"USER\")")
@@ -39,5 +59,32 @@
  ros:script
  ros:util
  ros:with-lock-held)
+
+(! "ros version")
+(! "ros -v run -- --version")
+(! "ros config")
+(! "ros -e \"(defvar *a* 1)\" -e \"(setq *a* (* *a* 2))\" -e \"(print *a*)\"" "2")
+(! "ros list")
+(! "ros list installed")
+(! "ros list dump")
+#+broken (! "ros list versions")
+
+(!-tree
+ '("ros"
+   ("list" "" "installed" "dump" #+broken "versions" "")
+   ("config" "" "show" "set")
+   "version"
+   "help"
+   ("dump" "" "executable" "output")
+   "use"
+   "asdf"
+   "fmt"
+   "build"
+   ("init" "" "testinit" "testinit2.ros")))
+
+(ok (probe-file "testinit.ros"))
+(when (probe-file "testinit.ros") (delete-file "testinit.ros"))
+(ok (probe-file "testinit2.ros"))
+(when (probe-file "testinit2.ros") (delete-file "testinit2.ros"))
 
 (finalize)
