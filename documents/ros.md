@@ -24,51 +24,51 @@ install
 
 init [name[.ros]]
 
-  : Create a new ros script
+  : Create a new ros script. `.ros` is optional, and is added automaticaly. See _ros-init_.
 
 dump [executable|output] [script]
 
-  : Dump an image of the script for the faster startup or to make an executable.
+  : Dump an image of the script for the faster startup or to make an executable. See _ros-dump_.
 
 build
 
-  : Make an executable from the script.
+  : Make an executable from the script. See _ros-build_.
 
 run
 
-  : Initiate REPL
+  : Initiate REPL. See _ros-run_.
 
 use
 
-  : Change the default implementation used by roswell.
+  : Change the default implementation used by roswell. See _ros-use_.
 
 list
 
-  : List the various informations.
+  : List the various informations. See _ros-list_.
 
 config
 
-  : Get and set the options.
+  : Get and set the options. See _ros-config_.
 
 setup
 
-  : Run the initial setup
+  : Run the initial setup. See _ros-setup_.
 
 emacs
 
-  : Launch emacs with slime.
+  : Launch emacs with slime. See _ros-emacs_.
 
 wait
 
-  : Wait forever, used for daemonizing the script.
+  : Wait forever, used for daemonizing the script. See _ros-wait_.
 
 delete
 
-  : Delete an installed implementation.
+  : Delete an installed implementation. See _ros-delete_.
 
 version
 
-  : Show the roswell version information.
+  : Show the roswell version information. See _ros-version_.
 
 help
 
