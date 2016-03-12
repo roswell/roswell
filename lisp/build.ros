@@ -30,7 +30,7 @@ exec ros -Q +R -- $0 "$@"
         exec)
     (unless file
       (help)
-      (ros:quit -1))
+      (ros:quit))
     (unless (probe-file file)
       (error "File does not exist: '~A'" file))
     (with-open-file (in file)
@@ -44,7 +44,7 @@ exec ros -Q +R -- $0 "$@"
 (defun main (&rest argv)
   (unless argv
     (help)
-    (ros:quit -1))
+    (ros:quit))
   (handler-case (main- argv)
     (error (e)
       (format *error-output* "~&~A~%" e)
