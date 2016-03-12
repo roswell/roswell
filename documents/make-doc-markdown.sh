@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Use this file to generate a markdown template
+
 cat > ros-$1.md <<EOF
 
 ros-$1 - 
