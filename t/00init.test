@@ -3,4 +3,26 @@
 (! "ros -v run -- --version")
 (! "ros config")
 (! "ros -e \"(defvar *a* 1)\" -e \"(setq *a* (* *a* 2))\" -e \"(print *a*)\"" "2")
+(! "ros list")
 (! "ros list installed")
+(! "ros list dump")
+(! "ros list versions")
+
+(!-tree
+ '("ros"
+   ("list" "" "installed" "dump" "versions" "")
+   ("config" "" "show" "set")
+   "version"
+   "help"
+   ("dump" "" "executable" "output")
+   "use"
+   "asdf"
+   "fmt"
+   "build"
+   ("init" "" "testinit" "testinit2.ros")))
+
+(ok (probe-file "testinit.ros"))
+(when (probe-file "testinit.ros") (delete-file "testinit.ros"))
+(ok (probe-file "testinit2.ros"))
+(when (probe-file "testinit2.ros") (delete-file "testinit2.ros"))
+

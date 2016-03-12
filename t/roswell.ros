@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|entry for test
+#|The entry for testing. Usage: ./roswell.ros (no args)
 exec ros -- $0 "$@"
 |#
 (in-package :cl-user)
@@ -21,13 +21,23 @@ exec ros -- $0 "$@"
             (or (uiop:run-program r) t))
           r)))
 
+(defun !-tree (tree)
+  (labels ((rec (current stack)
+             (mapcar (lambda (child)
+                       (if (consp child)
+                           (rec child (cons (car current) stack))
+                           (! (format nil "~{~a~^ ~}" (reverse (list* child (car current) stack)) ))))
+                     (cdr current))))
+    (rec tree nil)))
+
+
 (setf *default-reporter* :list)
 (plan nil)
 (mapc (lambda (x) 
         (diag (format nil "testing ~a" (pathname-name x)))
         (load x))
-     (sort (directory (make-pathname :defaults *load-pathname* :name :wild :type "test"))
-             #'string< :key #'pathname-name))
+      (sort (directory (make-pathname :defaults *load-pathname* :name :wild :type "test"))
+            #'string< :key #'pathname-name))
 
 #+:ros.script
 (defun main (&rest r)
