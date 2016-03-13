@@ -79,7 +79,7 @@
    "use"
    "asdf"
    "fmt"
-   "build"
+   ;;"build"
    ("init" "" "testinit" "testinit2.ros")))
 
 (ok (probe-file "testinit.ros"))
@@ -87,4 +87,4 @@
 (ok (probe-file "testinit2.ros"))
 (when (probe-file "testinit2.ros") (delete-file "testinit2.ros"))
 
-(finalize)
+(ros:quit (if (finalize) 0 1))
