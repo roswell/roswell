@@ -96,6 +96,7 @@ have the latest asdf, and this file has a workaround for this.
   #+clisp(system::setenv name value)
   #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-setenv")))))
            (when f (funcall f name value 1)))
+  #+ecl(ext:setenv name value)
   value)
 
 (defun unsetenv (name)
