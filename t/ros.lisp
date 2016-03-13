@@ -30,14 +30,14 @@
 
 (ok (getenv "USER") "(getenv \"USER\")")
 (ok (not (getenv "NON_EXITS_ENV")) "(getenv \"NON_EXITS_ENV\") return nil if key not exist")
-#-(or alisp abcl);;pass when sbcl ccl clisp
+#-(or allegro abcl);;pass when sbcl ccl clisp
 (is (progn
       (setenv "NON_EXITS_ENV" "hoge")
       (getenv "NON_EXITS_ENV"))
     "hoge"
     "(setenv \"NON_EXITS_ENV\")")
 
-#-(or ecl alisp abcl)
+#-(or ecl allegro abcl)
 (ok (and
      (getenv "NON_EXITS_ENV")
      (progn
