@@ -30,15 +30,19 @@
 
 (ok (getenv "USER") "(getenv \"USER\")")
 (ok (not (getenv "NON_EXITS_ENV")) "(getenv \"NON_EXITS_ENV\") return nil if key not exist")
+#-(or alisp abcl);;pass when sbcl ccl clisp
 (is (progn
       (setenv "NON_EXITS_ENV" "hoge")
       (getenv "NON_EXITS_ENV"))
     "hoge"
     "(setenv \"NON_EXITS_ENV\")")
 
-(ok (progn
-      (unsetenv "NON_EXITS_ENV")
-      (not (getenv "NON_EXITS_ENV")))
+#-(or ecl alisp abcl)
+(ok (and
+     (getenv "NON_EXITS_ENV")
+     (progn
+       (unsetenv "NON_EXITS_ENV")
+       (not (getenv "NON_EXITS_ENV"))))
     "(unsetenv \"NON_EXITS_ENV\")")
 
 (ok (not (zerop (length (roswell '("roswell-internal-use" "uname") :string :trim))))
