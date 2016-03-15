@@ -191,9 +191,9 @@ char* uname_m(void) {
   }
   return substitute_char('-','_',p2);
 #else
-#if _WIN64
+#if defined(_WIN64)
   return q("x86-64");
-#elif _WIN32
+#elif defined(_WIN32)
   BOOL isWow64 = FALSE;
   LPFN_ISWOW64PROCESS fnIsWow64Process  = (LPFN_ISWOW64PROCESS)
     GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
