@@ -3,7 +3,8 @@ roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 
 gend.h: FORCE
 	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
-	which git>/dev/null && [ -e ../.git ] && printf "#define ROS_REVISION \"%s\"\n" "`git log -n 1 --oneline|cut -d' ' -f1`" >> $@.tmp
+	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
+	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
 	printf '#define WIN_LISP_PATH \"%s\"' "`cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	rm -f $@.tmp
