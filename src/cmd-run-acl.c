@@ -7,11 +7,12 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   char* arch=uname_m();
   char* os=uname();
   char* impl=(char*)cmd->name;
+  char* lisp=strcmp(impl,"mlisp")==0?"mlisp":"alisp";
   char* version=(char*)cmd->short_name;
   int offset=8; /*[binpath for alisp] --qq -I param -e init.lisp
                   [terminating NULL] that total 7 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,"alisp",SLASH,version,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -20,11 +21,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   int paramc=0;
   char *bin;
   int issystem=(strcmp("system",version)==0);
-  if(issystem){
-    bin=truename(which("alisp"));
-  }else {
-    bin=cat(impl_path,SLASH,"bin",SLASH,"alisp",EXE_EXTENTION,NULL);
-  }
+  bin=issystem?truename(which(lisp)):cat(impl_path,SLASH,"bin",SLASH,lisp,EXE_EXTENTION,NULL);
   s(arch),s(os);
   if(acl_version)
     offset+=3;
