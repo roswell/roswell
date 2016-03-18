@@ -122,7 +122,7 @@ install_abcl () {
 install_ecl () {
     if [ `uname` = "Darwin" ]; then
         brew install ecl
-        PATH="$LISP_IMPLS_BIN:$PATH" ros use ecl/system
+        ros use ecl/system
     else
         ros install ecl
         ros use ecl
