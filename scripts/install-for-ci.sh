@@ -12,10 +12,10 @@ LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
 CMU_DIR="$LISP_IMPLS_DIR/cmucl"
 ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
 
-CMU_TARBALL_URL=      "https://common-lisp.net/project/cmucl/downloads/snapshots/2016/02/cmucl-2016-02-x86-linux.tar.bz2"
+CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2016/02/cmucl-2016-02-x86-linux.tar.bz2"
 CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2016/02/cmucl-2016-02-x86-linux.extra.tar.bz2"
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl100express/linux86/acl100express-linux-x86.bz2"
-ALLEGRO_DMG_URL=    "http://www.franz.com/ftp/pub/acl100express/macosx86/acl100express-macosx-x86.dmg"
+ALLEGRO_DMG_URL="http://www.franz.com/ftp/pub/acl100express/macosx86/acl100express-macosx-x86.dmg"
 
 log () {
     echo "$ $1"
