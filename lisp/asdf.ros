@@ -52,7 +52,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                                            "make"))))
         (uiop/os:chdir src)
         (format t "~&chdir ~A~%" src)
-        (format t "~&~S~%" cmd)
         (uiop/run-program:run-program cmd :output t :ignore-error-status nil)
         (let ((built (merge-pathnames "build/asdf.lisp" src)))
           (if (probe-file built)
