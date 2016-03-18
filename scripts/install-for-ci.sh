@@ -151,21 +151,25 @@ install_allegro () {
     PATH="$LISP_IMPLS_BIN:$PATH" ros use alisp/system
 }
 
-echo "Installing Roswell..."
+if ! which ros ; then
+    echo "Installing Roswell..."
 
-fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
-extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
-cd $ROSWELL_DIR
-sh bootstrap
-./configure --prefix=$ROSWELL_INSTALL_DIR
-make
-if [ -w "$ROSWELL_INSTALL_DIR" ]; then
-    make install
+    fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
+    extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
+    cd $ROSWELL_DIR
+    sh bootstrap
+    ./configure --prefix=$ROSWELL_INSTALL_DIR
+    make
+    if [ -w "$ROSWELL_INSTALL_DIR" ]; then
+        make install
+    else
+        sudo make install
+    fi
+    echo "Roswell has been installed."
 else
-    sudo make install
+    echo "Detected Roswell."
 fi
 
-echo "Roswell has been installed."
 log "ros --version"
 
 case "$LISP" in
