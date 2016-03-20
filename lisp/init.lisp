@@ -50,7 +50,9 @@ have the latest asdf, and this file has a workaround for this.
   #+sbcl(sb-posix:getenv x)
   #-(or abcl ecl ccl clisp sbcl cmucl) (funcall (read-from-string "asdf::getenv") x))
 
-(defun ros-opts ()
+(defun ros-opts (&optional append)
+  (when append
+    (setf *ros-opts* (append append (ros-opts))))
   (or *ros-opts*
       (setf *ros-opts*
             (let((*read-eval*))
