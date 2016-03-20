@@ -141,6 +141,21 @@
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
 
+(defun install-impl (impl version subcmd argv)
+  (let ((cmds (cond
+                ((equal subcmd "install") (cdr (assoc impl *install-cmds* :test #'equal)))
+                ((equal subcmd "help") (cdr (assoc impl *help-cmds* :test #'equal))))))
+    (when cmds
+      (let ((param `(t :target ,impl :version ,version :argv ,argv)))
+        (handler-case
+            (loop for call in cmds
+               do (setq param (funcall call (rest param)))
+               while (first param))
+          (sb-sys:interactive-interrupt (condition)
+            (declare (ignore condition))
+            (format t "SIGINT detected, cleaning up the partially installed files~%")
+            (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
+
 (defun install-script (path body)
   (declare (ignorable path body))
   #-win32

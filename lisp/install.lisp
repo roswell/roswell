@@ -28,20 +28,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
                           (append (read-from-string (first argv))
                                   (read-from-string (second argv))))
                  verbose (third argv)
-                 argv (nthcdr 3 argv)
-                 cmds (cond
-                        ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
-                        ((equal subcmd "help") (cdr (assoc imp *help-cmds* :test #'equal)))))
-           (when cmds
-             (let ((param `(t :target ,imp :version ,version :argv ,argv)))
-               (handler-case
-                   (loop for call in cmds
-                      do (setq param (funcall call (rest param)))
-                    while (first param))
-                 (sb-sys:interactive-interrupt (condition)
-                   (declare (ignore condition))
-                   (format t "SIGINT detected, cleaning up the partially installed files~%")
-                   (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
+                 argv (nthcdr 3 argv))
+           (install-impl imp version subcmd argv))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            (install-ros sub))
           ((or (ql-dist:find-system imp)
