@@ -21,7 +21,7 @@
 
 (in-package :ros.install)
 
-(defvar *opts* nil)
+;;(defvar *opts* nil)
 (defvar *ros-path* nil)
 (defvar *build-hook* nil)
 
@@ -64,13 +64,13 @@
             date hour minute second time-zone (if daylight "S" " ") year)))
 
 (defun get-opt (item)
-  (second (assoc item *opts* :test #'equal)))
+  (ros:opt item))
 
 (defun set-opt (item val)
-  (let ((found (assoc item *opts* :test #'equal)))
+  (let ((found (assoc param (ros::ros-opts) :test 'equal)))
     (if found
         (setf (second found) val)
-        (push (list item val) *opts*))))
+        (push (list item val) ros::*ros-opts*))))
 
 ;;end here from util/opts.c
 
@@ -141,6 +141,13 @@
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
 
+(defun probe-impl-script (impl)
+  (let ((sub (make-pathname :name nil :type nil :defaults *load-pathname*)))
+    (and
+     (setf sub (or (probe-file (merge-pathnames (format nil "install-~A.lisp" impl) sub))
+                   (probe-file (merge-pathnames (format nil "install+~A.lisp" impl) sub))))
+     (load sub))))
+
 (defun install-impl (impl version subcmd argv)
   (let ((cmds (cond
                 ((equal subcmd "install") (cdr (assoc impl *install-cmds* :test #'equal)))
@@ -151,6 +158,7 @@
             (loop for call in cmds
                do (setq param (funcall call (rest param)))
                while (first param))
+          #+sbcl
           (sb-sys:interactive-interrupt (condition)
             (declare (ignore condition))
             (format t "SIGINT detected, cleaning up the partially installed files~%")

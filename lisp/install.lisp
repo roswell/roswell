@@ -10,26 +10,20 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (defun main (subcmd impl/version &rest argv)
   (let* (imp
-         version verbose
          (seq impl/version)
          (pos (position #\/ impl/version))
          (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
-         sub cmds)
+         version sub)
     (if pos
         (setq imp (subseq seq 0 pos)
               version (subseq seq (1+ pos)))
         (setq imp seq))
-    (cond ((and
-            (setf sub (make-pathname :name nil :type nil :defaults *load-pathname*)
-                  sub (or (probe-file (merge-pathnames (format nil "install-~A.lisp" imp) sub))
-                          (probe-file (merge-pathnames (format nil "install+~A.lisp" imp) sub))))
-            (load sub))
-           (setf *opts* (let (*read-eval*)
-                          (append (read-from-string (first argv))
-                                  (read-from-string (second argv))))
-                 verbose (third argv)
-                 argv (nthcdr 3 argv))
-           (install-impl imp version subcmd argv))
+    (cond ((probe-impl-script imp)
+           (setf ros::*ros-opts* (append (let (*read-eval*)
+                                           (append (read-from-string (first argv))
+                                                   (read-from-string (second argv))))
+                                         (ros::ros-opts)))
+           (install-impl imp version subcmd (nthcdr 2 argv)))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            (install-ros sub))
           ((or (ql-dist:find-system imp)
