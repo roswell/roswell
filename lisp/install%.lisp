@@ -21,7 +21,6 @@
 
 (in-package :ros.install)
 
-;;(defvar *opts* nil)
 (defvar *ros-path* nil)
 (defvar *build-hook* nil)
 
