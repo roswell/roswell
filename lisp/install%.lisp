@@ -163,6 +163,34 @@
             (format t "SIGINT detected, cleaning up the partially installed files~%")
             (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
 
+(defun install-system-script (system)
+  (let ((step 0))
+    (handler-bind ((error (lambda (c)
+                            (declare (ignore c))
+                            ;; handle errors, but do not unwind -- Errors should automatically return the error code
+                            (format *error-output* "Aborted during step [~a/3]." step))))
+      (format *error-output* "~&[~a/3] System '~A' found. Loading the system.." (incf step) system)
+      (let ((*features* (cons :ros.installing *features*))
+            (*standard-output* (make-broadcast-stream))
+            (*error-output*    (make-broadcast-stream))
+            (*trace-output*    (make-broadcast-stream)))
+        (if (ql:where-is-system system)
+            (progn (ql:quickload system)
+                   (asdf:oos 'asdf:load-op system :force t))
+            (ql:quickload system)))
+      (when *build-hook*
+        (format *error-output* "~&[~a/3] Processing build-hook.." (incf step))
+        (funcall *build-hook*))
+      (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
+                                         roswell/ subdirectory of the system..." (incf step))
+      (let ((scripts (directory (merge-pathnames "roswell/*.*" (ql:where-is-system system)))))
+        (if scripts
+            (format t "~&Found ~a scripts:~{ ~a~}~%"
+                    (length scripts) (mapcar #'pathname-name scripts))
+            (format t "~&No roswell scripts found.~%"))
+        (dolist (from scripts)
+          (install-ros from))))))
+
 (defun install-script (path body)
   (declare (ignorable path body))
   #-win32
