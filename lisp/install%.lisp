@@ -67,7 +67,7 @@
   (ros:opt item))
 
 (defun set-opt (item val)
-  (let ((found (assoc param (ros::ros-opts) :test 'equal)))
+  (let ((found (assoc item (ros::ros-opts) :test 'equal)))
     (if found
         (setf (second found) val)
         (push (list item val) ros::*ros-opts*))))
