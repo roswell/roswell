@@ -20,41 +20,31 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
               version (subseq seq (1+ pos)))
         (setq imp seq))
     (cond ((and
-            (setf sub (or (probe-file (merge-pathnames
-                                       (format nil "install-~A.lisp" imp)
-                                       (setf sub (make-pathname :name nil :type nil
-                                                                :defaults *load-pathname*))))
-                          (probe-file (merge-pathnames
-                                       (format nil "install+~A.lisp" imp)
-                                       sub))))
-            (progn (load sub)
-                   (let (*read-eval*)
-                     (setf *opts* (append (read-from-string (first argv))
-                                          (read-from-string (second argv)))
-                           verbose (third argv)
-                           argv (nthcdr 3 argv)
-                           cmds (cond
-                                  ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
-                                  ((equal subcmd "help") (cdr (assoc imp *help-cmds* :test #'equal))))))))
-           (let ((param `(t :target ,imp :version ,version :argv ,argv)))
-             (handler-case
-                 (loop for call in cmds
-                    do (setq param (funcall call (rest param)))
+            (setf sub (make-pathname :name nil :type nil :defaults *load-pathname*)
+                  sub (or (probe-file (merge-pathnames (format nil "install-~A.lisp" imp) sub))
+                          (probe-file (merge-pathnames (format nil "install+~A.lisp" imp) sub))))
+            (load sub))
+           (setf *opts* (let (*read-eval*)
+                          (append (read-from-string (first argv))
+                                  (read-from-string (second argv))))
+                 verbose (third argv)
+                 argv (nthcdr 3 argv)
+                 cmds (cond
+                        ((equal subcmd "install") (cdr (assoc imp *install-cmds* :test #'equal)))
+                        ((equal subcmd "help") (cdr (assoc imp *help-cmds* :test #'equal)))))
+           (when cmds
+             (let ((param `(t :target ,imp :version ,version :argv ,argv)))
+               (handler-case
+                   (loop for call in cmds
+                      do (setq param (funcall call (rest param)))
                     while (first param))
-               (sb-sys:interactive-interrupt (condition)
-                 (declare (ignore condition))
-                 (format t "SIGINT detected, cleaning up the partially installed files~%")
-                 (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))
+                 (sb-sys:interactive-interrupt (condition)
+                   (declare (ignore condition))
+                   (format t "SIGINT detected, cleaning up the partially installed files~%")
+                   (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
-           #+nil(uiop/stream:copy-file sub (make-pathname
-                                            :defaults (merge-pathnames "subcmd/" (homedir))
-                                            :name (pathname-name sub)
-                                            :type (pathname-type sub)))
            (install-ros sub))
           ((or (ql-dist:find-system imp)
-               (ql:where-is-system imp)
-               (and (setq imp (format nil "roswell-install-~A" imp))
-                    (ql-dist:find-system imp))
                (ql:where-is-system imp))
            (let ((step 0))
              (handler-bind ((error (lambda (c)
