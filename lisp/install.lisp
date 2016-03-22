@@ -8,20 +8,19 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (in-package :ros.install)
 
-(defun main (subcmd impl/version &rest argv)
+(defun main (subcmd impl/version params &rest argv)
   (let* (imp
-         (seq impl/version)
          (pos (position #\/ impl/version))
          (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
          version sub)
+    (let (*read-eval*)
+      (ros::ros-opts (read-from-string params)))
     (if pos
-        (setq imp (subseq seq 0 pos)
-              version (subseq seq (1+ pos)))
-        (setq imp seq))
+        (setq version (subseq impl/version (1+ pos))
+              imp (subseq impl/version 0 pos))
+        (setq imp impl/version))
     (cond ((probe-impl-script imp)
-           (let (*read-eval*)
-             (ros::ros-opts (read-from-string (first argv))))
-           (install-impl imp version subcmd (rest argv)))
+           (install-impl imp version subcmd argv))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            (install-ros sub))
           ((or (ql-dist:find-system imp)
