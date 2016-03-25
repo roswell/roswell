@@ -10,7 +10,7 @@
 (unless (find-package :uiop)
   #+quicklisp(ql:quickload :uiop :silent t))
 
-(ql:quickload '(:cl-html-parse :simple-date-time :split-sequence) :silent t)
+(ql:quickload '(:simple-date-time :split-sequence :plump) :silent t)
 
 #-ros.util
 (ros:util)
