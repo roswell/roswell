@@ -4,7 +4,7 @@
   (format *error-output* "no options for quicklisp~%")
   (cons t argv))
 
-(defun patch-quicklisp (path)
+(defun quicklisp-patch (path)
   (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))
                        :direction :output :if-exists :supersede)
     (format
@@ -83,7 +83,6 @@
   (cons (not (ros:opt "without-install")) argv))
 
 (defun quicklisp-install (argv)
-  (format *error-output* "~S~%" argv)
   #-win32
   (ignore-errors
    (require :sb-posix)
@@ -93,7 +92,7 @@
      (sb-posix:setuid (parse-integer uid))))
   (let ((archive (ros:opt "download.archive"))
         (path (merge-pathnames "impls/ALL/ALL/quicklisp/" (homedir))))
-    (patch-quicklisp path)
+    (quicklisp-patch path)
     (cond
       ((probe-file (merge-pathnames "setup.lisp" path))
        (format *error-output* "Quicklisp is already setup.~%"))
