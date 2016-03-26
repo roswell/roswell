@@ -12,16 +12,8 @@
 
 (ql:quickload '(:simple-date-time :split-sequence :plump) :silent t)
 
-#-ros.util
-(ros:util)
-
-(defpackage :ros.install
-  (:use :cl :ros.util)
-  (:export :*build-hook*))
-
 (in-package :ros.install)
 
-(defvar *ros-path* nil)
 (defvar *build-hook* nil)
 
 #+sbcl
@@ -65,17 +57,7 @@
 (defun get-opt (item)
   (ros:opt item))
 
-(defun set-opt (item val)
-  (let ((found (assoc item (ros::ros-opts) :test 'equal)))
-    (if found
-        (setf (second found) val)
-        (push (list item val) ros::*ros-opts*))))
-
 ;;end here from util/opts.c
-
-(defvar *install-cmds* nil)
-(defvar *help-cmds* nil)
-(defvar *list-cmd* nil)
 
 (defun installedp (argv)
   (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
@@ -139,29 +121,6 @@
              (ros:roswell `("build" ,from "-o" ,to) :interactive nil)
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
-
-(defun probe-impl-script (impl)
-  (let ((sub (make-pathname :name nil :type nil :defaults *load-pathname*)))
-    (and
-     (setf sub (or (probe-file (merge-pathnames (format nil "install-~A.lisp" impl) sub))
-                   (probe-file (merge-pathnames (format nil "install+~A.lisp" impl) sub))))
-     (load sub))))
-
-(defun install-impl (impl version subcmd argv)
-  (let ((cmds (cond
-                ((equal subcmd "install") (cdr (assoc impl *install-cmds* :test #'equal)))
-                ((equal subcmd "help") (cdr (assoc impl *help-cmds* :test #'equal))))))
-    (when cmds
-      (let ((param `(t :target ,impl :version ,version :argv ,argv)))
-        (handler-case
-            (loop for call in cmds
-               do (setq param (funcall call (rest param)))
-               while (first param))
-          #+sbcl
-          (sb-sys:interactive-interrupt (condition)
-            (declare (ignore condition))
-            (format t "SIGINT detected, cleaning up the partially installed files~%")
-            (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
 
 (defun install-system-script (system)
   (let ((step 0))

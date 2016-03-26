@@ -7,7 +7,7 @@ struct install_impls *install_impl;
 
 struct install_impls *impls_to_install[]={
   &impls_sbcl_bin,
-  &utils_quicklisp
+  //&utils_quicklisp
 };
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
