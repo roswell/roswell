@@ -153,7 +153,6 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         tmp[i++]=install_ros;
         tmp[i++]=q("install");
         tmp[i++]=q(argv[1]);
-        tmp[i++]=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
         if(verbose&1) {
@@ -210,7 +209,6 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
     tmp[i++]=install_ros;
     tmp[i++]=q("help");
     tmp[i++]=q(argv[1]);
-    tmp[i++]=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
     for(j=2;j<argc;tmp[i++]=q(argv[j++]));
     argc_=i;
     for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));

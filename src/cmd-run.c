@@ -240,7 +240,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   if(wrap)
     arg[0]=q(wrap);
   if(arg && file_exist_p(arg[1])) {
-    char* opts=s_cat(q("("),sexp_opts(local_opt),q(")"),NULL);
+    char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
     setenv("ROS_OPTS",opts,1);
     if(verbose&1 ||testing) {
       fprintf(stderr,"args ");

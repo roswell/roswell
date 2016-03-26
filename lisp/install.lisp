@@ -53,13 +53,11 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
-(defun main (subcmd impl/version params &rest argv)
+(defun main (subcmd impl/version &rest argv)
   (let* (imp
          (pos (position #\/ impl/version))
          (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
          version sub)
-    (let (*read-eval*)
-      (ros::ros-opts (read-from-string params)))
     (if pos
         (setq version (subseq impl/version (1+ pos))
               imp (subseq impl/version 0 pos))
