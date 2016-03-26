@@ -7,7 +7,6 @@ struct install_impls *install_impl;
 
 struct install_impls *impls_to_install[]={
   &impls_sbcl_bin,
-  //&utils_quicklisp
 };
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
@@ -116,7 +115,28 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
           install_impl=j;
         }
       }
-      if(!install_impl) {
+      if(install_impl) {
+        for(cmds=install_impl->call;*cmds&&ret;++cmds)
+          ret=(*cmds)(&param);
+        if(ret) { // after install latest installed impl/version should be default for 'run'
+          struct opts* opt=global_opt;
+          struct opts** opts=&opt;
+          char* home=configdir();
+          char* path=cat(home,"config",NULL);
+          char* v=cat(param.impl,".version",NULL);
+          char* version=param.version;
+          if(!install_impl->util) {
+            int i;
+            for(i=0;version[i]!='\0';++i)
+              if(version[i]=='-')
+                version[i]='\0';
+            set_opt(opts,"default.lisp",param.impl,0);
+            set_opt(opts,v,version,0);
+            save_opts(path,opt);
+          }
+          s(home),s(path),s(v);
+        }
+      }else {
         char* lisp_path=lispdir();
         int i,j,argc_;
         char** tmp;
@@ -146,26 +166,6 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         for(j=0;j<argc_;s(tmp[j++]));
         dealloc(tmp);
         return 0;
-      }
-      for(cmds=install_impl->call;*cmds&&ret;++cmds)
-        ret=(*cmds)(&param);
-      if(ret) { // after install latest installed impl/version should be default for 'run'
-        struct opts* opt=global_opt;
-        struct opts** opts=&opt;
-        char* home=configdir();
-        char* path=cat(home,"config",NULL);
-        char* v=cat(param.impl,".version",NULL);
-        char* version=param.version;
-        if(!install_impl->util) {
-          int i;
-          for(i=0;version[i]!='\0';++i)
-            if(version[i]=='-')
-              version[i]='\0';
-          set_opt(opts,"default.lisp",param.impl,0);
-          set_opt(opts,v,version,0);
-          save_opts(path,opt);
-        }
-        s(home),s(path),s(v);
       }
       if(param.version)s(param.version);
       s(param.impl),s(param.arch),s(param.os);
