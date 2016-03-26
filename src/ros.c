@@ -31,7 +31,6 @@ LVal top_commands =(LVal)NULL;
 LVal top_options =(LVal)NULL;
 
 LVal top_helps =(LVal)NULL;
-LVal subcommand_name=(LVal)NULL;
 
 int proccmd(int argc,char** argv,LVal option,LVal command);
 
@@ -101,9 +100,18 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     return 1+proccmd(argc-1,&(argv[1]),option,command);
   }else {
     char* tmp[]={"help"};
-    LVal p;
-    if(command==top_commands && position_char(".",argv[0])==-1 &&
-       strcmp("install",argv[0])!=0) {
+    LVal p,p2=0;
+    /* search internal commands.*/
+    for(p=command;p;p=Next(p)) {
+      struct sub_command* fp=firstp(p);
+      if(fp->name) {
+        if(strcmp(fp->name,argv[0])==0)
+          exit(fp->call(argc,argv,fp));
+        if(strcmp(fp->name,"*")==0)
+          p2=p;
+      }
+    }
+    if(command==top_commands && position_char(".",argv[0])==-1) {
       /* local commands*/
       char* cmddir=configdir();
       char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
@@ -122,13 +130,9 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
       }
       s(cmddir),s(cmdpath);
     }
-    /* search internal commands.*/
-    for(p=command;p;p=Next(p)) {
-      struct sub_command* fp=firstp(p);
-      if(fp->name&&(strcmp(fp->name,argv[0])==0||strcmp(fp->name,"*")==0)) {
-        subcommand_name=conss((char*)fp->name,subcommand_name);
-        exit(fp->call(argc,argv,fp));
-      }
+    if(p2) {
+      struct sub_command* fp=firstp(p2);
+      exit(fp->call(argc,argv,fp));
     }
     fprintf(stderr,"invalid command\n");
     proccmd(1,tmp,top_options,top_commands);

@@ -47,7 +47,6 @@ extern LVal top_commands;
 extern LVal top_options;
 extern struct opts* global_opt;
 extern struct opts* local_opt;
-extern LVal subcommand_name;
 extern int quicklisp;
 extern int rc;
 
