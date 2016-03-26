@@ -102,7 +102,8 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
   }else {
     char* tmp[]={"help"};
     LVal p;
-    if(command==top_commands && position_char(".",argv[0])==-1) {
+    if(command==top_commands && position_char(".",argv[0])==-1 &&
+       strcmp("install",argv[0])!=0) {
       /* local commands*/
       char* cmddir=configdir();
       char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
