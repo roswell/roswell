@@ -159,7 +159,7 @@
                        :if-exists :supersede
                        :if-does-not-exist :create)
       (format o "#!/bin/sh~%~A" body))
-    (sb-posix:chmod path #o755))
+    #+sbcl(sb-posix:chmod path #o755))
   #+win32
   (progn))
 
