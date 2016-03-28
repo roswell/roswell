@@ -171,6 +171,7 @@ else
 fi
 
 log "ros --version"
+log "ros setup"
 
 case "$LISP" in
     # 'ccl' is an alias for 'ccl-bin'
