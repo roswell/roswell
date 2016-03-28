@@ -115,7 +115,7 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
           install_impl=j;
         }
       }
-      if(install_impl) {
+      if(install_impl) { 
         for(cmds=install_impl->call;*cmds&&ret;++cmds)
           ret=(*cmds)(&param);
         if(ret) { // after install latest installed impl/version should be default for 'run'
@@ -136,7 +136,8 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
           }
           s(home),s(path),s(v);
         }
-      }else {
+      }
+      {
         char* lisp_path=lispdir();
         int i,j,argc_;
         char** tmp;
