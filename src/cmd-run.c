@@ -171,6 +171,13 @@ char* determin_impl(char* impl) {
   if(!(impl && version)) {
     if(impl) s(impl);
     impl=q(DEFAULT_IMPL);
+    if(!lock_apply("setup",2)) { /* lock file not exists yet */
+      char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
+      int ret;
+      cond_printf(1,"cmd:%s\n",cmd);
+      ret=System(cmd);
+      cond_printf(1,"ret:%d\n",ret);
+    }
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);;
     version=get_opt(DEFAULT_IMPL".version",0);
