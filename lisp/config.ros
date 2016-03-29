@@ -1,0 +1,11 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Get and set options
+exec ros -Q -- $0 "$@"
+|#
+(defpackage :ros.script.config.3668210854
+  (:use :cl))
+(in-package :ros.script.config.3668210854)
+(defun main (&rest argv)
+  (declare (ignorable argv)))
+;;; vim: set ft=lisp lisp:

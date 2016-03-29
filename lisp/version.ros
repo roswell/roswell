@@ -1,0 +1,11 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Show the roswell version information
+exec ros -Q -- $0 "$@"
+|#
+(defpackage :ros.script.version.3668210994
+  (:use :cl))
+(in-package :ros.script.version.3668210994)
+(defun main (&rest argv)
+  (declare (ignorable argv)))
+;;; vim: set ft=lisp lisp:

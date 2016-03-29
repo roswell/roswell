@@ -220,6 +220,6 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
 }
 
 void register_cmd_install(void) {
-  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install a given implementation or a system for "PACKAGE" environment",NULL);
+  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,NULL,NULL);
   top_helps=add_help(top_helps,"install","",(LVal)NULL,(LVal)NULL,NULL,NULL,install_help);
 }

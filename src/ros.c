@@ -281,10 +281,10 @@ int main (int argc,char **argv) {
 
   /*         {"list",NULL,cmd_list,1,1}, */
   /*         {"set",NULL,cmd_notyet,0,1}, */
-  top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,"Show the "PACKAGE" version information",NULL);
+  top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,NULL,NULL);
   register_cmd_internal();
 
-  top_commands=add_command(top_commands,"help",NULL,cmd_help,1,1,"Show Command help",NULL);
+  top_commands=add_command(top_commands,"help",NULL,cmd_help,1,1,NULL,NULL);
   register_cmd_run();
   top_commands=nreverse(top_commands);
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [Command arguments...]  \n",
