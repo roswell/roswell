@@ -1,5 +1,6 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
+#include "gend.h"
 
 LVal internal_commands=(LVal)NULL;
 
@@ -119,4 +120,13 @@ char* lispdir(void) {
     lisp_path=append_trail_slash(lisp_path);
   }
   return lisp_path;
+}
+
+int opt_version(int argc,char **argv,struct sub_command* cmd) {
+  char *asdf= get_opt("asdf.version",0);
+  fprintf(stderr,"%s",PACKAGE_STRING);
+  if(strlen(ROS_REVISION)>0)
+    fprintf(stderr,"(%s)",ROS_REVISION);
+  fprintf(stderr,"\n");
+  return 0;
 }

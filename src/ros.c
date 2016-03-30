@@ -10,11 +10,11 @@ struct opts* global_opt;
 struct opts* local_opt=NULL;
 
 extern int cmd_list(int argc,char **argv,struct sub_command* cmd);
-extern int cmd_version(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_config(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_setup(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_internal(int argc,char **argv,struct sub_command* cmd);
+extern int opt_version(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
@@ -49,38 +49,39 @@ int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option
 
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int pos;
-  /* alias */
+  char* alias=NULL;
   if(!strcmp(argv[0],"-V"))
-    argv[0]="version";
+    alias="version";
   else if(!strcmp(argv[0],"-h") || !strcmp(argv[0],"-?"))
-    argv[0]="help";
+    alias="help";
+  else alias=argv[0];
 
   cond_printf(1,"proccmd:%s\n",argv[0]);
-  if(argv[0][0]=='-' || argv[0][0]=='+') {
-    if(argv[0][0]=='-' &&
-       argv[0][1]=='-') { /*long option*/
+  if(alias[0]=='-' || alias[0]=='+') {
+    if(alias[0]=='-' &&
+       alias[1]=='-') { /*long option*/
       LVal p;
       for(p=option;p;p=Next(p)) {
         struct sub_command* fp=firstp(p);
-        if(strcmp(&argv[0][2],fp->name)==0) {
+        if(strcmp(&alias[2],fp->name)==0) {
           int result= fp->call(argc,argv,fp);
           if(fp->terminating) {
-            cond_printf(1,"terminating:%s\n",argv[0]);
+            cond_printf(1,"terminating:%s\n",alias);
             exit(result);
           }else
             return result;
         }
       }
-      cond_printf(1,"proccmd:invalid? %s\n",argv[0]);
+      cond_printf(1,"proccmd:invalid? %s\n",alias);
     }else { /*short option*/
-      if(argv[0][1]!='\0') {
+      if(alias[1]!='\0') {
         LVal p;
         for(p=option;p;p=Next(p)) {
           struct sub_command* fp=firstp(p);
-          if(fp->short_name&&strcmp(argv[0],fp->short_name)==0) {
+          if(fp->short_name&&strcmp(alias,fp->short_name)==0) {
             int result= fp->call(argc,argv,fp);
             if(fp->terminating) {
-              cond_printf(1,"terminating:%s\n",argv[0]);
+              cond_printf(1,"terminating:%s\n",alias);
               exit(result);
             }else {
               return result;
@@ -111,26 +112,26 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     for(p=command;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
       if(fp->name) {
-        if(strcmp(fp->name,argv[0])==0)
+        if(strcmp(fp->name,alias)==0)
           exit(fp->call(argc,argv,fp));
         if(strcmp(fp->name,"*")==0)
           p2=p;
       }
     }
-    if(command==top_commands && position_char(".",argv[0])==-1) {
+    if(command==top_commands && position_char(".",alias)==-1) {
       /* local commands*/
       char* cmddir=configdir();
-      char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
+      char* cmdpath=cat(cmddir,alias,".ros",NULL);
       if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
         proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       s(cmddir),s(cmdpath);
       /* systemwide commands*/
       cmddir=subcmddir();
-      cmdpath=cat(cmddir,argv[0],".ros",NULL);
+      cmdpath=cat(cmddir,alias,".ros",NULL);
       if(directory_exist_p(cmddir)) {
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
-        s(cmdpath);cmdpath=cat(cmddir,"+",argv[0],".ros",NULL);
+        s(cmdpath);cmdpath=cat(cmddir,"+",alias,".ros",NULL);
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       }
@@ -268,6 +269,7 @@ int main (int argc,char **argv) {
   char* _help;
   /*options*/
   /* toplevel */
+  top_options=add_command(top_options,"version" ,NULL,opt_version,1,1,"Print version information and quit",NULL);
   top_options=add_command(top_options,"wrap","-w",opt_top,1,0,"Run "PACKAGE" with a shell wrapper CODE,","CODE");
   top_options=add_command(top_options,"image","-m",opt_top,1,0,"continue from Lisp image IMAGE","IMAGE");
   top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"Run "PACKAGE" with a lisp impl NAME[/VERSION].","NAME");
@@ -280,7 +282,6 @@ int main (int argc,char **argv) {
   register_cmd_config();
   register_cmd_setup();
 
-  top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,NULL,NULL);
   register_cmd_internal();
 
   top_commands=add_command(top_commands,"help",NULL,cmd_help,1,1,NULL,NULL);
