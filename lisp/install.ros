@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|install roswell
+#|Install a given implementation or a system for roswell environment
 exec ros -Q +R -L sbcl-bin -- $0 "$@"
 |#
 
@@ -13,7 +13,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (in-package :ros.install)
 
 (when (probe-file (merge-pathnames "impls/ALL/ALL/quicklisp/setup.lisp" (homedir)))
-  (ros:util "install%"))
+  (ros:util "util-install-quicklisp"))
 
 (defun main (subcmd impl/version &rest argv)
   (let* (imp
