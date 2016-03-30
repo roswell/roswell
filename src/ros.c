@@ -49,6 +49,12 @@ int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option
 
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int pos;
+  /* alias */
+  if(!strcmp(argv[0],"-V"))
+    argv[0]="version";
+  else if(!strcmp(argv[0],"-h") || !strcmp(argv[0],"-?"))
+    argv[0]="help";
+
   cond_printf(1,"proccmd:%s\n",argv[0]);
   if(argv[0][0]=='-' || argv[0][0]=='+') {
     if(argv[0][0]=='-' &&
@@ -267,11 +273,6 @@ int main (int argc,char **argv) {
   top_options=add_command(top_options,"lisp","-L",opt_top,1,0,"Run "PACKAGE" with a lisp impl NAME[/VERSION].","NAME");
   top_options=register_runtime_options(top_options);
 
-  /* abbrevs */
-  top_options=add_command(top_options,"version","-V",cmd_version,0,1,NULL,NULL);
-  top_options=add_command(top_options,"help","-h",cmd_help,0,1,NULL,NULL);
-  top_options=add_command(top_options,"help","-?",cmd_help,0,1,NULL,NULL);
-
   top_options=nreverse(top_options);
   /*commands*/
   register_cmd_install();
@@ -279,8 +280,6 @@ int main (int argc,char **argv) {
   register_cmd_config();
   register_cmd_setup();
 
-  /*         {"list",NULL,cmd_list,1,1}, */
-  /*         {"set",NULL,cmd_notyet,0,1}, */
   top_commands=add_command(top_commands,"version" ,NULL,cmd_version,1,1,NULL,NULL);
   register_cmd_internal();
 
