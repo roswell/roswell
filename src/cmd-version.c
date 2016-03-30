@@ -23,23 +23,3 @@ int cmd_version(int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-char* lispdir(void) {
-  char *w=which(argv_orig[0]);
-  char *ros_bin=pathname_directory(truename(w));
-  char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
-  char* lisp_path=NULL;
-  s(ros_bin),s(w);
-  if(directory_exist_p(ros_bin_lisp)) {
-    lisp_path=ros_bin_lisp;
-  }else {
-    s(ros_bin_lisp);
-#if defined(WIN_LISP_PATH) && defined(HAVE_WINDOWS_H)
-    if(lisp_path==NULL)
-      lisp_path=q(WIN_LISP_PATH);
-#endif
-    if(lisp_path==NULL)
-      lisp_path=q(LISP_PATH);
-    lisp_path=append_trail_slash(lisp_path);
-  }
-  return lisp_path;
-}

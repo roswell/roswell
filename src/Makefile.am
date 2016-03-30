@@ -9,7 +9,7 @@ gend.h: FORCE
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	rm -f $@.tmp
 	cat $@
-cmd-version.c: gend.h
+cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c archive.c html.c \
 	util_list.c util.c util_string.c util_dir.c util_file.c util_system.c \
