@@ -1,11 +1,34 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Show the roswell version information
-exec ros -Q -- $0 "$@"
+exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
+
+#-ros.util
+(ros:util "util")
+
 (defpackage :ros.script.version.3668210994
-  (:use :cl))
+  (:use :cl :ros.util))
 (in-package :ros.script.version.3668210994)
+
+(mapcar #'unintern '(main version))
+
 (defun main (&rest argv)
-  (declare (ignorable argv)))
+  (declare (ignorable argv))
+  (let ((revision (version "revision"))
+        (curl (version "curl"))
+        (asdf (version "asdf"))
+        (conf (version "confdir")))
+    (unless (zerop (length revision))
+      (setf revision (format nil "(~A)" revision)))
+    (format *error-output* "~A~A~%build with ~A~%"
+            (version "package") revision
+            (version "cc"))
+    (unless (zerop (length curl))
+      (format *error-output* "libcurl ~A~%" curl))
+    (unless (zerop (length asdf))
+      (format *error-output* "ASDF ~A~%" asdf))
+    (format *error-output* "lispdir='~A'~%" (version "lispdir"))
+    (unless (zerop (length conf))
+      (format *error-output* "configdir='~A'~%" conf))))
 ;;; vim: set ft=lisp lisp:
