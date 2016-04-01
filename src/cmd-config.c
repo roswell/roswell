@@ -45,6 +45,6 @@ int config_help(int argc,char **argv,struct sub_command* cmd) {
 }
 
 void register_cmd_config(void) {
-  top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,"Get and set options",NULL);
+  top_commands=add_command(top_commands,"config"  ,NULL,cmd_config,1,1,NULL,NULL);
   top_helps=add_help(top_helps,"config","",(LVal)NULL,(LVal)NULL,NULL,NULL,config_help);
 }

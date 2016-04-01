@@ -26,10 +26,10 @@ void print_opts(struct opts* opt) {
 }
 
 char* sexp_opts(struct opts* opt) {
-  void* ret=q("(");
+  void* ret=q("");
   for(;opt;opt=opt->next)
     ret=s_cat(ret,q("(\""),q(opt->name),q("\"\""),escape_string((char*)opt->value),q("\")"),NULL);
-  return ret=s_cat2(ret,q(")"));
+  return ret;
 }
 
 struct opts* load_opts(const char* path) {

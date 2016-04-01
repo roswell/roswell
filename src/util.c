@@ -321,13 +321,19 @@ void setup_uid(int euid_or_uid) {
 
 int lock_apply(char* symbol,int remove) {
   char *p=s_cat(configdir(),q("tmp/"),NULL);
+  int ret=0;
   ensure_directories_exist(p),s(p);
   p=s_cat(configdir(),q("tmp/lock."PACKAGE"."),q(symbol),NULL);
 #ifdef HAVE_WINDOWS_H
 #else
-  cond_printf(1,"%slock!:%s\n",remove?"un":"",symbol);
-  while(remove?rmdir(p):mkdir(p,0700));
+  if(remove<2) {
+    cond_printf(1,"%slock!:%s\n",remove?"un":"",symbol);
+    while(remove?rmdir(p):mkdir(p,0700));
+  }else{ /* prove lockfile*/
+    ret=directory_exist_p(p);
+    cond_printf(1,"lock %s exist status=%d",symbol,ret);
+  }
 #endif
   s(p);
-  return 0;
+  return ret;
 }

@@ -169,13 +169,15 @@ char* determin_impl(char* impl) {
     version=q("system");
   }
   if(!(impl && version)) {
-    char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
-    int ret;
     if(impl) s(impl);
     impl=q(DEFAULT_IMPL);
-    cond_printf(1,"cmd:%s\n",cmd);
-    ret=System(cmd);
-    cond_printf(1,"ret:%d\n",ret);
+    if(!lock_apply("setup",2)) { /* lock file not exists yet */
+      char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
+      int ret;
+      cond_printf(1,"cmd:%s\n",cmd);
+      ret=System(cmd);
+      cond_printf(1,"ret:%d\n",ret);
+    }
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);;
     version=get_opt(DEFAULT_IMPL".version",0);
@@ -240,7 +242,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   if(wrap)
     arg[0]=q(wrap);
   if(arg && file_exist_p(arg[1])) {
-    char* opts=sexp_opts(local_opt);
+    char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
     setenv("ROS_OPTS",opts,1);
     if(verbose&1 ||testing) {
       fprintf(stderr,"args ");
@@ -281,8 +283,8 @@ void register_cmd_run(void) {
 
   /*commands*/
   top_options=add_command(top_options,""         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
-  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1,"Run repl",NULL);
-  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
+  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1,NULL,NULL);
+  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,NULL,NULL);
 
   _help=cat("Usage: ",argv_orig[0]," [OPTIONS] "ROS_RUN_REPL" [OPTIONS] [-- implementation-native-options...]\n\n",NULL);
   top_helps=add_help(top_helps,ROS_RUN_REPL,_help,run_commands,run_options,NULL,NULL,NULL);

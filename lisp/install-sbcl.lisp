@@ -33,24 +33,16 @@
     ("32x16-divide" nil "affects the definition of a lot of things in bignum.lisp.not needed for X86." nil)))
 
 (defun sbcl-get-version ()
-  (let (result
-        (file (merge-pathnames "tmp/sbcl.html" (homedir))))
+  (let ((file (merge-pathnames "tmp/sbcl.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
       (download "https://github.com/sbcl/sbcl/releases.atom" file))
-    (with-open-file (in file #+sbcl :external-format #+sbcl :utf-8)
-      (net.html.parser:parse-html
-       in
-       :callbacks
-       (list (cons :link (lambda (arg)
-                           (let* ((href (getf (cdr (car arg)) :href))
-                                  (pos (position #\- href)))
-                             (when pos
-                               (push (subseq href (1+ pos)) result))))))
-       :callback-only t))
-    (setq result (nreverse result))
-    result))
+    (nreverse
+     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "link")
+           for href = (plump:get-attribute link "href")
+           when (eql (aref href 0) #\/)
+             collect (subseq href (1+ (position #\- href :from-end t)))))))
 
 (defun sbcl-msys (argv)
   (unless (ros:getenv "MSYSCON")

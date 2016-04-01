@@ -10,19 +10,10 @@
 (unless (find-package :uiop)
   #+quicklisp(ql:quickload :uiop :silent t))
 
-(ql:quickload '(:cl-html-parse :simple-date-time :split-sequence) :silent t)
-
-#-ros.util
-(ros:util)
-
-(defpackage :ros.install
-  (:use :cl :ros.util)
-  (:export :*build-hook*))
+(ql:quickload '(:simple-date-time :split-sequence :plump) :silent t)
 
 (in-package :ros.install)
 
-(defvar *opts* nil)
-(defvar *ros-path* nil)
 (defvar *build-hook* nil)
 
 #+sbcl
@@ -64,19 +55,9 @@
             date hour minute second time-zone (if daylight "S" " ") year)))
 
 (defun get-opt (item)
-  (second (assoc item *opts* :test #'equal)))
-
-(defun set-opt (item val)
-  (let ((found (assoc item *opts* :test #'equal)))
-    (if found
-        (setf (second found) val)
-        (push (list item val) *opts*))))
+  (ros:opt item))
 
 ;;end here from util/opts.c
-
-(defvar *install-cmds* nil)
-(defvar *help-cmds* nil)
-(defvar *list-cmd* nil)
 
 (defun installedp (argv)
   (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
@@ -141,6 +122,34 @@
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)))
 
+(defun install-system-script (system)
+  (let ((step 0))
+    (handler-bind ((error (lambda (c)
+                            (declare (ignore c))
+                            ;; handle errors, but do not unwind -- Errors should automatically return the error code
+                            (format *error-output* "Aborted during step [~a/3]." step))))
+      (format *error-output* "~&[~a/3] System '~A' found. Loading the system.." (incf step) system)
+      (let ((*features* (cons :ros.installing *features*))
+            (*standard-output* (make-broadcast-stream))
+            (*error-output*    (make-broadcast-stream))
+            (*trace-output*    (make-broadcast-stream)))
+        (if (ql:where-is-system system)
+            (progn (ql:quickload system)
+                   (asdf:oos 'asdf:load-op system :force t))
+            (ql:quickload system)))
+      (when *build-hook*
+        (format *error-output* "~&[~a/3] Processing build-hook.." (incf step))
+        (funcall *build-hook*))
+      (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
+                                         roswell/ subdirectory of the system..." (incf step))
+      (let ((scripts (directory (merge-pathnames "roswell/*.*" (ql:where-is-system system)))))
+        (if scripts
+            (format t "~&Found ~a scripts:~{ ~a~}~%"
+                    (length scripts) (mapcar #'pathname-name scripts))
+            (format t "~&No roswell scripts found.~%"))
+        (dolist (from scripts)
+          (install-ros from))))))
+
 (defun install-script (path body)
   (declare (ignorable path body))
   #-win32
@@ -150,7 +159,7 @@
                        :if-exists :supersede
                        :if-does-not-exist :create)
       (format o "#!/bin/sh~%~A" body))
-    (sb-posix:chmod path #o755))
+    #+sbcl(sb-posix:chmod path #o755))
   #+win32
   (progn))
 

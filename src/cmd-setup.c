@@ -27,11 +27,11 @@ int cmd_setup(int argc,char **argv,struct sub_command* cmd) {
   CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install 7zip",NULL),"Installing 7zip...\n");
 #endif
   if(argc==1)
-    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,"roswell-internal-core-build",NULL),"Making core for Roswell...\n");
+    CMD_SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros",NULL),"Making core for Roswell...\n");
   lock_apply("setup",1);
   return ret;
 }
 
 void register_cmd_setup(int argc,char **argv,struct sub_command* cmd) {
-  top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,"Initial setup",NULL);
+  top_commands=add_command(top_commands,"setup"  ,NULL,cmd_setup,1,1,NULL,NULL);
 }

@@ -7,7 +7,6 @@ struct install_impls *install_impl;
 
 struct install_impls *impls_to_install[]={
   &impls_sbcl_bin,
-  &utils_quicklisp
 };
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
@@ -116,11 +115,33 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
           install_impl=j;
         }
       }
-      if(!install_impl) {
+      if(install_impl) { 
+        for(cmds=install_impl->call;*cmds&&ret;++cmds)
+          ret=(*cmds)(&param);
+        if(ret) { // after install latest installed impl/version should be default for 'run'
+          struct opts* opt=global_opt;
+          struct opts** opts=&opt;
+          char* home=configdir();
+          char* path=cat(home,"config",NULL);
+          char* v=cat(param.impl,".version",NULL);
+          char* version=param.version;
+          if(!install_impl->util) {
+            int i;
+            for(i=0;version[i]!='\0';++i)
+              if(version[i]=='-')
+                version[i]='\0';
+            set_opt(opts,"default.lisp",param.impl,0);
+            set_opt(opts,v,version,0);
+            save_opts(path,opt);
+          }
+          s(home),s(path),s(v);
+        }
+      }
+      {
         char* lisp_path=lispdir();
         int i,j,argc_;
         char** tmp;
-        char* install_ros=s_cat2(lisp_path,q("install.lisp"));
+        char* install_ros=s_cat2(lisp_path,q("install.ros"));
         if(verbose&1) {
           fprintf(stderr,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
           for(i=0;i<argc;++i)
@@ -133,9 +154,6 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         tmp[i++]=install_ros;
         tmp[i++]=q("install");
         tmp[i++]=q(argv[1]);
-        tmp[i++]=sexp_opts(local_opt);
-        tmp[i++]=sexp_opts(global_opt);
-        tmp[i++]=qsprintf(10,"%d",verbose);
         for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
         if(verbose&1) {
@@ -148,26 +166,6 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
         for(j=0;j<argc_;s(tmp[j++]));
         dealloc(tmp);
         return 0;
-      }
-      for(cmds=install_impl->call;*cmds&&ret;++cmds)
-        ret=(*cmds)(&param);
-      if(ret) { // after install latest installed impl/version should be default for 'run'
-        struct opts* opt=global_opt;
-        struct opts** opts=&opt;
-        char* home=configdir();
-        char* path=cat(home,"config",NULL);
-        char* v=cat(param.impl,".version",NULL);
-        char* version=param.version;
-        if(!install_impl->util) {
-          int i;
-          for(i=0;version[i]!='\0';++i)
-            if(version[i]=='-')
-              version[i]='\0';
-          set_opt(opts,"default.lisp",param.impl,0);
-          set_opt(opts,v,version,0);
-          save_opts(path,opt);
-        }
-        s(home),s(path),s(v);
       }
       if(param.version)s(param.version);
       s(param.impl),s(param.arch),s(param.os);
@@ -205,16 +203,13 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
   }else if(argc==2) {
     int i,j,argc_;
     char** tmp;
-    char* install_ros=s_cat2(lispdir(),q("install.lisp"));
+    char* install_ros=s_cat2(lispdir(),q("install.ros"));
     tmp=(char**)alloc(sizeof(char*)*(argc+9));
     i=0;
     tmp[i++]=q("--");
     tmp[i++]=install_ros;
     tmp[i++]=q("help");
     tmp[i++]=q(argv[1]);
-    tmp[i++]=sexp_opts(local_opt);
-    tmp[i++]=sexp_opts(global_opt);
-    tmp[i++]=truename(argv_orig[0]);
     for(j=2;j<argc;tmp[i++]=q(argv[j++]));
     argc_=i;
     for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
@@ -225,6 +220,6 @@ int install_help(int argc,char **argv,struct sub_command* cmd) {
 }
 
 void register_cmd_install(void) {
-  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,"Install a given implementation or a system for "PACKAGE" environment",NULL);
+  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1,NULL,NULL);
   top_helps=add_help(top_helps,"install","",(LVal)NULL,(LVal)NULL,NULL,NULL,install_help);
 }

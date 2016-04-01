@@ -18,10 +18,11 @@ Roswell will be asdf-loadable in the future
   :version "0.0.4.57"
   :author "SANO Masatoshi"
   :license "MIT"
-  :depends-on ()
-  :components ((:module "src"
+  :depends-on (:simple-date-time :split-sequence :plump)
+  :components ((:module "lisp"
                 :components
-                ((:file "install%" :depends-on ("init"))
+                ((:file "util-install" :depends-on ("init"))
+                 (:file "util" :depends-on ("init"))
                  (:file "init"))))
   :description "a command line tool to install and manage Common Lisp implementations damn easily."
   :long-description
