@@ -17,66 +17,64 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (unless (find-package :plump)
   (ql:quickload '(:plump) :silent t))
 
-#-ros.sub.asdf
-(progn
-  (defun asdf-get-version ()
-    (let ((file (merge-pathnames "tmp/asdf.html" (homedir))))
-      (format *error-output* "Checking version to install....~%")
-      (unless (and (probe-file file)
-                   (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-        (download "https://github.com/fare/asdf/releases.atom" file))
-      (nreverse
-       (loop for link in (plump:get-elements-by-tag-name
-                          (plump:parse file) "link")
-          for href = (plump:get-attribute link "href")
-          when (eql (aref href 0) #\/)
-          collect (subseq href (1+ (position #\/ href :from-end t)))))))
+(defun asdf-get-version ()
+  (let ((file (merge-pathnames "tmp/asdf.html" (homedir))))
+    (format *error-output* "Checking version to install....~%")
+    (unless (and (probe-file file)
+                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+      (download "https://github.com/fare/asdf/releases.atom" file))
+    (nreverse
+     (loop for link in (plump:get-elements-by-tag-name
+                        (plump:parse file) "link")
+           for href = (plump:get-attribute link "href")
+           when (eql (aref href 0) #\/)
+             collect (subseq href (1+ (position #\/ href :from-end t)))))))
 
-  (defvar *subcommands*
-    '(("install" . asdf-install)
-      ("use" . asdf-use)
-      ("list" . asdf-list)))
+(defvar *subcommands*
+  '(("install" . asdf-install)
+    ("use" . asdf-use)
+    ("list" . asdf-list)))
 
-  (defun asdf-install (&optional version &rest r)
-    (declare (ignorable r))
-    (setf version (or version (first (asdf-get-version))))
-    (let ((url (format nil "https://github.com/fare/asdf/archive/~A.tar.gz" version))
-          (file (merge-pathnames (format nil "archives/asdf-~A.tar.gz" version) (homedir)))
-          (src (merge-pathnames "src/" (homedir))))
-      (unless (probe-file file)
-        (download url file))
-      (expand file src)
-      (let* ((src (merge-pathnames (format nil "asdf-~A/" version) src))
-             (cmd (list (sh) "-lc" (format nil "cd ~S;~A"
-                                           (#+win32 mingw-namestring #-win32 princ-to-string src)
-                                           "make"))))
-        (uiop/os:chdir src)
-        (format t "~&chdir ~A~%" src)
-        (uiop/run-program:run-program cmd :output t :ignore-error-status nil)
-        (let ((built (merge-pathnames "build/asdf.lisp" src)))
-          (if (probe-file built)
-              (progn
-                (uiop/stream:copy-file
-                 built
-                 (ensure-directories-exist
-                  (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (homedir))))
-                (setf (config "asdf.version") version))
-              (error "build fail asdf ~A~%" 'version))))))
+(defun asdf-install (&optional version &rest r)
+  (declare (ignorable r))
+  (setf version (or version (first (asdf-get-version))))
+  (let ((url (format nil "https://github.com/fare/asdf/archive/~A.tar.gz" version))
+        (file (merge-pathnames (format nil "archives/asdf-~A.tar.gz" version) (homedir)))
+        (src (merge-pathnames "src/" (homedir))))
+    (unless (probe-file file)
+      (download url file))
+    (expand file src)
+    (let* ((src (merge-pathnames (format nil "asdf-~A/" version) src))
+           (cmd (list (sh) "-lc" (format nil "cd ~S;~A"
+                                         (#+win32 mingw-namestring #-win32 princ-to-string src)
+                                         "make"))))
+      (uiop/os:chdir src)
+      (format t "~&chdir ~A~%" src)
+      (uiop/run-program:run-program cmd :output t :ignore-error-status nil)
+      (let ((built (merge-pathnames "build/asdf.lisp" src)))
+        (if (probe-file built)
+            (progn
+              (uiop/stream:copy-file
+               built
+               (ensure-directories-exist
+                (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (homedir))))
+              (setf (config "asdf.version") version))
+            (error "build fail asdf ~A~%" 'version))))))
 
-  (defun asdf-use (version &rest r)
-    (declare (ignorable r))
-    (if (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (homedir)))
-        (setf (config "asdf.version") version)
-        (error "~A not installed" version)))
+(defun asdf-use (version &rest r)
+  (declare (ignorable r))
+  (if (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (homedir)))
+      (setf (config "asdf.version") version)
+      (error "~A not installed" version)))
 
-  (defun asdf-list (&rest r)
-    (declare (ignorable r))
-    (dolist (i (asdf-get-version))
-      (format t "~A~%" i)))
+(defun asdf-list (&rest r)
+  (declare (ignorable r))
+  (dolist (i (asdf-get-version))
+    (format t "~A~%" i)))
 
-  (defun main (? asdf &optional subcmd &rest argv)
-    (declare (ignorable ? asdf argv))
-    (if subcmd
-        (let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
-          (apply fun argv))
-        (format t "secret.~A~%" *package*))))
+(defun main (? asdf &optional subcmd &rest argv)
+  (declare (ignorable ? asdf argv))
+  (if subcmd
+      (let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
+        (apply fun argv))
+      (format t "secret.~A~%" *package*)))

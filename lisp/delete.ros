@@ -10,68 +10,65 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:util)
 
-#-ros.sub.delete
 (defpackage :ros.sub.delete
   (:use :cl :ros.util))
+
 (in-package :ros.sub.delete)
-#-ros.sub.delete
+
 (ros:quicklisp :environment nil)
 
-#-ros.sub.delete
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
 
-#-ros.sub.delete
-(progn
-  (defun delete-dump (params)
-    (declare (ignorable params))
-    (let* ((impl (and (second params) (ros.util:parse-version-spec (second params))))
-           (name (first params))
-           path)
-      (let ((lisp (if (first impl) (first impl) (ros.util:config "default.lisp"))))
-        (setf impl (format nil "~A/~A" lisp
-                           (or (second impl) (ros.util:config (format nil "~A.version" lisp))))))
-      (setf path (make-pathname :name name
-                                :type (ros.util:core-extention impl)
-                                :defaults
-                                (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                         (uname-m) (uname) impl)
-                                                 (homedir))))
-      (if (probe-file path)
-          (delete-file path)
-          (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
+(defun delete-dump (params)
+  (declare (ignorable params))
+  (let* ((impl (and (second params) (ros.util:parse-version-spec (second params))))
+         (name (first params))
+         path)
+    (let ((lisp (if (first impl) (first impl) (ros.util:config "default.lisp"))))
+      (setf impl (format nil "~A/~A" lisp
+                         (or (second impl) (ros.util:config (format nil "~A.version" lisp))))))
+    (setf path (make-pathname :name name
+                              :type (ros.util:core-extention impl)
+                              :defaults
+                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
+                                                       (uname-m) (uname) impl)
+                                               (homedir))))
+    (if (probe-file path)
+        (delete-file path)
+        (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
 
-  (defun main (subcmd cmd &rest r)
-    (declare (ignore cmd))
-    (let* ((default (config "default.lisp"))
-           (verstring (format nil "~A.version" default))
-           (config (format nil "~A/~A" default (config verstring))))
-      ;; (print (list subcmd cmd r default verstring config))
-      (cond
-        ((null r)
-         (format *error-output* "Usage: ros delete dump [IMAGES...]~%")
-         (format *error-output* "Usage: ros delete [IMPLS...]~2%")
-         (format *error-output* "Possible subcommands:~%")
-         (finish-output *error-output*)
-         (format t "dump~%")
-         (finish-output)
-         (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
-         (finish-output *error-output*)
-         (ros:roswell '("list" "installed") *standard-output*))
-        ((not (equal subcmd "main"))
-         (error "what is this?"))
-        ((equal (first r) "dump")
-         (delete-dump (rest r)))
-        (t
-         (let* ((impl-name (first r))
-                (path (merge-pathnames (format nil "impls/~A/~A/~A/"
-                                               (uname-m) (uname) impl-name)
-                                       (homedir))))
-           (unless (position :up (pathname-directory path))
-             (cond ((probe-file path)
-                    (uiop/filesystem:delete-directory-tree path :validate t)
-                    (format t "~&~A was deleted successfully.~%" impl-name)
-                    (when (equal impl-name config)
-                      (format t "~&clear config ~S~%" verstring)
-                      (setf (config verstring) "")))
-                   (t (format *error-output* "~&~A is not installed yet.~%" impl-name))))))))))
+(defun main (subcmd cmd &rest r)
+  (declare (ignore cmd))
+  (let* ((default (config "default.lisp"))
+         (verstring (format nil "~A.version" default))
+         (config (format nil "~A/~A" default (config verstring))))
+    ;; (print (list subcmd cmd r default verstring config))
+    (cond
+      ((null r)
+       (format *error-output* "Usage: ros delete dump [IMAGES...]~%")
+       (format *error-output* "Usage: ros delete [IMPLS...]~2%")
+       (format *error-output* "Possible subcommands:~%")
+       (finish-output *error-output*)
+       (format t "dump~%")
+       (finish-output)
+       (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
+       (finish-output *error-output*)
+       (ros:roswell '("list" "installed") *standard-output*))
+      ((not (equal subcmd "main"))
+       (error "what is this?"))
+      ((equal (first r) "dump")
+       (delete-dump (rest r)))
+      (t
+       (let* ((impl-name (first r))
+              (path (merge-pathnames (format nil "impls/~A/~A/~A/"
+                                             (uname-m) (uname) impl-name)
+                                     (homedir))))
+         (unless (position :up (pathname-directory path))
+           (cond ((probe-file path)
+                  (uiop/filesystem:delete-directory-tree path :validate t)
+                  (format t "~&~A was deleted successfully.~%" impl-name)
+                  (when (equal impl-name config)
+                    (format t "~&clear config ~S~%" verstring)
+                    (setf (config verstring) "")))
+                 (t (format *error-output* "~&~A is not installed yet.~%" impl-name)))))))))

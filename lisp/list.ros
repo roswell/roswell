@@ -10,13 +10,11 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:util)
 
-#-ros.sub.list
 (defpackage :ros.sub.list
   (:use :cl :ros.util))
 
 (in-package :ros.sub.list)
 
-#-ros.sub.list
 (defun installed (&rest r)
   (cond
     ((null r)
@@ -57,7 +55,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                          (format t "~{~A~^/~}~%" (last (pathname-directory d) 2)))
                        dir)))))))))
 
-#-ros.sub.list
 (defun dump (&rest params)
   (let ((impl (impl (first params))))
     (format *error-output* "List of dumped images for ~A:~%" impl)
@@ -69,7 +66,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
                                                                        (uname-m) (uname) impl)
                                                                (homedir))))))))
-#-ros.sub.list
 (defun versions (&rest params)
   ;; Experimental?
   (destructuring-bind (impl version) (parse-version-spec (impl (first params)))
@@ -93,7 +89,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                (dolist (v (funcall cmd))
                  (format t "~A~%" v))))))))
 
-#-ros.sub.list
 (defun main (subcmd cmd &rest r)
   (declare (ignorable subcmd cmd))
   (if (null r)

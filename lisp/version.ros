@@ -11,8 +11,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :ros.script.version.3668210994)
 
-(mapcar #'unintern '(main version))
-
 (defun main (&rest argv)
   (declare (ignorable argv))
   (let ((revision (version "revision"))

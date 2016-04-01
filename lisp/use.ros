@@ -12,13 +12,11 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 (when (cl:find-package :ros.use)
   (push :ros.use *features*))
 
-#-ros.use
 (defpackage :ros.use
   (:use :cl :ros.util))
 
 (in-package :ros.use)
 
-#-ros.use
 (defun main (subcmd impl/version &rest argv)
   (declare (ignorable subcmd impl/version))
   (if (null argv)

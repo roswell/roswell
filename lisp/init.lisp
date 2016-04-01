@@ -336,19 +336,23 @@ have the latest asdf, and this file has a workaround for this.
   (flet ((body (in)
            (let ((line(read-line in)))
              (push :ros.script *features*)
-             (funcall #+(or sbcl clisp) 'cl:load
-                      #-(or sbcl clisp) 'asdf::eval-input
-                      (make-concatenated-stream
-                       (make-string-input-stream
-                        (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (ignore-errors (truename cl:*load-pathname*)))~A"
-                                (ignore-errors (merge-pathnames (make-pathname :defaults arg)))
-                                (if (equal (subseq line 0 (min (length line) 2)) "#!")
-                                    "" line)))
-                       in
-                       (make-string-input-stream
-                        (if (eql cmd :script)
-                            "(ros:quit (cl:apply 'main ros:*argv*))"
-                            "(setf ros:*main* 'main)"))))
+             (locally
+                 (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
+               (handler-bind
+                   (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
+                 (funcall #+(or sbcl clisp) 'cl:load
+                          #-(or sbcl clisp) 'asdf::eval-input
+                          (make-concatenated-stream
+                           (make-string-input-stream
+                            (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (ignore-errors (truename cl:*load-pathname*)))~A"
+                                    (ignore-errors (merge-pathnames (make-pathname :defaults arg)))
+                                    (if (equal (subseq line 0 (min (length line) 2)) "#!")
+                                        "" line)))
+                           in
+                           (make-string-input-stream
+                            (if (eql cmd :script)
+                                "(ros:quit (cl:apply 'main ros:*argv*))"
+                                "(setf ros:*main* 'main)"))))))
              (setf *features* (remove :ros.script *features*)))))
     (if (streamp arg)
         (body arg)
