@@ -58,7 +58,6 @@ int set_opt(struct opts** opts,const char* name,char* value,int type);
 int unset_opt(struct opts** opts,const char* name);
 char* get_opt(const char* name,int env);
 char* _get_opt(struct opts* opt,const char* name);
-void print_opts(struct opts* opt);
 char* sexp_opts(struct opts* opt);
 void free_opts(struct opts* opt);
 int cmd_tar(int argc,char **argv,struct sub_command* cmd);

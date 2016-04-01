@@ -20,11 +20,6 @@ void free_opts(struct opts* opt) {
   }
 }
 
-void print_opts(struct opts* opt) {
-  for(;opt;opt=opt->next)
-    fprintf(stderr,"%s=%s\n",opt->name,opt->value);
-}
-
 char* sexp_opts(struct opts* opt) {
   void* ret=q("");
   for(;opt;opt=opt->next)

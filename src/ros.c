@@ -18,7 +18,6 @@ extern int opt_version(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
-extern void register_cmd_config(void);
 extern void register_cmd_setup(void);
 extern void register_cmd_internal(void);
 
@@ -279,7 +278,6 @@ int main (int argc,char **argv) {
   /*commands*/
   register_cmd_install();
   top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1,NULL,NULL);
-  register_cmd_config();
   register_cmd_setup();
 
   register_cmd_internal();

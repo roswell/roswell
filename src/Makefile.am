@@ -17,7 +17,6 @@ ros_SOURCES = ros.c opt.c download.c archive.c html.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c \
 	cmd-install.c cmd-install-sbcl-bin.c \
 	cmd-help.c \
-	cmd-config.c \
 	cmd-setup.c
 noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 
