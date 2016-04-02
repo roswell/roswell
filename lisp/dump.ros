@@ -5,7 +5,7 @@ exec ros -- $0 "$@"
 |#
 
 #-ros.util
-(ros:util)
+(ros:include "util")
 
 (defpackage :ros.dump
   (:use :cl :ros.util))

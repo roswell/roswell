@@ -8,7 +8,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
   (push :ros.sub.list *features*))
 
 #-ros.util
-(ros:util)
+(ros:include "util")
 
 (defpackage :ros.sub.list
   (:use :cl :ros.util))

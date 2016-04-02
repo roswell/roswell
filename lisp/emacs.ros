@@ -8,7 +8,7 @@ exec ros -L sbcl-bin -- $0 "$@"
 (in-package :ros.sub.emacs)
 
 #-ros.util
-(ros:util)
+(ros:include "util")
 
 (defun main (&rest argv)
   (let ((path (merge-pathnames "impls/ALL/ALL/quicklisp/slime-helper.el" (ros:opt "homedir"))))

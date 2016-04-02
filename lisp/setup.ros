@@ -5,7 +5,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
 #-ros.util
-(ros:util "util")
+(ros:include "util")
 
 (defpackage :ros.sub.setup
   (:use :cl :ros.util))

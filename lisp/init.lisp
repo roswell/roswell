@@ -26,7 +26,7 @@ have the latest asdf, and this file has a workaround for this.
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-           :ignore-shebang :ensure-using-downloaded-asdf :util
+           :ignore-shebang :ensure-using-downloaded-asdf :include
            :roswell :exec :setenv :unsetenv :with-lock-held :version)
   (:documentation "Roswell backend."))
 
@@ -156,7 +156,7 @@ have the latest asdf, and this file has a workaround for this.
                               (symbol-value symbol)))))
         t))))
 
-(defun util (&optional (name "util"))
+(defun include (name)
   (cl:load (make-pathname
 	    :defaults #.*load-pathname*
 	    :name name :type "lisp")))

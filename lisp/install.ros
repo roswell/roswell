@@ -5,15 +5,15 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 |#
 
 #-ros.util
-(ros:util)
+(ros:include "util")
 
 #-ros.install.util
-(ros:util "util-install")
+(ros:include "util-install")
 
 (in-package :ros.install)
 
 (when (probe-file (merge-pathnames "impls/ALL/ALL/quicklisp/setup.lisp" (homedir)))
-  (ros:util "util-install-quicklisp"))
+  (ros:include "util-install-quicklisp"))
 
 (defun main (subcmd impl/version &rest argv)
   (let* (imp

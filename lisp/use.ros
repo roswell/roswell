@@ -7,7 +7,7 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 (cl:in-package :cl-user)
 
 #-ros.util
-(ros:util)
+(ros:include "util")
 
 (when (cl:find-package :ros.use)
   (push :ros.use *features*))
