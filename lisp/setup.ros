@@ -1,40 +1,38 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|
+#|Initial setup
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
 #-ros.util
-(ros:util)
+(ros:util "util")
 
-#-ros.sub.internal-core-build
-(defpackage :sub.internal-core-build
+(defpackage :ros.sub.setup
   (:use :cl :ros.util))
-(in-package :sub.internal-core-build)
+(in-package :ros.sub.setup)
 
-#-ros.sub.internal-core-build
 (defun main (&rest argv)
   (declare (ignorable argv))
   #-win32(ignore-errors
-           (require :sb-posix)
-           (let ((gid (sb-posix:getenv "SUDO_GID")))
-             (sb-posix:setgid (parse-integer gid)))
-           (let ((uid (sb-posix:getenv "SUDO_UID")))
-             (sb-posix:setuid (parse-integer uid))))
+          (require :sb-posix)
+          (let ((gid (sb-posix:getenv "SUDO_GID")))
+            (sb-posix:setgid (parse-integer gid)))
+          (let ((uid (sb-posix:getenv "SUDO_UID")))
+            (sb-posix:setuid (parse-integer uid))))
   (let ((dir (append (directory (make-pathname :defaults *load-pathname* :name :wild))
                      (directory (merge-pathnames "cmds/*.ros" (homedir))))))
     (unless (ignore-errors
-              (when (> (parse-integer (ros.util:version :date))
-                       (loop for i in dir
-                          maximize (file-write-date i)))
-                (format *error-output* "up to date. stop~%")
-                t))
+             (when (> (parse-integer (ros.util:version :date))
+                      (loop for i in dir
+                            maximize (file-write-date i)))
+               (format *error-output* "up to date. stop~%")
+               t))
       (ros:roswell `("-L " "sbcl-bin " "--eval "
 			   #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
 			   ,@(loop :for i :in dir
-				:collect "--load"
-				:collect (format nil "~A" i))
+                                   :collect "--load"
+                                   :collect (format nil "~A" i))
 			   " dump output -f roswell")
                    t nil))))
 
-(push :ros.sub.internal-core-build *features*)
+(push :ros.sub.setup *features*)
