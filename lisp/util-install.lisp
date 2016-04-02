@@ -23,9 +23,9 @@
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
 (defun probe-impl-script (impl)
-  (or (and
-       (equal "quicklisp" impl)
-       (load (make-pathname :name "install+quicklisp" :type "lisp" :defaults *load-pathname*)))
+  (or (and ;; before setup quicklisp
+       (find impl '("sbcl-bin" "quicklisp") :test 'equal)
+       (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*)))
       (let ((imp (format nil "roswell.install.~A" impl)))
         (and (or (read-call "ql-dist:find-system" imp)
                  (read-call "ql:where-is-system" imp))
