@@ -141,6 +141,30 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
+#define SETUP_SYSTEM(sys,msg) {\
+    fprintf(stderr,"%s",msg);      \
+    ret=System(sys);               \
+    s(sys);                        \
+    if(ret) {                      \
+      lock_apply("setup",1);       \
+      return ret;                  \
+    }                              \
+  }
+
+int setup(int argc,char **argv,struct sub_command* cmd) {
+  char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
+  int ret=1;
+  lock_apply("setup",0);
+  char* sbcl_bin_version=get_opt("sbcl-bin.version",0);
+  if(!sbcl_bin_version) {
+    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install sbcl-bin",NULL),"Installing sbcl-bin...\n");
+  }else
+    fprintf(stderr,"Already have sbcl-bin.\n");
+  SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros",NULL),"Making core for Roswell...\n");
+  lock_apply("setup",1);
+  return ret;
+}
+
 char* determin_impl(char* impl) {
   char* version=NULL;
   int pos;
@@ -172,10 +196,7 @@ char* determin_impl(char* impl) {
     if(impl) s(impl);
     impl=q(DEFAULT_IMPL);
     if(!lock_apply("setup",2)) { /* lock file not exists yet */
-      char* cmd=cat(which(argv_orig[0]),verbose>0?(verbose>1?" -v -v":" -v"):""," setup",NULL);
-      int ret;
-      cond_printf(1,"cmd:%s\n",cmd);
-      ret=System(cmd);
+      int ret= setup(0,NULL,NULL);
       cond_printf(1,"ret:%d\n",ret);
     }
     char* path=s_cat(configdir(),q("config"),NULL);

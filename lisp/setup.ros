@@ -13,12 +13,18 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  #-win32(ignore-errors
-          (require :sb-posix)
-          (let ((gid (sb-posix:getenv "SUDO_GID")))
-            (sb-posix:setgid (parse-integer gid)))
-          (let ((uid (sb-posix:getenv "SUDO_UID")))
-            (sb-posix:setuid (parse-integer uid))))
+  #-win32
+  (ignore-errors
+   (require :sb-posix)
+   (sb-posix:setgid (parse-integer (sb-posix:getenv "SUDO_GID")))
+   (sb-posix:setuid (parse-integer (sb-posix:getenv "SUDO_UID"))))
+  (format *error-output* "Installing Quicklisp...~%")
+  (ros:roswell '("install" "quicklisp") :interactive nil)
+  #+win32
+  (progn
+    (format *error-output* "Installing 7zip...~%")
+    (ros:roswell '("install" "7zip") :interactive nil))
+  ;;  if(argc==1) ??
   (let ((dir (append (directory (make-pathname :defaults *load-pathname* :name :wild))
                      (directory (merge-pathnames "cmds/*.ros" (homedir))))))
     (unless (ignore-errors

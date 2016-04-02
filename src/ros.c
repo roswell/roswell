@@ -9,8 +9,6 @@ int argc_orig;
 struct opts* global_opt;
 struct opts* local_opt=NULL;
 
-extern int cmd_list(int argc,char **argv,struct sub_command* cmd);
-extern int cmd_config(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_setup(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_help(int argc,char **argv,struct sub_command* cmd);
 extern int cmd_internal(int argc,char **argv,struct sub_command* cmd);
@@ -18,7 +16,6 @@ extern int opt_version(int argc,char **argv,struct sub_command* cmd);
 
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
-extern void register_cmd_setup(void);
 extern void register_cmd_internal(void);
 
 int verbose=0;
@@ -249,8 +246,6 @@ LVal register_runtime_options(LVal opt) {
 
   opt=add_command(opt,"final","-F",opt_final,1,0,"evaluate FORM before dumping IMAGE","FORM");
 
-  /* opt=add_command(opt,"include","-I",cmd_notyet,1,0,"runtime PATH to cl-launch installation","PATH"); */
-  /* opt=add_command(opt,"no-include","+I",cmd_notyet,1,0,"disable cl-launch installation feature",NULL); */
   opt=add_command(opt,"rc","-R",opt_top_rc,1,0,"try read /etc/rosrc, ~/.roswell/init.lisp",NULL);
   opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0,"skip /etc/rosrc, ~/.roswell/init.lisp",NULL);
   opt=add_command(opt,"quicklisp","-Q",opt_top_ql,1,0,"use quicklisp (default)",NULL);
@@ -278,8 +273,6 @@ int main (int argc,char **argv) {
   /*commands*/
   register_cmd_install();
   top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1,NULL,NULL);
-  register_cmd_setup();
-
   register_cmd_internal();
 
   top_commands=add_command(top_commands,"help",NULL,cmd_help,1,1,NULL,NULL);
