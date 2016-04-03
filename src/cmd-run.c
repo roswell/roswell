@@ -295,22 +295,14 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
 }
 
 void register_cmd_run(void) {
-  char* _help;
   /*options*/
   run_options=register_runtime_options(run_options);
-  run_options=add_command(run_options,"",NULL,cmd_run_star,OPT_SHOW_NONE,1,NULL,NULL);
-  /*run_options=add_command(run_options,"version",NULL,cmd_run_version,OPT_SHOW_NONE,0,NULL,NULL);*/
+  run_options=add_command(run_options,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
+  /*run_options=add_command(run_options,"version",NULL,cmd_run_version,OPT_SHOW_NONE,0);*/
   run_options=nreverse(run_options);
 
   /*commands*/
-  top_options=add_command(top_options,""         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,"Run lisp environment then quit (default)",NULL);
-  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1,NULL,NULL);
-  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1,NULL,NULL);
-
-  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] "ROS_RUN_REPL" [OPTIONS] [-- implementation-native-options...]\n\n",NULL);
-  top_helps=add_help(top_helps,ROS_RUN_REPL,_help,run_commands,run_options,NULL,NULL,NULL);
-  s(_help);
-  _help=cat("Usage: ",argv_orig[0]," [OPTIONS] [--] script-file arguments...\n\n",
-            NULL);
-  s(_help);
+  top_options=add_command(top_options,""         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
+  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
 }

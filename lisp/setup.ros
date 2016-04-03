@@ -23,7 +23,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   #+win32
   (progn
     (format *error-output* "Installing 7zip...~%")
-    (ros:roswell '("install" "7zip") :interactive nil))
+    (ros:roswell '("install" "7zip+") :interactive nil))
   ;;  if(argc==1) ??
   (let ((dir (append (directory (make-pathname :defaults *load-pathname* :name :wild))
                      (directory (merge-pathnames "cmds/*.ros" (homedir))))))

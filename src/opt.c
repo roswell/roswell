@@ -156,32 +156,13 @@ int unset_opt(struct opts** opts,const char* name) {
   return 1;
 }
 
-int set_opts_int(struct opts* opts,const char* name,int value) {
-  return 0;
-}
-
-LVal add_help(LVal help,const char* name,const char* usage,LVal commands,LVal opts,const char* header,const char* footer,sub_command_fnc call) {
-  struct command_help* p=alloc(sizeof(struct command_help));
-  help=cons(p,help);
-  p->name=name?q(name):NULL;
-  p->usage=usage?q(usage):NULL;
-  p->commands=commands;
-  p->opts=opts;
-  p->header=header?q(header):NULL;
-  p->footer=footer?q(footer):NULL;
-  p->call=call;
-  return help;
-}
-
-LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating,char* description,char* arg_example) {
+LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating) {
   struct sub_command* p=alloc(sizeof(struct sub_command));
   p->name=name?q(name):NULL;
   p->short_name=short_name?q(short_name):NULL;
   p->call=call;
   p->show_opt=show_opt;
   p->terminating=terminating;
-  p->description=description?q(description):NULL;
-  p->arg_example=arg_example?q(arg_example):NULL;
   cmd=cons(p,cmd);
   return cmd;
 }

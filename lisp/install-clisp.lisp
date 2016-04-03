@@ -49,8 +49,8 @@
 (defun clisp-lib (argv)
   (when (and (find :linux *features*)
              (not (or (find :arm *features*))))
-    (ros:roswell '("install ffcall") :interactive nil))
-  (ros:roswell '("install sigsegv") :interactive nil)
+    (ros:roswell '("install ffcall+") :interactive nil))
+  (ros:roswell '("install sigsegv+") :interactive nil)
   (cons t argv))
 
 (defun clisp-expand (argv)

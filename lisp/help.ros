@@ -3,9 +3,114 @@
 #|Show Command help
 exec ros -Q -- $0 "$@"
 |#
+
+#-ros.util
+(ros:include "util")
+
 (defpackage :ros.script.help.3668211011
-  (:use :cl))
+  (:use :cl :ros.util))
 (in-package :ros.script.help.3668211011)
+
+(defvar *options*
+  '((()              ("--version")             "Print version information and quit")
+    (("-w" "CODE")   ("--wrap" "CODE")         "Run roswell with a shell wrapper CODE,")
+    (("-m" "IMAGE")  ("--image" "IMAGE")       "continue from Lisp image IMAGE")
+    (("-L" "NAME")   ("--lisp" "NAME")         "Run roswell with a lisp impl NAME[/VERSION].")
+    (("-l" "FILE")   ("--load" "FILE")         "load lisp FILE while building")
+    (("-S" "X")      ("--source-registry" "X") "override source registry of asdf systems")
+    (("-s" "SYSTEM") ("--system" "SYSTEM")     "load asdf SYSTEM while building")
+    (()              ("--load-system" "SYSTEM")"same as above (buildapp compatibility)")
+    (("-p" "PACKAGE")("--package" "PACKAGE")   "change current package to PACKAGE")
+    (("-sp" "SP")    ("--system-package" "SP") "combination of -s SP and -p SP")
+    (("-e" "FORM")   ("--eval" "FORM")         "evaluate FORM while building")
+    (()              ("--require" "MODULE")    "require MODULE while building")
+    (("-q")          ("--quit")                "quit lisp here")
+    (("-r" "FUNC")   ("--restart" "FUNC")      "restart from build by calling (FUNC)")
+    (("-E" "FUNC")   ("--entry" "FUNC")        "restart from build by calling (FUNC argv)")
+    (("-i" "FORM")   ("--init" "FORM")         "evaluate FORM after restart")
+    (("-ip" "FORM")  ("--print" "FORM")        "evaluate and princ FORM after restart")
+    (("-iw" "FORM")  ("--write" "FORM")        "evaluate and write FORM after restart")
+    (("-F" "FORM")   ("--final" "FORM")        "evaluate FORM before dumping IMAGE")
+    (("-R")          ("--rc")                  "try read /etc/rosrc, ~/.roswell/init.lisp")
+    (("+R")          ("--no-rc")               "skip /etc/rosrc, ~/.roswell/init.lisp")
+    (("-Q")          ("--quicklisp")           "use quicklisp (default)")
+    (("+Q")          ("--no-quicklisp")        "do not use quicklisp")
+    (("-v")          ("--verbose")             "be quite noisy while building")
+    (()              ("--quiet")               "be quite quiet while building (default)")
+    (()              ("--test")                "for test purpose")))
+
+(defparameter *important-commands* '("run" "install" "build" "use" "init" "list"))
+
+(defun option (stream &optional (options *options*))
+  (let ((p 3)
+        (w1 0)
+        (w2 0))
+    (format stream "Options:~%")
+    (loop for l in options
+          maximize (length (second (first l))) into a
+          maximize (+ (length (first (second l)))
+                      (length (second (second l)))) into b
+          finally (setf w1 (+ a 2)
+                        w2 (+ b 2)))
+    (loop for l in options
+          do (format stream "~va~3a ~va~va~a~%"
+                     p " " (or (first (first l))"") w1 (or (second (first l)) "")
+                     w2 (format nil "~A ~A"(or (first (second l))"") (or (second (second l))""))
+                     (third l)))))
+
+(defun command (stream path max)
+  (format stream "   ~vA~A~%" (+ 2 max) (pathname-name path)
+          (ignore-errors
+           (with-open-file (in path)
+             (loop repeat 2 do (read-line in))
+             (subseq (read-line in) 2)))))
+
+(defun commands (stream)
+  (let* ((lispdir (version "lispdir"))
+         (list (nconc (directory (merge-pathnames "*.ros" lispdir))
+                      (directory (merge-pathnames "cmds/*.ros" (homedir)))))
+         (max (loop for i in list maximize (length (pathname-name i)))))
+    (dolist (i *important-commands*)
+      (setf list (delete i list :key #'pathname-name :test #'equal)))
+    (setf list (nconc (mapcar #'(lambda (x) (make-pathname :type "ros" :name x :defaults lispdir)) *important-commands*)
+                      list))
+    (format stream "Commands:~%")
+    (dolist (i list)
+      (command stream i max))
+    (format stream "~%")))
+
 (defun main (&rest argv)
-  (declare (ignorable argv)))
+  (let ((s *error-output*))
+    (cond
+      ((not (third argv)) ;; without any options
+       (format s "Usage: ~A [OPTIONS] [Command arguments...]~%" (ros:opt "wargv0"))
+       (format s "Usage: ~A [OPTIONS] [[--] script-path arguments...]~%~%" (ros:opt "wargv0"))
+       (commands s)
+       (option s))
+      ((equal (third argv) "run")
+       (format s "Usage: ~A [OPTIONS] run [OPTIONS] [-- implementation-native-options...]~%~%" (ros:opt "wargv0"))
+       (option s (nthcdr 4 *options*))) ;; fix me
+      ((equal (third argv) "install")
+       (let ((path (merge-pathnames "impls/ALL/ALL/quicklisp/" (homedir))))
+         (unless (probe-file (merge-pathnames "setup.lisp" path))
+           (ros:roswell '("install" "quicklisp"))))
+       (ros:quicklisp :environment nil)
+       (ros:include "util-install")
+       (ros:include "util-install-quicklisp")
+       (if (not (fourth argv))
+           (progn
+             (format s "Usage: ~A install impl [OPTIONS]~2%" (ros:opt "wargv0"))
+             (format s "For more details on impl specific options, type:~%")
+             (format s " ~A help install impl~2%" (ros:opt "wargv0"))
+             (format s "Candidates impls for installation are:~%")
+             (loop for i in (asdf:registered-systems)
+                   with len = #.(length "roswell.install.")
+                   when (and (string-equal "roswell.install." i :end2 (min (length i) len))
+                             (not (eql (aref i (1- (length i))) #\+)))
+                     do (format s "~A~%" (subseq i len))))
+           (let ((impl (fourth argv)))
+             (ql:quickload (format nil "roswell.install.~A" impl) :silent t)
+             (funcall (read-from-string"ros.install::install-impl") impl nil "help" nil))))
+      (t (ros:exec `("man" ,(format nil "ros-~A" (third argv))))))))
+
 ;;; vim: set ft=lisp lisp:

@@ -104,13 +104,13 @@ int cmd_internal_core_extention (int argc,char **argv,struct sub_command* cmd) {
 
 void register_cmd_internal(void) {
   LVal cmds=internal_commands;
-  cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1,NULL,NULL);
-  cmds=add_command(cmds,"download",NULL,cmd_download,0,1,NULL,NULL);
-  cmds=add_command(cmds,"uname",NULL,cmd_uname,0,1,NULL,NULL);
-  cmds=add_command(cmds,"which",NULL,cmd_which,0,1,NULL,NULL);
-  cmds=add_command(cmds,"impl",NULL,cmd_impl,0,1,NULL,NULL);
-  cmds=add_command(cmds,"version",NULL,cmd_internal_version,0,1,NULL,NULL);
-  cmds=add_command(cmds,"core-extention",NULL,cmd_internal_core_extention,0,1,NULL,NULL);
+  cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
+  cmds=add_command(cmds,"download",NULL,cmd_download,0,1);
+  cmds=add_command(cmds,"uname",NULL,cmd_uname,0,1);
+  cmds=add_command(cmds,"which",NULL,cmd_which,0,1);
+  cmds=add_command(cmds,"impl",NULL,cmd_impl,0,1);
+  cmds=add_command(cmds,"version",NULL,cmd_internal_version,0,1);
+  cmds=add_command(cmds,"core-extention",NULL,cmd_internal_core_extention,0,1);
   internal_commands=cmds;
 }
 

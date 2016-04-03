@@ -195,14 +195,14 @@
 (asdf:defsystem :roswell.install.sbcl
   :components ((:file "install-sbcl")))
 
-(asdf:defsystem :roswell.install.7zip
+(asdf:defsystem :roswell.install.7zip+
   :components ((:file "install+7zip")))
 
-(asdf:defsystem :roswell.install.ffcall
+(asdf:defsystem :roswell.install.ffcall+
   :components ((:file "install+ffcall")))
 
-(asdf:defsystem :roswell.install.msys2
+(asdf:defsystem :roswell.install.msys2+
   :components ((:file "install+msys2")))
 
-(asdf:defsystem :roswell.install.sigsegv
+(asdf:defsystem :roswell.install.sigsegv+
   :components ((:file "install+sigsegv")))
