@@ -45,7 +45,7 @@
       (format *error-output* "done.~%")))
   (cons t argv))
 
-(push `("sigsegv" . ,(list
+(push `("sigsegv+" . ,(list
 		      'sigsegv-setup))
       *install-cmds*)
 
@@ -53,4 +53,4 @@
   (format t "~%")
   (cons t argv))
 
-(push `("sigsegv" . ,(list 'sigsegv-help)) *help-cmds*)
+(push `("sigsegv+" . ,(list 'sigsegv-help)) *help-cmds*)
