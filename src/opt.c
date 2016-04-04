@@ -41,7 +41,7 @@ struct opts* load_opts(const char* path) {
     int i,mode,last;
     cur->next=(struct opts*)alloc(sizeof(struct opts));
     cur=cur->next;
-    cur->type=OPT_VOID;
+    cur->type=0;
     cur->value=NULL;
     cur->name=NULL;
     cur->next=NULL;

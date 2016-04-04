@@ -12,13 +12,6 @@ struct opts {
   struct opts* next;
 };
 
-enum opt_type {
-  OPT_VOID,
-  OPT_INT,
-  OPT_STRING,
-  OPT_BOOL
-};
-
 struct sub_command {
   const char* name;
   const char* short_name;
@@ -29,7 +22,6 @@ struct sub_command {
 
 #define OPT_SHOW_NONE (0)
 #define OPT_SHOW_HELP (1)
-//#define OPT_SHOW_
 
 extern LVal top_commands;
 extern LVal top_options;
