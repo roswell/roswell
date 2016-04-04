@@ -62,7 +62,6 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
     offset+=2;
 
   arg=alloc(sizeof(char*)*(offset+argc));
-  arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   if(ccl_version)
     arg[paramc++]=q("--version");

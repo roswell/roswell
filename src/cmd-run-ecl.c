@@ -33,7 +33,6 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
   if(program||script)
     offset+=2;
   arg=alloc(sizeof(char*)*(offset+argc));
-  arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   if(ecl_version)
     arg[paramc++]=q("--version");

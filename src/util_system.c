@@ -173,7 +173,7 @@ int System(const char* command) {
 }
 
 void exec_arg(char** arg) {
-  int offset=1;
+  int offset=0;
 #ifdef _WIN32
   {
     char* cmd=q(arg[offset]);

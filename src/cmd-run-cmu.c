@@ -46,7 +46,6 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
     offset+=2;
 
   arg=alloc(sizeof(char*)*(offset+argc));
-  arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   /* runtime options from here */
 

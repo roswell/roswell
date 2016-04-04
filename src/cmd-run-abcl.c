@@ -29,7 +29,6 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   if(program||script)
     offset+=2;
   arg=alloc(sizeof(char*)*(offset+argc));
-  arg[paramc++]=q("wrapper-dummy");
   arg[paramc++]=bin;
   /* runtime options from here */
   arg[paramc++]=q("--noinform");
