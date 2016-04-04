@@ -105,13 +105,6 @@ int set_opt(struct opts** opts,const char* name,char* value,int type) {
   return 1;
 }
 
-int get_opt_type(struct opts* opt,const char* name) {
-  for(;opt;opt=opt->next)
-    if(strcmp(opt->name,name)==0)
-      return opt->type;
-  return 0;
-}
-
 char* _get_opt(struct opts* opt,const char* name) {
   for(;opt;opt=opt->next)
     if(strcmp(opt->name,name)==0)
