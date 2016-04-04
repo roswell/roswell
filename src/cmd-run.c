@@ -271,7 +271,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   if(rc)
     star_rc();
   char** arg=determin_args(argc,argv);
-  if(arg && file_exist_p(arg[1])) {
+  if(arg && file_exist_p(arg[0])) {
     int i;
     char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
     arg=star_wrap(arg);
