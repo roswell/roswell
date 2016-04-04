@@ -150,6 +150,7 @@ int file_newer_p(char * a,char* b);
 char* system_(char* cmd);
 int system_redirect(const char* cmd,char* filename);
 int System(const char* command);
+void exec_arg(char** arg);
 
 char** parse_cmdline(char* cmdline,int *argc);
 int free_cmdline(char** argv);

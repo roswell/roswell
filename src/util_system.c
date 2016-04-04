@@ -171,3 +171,20 @@ int System(const char* command) {
   return 0;
 #endif
 }
+
+void exec_arg(char** arg) {
+  int offset=1;
+#ifdef _WIN32
+  {
+    char* cmd=q(arg[offset]);
+    for(i=1+offset;arg[i]!=NULL;++i) {
+      cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
+    }
+    SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+    exit(System(cmd));
+    s(cmd);
+  }
+#else
+  execvp(arg[offset],&(arg[offset]));
+#endif
+}

@@ -142,18 +142,19 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
 }
 
 #define SETUP_SYSTEM(sys,msg) {\
-    fprintf(stderr,"%s",msg);      \
-    ret=System(sys);               \
-    s(sys);                        \
-    if(ret) {                      \
-      lock_apply("setup",1);       \
-      return ret;                  \
-    }                              \
+    fprintf(stderr,"%s",msg);  \
+    int ret=System(sys);       \
+    s(sys);                    \
+    if(ret) {                  \
+      lock_apply("setup",1);   \
+      return ret;              \
+    }                          \
   }
 
-int setup(int argc,char **argv,struct sub_command* cmd) {
+int setup(void) {
+  if(lock_apply("setup",2))
+    return 0; /* lock file exists */
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
-  int ret=1;
   lock_apply("setup",0);
   char* sbcl_bin_version=get_opt("sbcl-bin.version",0);
   if(!sbcl_bin_version) {
@@ -162,7 +163,8 @@ int setup(int argc,char **argv,struct sub_command* cmd) {
     fprintf(stderr,"Already have sbcl-bin.\n");
   SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros",NULL),"Making core for Roswell...\n");
   lock_apply("setup",1);
-  return ret;
+
+  return 1;
 }
 
 char* determin_impl(char* impl) {
@@ -188,19 +190,15 @@ char* determin_impl(char* impl) {
   }
   if(!version&&strcmp(impl,DEFAULT_IMPL)!=0) {
     cond_printf(1,"once!%s,%s\n",impl,version);
-    if(!version)
-      s(version);
+    s(version);
     version=q("system");
   }
   if(!(impl && version)) {
-    if(impl) s(impl);
+    s(impl);
     impl=q(DEFAULT_IMPL);
-    if(!lock_apply("setup",2)) { /* lock file not exists yet */
-      int ret= setup(0,NULL,NULL);
-      cond_printf(1,"ret:%d\n",ret);
-    }
+    setup();
     char* path=s_cat(configdir(),q("config"),NULL);
-    global_opt=load_opts(path),s(path);;
+    global_opt=load_opts(path),s(path);
     version=get_opt(DEFAULT_IMPL".version",0);
   }
   return s_cat(impl,q("/"),version,NULL);
@@ -246,6 +244,7 @@ void star_rc(void) {
 }
 
 char** star_wrap(char** arg) {
+  //tbd
   char* wrap=get_opt("wrap",1);
   return arg;
 }
@@ -268,40 +267,26 @@ char** determin_args(int argc,char **argv) {
 }
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
+  char** arg=determin_args(argc,argv);
   star_set_opt();
   if(rc)
-    star_rc();   
-  char** arg=determin_args(argc,argv);
-  
+    star_rc();
+
   if(arg && file_exist_p(arg[1])) {
     int i;
     char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
     arg=star_wrap(arg);
     setenv("ROS_OPTS",opts,1);
     if(verbose&1 ||testing) {
-      fprintf(stderr,"args ");
+      cond_printf(0,"args ");
       for(i=0;arg[i]!=NULL;++i)
         fprintf(stderr,"%s ",arg[i]);
-      fprintf(stderr,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
-      if(testing)
-        s(opts),exit(EXIT_SUCCESS);
+      cond_printf(0,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
     }
     s(opts);
-#ifdef _WIN32
-    {
-      char* cmd=q(arg[1]);
-      for(i=2;arg[i]!=NULL;++i) {
-        cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
-      }
-      SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-      exit(System(cmd));
-      s(cmd);
-    }
-#else
-    execvp(arg[1],&(arg[1]));
-#endif
-  }else
-    fprintf(stderr,"%s is not installed.stop.\n",get_opt("impl",0));
+    testing?exit(EXIT_SUCCESS):exec_arg(arg);
+  }
+  cond_printf(0,"%s is not installed.stop.\n",get_opt("impl",0));
   return 1;
 }
 
