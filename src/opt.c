@@ -80,24 +80,21 @@ int save_opts(const char* path,struct opts* opt) {
   return 1;
 }
 
-int set_opt(struct opts** opts,const char* name,char* value,int type) {
+int set_opt(struct opts** opts,const char* name,char* value) {
   int found=0;
   struct opts* opt=*opts;
 
   while(opt) {
     if(strcmp(opt->name,name)==0) {
       found=1;
-      /*s((char*)opt->value);*/
       opt->value=remove_char("\n\t",value);
-      if(type!=0)
-        opt->type=type;
     }
     opt=opt->next;
   }
   if(!found) {
     opt=(struct opts*)alloc(sizeof(struct opts));
     opt->next=*opts;
-    opt->type=type;
+    opt->type=0;
     opt->name=(const char*)remove_char("\n\t",(char*)name);
     opt->value=remove_char("\n\t",value);
     *opts=opt;
