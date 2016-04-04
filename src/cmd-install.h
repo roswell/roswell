@@ -1,6 +1,6 @@
 /* -*- tab-width : 2 -*- */
-#ifndef __PULL_H__
-#define __PULL_H__
+#ifndef __INSTALL_H__
+#define __INSTALL_H__
 
 struct install_options {
   char* impl;
