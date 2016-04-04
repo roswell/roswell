@@ -267,11 +267,10 @@ char** determin_args(int argc,char **argv) {
 }
 
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
-  char** arg=determin_args(argc,argv);
   star_set_opt();
   if(rc)
     star_rc();
-
+  char** arg=determin_args(argc,argv);
   if(arg && file_exist_p(arg[1])) {
     int i;
     char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
