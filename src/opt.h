@@ -7,7 +7,6 @@ typedef int (*sub_command_fnc)(int argc,char **argv,struct sub_command* cmd);
 
 struct opts {
   const char* name;
-  int type;
   const char* value;
   struct opts* next;
 };
@@ -41,7 +40,7 @@ extern int rc;
 LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating);
 struct opts* load_opts(const char* path);
 int save_opts(const char* path,struct opts* opt);
-int set_opt(struct opts** opts,const char* name,char* value,int type);
+int set_opt(struct opts** opts,const char* name,char* value);
 int unset_opt(struct opts** opts,const char* name);
 char* get_opt(const char* name,int env);
 char* _get_opt(struct opts* opt,const char* name);

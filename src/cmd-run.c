@@ -89,7 +89,7 @@ int cmd_script(int argc,char **argv,struct sub_command* cmd) {
       result=cat(result,"\"",val,"\"",NULL);
       s(val);
     }
-    set_opt(&local_opt,"script",result,0);
+    set_opt(&local_opt,"script",result);
     s(result);
     cmd_run_star(1,tmp,cmd);
   }
@@ -209,12 +209,12 @@ char* determin_impl(char* impl) {
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   int ret=1;
   char* config=configdir();
-  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)),0);
-  set_opt(&local_opt,"argv0",argv_orig[0],0);
-  set_opt(&local_opt,"wargv0",which(argv_orig[0]),0);
-  set_opt(&local_opt,"homedir",config,0);
+  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)));
+  set_opt(&local_opt,"argv0",argv_orig[0]);
+  set_opt(&local_opt,"wargv0",which(argv_orig[0]));
+  set_opt(&local_opt,"homedir",config);
   if(get_opt("asdf.version",0))
-    set_opt(&local_opt,"asdf",get_opt("asdf.version",0),0);
+    set_opt(&local_opt,"asdf",get_opt("asdf.version",0));
   if(rc) {
     char* init=s_cat(configdir(),q("init.lisp"),NULL);
 #ifdef _WIN32
@@ -228,7 +228,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       path=cat("(:load \"",init,"\")",NULL);
       would=cat(path,current?current:"",NULL);
       s(current);
-      set_opt(&local_opt,"program",would,0);
+      set_opt(&local_opt,"program",would);
       s(path);
     }
     s(init);
@@ -236,13 +236,13 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     if(file_exist_p(etc)) {
       path=cat("(:load \"",etc,"\")",NULL);
       would=cat(path,current?current:"",NULL);
-      set_opt(&local_opt,"program",would,0);
+      set_opt(&local_opt,"program",would);
     }
   }
   char*lisp=get_opt("lisp",1);
   if(!lisp)
     lisp=get_opt("*lisp",0);
-  set_opt(&local_opt,"impl",determin_impl(lisp),0);
+  set_opt(&local_opt,"impl",determin_impl(lisp));
   char** arg=NULL;
   int i;
   char* wrap=get_opt("wrap",1);
@@ -260,7 +260,7 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       }
     s((char*)cmd.name),s((char*)cmd.short_name);
   }
-  if(wrap)
+  if(arg && wrap)
     arg[0]=q(wrap);
   if(arg && file_exist_p(arg[1])) {
     char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
