@@ -206,64 +206,77 @@ char* determin_impl(char* impl) {
   return s_cat(impl,q("/"),version,NULL);
 }
 
-int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
-  int ret=1;
+void star_set_opt(void) {
   char* config=configdir();
+  char*lisp=get_opt("lisp",1);
+  lisp=lisp?lisp:get_opt("*lisp",0);
+  set_opt(&local_opt,"impl",determin_impl(lisp));
   set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)));
   set_opt(&local_opt,"argv0",argv_orig[0]);
   set_opt(&local_opt,"wargv0",which(argv_orig[0]));
-  set_opt(&local_opt,"homedir",config);
+  set_opt(&local_opt,"homedir",q(config));
   if(get_opt("asdf.version",0))
     set_opt(&local_opt,"asdf",get_opt("asdf.version",0));
-  if(rc) {
-    char* init=s_cat(configdir(),q("init.lisp"),NULL);
+  s(config);
+}
+
+void star_rc(void) {
+  char* init=s_cat(configdir(),q("init.lisp"),NULL);
 #ifdef _WIN32
-    char* etc="";
+  char* etc="";
 #else
-    char* etc="/etc/rosrc";
+  char* etc="/etc/rosrc";
 #endif
-    char* current=get_opt("program",0);
-    char *path,*would;
-    if(file_exist_p(init)) {
-      path=cat("(:load \"",init,"\")",NULL);
-      would=cat(path,current?current:"",NULL);
-      s(current);
-      set_opt(&local_opt,"program",would);
-      s(path);
-    }
-    s(init);
-    current=get_opt("program",0);
-    if(file_exist_p(etc)) {
-      path=cat("(:load \"",etc,"\")",NULL);
-      would=cat(path,current?current:"",NULL);
-      set_opt(&local_opt,"program",would);
-    }
+  char* current=get_opt("program",0);
+  char *path,*would;
+  if(file_exist_p(init)) {
+    path=cat("(:load \"",init,"\")",NULL);
+    would=cat(path,current?current:"",NULL);
+    s(current);
+    set_opt(&local_opt,"program",would);
+    s(path);
   }
-  char*lisp=get_opt("lisp",1);
-  if(!lisp)
-    lisp=get_opt("*lisp",0);
-  set_opt(&local_opt,"impl",determin_impl(lisp));
-  char** arg=NULL;
-  int i;
+  s(init);
+  current=get_opt("program",0);
+  if(file_exist_p(etc)) {
+    path=cat("(:load \"",etc,"\")",NULL);
+    would=cat(path,current?current:"",NULL);
+    set_opt(&local_opt,"program",would);
+  }
+}
+
+char** star_wrap(char** arg) {
   char* wrap=get_opt("wrap",1);
-  {
-    struct sub_command cmd;
-    int i;
-    char *_= get_opt("impl",0);
-    i=position_char("/",_);
-    cmd.name=subseq(_,0,i);
-    cmd.short_name=subseq(_,i+1,0);
-    for(i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
-      if(strcmp(impls_to_run[i].name,cmd.name)==0) {
-        arg=impls_to_run[i].impl(argc,argv,&cmd);
-        break;
-      }
-    s((char*)cmd.name),s((char*)cmd.short_name);
-  }
-  if(wrap)
-    arg[0]=q(wrap);
+  return arg;
+}
+
+char** determin_args(int argc,char **argv) {
+  struct sub_command cmd;
+  int i;
+  char** arg=NULL;
+  char *_= get_opt("impl",0);
+  i=position_char("/",_);
+  cmd.name=subseq(_,0,i);
+  cmd.short_name=subseq(_,i+1,0);
+  for(i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
+    if(strcmp(impls_to_run[i].name,cmd.name)==0) {
+      arg=impls_to_run[i].impl(argc,argv,&cmd);
+      break;
+    }
+  s((char*)cmd.name),s((char*)cmd.short_name);
+  return arg;
+}
+
+int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
+  star_set_opt();
+  if(rc)
+    star_rc();   
+  char** arg=determin_args(argc,argv);
+  
   if(arg && file_exist_p(arg[1])) {
+    int i;
     char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
+    arg=star_wrap(arg);
     setenv("ROS_OPTS",opts,1);
     if(verbose&1 ||testing) {
       fprintf(stderr,"args ");
@@ -276,8 +289,8 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     s(opts);
 #ifdef _WIN32
     {
-      char* cmd=q(arg[wrap?0:1]);
-      for(i=wrap?1:2;arg[i]!=NULL;++i) {
+      char* cmd=q(arg[1]);
+      for(i=2;arg[i]!=NULL;++i) {
         cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
       }
       SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
@@ -285,13 +298,11 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
       s(cmd);
     }
 #else
-    execvp(arg[wrap?0:1],&(arg[wrap?0:1]));
+    execvp(arg[1],&(arg[1]));
 #endif
   }else
     fprintf(stderr,"%s is not installed.stop.\n",get_opt("impl",0));
-
-  s(config);
-  return ret;
+  return 1;
 }
 
 void register_cmd_run(void) {
