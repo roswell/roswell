@@ -181,44 +181,6 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-int install_help(int argc,char **argv,struct sub_command* cmd) {
-  if(argc==1) {
-    cond_printf(0,"Usage: %s install impl [OPTIONS]\n\nFor more details on impl specific options, type:\n %s help install impl\n\n"
-                "Candidates impls for installation are:\n",argv_orig[0],argv_orig[0]);
-    char* install=lispdir();
-    LVal d=directory(install),v=d;
-    for(;v;v=Next(v)) {
-      char* str=firsts(v);
-      if(str[strlen(str)-1]!='/') {
-        int p=position_char(".",str);
-        if(p!=-1) {
-          char *sub=subseq(str,0,p);
-          if(p>=8/*strlen("install-")*/ && strncmp(str,"install-",8)==0)
-            printf("%s\n",sub+8);
-          s(sub);
-        }
-      }
-    }
-    sL(d);
-  }else if(argc==2) {
-    int i,j,argc_;
-    char** tmp;
-    char* install_ros=s_cat2(lispdir(),q("install.ros"));
-    tmp=(char**)alloc(sizeof(char*)*(argc+9));
-    i=0;
-    tmp[i++]=q("--");
-    tmp[i++]=install_ros;
-    tmp[i++]=q("help");
-    tmp[i++]=q(argv[1]);
-    for(j=2;j<argc;tmp[i++]=q(argv[j++]));
-    argc_=i;
-    for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
-    for(j=0;j<argc_;s(tmp[j++]));
-    dealloc(tmp);
-  }
-  return 0;
-}
-
 void register_cmd_install(void) {
   top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1);
 }
