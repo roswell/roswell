@@ -90,7 +90,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     l=subseq(argv[0],0,pos);
     r=subseq(argv[0],pos+1,0);
     if(r)
-      set_opt(&local_opt,l,r);
+      set_opt(&local_opt,l,r,0);
     else{
       struct opts* opt=global_opt;
       struct opts** opts=&opt;
@@ -144,7 +144,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
 int opt_top(int argc,char** argv,struct sub_command* cmd) {
   const char* arg=cmd->name;
   if(arg && argc>1)
-    set_opt(&local_opt,arg,argv[1]);
+    set_opt(&local_opt,arg,argv[1],0);
   return 2;
 }
 
@@ -186,7 +186,7 @@ int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name) {
     char* current=get_opt("program",0);
     current=cat(current?current:"","(:",cmd->name,")",NULL);
-    set_opt(&local_opt,"program",current);
+    set_opt(&local_opt,"program",current,0);
   }
   return 1;
 }
@@ -197,7 +197,7 @@ int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
     char* escaped=escape_string(argv[1]);
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
     s(escaped);
-    set_opt(&local_opt,"program",current);
+    set_opt(&local_opt,"program",current,0);
   }
   return 2;
 }
@@ -208,7 +208,7 @@ int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
     char* escaped=escape_string(argv[1]);
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
     s(escaped);
-    set_opt(&local_opt,"restart",current);
+    set_opt(&local_opt,"restart",current,0);
   }
   return 2;
 }
@@ -219,7 +219,7 @@ int opt_final(int argc,char** argv,struct sub_command* cmd) {
     char* escaped=escape_string(argv[1]);
     current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
     s(escaped);
-    set_opt(&local_opt,"final",current);
+    set_opt(&local_opt,"final",current,0);
   }
   return 2;
 }

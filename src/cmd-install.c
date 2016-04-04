@@ -130,8 +130,8 @@ int cmd_install(int argc,char **argv,struct sub_command* cmd) {
             for(i=0;version[i]!='\0';++i)
               if(version[i]=='-')
                 version[i]='\0';
-            set_opt(opts,"default.lisp",param.impl);
-            set_opt(opts,v,version);
+            set_opt(opts,"default.lisp",param.impl,0);
+            set_opt(opts,v,version,0);
             save_opts(path,opt);
           }
           s(home),s(path),s(v);

@@ -17,13 +17,10 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
     (loop for line = (read-line in nil nil)
           while line
           collect
-          (let ((r (loop for last = -1 then pos
-                         for pos = (position #\Tab line :start (1+ last))
-                         collect (subseq line (1+ last) pos)
-                         while pos)))
-            (if (= (length r) 3)
-                (list (first r) (third r))
-                r)))))
+          (loop for last = -1 then pos
+                for pos = (position #\Tab line :start (1+ last))
+                collect (subseq line (1+ last) pos)
+                while pos))))
 
 (defun save-config (path config)
   (with-open-file (out path :direction :output
@@ -39,9 +36,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
   (let ((found (find var config :test 'equal :key #'first)))
     (if found
         (progn
-          (setf (second found) val)
+          (setf (third found) val)
           config)
-        (cons (list var val)
+        (cons (list var "0" val)
               config))))
 
 (defun main (&rest argv)
@@ -52,7 +49,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
     (cond
       ((= 2 len)
        (loop for i in conf
-             do (format *error-output* "~A=~A~%" (first i) (second i))
+             do (format *error-output* "~A=~A~%" (first i) (third i))
              finally (format *error-output* "~%Possible subcommands:~%set~%show~%")) 0)
       ((= 3 len)
        (setf conf (unconfig conf (third argv)))

@@ -41,6 +41,7 @@ struct opts* load_opts(const char* path) {
     int i,mode,last;
     cur->next=(struct opts*)alloc(sizeof(struct opts));
     cur=cur->next;
+    cur->type=OPT_VOID;
     cur->value=NULL;
     cur->name=NULL;
     cur->next=NULL;
@@ -51,6 +52,8 @@ struct opts* load_opts(const char* path) {
           cur->name=subseq(buf,last,i);
           break;
         case 1:
+          cur->type=buf[i-1]-'0';
+          break;
         case 2:
           cur->value=subseq(buf,last,i);
           break;
@@ -70,14 +73,14 @@ int save_opts(const char* path,struct opts* opt) {
     return 0;
 
   while(opt) {
-    fprintf(fp,"%s\t%s\n",opt->name,opt->value);
+    fprintf(fp,"%s\t%d\t%s\n",opt->name,opt->type,opt->value);
     opt=opt->next;
   }
   fclose(fp);
   return 1;
 }
 
-int set_opt(struct opts** opts,const char* name,char* value) {
+int set_opt(struct opts** opts,const char* name,char* value,int type) {
   int found=0;
   struct opts* opt=*opts;
 
@@ -86,17 +89,27 @@ int set_opt(struct opts** opts,const char* name,char* value) {
       found=1;
       /*s((char*)opt->value);*/
       opt->value=remove_char("\n\t",value);
+      if(type!=0)
+        opt->type=type;
     }
     opt=opt->next;
   }
   if(!found) {
     opt=(struct opts*)alloc(sizeof(struct opts));
     opt->next=*opts;
+    opt->type=type;
     opt->name=(const char*)remove_char("\n\t",(char*)name);
     opt->value=remove_char("\n\t",value);
     *opts=opt;
   }
   return 1;
+}
+
+int get_opt_type(struct opts* opt,const char* name) {
+  for(;opt;opt=opt->next)
+    if(strcmp(opt->name,name)==0)
+      return opt->type;
+  return 0;
 }
 
 char* _get_opt(struct opts* opt,const char* name) {
