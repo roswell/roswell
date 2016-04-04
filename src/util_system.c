@@ -106,12 +106,10 @@ char* system_(char* cmd) {
 }
 #endif
 
-
 int system_redirect(const char* cmd,char* filename) {
 #ifndef HAVE_WINDOWS_H
   pid_t pid;
   int fd[2];
-  int c;
   if (pipe(fd)==-1) {
     perror("pipe");
     return -1;
@@ -135,6 +133,7 @@ int system_redirect(const char* cmd,char* filename) {
     close(fd[1]);
     if((out=fopen(filename,"a"))!=NULL) {
       if((in=fdopen(fd[0], "r"))!=NULL) {
+        int c;
         while((c = fgetc(in)) != EOF) {
           if (fputc(c, out) == EOF) {
             fclose(in);
@@ -145,40 +144,6 @@ int system_redirect(const char* cmd,char* filename) {
         fclose(in);
       }
       fclose(out);
-    }
-  }
-  return(0);
-#endif
-}
-
-int system_redirect_function(const char* cmd,Function1 f) {
-#ifndef HAVE_WINDOWS_H
-  pid_t pid;
-  int fd[2];
-  if (pipe(fd)==-1) {
-    perror("pipe");
-    return -1;
-  }
-  pid=fork();
-  if(pid==-1) {
-    perror("fork");
-    return -1;
-  }
-  if(pid==0) {
-    int argc;
-    char** argv=parse_cmdline((char*)cmd,&argc);
-    /* standard output */
-    close(fd[0]);
-    close(1),close(2);
-    dup2(fd[1],1),dup2(fd[1],2);
-    close(fd[1]);
-    execvp(argv[0],argv);
-  }else {
-    FILE *in;
-    close(fd[1]);
-    if((in=fdopen(fd[0], "r"))!=NULL) {
-      f((LVal)in);
-      fclose(in);
     }
   }
   return(0);

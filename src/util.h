@@ -149,7 +149,6 @@ int file_newer_p(char * a,char* b);
 /*util_system.c */
 char* system_(char* cmd);
 int system_redirect(const char* cmd,char* filename);
-int system_redirect_function(const char* cmd,Function1 f);
 int System(const char* command);
 
 char** parse_cmdline(char* cmdline,int *argc);
