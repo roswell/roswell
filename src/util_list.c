@@ -96,10 +96,10 @@ LVal nthcdr(int n,LVal v) {
   return v;
 }
 
-LVal length(LVal l) {
+int length(LVal l) {
   int c;
   for(c=0;l;++c,l=Next(l));
-  return toNumber(c);
+  return c;
 }
 
 void print_list(LVal v) {
@@ -143,4 +143,16 @@ void sL(LVal v) {
     }
     break;
   }
+}
+
+char** stringlist_array(LVal v) {
+  LVal vi=v;
+  int l=length(v);
+  int c;
+  char** arg=alloc(sizeof(char*)*(l+1));
+  arg[l]=NULL;
+  for(c=0;c<l;++c,v=Next(v))
+    arg[c]=q(firsts(v));
+  sL(vi);
+  return arg;
 }
