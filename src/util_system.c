@@ -172,17 +172,24 @@ int System(const char* command) {
 #endif
 }
 
+#ifdef _WIN32
+BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar) {
+  if(CTRL_C_EVENT == ctrlChar)
+    return TRUE;
+  return FALSE;
+}
+#endif
+
 void exec_arg(char** arg) {
 #ifdef _WIN32
-  {
-    char* cmd=q(arg[0]);
-    for(i=1;arg[i]!=NULL;++i) {
-      cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
-    }
-    SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
-    exit(System(cmd));
-    s(cmd);
+  int i;
+  char* cmd=q(arg[0]);
+  for(i=1;arg[i]!=NULL;++i) {
+    cmd=s_cat(cmd,q(" "),q("\""),escape_string(arg[i]),q("\""),NULL);
   }
+  SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
+  exit(System(cmd));
+  s(cmd);
 #else
   execvp(arg[0],&(arg[0]));
 #endif

@@ -36,14 +36,6 @@ struct run_impl_t impls_to_run[]={
   {"alisp",&cmd_run_acl},
 };
 
-#ifdef _WIN32
-BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar) {
-  if(CTRL_C_EVENT == ctrlChar)
-    return TRUE;
-  return FALSE;
-}
-#endif
-
 LVal run_commands=(LVal)NULL;
 LVal run_options =(LVal)NULL;
 
