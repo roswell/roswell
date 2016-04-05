@@ -102,11 +102,12 @@ void* firstp(LVal l);
 LVal first(LVal v);
 LVal rest(LVal v);
 LVal nthcdr(int n,LVal v);
-LVal length(LVal l);
+int length(LVal l);
 
 void print_list(LVal v);
 LVal split_string(char* string,char* by);
 void sL(LVal l);
+char** stringlist_array(LVal v);
 
 void cond_printf (int v,char* format,...);
 void* alloc(size_t bytes);
