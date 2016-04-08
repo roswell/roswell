@@ -26,7 +26,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     ret=System(cmd);
     cond_printf(1,"ret:%d\n",ret);
   }
-  s(asdf3),s(arch),s(os);
+  s(arch),s(os);
 
   ret=conss((strcmp("system",version)==0)?
             truename(which((strcmp(impl,"clisp32")==0)?"clisp32":"clisp")):
