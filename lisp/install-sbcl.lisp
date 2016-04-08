@@ -100,7 +100,7 @@
         (download (get-opt "download.uri") (get-opt "download.archive")))
       (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download again.~%"
               (get-opt "download.uri")))
-  (cons (not (get-opt "without-install")) argv))
+  (cons t argv))
 
 (defun sbcl-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -117,7 +117,7 @@
                          :if-does-not-exist :create
                          :if-exists nil)
         (format o "~S~%" v))))
-  (cons t argv))
+  (cons (not (get-opt "without-install")) argv))
 
 (defun sbcl-patch (argv)
   #+darwin
