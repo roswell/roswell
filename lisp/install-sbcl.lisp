@@ -45,7 +45,8 @@
              collect (subseq href (1+ (position #\- href :from-end t)))))))
 
 (defun sbcl-msys (argv)
-  (unless (ros:getenv "MSYSCON")
+  (unless (or (ros:getenv "MSYSCON")
+              (get-opt "without-install"))
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
