@@ -267,7 +267,7 @@ have the latest asdf, and this file has a workaround for this.
 
 #+sbcl
 (when (ignore-errors (string-equal (ros:opt "impl") "sbcl-bin" :end1 8))
-  (let ((path (probe-file (merge-pathnames (format nil "src/sbcl-~A/" (lisp-implementation-version)) (opt "homedir")))))
+  (let ((path (merge-pathnames (format nil "src/sbcl-~A/" (lisp-implementation-version)) (opt "homedir"))))
     (when (probe-file path)
       (sb-ext:set-sbcl-source-location path))))
 
