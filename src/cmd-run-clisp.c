@@ -2,26 +2,22 @@
 #include "opt.h"
 
 char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
-  char** arg=NULL;
   char* home=configdir();
   char* arch=uname_m();
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=9; /*[binpath for clisp] -q -q -M param -repl init.lisp
-                  [terminating NULL] that total 8 are default. */
+  /*[binpath for clisp] -q -q -M param -repl init.lisp
+    [terminating NULL] that total 8 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
-  char* clisp_version=get_opt("version",0);
-  int paramc=0;
-  char *bin;
-  int issystem=(strcmp("system",version)==0);
   int simple=0;
   char *asdf3= get_opt("asdf.version",0);
+  LVal ret=0;
 
   if(!asdf3) {
     char* cmd=cat(which(argv_orig[0])," asdf install",NULL);
@@ -30,49 +26,29 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     ret=System(cmd);
     cond_printf(1,"ret:%d\n",ret);
   }
-  s(asdf3);
+  s(asdf3),s(arch),s(os);
 
-  if(issystem){
-    if(strcmp(impl,"clisp32")==0) {
-      bin=truename(which("clisp32"));
-    }else {
-      bin=truename(which("clisp"));
-    }
-  }else {
-    bin=cat(impl_path,SLASH,"bin",SLASH,"clisp",EXE_EXTENTION,NULL);
-  }
-  s(arch),s(os);
-  if(help) {
-    offset++;
-  }
-  if(clisp_version)
-    offset+=1;
-  if(quicklisp)
-    offset+=2;
-  if(program||script)
-    offset+=2;
-
-  arg=alloc(sizeof(char*)*(offset+argc));
-  arg[paramc++]=bin;
-
-  if(clisp_version) {
-    arg[paramc++]=q("--version");
+  ret=conss((strcmp("system",version)==0)?
+            truename(which((strcmp(impl,"clisp32")==0)?"clisp32":"clisp")):
+            cat(impl_path,SLASH,"bin",SLASH,"clisp",EXE_EXTENTION,NULL),ret);
+  if(get_opt("version",0)) {
+    ret=conss(q("--version"),ret);
     simple=1;
   }
 
   for(i=1;i<argc;++i) {
-    arg[paramc++]=argv[i];
+    ret=conss(q(argv[i]),ret);
     if(strcmp(argv[i],"--version")==0)
       simple=1;
   }
   if(help)
-    arg[paramc++]=q("--help");
+    ret=conss(q("--help"),ret);
 
   if(image) {
     char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
-      arg[paramc++]=q("-M");
-      arg[paramc++]=path;
+      ret=conss(q("-M"),ret);
+      ret=conss(path,ret);
     } else {
       cond_printf(1,"core not found:%s\n",path);
       s(path);
@@ -80,29 +56,26 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   }
 
   /* runtime options from here */
-  arg[paramc++]=q("-q");
-  arg[paramc++]=q("-q");
+  ret=conss(q("-q"),ret);
+  ret=conss(q("-q"),ret);
 
   if(script) {
-    arg[paramc++]=q("-on-error");
-    arg[paramc++]=q("exit");
+    ret=conss(q("-on-error"),ret);
+    ret=conss(q("exit"),ret);
   }
-  arg[paramc++]=q("-repl");
+  ret=conss(q("-repl"),ret);
   if(!simple) {
-    arg[paramc++]=s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL);
-    if(quicklisp) {
-      arg[paramc++]=q("(ros:quicklisp)");
-    }
-    if(program || script) {
-      char *tmp;
-      tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
-      arg[paramc++]=tmp;
-    }
+    ret=conss(s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL),ret);
+    if(quicklisp)
+      ret=conss(q("(ros:quicklisp)"),ret);
+
+    if(program || script)
+      ret=conss(cat("(ros:run '(",program?program:"",
+                    script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"",
+                    "))",NULL),ret);
   }
   s(impl_path);
 
-  arg[paramc]=NULL;
-  cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil"
-              ,script?script:"nil");
-  return arg;
+  cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil",script?script:"nil");
+  return stringlist_array(nreverse(ret));
 }
