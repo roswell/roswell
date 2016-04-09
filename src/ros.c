@@ -24,16 +24,13 @@ int quicklisp=1;
 LVal top_commands =(LVal)NULL;
 LVal top_options =(LVal)NULL;
 
-LVal top_helps =(LVal)NULL;
-
 int proccmd(int argc,char** argv,LVal option,LVal command);
 
 int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command) {
   char** argv2=(char**)alloc(sizeof(char*)*(argc+2));
   int i,ret;
-  for(i=0;i<argc;++i) {
+  for(i=0;i<argc;++i)
     argv2[i+2]=argv[i];
-  }
   argv2[0]=path;
   argv2[1]=subcmd;
   ret=proccmd(argc+2,argv2,option,command);
@@ -77,9 +74,8 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
             if(fp->terminating) {
               cond_printf(1,"terminating:%s\n",alias);
               exit(result);
-            }else {
+            }else
               return result;
-            }
           }
         }
       }
@@ -141,48 +137,18 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
   return 1;
 }
 
-int opt_top(int argc,char** argv,struct sub_command* cmd) {
-  const char* arg=cmd->name;
-  if(arg && argc>1)
-    set_opt(&local_opt,arg,argv[1]);
-  return 2;
-}
+#define OPT_SETVAL(sym,rexp)                                    \
+  int opt_##sym(int argc,char** argv,struct sub_command* cmd) { \
+    sym=rexp;                                                   \
+    cond_printf(1,"opt:%s:%d\n",cmd->name,sym);                 \
+    return 1;}
 
-int opt_top_verbose(int argc,char** argv,struct sub_command* cmd) {
-  if(strcmp(cmd->name,"verbose")==0) {
-    verbose=1|verbose<<1;
-  }else if(strcmp(cmd->name,"quiet")==0) {
-    verbose=verbose>>1;
-  }
-  cond_printf(1,"opt_verbose:%s %d\n",cmd->name,verbose);
-  return 1;
-}
+OPT_SETVAL(verbose,(strcmp(cmd->name,"verbose")==0)?1|verbose<<1:verbose>>1)
+OPT_SETVAL(testing,1+testing)
+OPT_SETVAL(rc,(strcmp(cmd->name,"rc")==0)?1:0)
+OPT_SETVAL(quicklisp,(strcmp(cmd->name,"quicklisp")==0)?1:0)
 
-int opt_top_testing(int argc,char** argv,struct sub_command* cmd) {
-  ++testing;
-  cond_printf(1,"opt_testing:%s %d\n",cmd->name,testing);
-  return 1;
-}
-
-int opt_top_rc(int argc,char** argv,struct sub_command* cmd) {
-  if(strcmp(cmd->name,"rc")==0) {
-    rc=1;
-  }else if(strcmp(cmd->name,"no-rc")==0)
-    rc=0;
-  cond_printf(1,"opt_rc:%s\n",cmd->name);
-  return 1;
-}
-
-int opt_top_ql(int argc,char** argv,struct sub_command* cmd) {
-  if(strcmp(cmd->name,"quicklisp")==0) {
-    quicklisp=1;
-  }else if(strcmp(cmd->name,"no-quicklisp")==0)
-    quicklisp=0;
-  cond_printf(1,"opt_quicklisp:%s\n",cmd->name);
-  return 1;
-}
-
-int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
+int opt_program0(int argc,char** argv,struct sub_command* cmd) {
   if(cmd->name) {
     char* current=get_opt("program",0);
     current=cat(current?current:"","(:",cmd->name,")",NULL);
@@ -191,67 +157,57 @@ int opt_top_build0(int argc,char** argv,struct sub_command* cmd) {
   return 1;
 }
 
-int opt_top_build(int argc,char** argv,struct sub_command* cmd) {
-  if(cmd->name && argc>1) {
-    char* current=get_opt("program",0);
-    char* escaped=escape_string(argv[1]);
-    current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
-    s(escaped);
-    set_opt(&local_opt,"program",current);
-  }
+int opt_take1(int argc,char** argv,struct sub_command* cmd) {
+  const char* arg=cmd->name;
+  if(arg && argc>1)
+    set_opt(&local_opt,arg,argv[1]);
   return 2;
 }
 
-int opt_restart_after(int argc,char** argv,struct sub_command* cmd) {
-  if(cmd->name && argc>1) {
-    char* current=get_opt("restart",0);
-    char* escaped=escape_string(argv[1]);
-    current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
-    s(escaped);
-    set_opt(&local_opt,"restart",current);
+#define OPT_APPEND(sym)                                            \
+  int opt_##sym(int argc,char** argv,struct sub_command* cmd) {    \
+    if(cmd->name && argc>1) {                                      \
+      char* current=get_opt(#sym,0);                               \
+      current=s_cat(current?q(current):q(""),                      \
+                    q("(:"),q(cmd->name),q(" \""),                 \
+                    escape_string(argv[1]),q("\")"),NULL);         \
+      set_opt(&local_opt,#sym,current);                            \
+    }                                                              \
+    return 2;                                                      \
   }
-  return 2;
-}
 
-int opt_final(int argc,char** argv,struct sub_command* cmd) {
-  if(cmd->name && argc>1) {
-    char* current=get_opt("final",0);
-    char* escaped=escape_string(argv[1]);
-    current=cat(current?current:"","(:",cmd->name," \"",escaped,"\")",NULL);
-    s(escaped);
-    set_opt(&local_opt,"final",current);
-  }
-  return 2;
-}
+OPT_APPEND(program)
+OPT_APPEND(restart)
+OPT_APPEND(final)
 
 LVal register_runtime_options(LVal opt) {
-  /*opt=add_command(opt,"file","-f",opt_top_build,1,0,"include lisp FILE while building","FILE");*/
-  opt=add_command(opt,"load","-l",opt_top_build,1,0);
-  opt=add_command(opt,"source-registry","-S",opt_top_build,1,0);
-  opt=add_command(opt,"system","-s",opt_top_build,1,0);
-  opt=add_command(opt,"load-system",NULL,opt_top_build,1,0);
-  opt=add_command(opt,"package","-p",opt_top_build,1,0);
-  opt=add_command(opt,"system-package","-sp",opt_top_build,1,0);
-  opt=add_command(opt,"eval","-e",opt_top_build,1,0);
-  opt=add_command(opt,"require",NULL,opt_top_build,1,0);
-  opt=add_command(opt,"quit","-q",opt_top_build0,1,0);
+  /*opt=add_command(opt,"file","-f",opt_program,1,0,"include lisp FILE while building","FILE");*/
+  opt=add_command(opt,"load","-l",opt_program,1,0);
+  opt=add_command(opt,"source-registry","-S",opt_program,1,0);
+  opt=add_command(opt,"system","-s",opt_program,1,0);
+  opt=add_command(opt,"load-system",NULL,opt_program,1,0);
+  opt=add_command(opt,"package","-p",opt_program,1,0);
+  opt=add_command(opt,"system-package","-sp",opt_program,1,0);
+  opt=add_command(opt,"eval","-e",opt_program,1,0);
+  opt=add_command(opt,"require",NULL,opt_program,1,0);
+  opt=add_command(opt,"quit","-q",opt_program0,1,0);
 
-  opt=add_command(opt,"restart","-r",opt_restart_after,1,0);
-  opt=add_command(opt,"entry","-E",opt_restart_after,1,0);
-  opt=add_command(opt,"init","-i",opt_restart_after,1,0);
-  opt=add_command(opt,"print","-ip",opt_restart_after,1,0);
-  opt=add_command(opt,"write","-iw",opt_restart_after,1,0);
+  opt=add_command(opt,"restart","-r",opt_restart,1,0);
+  opt=add_command(opt,"entry","-E",opt_restart,1,0);
+  opt=add_command(opt,"init","-i",opt_restart,1,0);
+  opt=add_command(opt,"print","-ip",opt_restart,1,0);
+  opt=add_command(opt,"write","-iw",opt_restart,1,0);
 
   opt=add_command(opt,"final","-F",opt_final,1,0);
 
-  opt=add_command(opt,"rc","-R",opt_top_rc,1,0);
-  opt=add_command(opt,"no-rc","+R",opt_top_rc,1,0);
-  opt=add_command(opt,"quicklisp","-Q",opt_top_ql,1,0);
-  opt=add_command(opt,"no-quicklisp","+Q",opt_top_ql,1,0);
-  opt=add_command(opt,"verbose","-v",opt_top_verbose,1,0);
-  opt=add_command(opt,"quiet",NULL,opt_top_verbose,1,0);
-  opt=add_command(opt,"test",NULL,opt_top_testing,1,0);
-  opt=add_command(opt,"stdin",NULL,opt_top_build,0,0);
+  opt=add_command(opt,"rc","-R",opt_rc,1,0);
+  opt=add_command(opt,"no-rc","+R",opt_rc,1,0);
+  opt=add_command(opt,"quicklisp","-Q",opt_quicklisp,1,0);
+  opt=add_command(opt,"no-quicklisp","+Q",opt_quicklisp,1,0);
+  opt=add_command(opt,"verbose","-v",opt_verbose,1,0);
+  opt=add_command(opt,"quiet",NULL,opt_verbose,1,0);
+  opt=add_command(opt,"test",NULL,opt_testing,1,0);
+  opt=add_command(opt,"stdin",NULL,opt_program,0,0);
   return opt;
 }
 
@@ -260,9 +216,9 @@ int main (int argc,char **argv) {
   argc_orig=argc;
   /* toplevel */
   top_options=add_command(top_options,"version" ,NULL,opt_version,1,1);
-  top_options=add_command(top_options,"wrap","-w",opt_top,1,0);
-  top_options=add_command(top_options,"image","-m",opt_top,1,0);
-  top_options=add_command(top_options,"lisp","-L",opt_top,1,0);
+  top_options=add_command(top_options,"wrap","-w",opt_take1,1,0);
+  top_options=add_command(top_options,"image","-m",opt_take1,1,0);
+  top_options=add_command(top_options,"lisp","-L",opt_take1,1,0);
   top_options=register_runtime_options(top_options);
 
   top_options=nreverse(top_options);
