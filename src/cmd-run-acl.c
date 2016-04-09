@@ -30,7 +30,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   if(acl_version) {
     ret=conss(q("-e"),ret);
     ret=conss(q("(format t \"~A ~A~%\" (lisp-implementation-type) (lisp-implementation-version))"),ret);
-    ret=conss(q("-kill"),ret);arg[paramc++]=q("-kill");
+    ret=conss(q("-kill"),ret);
   }
 
   if(image) {
