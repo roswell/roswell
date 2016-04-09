@@ -7,7 +7,6 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
     - METHOD=brew
-    - METHOD=brew WORKARROUND=true
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
     - METHOD=ci LISP=sbcl
@@ -37,9 +36,6 @@ matrix:
     - sudo: required
       os: linux
       env: METHOD=valgrind XCFLAGS="-g -O0"
-  exclude:
-    - os: osx
-      env: METHOD=brew WORKARROUND=true
 
 #branches:
 #  except:
@@ -62,7 +58,6 @@ before_install:
        sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
   - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew --env;brew config; fi
-  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ] && [ $WORKARROUND = true ]; then brew tap homebrew/dupes; fi #work arround https://github.com/Linuxbrew/linuxbrew/issues/742#issuecomment-176486281
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
@@ -73,6 +68,7 @@ install:
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $METHOD = brew ]; then brew tap roswell/roswell; fi
+  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
 script:
