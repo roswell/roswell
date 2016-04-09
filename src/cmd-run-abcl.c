@@ -2,14 +2,13 @@
 #include "opt.h"
 
 char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
-  char** arg=NULL;
   char* home=configdir();
   char* arch=uname_m();
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  int offset=8; /*[binpath for abcl] --noinform --noinit --nosystem --eval init.lisp
-                   [terminating NULL] that total 7 are default. */
+  /*[binpath for abcl] --noinform --noinit --nosystem --eval init.lisp
+    [terminating NULL] that total 7 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help",0);
@@ -17,47 +16,37 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
   char* abcl_version=get_opt("version",0);
-  int paramc=0;
-  char *bin;
-  int issystem=(strcmp("system",version)==0);
-  bin=issystem?truename(which("abcl")):cat(impl_path,SLASH,"abcl",EXE_EXTENTION,NULL);
+  LVal ret=0;
+  
   s(arch),s(os);
-  if(abcl_version)
-    offset+=2;
-  if(quicklisp)
-    offset+=2;
-  if(program||script)
-    offset+=2;
-  arg=alloc(sizeof(char*)*(offset+argc));
-  arg[paramc++]=bin;
+
+  ret=conss((strcmp("system",version)==0)?truename(which("abcl")):cat(impl_path,SLASH,"abcl",EXE_EXTENTION,NULL),ret);
   /* runtime options from here */
-  arg[paramc++]=q("--noinform");
-  arg[paramc++]=q("--noinit");
-  arg[paramc++]=q("--nosystem");
+  ret=conss(q("--noinform"),ret);
+  ret=conss(q("--noinit"),ret);
+  ret=conss(q("--nosystem"),ret);
+
   if(abcl_version) {
-    arg[paramc++]=q("--eval");
-    arg[paramc++]=q("(progn (format t \"~A ~A~%\" (lisp-implementation-type) (lisp-implementation-version))(extensions:quit))");
+    ret=conss(q("--eval"),ret);
+    ret=conss(q("(progn (format t \"~A ~A~%\" (lisp-implementation-type) (lisp-implementation-version))(extensions:quit))"),ret);
   }
-  arg[paramc++]=q("--eval");
-  arg[paramc++]=s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL);
+  ret=conss(q("--eval"),ret);
+  ret=conss(s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL),ret);
   if(quicklisp) {
-    arg[paramc++]=q("--eval");
-    arg[paramc++]=q("(ros:quicklisp)");
+    ret=conss(q("--eval"),ret);
+    ret=conss(q("(ros:quicklisp)"),ret);
   }
   if(program || script) {
-    char *tmp;
-    arg[paramc++]=q("--eval");
-    tmp=cat("(ros:run '(",program?program:"",script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"","))",NULL);
-    arg[paramc++]=tmp;
+    ret=conss(q("--eval"),ret);
+    ret=conss(cat("(ros:run '(",program?program:"",
+                  script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"",
+                  "))",NULL),ret);
   }
 
-  for(i=1;i<argc;++i) {
-    arg[paramc++]=argv[i];
-  }
-
+  for(i=1;i<argc;++i)
+    ret=conss(q(argv[i]),ret);
+ 
   s(impl_path);
-  arg[paramc]=NULL;
-  cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil"
-              ,script?script:"nil");
-  return arg;
+  cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil",script?script:"nil");
+  return stringlist_array(nreverse(ret));
 }
