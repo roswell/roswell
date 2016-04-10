@@ -9,7 +9,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* version=(char*)cmd->short_name;
   //int offset=10;
   /*[binpath for sbcl] --noinform --core param --eval init.lisp
-                  --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
+    --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
   char* help=get_opt("help",0);
