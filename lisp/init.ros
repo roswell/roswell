@@ -11,48 +11,47 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
   (push :ros.sub.init *features*))
 
 (defpackage :ros.sub.init
-  (:use :cl))
+  (:use :cl :ros))
 
 (in-package :ros.sub.init)
 
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd))
-  (cond ((and (equal subcmd "main") name)
-         (let (script-path
-               template
-               (date (get-universal-time)))
-           (when r (setq template name
-                         name (first r)
-                         r (cdr r)))
-           (setq script-path (make-pathname :defaults name :type "ros"))
-           (if template
-               (progn
-                 (ql:quickload template :silent t)
-                 (when ros:*main*
-                   (apply ros:*main* r)))
-               (handler-case
-                   (unless (prog1
-                               (with-open-file (out script-path
-                                                    :direction :output
-                                                    :if-exists nil
-                                                    :if-does-not-exist :create)
-                                 (when out
-                                   (format out "~@{~A~%~}"
-                                           "#!/bin/sh"
-                                           "#|-*- mode:lisp -*-|#"
-                                           "#| <Put a one-line description here>"
-                                           "exec ros -Q -- $0 \"$@\"" "|#"
-                                           (format nil "(defpackage :ros.script.~A.~A" name date)
-                                           "  (:use :cl))"
-                                           (format nil "(in-package :ros.script.~A.~A)" name date)
-                                           "(defun main (&rest argv)"
-                                           "  (declare (ignorable argv)))"
-                                           ";;; vim: set ft=lisp lisp:")
-                                   (format t "~&Successfully generated: ~A~%" script-path)
-                                   t))
-                             #+sbcl (sb-posix:chmod script-path #o700))
-                     (format *error-output* "~&File already exists: ~A~%" script-path)
-                     (ros:quit -1))
-                 (error (e)
-                   (format *error-output* "~&~A~%" e)
-                   (ros:quit -1))))))))
+  (if (and (equal subcmd "main") name)
+      (let* ((date (get-universal-time))
+             (path (format nil "templates/~A/~A.asd" name name)))
+        (setq path (probe-file (merge-pathnames path (ros.util:homedir))))
+        (when path
+          (asdf:load-asd path)
+          (ql:quickload name :silent t)
+          (when *main*
+            (apply *main* r)))
+        (setq path (make-pathname :defaults name :type "ros"))
+        (handler-case
+            (unless
+                (prog1
+                    (with-open-file (out path
+                                         :direction :output
+                                         :if-exists nil
+                                         :if-does-not-exist :create)
+                      (when out
+                        (format out "~@{~A~%~}"
+                                "#!/bin/sh"
+                                "#|-*- mode:lisp -*-|#"
+                                "#| <Put a one-line description here>"
+                                "exec ros -Q -- $0 \"$@\"" "|#"
+                                (format nil "(defpackage :ros.script.~A.~A" name date)
+                                "  (:use :cl))"
+                                (format nil "(in-package :ros.script.~A.~A)" name date)
+                                "(defun main (&rest argv)"
+                                "  (declare (ignorable argv)))"
+                                ";;; vim: set ft=lisp lisp:")
+                        (format t "~&Successfully generated: ~A~%" path)
+                        t))
+                  #+sbcl (sb-posix:chmod path #o700))
+              (format *error-output* "~&File already exists: ~A~%" path)
+              (quit -1))
+          (error (e)
+            (format *error-output* "~&~A~%" e)
+            (quit -1))))
+      ()))
