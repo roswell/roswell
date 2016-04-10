@@ -132,7 +132,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (let ((version (find-version)))
     (mapc
      #'uiop:run-program
-     `("git checkout -b release origin/release"
+     `("git checkout release"
        "git merge origin/master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push --tags"
