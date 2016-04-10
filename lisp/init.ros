@@ -22,7 +22,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
              (path (format nil "templates/~A/~A.asd" name name)))
         (setq path (probe-file (merge-pathnames path (ros.util:homedir))))
         (when path
-          (asdf:load-asd path)
+          (load path)
           (ql:quickload name :silent t)
           (when *main*
             (apply *main* r)))
