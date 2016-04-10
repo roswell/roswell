@@ -1,7 +1,8 @@
 /* -*- tab-width : 2 -*- */
+#include "opt.h"
 #ifdef HAVE_WINDOWS_H
 #include "cmd-install.h"
-#include "opt.h"
+
 
 char* sbcl_bin_extention(struct install_options* param) {
   return ".msi";
