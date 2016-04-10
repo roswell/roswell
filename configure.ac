@@ -5,7 +5,7 @@ AC_PREREQ([2.65])
 AC_INIT([roswell],[0.0.5.58],snmsts@gmail.com)
 
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_FILES([Makefile src/Makefile documents/Makefile lisp/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile documents/Makefile lisp/Makefile scripts/Makefile])
 AC_CONFIG_SRCDIR([src/Makefile.am])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE([enable])
@@ -80,4 +80,41 @@ AC_ARG_ENABLE([html_generation],
    esac],[])
 AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
+
+
+AC_ARG_WITH([bash-completion],
+    AS_HELP_STRING([--with-bash-completion@<:@=INSTALL_DIR@:>@],
+        [Install the bash auto-completion script in this directory. default: yes,
+         and INSTALL_DIR will be the correct pathname given by pkg-config.]),
+    [],
+    [with_bash_completion=yes])
+
+AS_IF([test "x$with_bash_completion" = "xyes"],
+      [PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
+         [BASH_COMPLETION_DIR="`pkg-config --variable=completionsdir bash-completion`"],
+         [with_bash_completion=no])])
+    
+AC_SUBST([BASH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_BASH_COMPLETION],[test "x$with_bash_completion" != "xno"])
+
+
+AC_ARG_WITH([zsh-completion],
+    AS_HELP_STRING([--with-zsh-completion@<:@=INSTALL_DIR@:>@],
+        [Install the zsh auto-completion script in this directory. default: yes,
+         and INSTALL_DIR will be the correct pathname given by pkg-config.]),
+    [],
+    [with_zsh_completion=yes])
+
+AS_IF([test "x$with_zsh_completion" = "xyes"],
+      [PKG_CHECK_MODULES([ZSH_COMPLETION], [zsh-completion >= 2.0],
+         [ZSH_COMPLETION_DIR="`pkg-config --variable=completionsdir zsh-completion`"],
+         [with_zsh_completion=no])])
+    
+AC_SUBST([ZSH_COMPLETION_DIR])
+AM_CONDITIONAL([ENABLE_ZSH_COMPLETION],[test "x$with_zsh_completion" != "xno"])
+
+
+
+
+    
 AC_OUTPUT

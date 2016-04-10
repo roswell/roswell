@@ -1,4 +1,4 @@
-SUBDIRS = lisp src documents
+SUBDIRS = lisp src documents scripts
 debian:
 	ros scripts/debian.ros
 prepare:
@@ -10,3 +10,4 @@ release-2:
 test:
 	run-prove roswell-test.asd
 .PHONY: debian prepare-release test
+

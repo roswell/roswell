@@ -19,7 +19,7 @@ ros_SOURCES = ros.c opt.c download.c archive.c html.c \
 
 noinst_HEADERS = util.h opt.h cmd-install.h gend.h
 
-CLEANFILES = gend.h $(bashcompletion_DATA) $(zshcompletion_DATA)
+CLEANFILES = gend.h
 
 FORCE:
 .PHONY: FORCE
