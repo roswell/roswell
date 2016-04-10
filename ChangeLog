@@ -1,3 +1,14 @@
+roswell (0.0.5.58-1) unstable; urgency=low
+
+  * Change: 'ros install sbcl --without-install' install just download and expand sbcl source.It's good with sbcl-bin.
+  * Change: 'ros config','ros help' are reimplemented in lisp.
+  * Change: lisp/install.lisp was specially treated ros script. Now it is just a ros script.
+  * Change: 'ros install quicklisp' are reimplemented in lisp.
+  * Change: use plump insteand of cl-html-parse.
+  * Fix: make 'ros setup' not to use dump file. It breaks everything sometime.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 10 Apr 2016 12:57:43 +0900
+
 roswell (0.0.4.57-1) unstable; urgency=low
 
   * New: support installing abcl-bin try 'ros install abcl-bin'
