@@ -90,8 +90,7 @@ AC_ARG_WITH([bash-completion],
     [with_bash_completion=yes])
 
 AS_IF([test "x$with_bash_completion" = "xyes"],
-      [PKG_CHECK_MODULES(
-         [BASH_COMPLETION], [bash-completion >= 2.0],
+      [PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
          [BASH_COMPLETION_DIR="`pkg-config --variable=completionsdir bash-completion`"],
          [with_bash_completion=no])])
     
@@ -107,8 +106,7 @@ AC_ARG_WITH([zsh-completion],
     [with_zsh_completion=yes])
 
 AS_IF([test "x$with_zsh_completion" = "xyes"],
-      [PKG_CHECK_MODULES(
-         [ZSH_COMPLETION], [zsh-completion >= 2.0],
+      [PKG_CHECK_MODULES([ZSH_COMPLETION], [zsh-completion >= 2.0],
          [ZSH_COMPLETION_DIR="`pkg-config --variable=completionsdir zsh-completion`"],
          [with_zsh_completion=no])])
     
