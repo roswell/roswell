@@ -25,7 +25,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
           (load path)
           (ql:quickload name :silent t)
           (when *main*
-            (apply *main* r)))
+            (apply *main* name r)))
         (setq path (make-pathname :defaults name :type "ros"))
         (handler-case
             (unless
