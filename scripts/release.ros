@@ -125,9 +125,15 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (mapc
      #'uiop:run-program
      `("git add ChangeLog configure.ac roswell.asd"
-       ,(format nil "git commit -m \"bump version to ~A\"" version)
-       "git checkout release"
-       "git merge master"
+       ,(format nil "git commit -m \"bump version to ~A\"" version)))))
+
+(defun release-2 (argv)
+  (declare (ignore argv))
+  (let ((version (find-version)))
+    (mapc
+     #'uiop:run-program
+     `("git checkout -b release origin/release"
+       "git merge origin/master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push --tags"
        "git push --all"
@@ -170,7 +176,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(release prepare github debian)
+  (let ((subcmd (find subcmd '(release prepare github debian release-2)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))
