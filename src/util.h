@@ -57,12 +57,6 @@ struct Cons {
 #define EXE_EXTENTION ""
 #endif
 
-#if defined(HAVE_WINDOWS_H)
-#define SBCL_BIN_EXTENTION ".msi"
-#else
-#define SBCL_BIN_EXTENTION ".tar.bz2"
-#endif
-
 #ifdef __APPLE__
 #ifndef st_mtime
 #define st_mtime st_mtimespec.tv_sec
