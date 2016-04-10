@@ -22,7 +22,7 @@ int rc=1;
 int quicklisp=1;
 
 LVal top_commands =(LVal)NULL;
-LVal top_options =(LVal)NULL;
+LVal top_options;
 
 int proccmd(int argc,char** argv,LVal option,LVal command);
 
@@ -180,7 +180,13 @@ OPT_APPEND(program)
 OPT_APPEND(restart)
 OPT_APPEND(final)
 
-LVal register_runtime_options(LVal opt) {
+LVal register_runtime_options() {
+  LVal opt=0;
+  opt=add_command(opt,"version" ,NULL,opt_version,1,1);
+  opt=add_command(opt,"wrap","-w",opt_take1,1,0);
+  opt=add_command(opt,"image","-m",opt_take1,1,0);
+  opt=add_command(opt,"lisp","-L",opt_take1,1,0);
+
   /*opt=add_command(opt,"file","-f",opt_program,1,0,"include lisp FILE while building","FILE");*/
   opt=add_command(opt,"load","-l",opt_program,1,0);
   opt=add_command(opt,"source-registry","-S",opt_program,1,0);
@@ -208,20 +214,16 @@ LVal register_runtime_options(LVal opt) {
   opt=add_command(opt,"quiet",NULL,opt_verbose,1,0);
   opt=add_command(opt,"test",NULL,opt_testing,1,0);
   opt=add_command(opt,"stdin",NULL,opt_program,0,0);
-  return opt;
+  return nreverse(opt);
 }
 
 int main (int argc,char **argv) {
+  int i;
   argv_orig=argv;
   argc_orig=argc;
-  /* toplevel */
-  top_options=add_command(top_options,"version" ,NULL,opt_version,1,1);
-  top_options=add_command(top_options,"wrap","-w",opt_take1,1,0);
-  top_options=add_command(top_options,"image","-m",opt_take1,1,0);
-  top_options=add_command(top_options,"lisp","-L",opt_take1,1,0);
-  top_options=register_runtime_options(top_options);
 
-  top_options=nreverse(top_options);
+  top_options=register_runtime_options();
+
   /*commands*/
   register_cmd_install();
   top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1);
@@ -234,16 +236,11 @@ int main (int argc,char **argv) {
   struct opts** opts=&global_opt;
   unset_opt(opts,"program");
   s(path);
-  if(argc==1) {
-    char* tmp[]={"help"};
-    proccmd(1,tmp,top_options,top_commands);
-  }else {
-    int i;
+  if(argc==1)
+    {char* tmp[]={"help"};proccmd(1,tmp,top_options,top_commands);}
+  else
     for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],top_options,top_commands));
-  }
-  if(get_opt("program",0)) {
-    char* tmp[]={"run","-q","--"};
-    proccmd(3,tmp,top_options,top_commands);
-  }
+  if(get_opt("program",0))
+    {char* tmp[]={"run","-q","--"};proccmd(3,tmp,top_options,top_commands);}
   free_opts(global_opt);
 }
