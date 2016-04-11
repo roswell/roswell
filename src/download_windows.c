@@ -3,6 +3,7 @@
 extern int count=0;
 extern FILE* c_out;
 extern int content_length;
+extern int download_opt;
 
 #ifdef HAVE_WINDOWS_H
 int download_simple (char* uri,char* path,int opt) {
