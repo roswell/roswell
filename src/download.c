@@ -1,38 +1,39 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
 
-static int count=0;
-static int width=74;
-static int content_length=0;
-static int download_opt=0;
-static FILE* c_out;
+int download_count=0;
+int download_width=74;
+int content_length=0;
+int download_opt=0;
+static FILE* download_out;
+
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   static char* last_showd=NULL;
   char* w=q("\r");
   last_showd=last_showd?last_showd:q("");
-  count+=written*size;
+  download_count+=written*size;
   if(download_opt&&content_length) {
-    int i,len=width*count/content_length-width*(count-written*size)/content_length;
+    int i,len=download_width*download_count/content_length-download_width*(download_count-written*size)/content_length;
     s(w);
     for(i=0;i<len;++i)
-      fprintf(c_out,"#"),fflush(c_out);
+      fprintf(download_out,"#"),fflush(download_out);
     return written;
   }
   if(content_length) {
     int i;
-    for(i=0;i<width;++i)
-      w=s_cat2(w,q((i>=(count/(content_length/(width)))?" ":"#")));
-    w=s_cat2(w,qsprintf(8," %3d%%",(100*(count/100))/(content_length/100)));
+    for(i=0;i<download_width;++i)
+      w=s_cat2(w,q((i>=(download_count/(content_length/(download_width)))?" ":"#")));
+    w=s_cat2(w,qsprintf(8," %3d%%",(100*(download_count/100))/(content_length/100)));
   }else {
     int current,aux;
-    aux=1024>count?' ':1024*1024>count?(current=count/1024,'K'):
-      1024*1024*1024>count?(current=count/(1024*1024),'M'):(current=count/(1024*1024*1024),'G');
+    aux=1024>download_count?' ':1024*1024>download_count?(current=download_count/1024,'K'):
+      1024*1024*1024>download_count?(current=download_count/(1024*1024),'M'):(current=download_count/(1024*1024*1024),'G');
     w=s_cat2(w,qsprintf(20,"%4d%c downloaded.",current,aux));
   }
   if(strcmp(w,last_showd)){
     if(!(download_opt&1))
-      fprintf(c_out, "%s", w),fflush(c_out);
+      fprintf(download_out, "%s", w),fflush(download_out);
     s(last_showd),last_showd=q(w);
   }
   s(w);return written;
@@ -46,7 +47,7 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *opt)
       char *num=subseq(&buffer[pos+1],0,pos2);
       code=atoi(num),s(num);
       if(verbose)
-        fprintf(c_out, "http response:%d\n",code);
+        fprintf(download_out, "http response:%d\n",code);
     }
     if(400<=code)
       return 0; /*invoke error for curl*/
@@ -79,7 +80,7 @@ int download_simple (char* uri,char* path,int opt) {
     s(path_partial);
     return -1;
   }
-  c_out=0==(download_opt=opt)?stderr:stdout;
+  download_out=0==(download_opt=opt)?stderr:stdout;
 
   CURL *curl;
   CURLcode res=!CURLE_OK;
@@ -105,7 +106,7 @@ int download_simple (char* uri,char* path,int opt) {
         curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, userpwd);
       s(reserve);
     }
-    count=0,content_length=0;
+    download_count=0,content_length=0;
     curl_easy_setopt(curl, CURLOPT_URL, uri);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
@@ -121,7 +122,7 @@ int download_simple (char* uri,char* path,int opt) {
   }
   if(res != CURLE_OK)
     return -2;
-  fprintf(c_out, "\n");
+  fprintf(download_out, "\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
   return ret?0:-7;

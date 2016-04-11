@@ -1,7 +1,7 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
-extern int count=0;
-extern FILE* c_out;
+extern int download_count;
+extern FILE* download_out;
 extern int content_length;
 extern int download_opt;
 
@@ -14,7 +14,7 @@ int download_simple (char* uri,char* path,int opt) {
     s(path_partial);
     return -1;
   }
-  c_out=0==(download_opt=opt)?stderr:stdout;
+  download_out=0==(download_opt=opt)?stderr:stdout;
   URL_COMPONENTS u;
   TCHAR szHostName[4096];
   TCHAR szUrlPath[4096];
@@ -64,14 +64,14 @@ int download_simple (char* uri,char* path,int opt) {
   }
   char pData[10000];
   DWORD dwBytesRead = 1;
-  count=0;
+  download_count=0;
   while (dwBytesRead) {
     InternetReadFile(hRequest, pData, 99, &dwBytesRead);
     pData[dwBytesRead] = 0;
     write_data(pData,dwBytesRead,1,bodyfile);
   }
   fclose(bodyfile);
-  fprintf(c_out, "\n");
+  fprintf(download_out, "\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
   return ret?0:-7;
