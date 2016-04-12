@@ -1,0 +1,96 @@
+.TH "ros-template" "1" "" "" ""
+.nh \" Turn off hyphenation by default.
+.SH Synopsis
+.PP
+\f[B]ros template\f[] [add|rm|list|show] [OPTIONS] [TEMPLATE [ARGS...]]
+.PP
+Register, manage and remove the templates.
+.PP
+The format of ARGS is same as the lambda list except the following
+translation:
+.IP \[bu] 2
+&key, &optional, &rest corresponds to \-\-key, \-\-optional, \-\-rest,
+respectively.
+.IP \[bu] 2
+Abbreviation as \-k, \-o, \-r are available.
+.IP \[bu] 2
+Each argument is separated by \-\-, instead of being surrounded by
+parentheses.
+.IP \[bu] 2
+Optional and keyword arguments can have a default value.
+When no defauilt value is specified, it implies an empty string.
+.SH Examples
+.PP
+The following example shows how to register a template file (an asdf
+system definition) named \f[I]tmpl.asd\f[], then instantiate the
+template with some arguments.
+.IP
+.nf
+\f[C]
+$\ cat\ tmpl.asd
+(asdf:defsystem\ NAME\ :author\ "AUTHOR"\ :depends\-on\ DEP\ :short\-description\ "library\ by\ AUTHOR.")
+$\ ros\ template\ add\ tmpl.asd\ NAME\ AUTHOR\ \-\-optional\ DEP\ "(:alexandria)"
+$\ ros\ init\ result.asd\ tmpl.asd\ bob\-utilities\ Bob
+Successfully\ generated:\ result.asd
+$\ cat\ result.asd:
+(asdf:defsystem\ bob\-utilities\ :author\ "Bob"\ :depends\-on\ (:alexandria)\ :short\-description\ "library\ by\ Bob.")
+\f[]
+.fi
+.PP
+Notice the arguments are READ.
+Thus you may use "#." readmacro in order to evaluate the arguments when
+the template is instantiated.
+For example,
+.IP
+.nf
+\f[C]
+$\ echo\ $USER
+Bob
+$\ ros\ init\ result.asd\ tmpl.asd\ bob\-utilities\ \[aq]#.(uiop:getenv\ "USER")\[aq]
+$\ cat\ result.asd:
+(asdf:defsystem\ bob\-utilities\ :author\ "Bob"\ :depends\-on\ (:alexandria)\ :short\-description\ "library\ by\ Bob.")
+\f[]
+.fi
+.PP
+The results are PRINCed, so the results are not escaped with "".
+If you want the results to be escaped, it should be done in the template
+(as in "AUTHOR").
+.SH Subcommands
+.TP
+.B add
+Registers a file \f[I]TEMPLATE\f[].
+.RS
+.RE
+.TP
+.B list
+Shows the list of the registered templates.
+.RS
+.RE
+.TP
+.B show
+Describes the contents of \f[I]TEMPLATE\f[] which is already registered.
+.RS
+.RE
+.TP
+.B rm
+Ensures that a template \f[I]TEMPLATE\f[] is removed.
+.RS
+.RE
+.SH Options for \f[I]ros template add\f[]
+.IP \[bu] 2
+\-f,\-\-force : Overwrites the existing template with the same name
+without asking
+.IP \[bu] 2
+\-r,\-\-recursive : register the directory recursively.
+TEMPLATE should be a directory in order to make this option meaningful.
+.IP \[bu] 2
+\-\-name NAME : register the template with a given name, not the
+original filename.
+.SH Misc
+.PP
+Registered templates are stored in directory $ROSWELL_HOME/templates/ .
+.SH SEE ALSO
+.PP
+\f[I]ros\f[](1) \f[I]ros\-init\f[](1)
+.SH AUTHORS
+Roswell Project Team.
