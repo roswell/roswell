@@ -138,9 +138,6 @@ int free_cmdline(char** argv) {
 }
 
 char* uname(void) {
-#ifdef __CYGWIN__
-  return q("windows");
-#endif
 #ifndef HAVE_WINDOWS_H
   char *p=system_("uname");
   char *p2;
@@ -153,12 +150,6 @@ char* uname(void) {
 }
 
 char* uname_m(void) {
-#if defined(_WIN64)
-  return q("x86-64");
-#endif
-#ifdef __CYGWIN__
-  return q("x86");
-#endif
 #ifndef HAVE_WINDOWS_H
   char *p=system_("uname -m");
   char *p2;
