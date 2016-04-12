@@ -129,7 +129,7 @@ char* lispdir(void) {
     lisp_path=ros_bin_lisp;
   }else {
     s(ros_bin_lisp);
-#if defined(WIN_LISP_PATH) && defined(HAVE_WINDOWS_H)
+#if defined(WIN_LISP_PATH)
     if(lisp_path==NULL)
       lisp_path=q(WIN_LISP_PATH);
 #endif
