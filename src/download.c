@@ -7,7 +7,7 @@ int content_length=0;
 int download_opt=0;
 FILE* download_out;
 
-static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
+size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
   static char* last_showd=NULL;
   char* w=q("\r");

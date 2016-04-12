@@ -1,5 +1,6 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
+#ifdef HAVE_WINDOWS_H
 extern int download_count;
 extern FILE* download_out;
 extern int content_length;
@@ -7,7 +8,6 @@ extern int download_opt;
 
 extern size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
 
-#ifdef HAVE_WINDOWS_H
 int download_simple (char* uri,char* path,int opt) {
   FILE *bodyfile;
   char* path_partial=cat(path,".partial",NULL);
