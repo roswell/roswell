@@ -11,11 +11,17 @@
 (defun ! (r &optional expected)
   (if expected
       (is (string-trim #.(format nil " ~%")
-                       (uiop:run-program r :output :string))
+                       (uiop:run-program r :output :string :error-output *error-output*))
           expected r)
       (ok (ignore-errors
-            (or (uiop:run-program r) t))
+            (or (uiop:run-program r :error-output *error-output*
+                                  :output *standard-output*)
+                t))
           r)))
+
+(defun !e (r)
+  (is-error (uiop:run-program r :output :string)
+            'error (format nil "~a should fail" r)))
 
 (defun !-tree (tree)
   (labels ((rec (current stack)
@@ -25,6 +31,9 @@
                            (! (format nil "~{~a~^ ~}" (reverse (list* child (car current) stack)) ))))
                      (cdr current))))
     (rec tree nil)))
+
+(defun ensure-delete-file (file)
+  (when (probe-file file) (delete-file file)))
 
 (plan nil)
 
@@ -84,11 +93,35 @@
    "asdf"
    "fmt"
    ;;"build"
-   ("init" "" "testinit" "testinit2.ros")))
+   ("init" "testinit" "testinit2.ros")))
+
+(!e "ros init")
 
 (ok (probe-file "testinit.ros"))
-(when (probe-file "testinit.ros") (delete-file "testinit.ros"))
+(ensure-delete-file "testinit.ros")
 (ok (probe-file "testinit2.ros"))
-(when (probe-file "testinit2.ros") (delete-file "testinit2.ros"))
+(ensure-delete-file "testinit2.ros")
+
+(ok (probe-file "t/test-template"))
+(! "ros template rm test-template")
+(! "ros template list" "")
+
+(! "ros template add t/test-template AUTHOR")
+(!e "ros template add t/test-template AUTHOR") ;; overwrite error
+(! "ros template add -f t/test-template AUTHOR") ;; force overwrite
+(! "ros template list"
+   "test-template")
+(! "ros template show test-template")
+(! "ros init - test-template BOB" "my name is BOB")
+(! "ros template rm test-template")
+(! "ros template list" "")
+
+(! "ros template add t/test-template --optional AUTHOR '\"Alice\"'")
+(! "ros template list" "test-template")
+(! "ros template show test-template")
+(! "ros init - test-template BOB" "my name is BOB")
+(! "ros init - test-template" "my name is Alice")
+(! "ros template rm test-template")
+(! "ros template list" "")
 
 (ros:quit (if (finalize) 0 1))
