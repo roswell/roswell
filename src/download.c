@@ -5,7 +5,7 @@ int download_count=0;
 int download_width=74;
 int content_length=0;
 int download_opt=0;
-static FILE* download_out;
+FILE* download_out;
 
 static size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   int written = fwrite(ptr, size, nmemb, (FILE *)stream);
