@@ -25,7 +25,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
   (let* ((impl (and (second params) (parse-version-spec (second params))))
          (name (first params))
          path)
-    (let ((lisp (if (first impl) (first impl) (second (config "default.lisp")))))
+    (let ((lisp (or (first impl) (config "default.lisp"))))
       (setf impl (format nil "~A/~A" lisp
                          (or (second impl) (config (format nil "~A.version" lisp))))))
     (setf path (make-pathname :name name
