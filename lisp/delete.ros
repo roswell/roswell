@@ -22,14 +22,14 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun delete-dump (params)
   (declare (ignorable params))
-  (let* ((impl (and (second params) (ros.util:parse-version-spec (second params))))
+  (let* ((impl (and (second params) (parse-version-spec (second params))))
          (name (first params))
          path)
-    (let ((lisp (if (first impl) (first impl) (ros.util:config "default.lisp"))))
+    (let ((lisp (if (first impl) (first impl) (second (config "default.lisp")))))
       (setf impl (format nil "~A/~A" lisp
-                         (or (second impl) (ros.util:config (format nil "~A.version" lisp))))))
+                         (or (second impl) (config (format nil "~A.version" lisp))))))
     (setf path (make-pathname :name name
-                              :type (ros.util:core-extention impl)
+                              :type (core-extention impl)
                               :defaults
                               (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
                                                        (uname-m) (uname) impl)

@@ -8,7 +8,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (ros:include "util")
 
 (defpackage :ros.script.config.3668210854
-  (:use :cl :ros.util))
+  (:use :cl))
 
 (in-package :ros.script.config.3668210854)
 
@@ -43,7 +43,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let* ((path (merge-pathnames "config" (version "confdir")))
+  (let* ((path (merge-pathnames "config" (ros.util:version "confdir")))
          (conf (load-config path))
          (len (length argv)))
     (cond
@@ -58,7 +58,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
        (setf conf (config conf (fourth argv) (fifth argv)))
        (save-config path conf) 0)
       ((and (equal (third argv) "show") (= 4 len))
-       (format t "~A~%" (find (fourth argv) conf :test 'equal :key #'first)) 0)
+       (format t "~A~%" (third (find (fourth argv) conf :test 'equal :key #'first))) 0)
       ((= 4 len)
        (setf conf (config conf (third argv) (fourth argv)))
        (save-config path conf) 0)

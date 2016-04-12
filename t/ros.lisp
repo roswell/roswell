@@ -71,6 +71,12 @@
 (! "ros list")
 (! "ros list installed")
 (! "ros list dump")
+
+#+sbcl
+(when (equal (ros:opt "default.lisp") "sbcl-bin")
+  (! "ros install ccl-bin/1.11")
+  (! "ros use sbcl-bin")
+  (! "ros delete ccl-bin/1.11"))
 #+broken (! "ros list versions")
 
 (!-tree
