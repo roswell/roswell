@@ -1,20 +1,180 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|Create new ros script
+#|Create a new ros script. Not to be confused with init.lisp
 exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 #-ros.util
 (ros:include "util")
-
-(when (cl:find-package :ros.sub.init)
-  (push :ros.sub.init *features*))
+#-ros.match
+(ros:include "match")
 
 (defpackage :ros.sub.init
-  (:use :cl :ros))
+  (:use :cl :ros.util :ros.match)
+  (:export
+   #:*filename*))
 
 (in-package :ros.sub.init)
 
+(defun usage ()
+  (format *error-output* "Usage: ros init FILENAME [TEMPLATE [ARGS...]]")
+  (format *error-output* "
+TEMPLATE is defaulted to \"default\".
+When TEMPLATE is missing and FILENAME matches the name of some template, it overrides the default.
+When FILENAME is \"-\", it renders the output to stdout. 
+")
+  (ros:quit 1))
+
+(defvar *filename*)
+(defun main (main cmd &optional filename (template (when filename (find-template-or-lose filename))) &rest argv)
+  (assert (equal main "main"))
+  (assert (equal cmd "init"))
+  (match filename
+   (nil
+    (usage))
+   ("-"
+    (let ((*filename* "STDOUT"))
+      (render *standard-output* template
+              (mapcar #'read-and-reprint-string argv))))
+   (_
+    (let* ((filename (pathname filename))
+           (*filename* (if (not (pathname-type filename))
+                           (make-pathname :type "ros" :defaults filename)
+                           filename)))
+      (with-open-file (s *filename* :direction :output :if-exists :supersede :if-does-not-exist :create)
+        (render s template
+                (mapcar #'read-and-reprint-string argv)))
+      (format t "Instantiated a template ~a into ~a~%" template *filename*)))))
+
+(defun read-and-reprint-string (string)
+  (princ-to-string (read-from-string string)))
+
+(defvar *template-dir* (merge-pathnames "templates/" (homedir)))
+(ensure-directories-exist *template-dir*)
+
+(defun find-template-or-lose (filename)
+  "try to find a tempalte with a given filename, return \"default\" when failed"
+  (let ((path (merge-pathnames filename *template-dir*)))
+    (if (probe-file path)
+        filename
+        "default")))
+
+(defun slurp (stream)
+  "http://www.ymeme.com/slurping-a-file-common-lisp-83.html"
+  (let ((seq (make-array (file-length stream)
+                         :element-type 'character
+                         :fill-pointer t)))
+    (setf (fill-pointer seq) (read-sequence seq stream))
+    seq))
+
+(defun read-file (path)
+  (with-open-file (s path :if-does-not-exist :error)
+    (loop for o = (read s nil '+eof+)
+          until (eq o '+eof+)
+          collect o)))
+
+(defun render (s template argv)
+  (handler-case
+      (let ((abs (merge-pathnames template *template-dir*)))
+        (bind-arguments s (first (read-file abs)) argv))
+    (file-error ()
+      (format t "Template file ~a does not exist" template))))
+
+(defun bind-arguments (s metadata argv0)
+  (let ((argv (copy-list argv0)))
+    (ematch metadata
+      ((list :arguments (list required optional keywords rest) :source src)
+       (let (binding)
+         (dolist (var required)
+           (push (cons var
+                       (or (pop argv)
+                           (progn
+                             (format *error-output*
+                                     "Insufficient number of arguments in ~a for ~a: ~
+                                      ~a needed, ~a present~%"
+                                     argv0 required (length required) (length argv0))
+                             (ros:quit 1))))
+                 binding))
+         (dolist (opt optional)
+           (ematch opt
+             ((list* var default _)
+              (push (cons var (or (pop argv) (read-and-reprint-string default)))
+                    binding))))
+         (dolist (key keywords)
+           (ematch key
+             ((list* var default _)
+              (push (cons var (string-getf argv (shell-keyword var)
+                                            (read-and-reprint-string default)))
+                    binding)
+              (string-remf argv (shell-keyword var)))))
+         (when rest
+           (push (cons rest argv) binding))
+         (princ (render-variables (reverse binding) src) s))))))
+
+(defun shell-keyword (var)
+  (format nil "--~(~a~)" var))
+
+(defun string-getf (place indicator &optional default)
+  (match place
+    ((list* key value rest)
+     (if (string-equal key indicator)
+         value
+         (string-getf rest indicator default)))
+    (nil
+     default)))
+
+(defun string-remf (place indicator)
+  (match place
+    ((list* key value rest)
+     (if (string-equal key indicator)
+         (string-remf rest indicator)
+         (list* key value
+                (string-remf rest indicator))))
+    (nil nil)))
+
+(defun render-variables (bindings src)
+  ;; FIXME: list-based implementation, does not scale to larger files
+  (let ((src (coerce src 'list)))
+    (dolist (binding bindings (coerce src 'string))
+      (ematch binding
+        ((cons var val)
+         ;; FIXME: irregular behavior might occur when one variable name is
+         ;; included as a part of the other variable, e.g. var1=FOO and
+         ;; var2=FOOBAR.
+         ;; 
+         ;; Similarly, further undefined behavior might exists when the
+         ;; result of replacement contains other variables, e.g., var1=FOO is
+         ;; replaced with a string BAR, and var2=BAR.
+         (setf src (render-variable var val src)))))))
+
+(defun render-variable (var val src)
+  "search for a matching substring from the beginning, and replacing the elements, backtracking as needed."
+  (loop for sub on src
+        while (nthcdr (length var) sub)
+        for pos = (search var sub :end2 (length var))
+        do
+     (when pos
+       (assert (= pos 0))
+       (cond
+         ((< (length var) (length val))
+          (dotimes (i (- (length val) (length var)))
+            ;; (a b c d) -> (a a b c d)
+            (push (car sub) (cdr sub))))
+         ((> (length var) (length val))
+          (dotimes (i (- (length var) (length val)))
+            ;; (a b c d) -> (b b c d)
+            (setf (car sub) (cadr sub))
+            ;; (b [b] c d) -> (b c d)
+            ;; [b] is removed, so the first cons cell does not change
+            (pop (cdr sub)))))
+       (replace sub val)))
+  src)
+
+
+
+
+
+#+nil
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd))
   (if (and (equal subcmd "main") name)
