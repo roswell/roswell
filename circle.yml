@@ -5,6 +5,10 @@ dependencies:
       - sudo apt-get update
       - sudo apt-get -qq install pandoc ruby-sass
 
+
+machine:
+  environment:
+    PATH: ~/.roswell/bin:~/.linuxbrew/bin:$PATH
 test:
   post:
     - sh bootstrap
@@ -14,6 +18,8 @@ test:
     - ros version
     - ros -v setup
     - ros install
+    - ros install prove
+    - run-prove roswell-test.asd
     - ros install sbcl
     - ros -v run -- --version
     - ros install ccl-bin

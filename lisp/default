@@ -1,0 +1,13 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#| <Put a one-line description here>
+exec ros -Q -- $0 "$@"
+|#
+;;; vim: set ft=lisp lisp:
+;; created DATETIME
+(defpackage :ros.script.NAME.DATETIME
+  (:use :cl))
+(in-package :ros.script.NAME.DATETIME)
+(defun main (&rest argv)
+  (declare (ignorable argv)))
+

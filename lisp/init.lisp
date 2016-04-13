@@ -3,15 +3,15 @@
 
 The entry of all roswell commands.
 The true internal entry invoked by the C binary is ros:run.
-(to see how this function is invoked, consult ros.c, cmd-run-sbcl.c etc.)
+ (to see how this function is invoked, consult ros.c, cmd-run-sbcl.c etc.)
 All roswell commands are dispatched from this function via the symbol lookup.
 
 For example, -sp SP or --system-package SP will cause the roswell C binary
 to invoke #'system-package.
 
 This file also contains many functions which can be otherwise delegated to
-UIOP, such as run-command, quit, getenv. This is because UIOP may not be
-available in order implementations. Similarly, older implementations do not
+UIOP, such as run-program, quit, getenv. This is because UIOP may not be
+available in older implementations. Similarly, older implementations do not
 have the latest asdf, and this file has a workaround for this.
 
 |#
