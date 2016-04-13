@@ -12,4 +12,4 @@ override_dh_autoreconf:
 	dh_autoreconf
 
 %:
-	dh "$@" --with=autoreconf 
+	dh $@ --with autoreconf,bash-completion

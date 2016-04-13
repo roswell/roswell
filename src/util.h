@@ -20,12 +20,16 @@
 #include <dirent.h>
 #include <sys/types.h>
 #include <sys/wait.h>
+#define SLASH "/"
+#define EXE_EXTENTION ""
 #else
 #include <windows.h>
 #include <shellapi.h>
 #include <shlobj.h>
 #include <wininet.h>
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
+#define SLASH "\\"
+#define EXE_EXTENTION ".exe"
 #endif
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>
@@ -44,18 +48,6 @@ struct Cons {
   int type;
   LVal next;
 };
-
-#ifdef HAVE_WINDOWS_H
-#define SLASH "\\"
-#else
-#define SLASH "/"
-#endif
-
-#ifdef HAVE_WINDOWS_H
-#define EXE_EXTENTION ".exe"
-#else
-#define EXE_EXTENTION ""
-#endif
 
 #ifdef __APPLE__
 #ifndef st_mtime

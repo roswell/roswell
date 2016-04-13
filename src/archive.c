@@ -1,27 +1,9 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
 
-int extract(const char *filename, int do_extract, int flags,const char* outputpath) {
-  char* str=NULL;
-  int len=strlen(filename),ret=-1;
-  char* type="gzip"; /*for gz*/
-  if(len>4) {
-    int i,c;
-    for(c=0,i=len;filename[i]!='.' && c<5;--i,++c) {
-      if(filename[i]=='b'||filename[i]=='B') {
-        type="bzip2";
-        break;
-      }else if(filename[i]=='x'||filename[i]=='X'){
-        type="xz";
-        break;
-      }else if(filename[i]=='7') {
-        type="7za";
-        break;
-      }
-    }
-  }
-  cond_printf(1,"extracttype=%s\n",type);
-#ifndef HAVE_WINDOWS_H
+char* extract_command_str(int flags,const char *filename,int do_extract,const char* outputpath,char* type) {
+  char* str;
+  #ifndef HAVE_WINDOWS_H
   if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0 || strcmp(type,"xz")==0) {
     str=cat(type," -dc ",filename," | tar -",do_extract?"x":"t",
             flags?"p":"","f - -C ",outputpath,NULL);
@@ -48,6 +30,30 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   }
   s(outputpath2),s(filename2),s(_homedir),s(_uname),s(_uname_m);
 #endif
+  return str;
+}
+
+int extract(const char *filename, int do_extract, int flags,const char* outputpath) {
+  char* str=NULL;
+  int len=strlen(filename),ret=-1;
+  char* type="gzip"; /*for gz*/
+  if(len>4) {
+    int i,c;
+    for(c=0,i=len;filename[i]!='.' && c<5;--i,++c) {
+      if(filename[i]=='b'||filename[i]=='B') {
+        type="bzip2";
+        break;
+      }else if(filename[i]=='x'||filename[i]=='X'){
+        type="xz";
+        break;
+      }else if(filename[i]=='7') {
+        type="7za";
+        break;
+      }
+    }
+  }
+  cond_printf(1,"extracttype=%s\n",type);
+  str=extract_command_str(flags,filename,do_extract,outputpath,type);
   cond_printf(1,"extractcmd=%s\n",str);
   if(str) {
     ret=System(str);
