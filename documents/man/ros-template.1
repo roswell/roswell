@@ -9,12 +9,12 @@ Register, manage and remove the templates.
 The format of ARGS is same as the lambda list except the following
 translation:
 .IP \[bu] 2
-&key, &optional, &rest corresponds to \-\-key, \-\-optional, \-\-rest,
+&key, &optional, &rest corresponds to --key, --optional, --rest,
 respectively.
 .IP \[bu] 2
-Abbreviation as \-k, \-o, \-r are available.
+Abbreviation as -k, -o, -r are available.
 .IP \[bu] 2
-Each argument is separated by \-\-, instead of being surrounded by
+Each argument is separated by --, instead of being surrounded by
 parentheses.
 .IP \[bu] 2
 Optional and keyword arguments can have a default value.
@@ -28,12 +28,12 @@ template with some arguments.
 .nf
 \f[C]
 $\ cat\ tmpl.asd
-(asdf:defsystem\ NAME\ :author\ "AUTHOR"\ :depends\-on\ DEP\ :short\-description\ "library\ by\ AUTHOR.")
-$\ ros\ template\ add\ tmpl.asd\ NAME\ AUTHOR\ \-\-optional\ DEP\ "(:alexandria)"
-$\ ros\ init\ result.asd\ tmpl.asd\ bob\-utilities\ Bob
+(asdf:defsystem\ NAME\ :author\ "AUTHOR"\ :depends-on\ DEP\ :short-description\ "library\ by\ AUTHOR.")
+$\ ros\ template\ add\ tmpl.asd\ NAME\ AUTHOR\ --optional\ DEP\ "(:alexandria)"
+$\ ros\ init\ result.asd\ tmpl.asd\ bob-utilities\ Bob
 Successfully\ generated:\ result.asd
 $\ cat\ result.asd:
-(asdf:defsystem\ bob\-utilities\ :author\ "Bob"\ :depends\-on\ (:alexandria)\ :short\-description\ "library\ by\ Bob.")
+(asdf:defsystem\ bob-utilities\ :author\ "Bob"\ :depends-on\ (:alexandria)\ :short-description\ "library\ by\ Bob.")
 \f[]
 .fi
 .PP
@@ -46,9 +46,9 @@ For example,
 \f[C]
 $\ echo\ $USER
 Bob
-$\ ros\ init\ result.asd\ tmpl.asd\ bob\-utilities\ \[aq]#.(uiop:getenv\ "USER")\[aq]
+$\ ros\ init\ result.asd\ tmpl.asd\ bob-utilities\ \[aq]#.(uiop:getenv\ "USER")\[aq]
 $\ cat\ result.asd:
-(asdf:defsystem\ bob\-utilities\ :author\ "Bob"\ :depends\-on\ (:alexandria)\ :short\-description\ "library\ by\ Bob.")
+(asdf:defsystem\ bob-utilities\ :author\ "Bob"\ :depends-on\ (:alexandria)\ :short-description\ "library\ by\ Bob.")
 \f[]
 .fi
 .PP
@@ -78,19 +78,19 @@ Ensures that a template \f[I]TEMPLATE\f[] is removed.
 .RE
 .SH Options for \f[I]ros template add\f[]
 .IP \[bu] 2
-\-f,\-\-force : Overwrites the existing template with the same name
-without asking
+-f,--force : Overwrites the existing template with the same name without
+asking
 .IP \[bu] 2
-\-r,\-\-recursive : register the directory recursively.
+-r,--recursive : register the directory recursively.
 TEMPLATE should be a directory in order to make this option meaningful.
 .IP \[bu] 2
-\-\-name NAME : register the template with a given name, not the
-original filename.
+--name NAME : register the template with a given name, not the original
+filename.
 .SH Misc
 .PP
 Registered templates are stored in directory $ROSWELL_HOME/templates/ .
 .SH SEE ALSO
 .PP
-\f[I]ros\f[](1) \f[I]ros\-init\f[](1)
+\f[I]ros\f[](1) \f[I]ros-init\f[](1)
 .SH AUTHORS
 Roswell Project Team.
