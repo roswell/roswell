@@ -24,7 +24,7 @@ os:
 
 matrix:
   allow_failures:
-    - env: METHOD=brew
+    - env: METHOD=brew          # because of the time lag between HEAD and brew
   include:
     - sudo: required
       os: linux
