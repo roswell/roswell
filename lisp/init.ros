@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|Create a new ros script. Not to be confused with init.lisp
+#|Creates a new ros script, optionally based on a template.
 exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
