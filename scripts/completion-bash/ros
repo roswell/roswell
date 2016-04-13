@@ -42,7 +42,7 @@ _ros()
                 --print --write --final --rc --no-rc --quicklisp --no-quicklisp --verbose
                 --quiet --test"
     opts_short="-w -m -L -l -S -p -sp -e -q -r -E -i -ip -iw -F -R +R -Q +Q -v"
-    subcommands="install config setup version help run wait use list init emacs dump delete build template"
+    subcommands="install config setup version help run wait use list init emacs dump delete build"
     subcommands_caserule=$(echo $subcommands | sed 's/ /|/g')
 
     for ((i=1; i < COMP_CWORD; i++)); do
@@ -79,7 +79,7 @@ _ros()
                     # complete filenames
                     COMPREPLY=( $(compgen -f -G '*.ros' -- ${cur} ))
                     ;;
-                config|dump|install|delete|list|installed|versions|use|template)
+                config|dump|install|delete|list|installed|versions|use)
                     if [ -z $cur ]
                     then
                         COMPREPLY=( $(compgen -W "$($COMP_LINE 2> /dev/null)" -- ${cur}) )

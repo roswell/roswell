@@ -6,25 +6,16 @@
   (:shadowing-import-from :ros :run))
 (in-package :roswell-test)
 
-(ql:quickload :uiop :silent t)
+(ql:quickload :uiop)
 
 (defun ! (r &optional expected)
   (if expected
-      (is (print (string-trim #(#\Space #\Tab #\Newline #\Return #\linefeed)
-                              (with-output-to-string (s)
-                                (uiop:run-program r
-                                                  :output (make-broadcast-stream s *standard-output*)
-                                                  :error-output *error-output*))))
+      (is (string-trim #.(format nil " ~%")
+                       (uiop:run-program r :output :string))
           expected r)
       (ok (ignore-errors
-            (or (uiop:run-program r :error-output *error-output*
-                                  :output *standard-output*)
-                t))
+            (or (uiop:run-program r) t))
           r)))
-
-(defun !e (r)
-  (is-error (uiop:run-program r :output *standard-output* :error-output *error-output*)
-            'error (format nil "~a expected to fail" r)))
 
 (defun !-tree (tree)
   (labels ((rec (current stack)
@@ -35,11 +26,7 @@
                      (cdr current))))
     (rec tree nil)))
 
-(defun ensure-delete-file (file)
-  (when (probe-file file) (delete-file file)))
-
 (plan nil)
-
 
 (ok (getenv "USER") "(getenv \"USER\")")
 (ok (not (getenv "NON_EXITS_ENV")) "(getenv \"NON_EXITS_ENV\") return nil if key not exist")
@@ -103,34 +90,11 @@
    "asdf"
    "fmt"
    ;;"build"
-   ("init" "testinit" "testinit2.ros")))
+   ("init" "" "testinit" "testinit2.ros")))
+
 (ok (probe-file "testinit.ros"))
-(ensure-delete-file "testinit.ros")
+(when (probe-file "testinit.ros") (delete-file "testinit.ros"))
 (ok (probe-file "testinit2.ros"))
-(ensure-delete-file "testinit2.ros")
-
-(!e "ros init")
-
-(ok (probe-file "t/test-template"))
-(! "ros template rm test-template")
-(! "ros template list" "")
-
-(! "ros template add t/test-template AUTHOR")
-(!e "ros template add t/test-template AUTHOR") ;; overwrite error
-(! "ros template add -f t/test-template AUTHOR") ;; force overwrite
-(! "ros template list"
-   "test-template")
-(! "ros template show test-template")
-(! "ros init - test-template BOB" "my name is BOB")
-(! "ros template rm test-template")
-(! "ros template list" "")
-
-(! "ros template add t/test-template --optional AUTHOR '\"Alice\"'")
-(! "ros template list" "test-template")
-(! "ros template show test-template")
-(! "ros init - test-template BOB" "my name is BOB")
-(! "ros init - test-template" "my name is Alice")
-(! "ros template rm test-template")
-(! "ros template list" "")
+(when (probe-file "testinit2.ros") (delete-file "testinit2.ros"))
 
 (ros:quit (if (finalize) 0 1))
