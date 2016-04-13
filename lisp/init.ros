@@ -30,21 +30,21 @@ When FILENAME is \"-\", it renders the output to stdout.
   (assert (equal main "main"))
   (assert (equal cmd "init"))
   (match filename
-   (nil
-    (usage))
-   ("-"
-    (let ((*filename* "STDOUT"))
-      (render *standard-output* template
-              (mapcar #'read-and-reprint-string argv))))
-   (_
-    (let* ((filename (pathname filename))
-           (*filename* (if (not (pathname-type filename))
-                           (make-pathname :type "ros" :defaults filename)
-                           filename)))
-      (with-open-file (s *filename* :direction :output :if-exists :supersede :if-does-not-exist :create)
-        (render s template
-                (mapcar #'read-and-reprint-string argv)))
-      (format t "Instantiated a template ~a into ~a~%" template *filename*)))))
+    (nil
+     (usage))
+    ("-"
+     (let ((*filename* "STDOUT"))
+       (render *standard-output* template
+               (mapcar #'read-and-reprint-string argv))))
+    (_
+     (let* ((filename (pathname filename))
+            (*filename* (if (not (pathname-type filename))
+                            (make-pathname :type "ros" :defaults filename)
+                            filename)))
+       (with-open-file (s *filename* :direction :output :if-exists :supersede :if-does-not-exist :create)
+         (render s template
+                 (mapcar #'read-and-reprint-string argv)))
+       (format t "Instantiated a template ~a into ~a~%" template *filename*)))))
 
 (defun read-and-reprint-string (string)
   (princ-to-string (read-from-string string)))
