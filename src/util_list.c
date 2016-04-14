@@ -1,8 +1,4 @@
 /* -*- tab-width : 2 -*- */
-#ifdef HAVE_CONFIG_H
-#  include "config.h"
-#endif
-#include <stdio.h>
 #include "util.h"
 
 LVal cons(void* v,LVal l) {
