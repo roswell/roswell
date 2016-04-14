@@ -1,23 +1,6 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
-
-#define ROS_RUN_REPL "run"
-#define DEFAULT_IMPL "sbcl-bin"
-
-typedef char** (*cmd_run_impl)(int argc,char** argv,struct sub_command* cmd);
-
-struct run_impl_t {
-  char* name;
-  cmd_run_impl impl;
-};
-
-extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd);
-extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
+#include "cmd-run.h"
 
 struct run_impl_t impls_to_run[]={
   {"sbcl",&cmd_run_sbcl},
@@ -38,10 +21,6 @@ struct run_impl_t impls_to_run[]={
 
 LVal run_commands=(LVal)NULL;
 LVal run_options =(LVal)NULL;
-
-extern LVal register_runtime_options(LVal opt);
-
-int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
 
 int cmd_run(int argc,char **argv,struct sub_command* cmd) {
   char* current=get_opt("program",0);
@@ -132,16 +111,6 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   for(i=0;i<j;i+=proccmd(j-i,&argv_gen[i],top_options,top_commands));
   return 0;
 }
-
-#define SETUP_SYSTEM(sys,msg) {\
-    fprintf(stderr,"%s",msg);  \
-    int ret=System(sys);       \
-    s(sys);                    \
-    if(ret) {                  \
-      lock_apply("setup",1);   \
-      return ret;              \
-    }                          \
-  }
 
 int setup(void) {
   if(lock_apply("setup",2))
@@ -243,10 +212,9 @@ char** star_wrap(char** arg) {
 
 char** determin_args(int argc,char **argv) {
   struct sub_command cmd;
-  int i;
   char** arg=NULL;
   char *_= get_opt("impl",0);
-  i=position_char("/",_);
+  int i=position_char("/",_);
   cmd.name=subseq(_,0,i);
   cmd.short_name=subseq(_,i+1,0);
   for(i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
@@ -289,7 +257,7 @@ void register_cmd_run(void) {
   run_options=nreverse(run_options);
 
   /*commands*/
-  top_options=add_command(top_options,""         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top_options=add_command(top_options,""             ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
   top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
-  top_commands=add_command(top_commands,"*"         ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top_commands=add_command(top_commands,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
 }

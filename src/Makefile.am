@@ -19,7 +19,7 @@ ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_window
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c \
 	cmd-install.c install-sbcl-bin.c install-sbcl-bin_windows.c
 
-noinst_HEADERS = util.h opt.h cmd-install.h gend.h
+noinst_HEADERS = util.h opt.h cmd-install.h gend.h cmd-run.h
 
 CLEANFILES = gend.h
 
