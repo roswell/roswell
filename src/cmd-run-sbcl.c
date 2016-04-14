@@ -7,7 +7,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* os=uname();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  //int offset=10;
   /*[binpath for sbcl] --noinform --core param --eval init.lisp
     --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
