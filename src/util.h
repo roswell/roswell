@@ -22,6 +22,7 @@
 #include <sys/wait.h>
 #define SLASH "/"
 #define EXE_EXTENTION ""
+#define ROSRC "/etc/rosrc"
 #else
 #include <windows.h>
 #include <shellapi.h>
@@ -30,6 +31,7 @@
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 #define SLASH "\\"
 #define EXE_EXTENTION ".exe"
+#define ROSRC ""
 #endif
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>

@@ -181,11 +181,7 @@ void star_set_opt(void) {
 
 void star_rc(void) {
   char* init=s_cat(configdir(),q("init.lisp"),NULL);
-#ifdef _WIN32
-  char* etc="";
-#else
-  char* etc="/etc/rosrc";
-#endif
+  char* etc=ROSRC;
   char* current=get_opt("program",0);
   char *path,*would;
   if(file_exist_p(init)) {
