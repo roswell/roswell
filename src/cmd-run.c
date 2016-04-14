@@ -117,11 +117,11 @@ int setup(void) {
     return 0; /* lock file exists */
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
   lock_apply("setup",0);
-  char* sbcl_bin_version=get_opt("sbcl-bin.version",0);
-  if(!sbcl_bin_version) {
-    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install sbcl-bin",NULL),"Installing sbcl-bin...\n");
+  char* version=get_opt(DEFAULT_IMPL".version",0);
+  if(!version) {
+    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
   }else
-    fprintf(stderr,"Already have sbcl-bin.\n");
+    fprintf(stderr,"Already have "DEFAULT_IMPL".\n");
   SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros",NULL),"Making core for Roswell...\n");
   lock_apply("setup",1);
 

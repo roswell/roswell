@@ -1,5 +1,6 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
+#include "cmd-run.h"
 #include "gend.h"
 
 LVal internal_commands=(LVal)NULL;
@@ -58,7 +59,7 @@ int cmd_internal_version (int argc,char **argv,struct sub_command* cmd) {
       char *cmd=cat("(progn(format t\"~A~%\"(or(ignore-errors(getf(symbol-value(read-from-string \"ros.util::*version*\")) :",ev,
                     "))(ros:quit 1))) (ros:quit 0))",NULL);
       {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-      {char* p[]={"-L","sbcl-bin"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      {char* p[]={"-L",DEFAULT_IMPL};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
       {char* p[]={"-m","roswell"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
       {char* p[]={"--eval",cmd};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
       {char* p[]={"run"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
