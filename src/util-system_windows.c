@@ -2,6 +2,7 @@
 #include "util.h"
 
 #ifdef HAVE_WINDOWS_H
+
 void DisplayError(char *pszAPI) {
   LPVOID lpvMessageBuffer;
   CHAR szPrintBuffer[512];
@@ -88,72 +89,11 @@ char* system_(char* cmd) {
   }
   return ret;
 }
-#else
-
-char* system_(char* cmd) {
-  FILE *fp;
-  char buf[256];
-  char* s=q("");
-  if((fp=popen(cmd,"r")) ==NULL) {
-    printf("Error:%s\n",cmd);
-    exit(EXIT_FAILURE);
-  }
-  while(fgets(buf,256,fp) !=NULL) {
-    s=s_cat2(s,q(buf));
-  }
-  (void)pclose(fp);
-  return s;
-}
-#endif
 
 int system_redirect(const char* cmd,char* filename) {
-#ifndef HAVE_WINDOWS_H
-  pid_t pid;
-  int fd[2];
-  if (pipe(fd)==-1) {
-    perror("pipe");
-    return -1;
-  }
-  pid=fork();
-  if(pid==-1) {
-    perror("fork");
-    return -1;
-  }
-  if(pid==0) {
-    int argc;
-    char** argv=parse_cmdline((char*)cmd,&argc);
-    /* standard output */
-    close(fd[0]);
-    close(1),close(2);
-    dup2(fd[1],1),dup2(fd[1],2);
-    close(fd[1]);
-    execvp(argv[0],argv);
-  }else {
-    FILE *in,*out;
-    close(fd[1]);
-    if((out=fopen(filename,"a"))!=NULL) {
-      if((in=fdopen(fd[0], "r"))!=NULL) {
-        int c;
-        while((c = fgetc(in)) != EOF) {
-          if (fputc(c, out) == EOF) {
-            fclose(in);
-            fclose(out);
-            return 0;
-          }
-        }
-        fclose(in);
-      }
-      fclose(out);
-    }
-  }
-  return(0);
-#endif
 }
 
 int System(const char* command) {
-#ifndef HAVE_WINDOWS_H
-  return system(command);
-#else
   STARTUPINFO si;
   PROCESS_INFORMATION pi;
   DWORD ExitCode;
@@ -169,19 +109,15 @@ int System(const char* command) {
   if(!GetExitCodeProcess(pi.hProcess,&ExitCode)||ExitCode)
     return ExitCode||1;
   return 0;
-#endif
 }
 
-#ifdef _WIN32
 BOOL WINAPI ConsoleCtrlHandler(DWORD ctrlChar) {
   if(CTRL_C_EVENT == ctrlChar)
     return TRUE;
   return FALSE;
 }
-#endif
 
 void exec_arg(char** arg) {
-#ifdef _WIN32
   int i;
   char* cmd=q(arg[0]);
   for(i=1;arg[i]!=NULL;++i) {
@@ -190,7 +126,5 @@ void exec_arg(char** arg) {
   SetConsoleCtrlHandler(ConsoleCtrlHandler, TRUE);
   exit(System(cmd));
   s(cmd);
-#else
-  execvp(arg[0],&(arg[0]));
-#endif
 }
+#endif

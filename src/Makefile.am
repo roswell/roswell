@@ -14,7 +14,7 @@ gend.h: FORCE
 cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c html.c \
-	util_list.c util.c util_string.c util_dir.c util_file.c util_system.c \
+	util_list.c util.c util_string.c util_dir.c util_file.c util-system.c util-system_windows.c \
 	cmd-internal.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c \
 	cmd-install.c install-sbcl-bin.c install-sbcl-bin_windows.c
