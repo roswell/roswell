@@ -2,10 +2,8 @@
 #include "util.h"
 
 char* homedir(void) {
-  char *postfix="_HOME";
-  char *c=s_cat2(upcase(q_(PACKAGE)),q_(postfix));
-  char *env=NULL;
-  env=getenv(c);
+  char *c=q_(PACKAGE"_HOME");
+  char *env=getenv(c);
   s(c);
   if(env)
     return append_trail_slash(q(env));
@@ -28,9 +26,7 @@ char* homedir(void) {
 
 char* configdir(void) {
   char* home=homedir();
-  if(home)
-    return s_cat(home,q_("."),q(PACKAGE),q(SLASH),NULL);
-  return NULL;
+  return home?s_cat2(home,q("."PACKAGE SLASH)):NULL;
 }
 
 char* subcmddir(void) {
@@ -65,11 +61,8 @@ char* file_namestring(char* path) {
   int i;
   char* ret;
   for(i=strlen(path)-1;i>=0&&path[i]!='/';--i);
-  if(path[i]=='/') {
-    ret=subseq(path,i+1,0);
-    s(path);
-  }else
-    ret=path;
+  ret=path[i]=='/'?subseq(path,i+1,0):q(path);
+  s(path);
   return ret;
 }
 
@@ -113,11 +106,7 @@ int ensure_directories_exist (char* path) {
 int directory_exist_p (char* path) {
 #ifndef HAVE_WINDOWS_H
   struct stat sb;
-  int ret=0;
-  if (stat(path, &sb) == 0 && S_ISDIR(sb.st_mode)) {
-    ret=1;
-  }
-  return ret;
+  return stat(path, &sb) == 0 && S_ISDIR(sb.st_mode)?1:0;
 #else
   WIN32_FIND_DATA fd;
   char *p=cat(path,"*.*",NULL);
@@ -140,14 +129,8 @@ int change_directory(const char* path) {
 
 int delete_directory(char* pathspec,int recursive) {
 #ifndef HAVE_WINDOWS_H
-  char* cmd;
-  int ret;
-  if(recursive) {
-    cmd=s_cat2(q("rm -rf "),q(pathspec));
-  }else {
-    cmd=s_cat2(q("rmdir "),q(pathspec));
-  }
-  ret=System(cmd);
+  char* cmd=s_cat2(q(recursive?"rm -rf ":"rmdir "),q(pathspec));
+  int ret=System(cmd);
   s(cmd);
   return ret==0;
 #else
