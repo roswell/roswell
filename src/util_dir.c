@@ -61,7 +61,7 @@ char* file_namestring(char* path) {
   int i;
   char* ret;
   for(i=strlen(path)-1;i>=0&&path[i]!='/';--i);
-  ret=path[i]=='/'?subseq(path,i+1,0):q(path);
+  ret=(path[i]=='/')?subseq(path,i+1,0):q(path);
   s(path);
   return ret;
 }
