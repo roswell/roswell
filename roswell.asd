@@ -15,7 +15,7 @@ Roswell will be asdf-loadable in the future
 (in-package :roswell-asd)
 
 (defsystem roswell
-  :version "0.0.5.58"
+  :version "0.0.5.59"
   :author "SANO Masatoshi"
   :license "MIT"
   :depends-on (:simple-date-time :split-sequence :plump)
