@@ -25,9 +25,8 @@ char* s_cat(char* first,...) {
   va_list list;
   va_start(list,first);
 
-  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*)) {
+  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*))
     ret=s_cat2(ret,i);
-  }
   va_end(list);
   return ret;
 }
@@ -38,9 +37,8 @@ char* cat(char* first,...) {
   va_list list;
   va_start(list,first);
 
-  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*)) {
+  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*))
     ret=s_cat2(ret,q_(i));
-  }
   va_end(list);
   return ret;
 }
@@ -50,23 +48,20 @@ char* subseq(char* base,int beg,int end) {
   int i;
   char* ret;
   if(0>beg) {
-    if(0>len) {
+    if(0>len)
       len=strlen(base);
-    }
     beg=len+beg;
   }
   if(0>=end) {
-    if(0>len) {
+    if(0>len)
       len=strlen(base);
-    }
     end=len+end;
   }
   if(end<=beg)
     return NULL;
   ret=alloc(end-beg+1);
-  for(i=0;i<end-beg;++i) {
+  for(i=0;i<end-beg;++i)
     ret[i]=base[i+beg];
-  }
   ret[i]='\0';
   return ret;
 }
@@ -118,9 +113,8 @@ int position_char_not(char* items,char* seq) {
         break;
       }
     }
-    if(stop) {
+    if(stop)
       return i;
-    }
   }
   return -1;
 }
@@ -178,6 +172,7 @@ char* escape_string(char* str) {
   ret[j]='\0';
   return ret;
 }
+
 char* s_escape_string(char* str) {
   char* r=escape_string(str);
   s(str);return r;
@@ -195,9 +190,5 @@ LVal split_string(char* string,char* by) {
       }
     }
   }
-  if(i!=pos+1)
-    ret=conss(subseq(string,pos+1,i),V(ret));
-  else 
-    ret=conss(q(""),V(ret));
-  return nreverse(ret);
+  return nreverse((i!=pos+1)?conss(subseq(string,pos+1,i),V(ret)):conss(q(""),V(ret)));
 }
