@@ -1,6 +1,126 @@
 /* -*- tab-width : 2 -*- */
 #include "util.h"
 
+#ifndef HAVE_WINDOWS_H
+
+char* uname(void) {
+  char *p,*p2;
+  p2=remove_char("\r\n",p=system_("uname"));
+  s(p);
+  return downcase(p2);
+}
+
+char* uname_m(void) {
+  char *p=system_("uname -m");
+  char *p2;
+  p2=remove_char("\r\n",p);
+  s(p);
+  if(strcmp(p2,"i686")==0) {
+    s(p2);
+    return q("x86");
+  }
+  if(strcmp(p2,"amd64")==0) {
+    s(p2);
+    return q("x86-64");
+  }
+  if(strcmp(p2,"aarch64")==0) {
+    s(p2);
+    return q("arm64");
+  }
+  if(strcmp(p2,"armv6l")==0 ||
+     strcmp(p2,"armv7l")==0) {
+    char* result=system_("readelf -A /proc/self/exe |grep Tag_ABI_VFP_args|wc -l");
+    char* result2=remove_char("\r\n",result);
+    s(result);
+    if(strcmp(result2,"0")!=0) {
+      s(result2);
+      return q("armhf");
+    }else {
+      s(result2);
+      return q("armel");
+    }
+  }
+  return substitute_char('-','_',p2);
+}
+
+char* which(char* cmd) {
+  char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
+  cond_printf(1,"which cmd:%s\n",which_cmd);
+  char* p=system_(which_cmd);
+  cond_printf(1,"which result:%s\n",p);
+  p=substitute_char('\0','\r',substitute_char('\0','\n',p));
+  char* p2=p?remove_char("\r\n",p):q("");
+  s(p),s(which_cmd);
+  return p2;
+}
+
+LVal directory(char* path) {
+  LVal ret=0;
+  DIR* dir=opendir(path);
+  struct dirent *dirent;
+
+  if(dir==NULL)
+    return 0;
+  while((dirent=readdir(dir))!=0) {
+    char* str=q(dirent->d_name);
+    if(dirent->d_type&DT_DIR)
+      str=s_cat2(str,q("/"));
+    ret=conss(str,ret);
+  }
+  closedir(dir);
+  return ret;
+}
+
+void signal_callback_handler(int signum) {
+  printf("Caught signal %d\n",signum);
+  exit(1);
+}
+
+LVal atexit_delete=0;
+int setup_atexit=0;
+void atexit_handler(void) {
+  LVal n,l;
+  for(l=atexit_delete;l;l=n) {
+    delete_file(firsts(l));
+    s(firsts(l));
+    n=rest(l);
+    dealloc((void*)l);
+  }
+}
+
+void delete_at_exit(char* file_to_delete) {
+  atexit_delete=conss(q(file_to_delete),atexit_delete);
+  if(!setup_atexit) {
+    signal(SIGHUP,  signal_callback_handler);
+    signal(SIGINT,  signal_callback_handler);
+    signal(SIGPIPE, signal_callback_handler);
+    signal(SIGQUIT, signal_callback_handler);
+    signal(SIGTERM, signal_callback_handler);
+    atexit(atexit_handler);
+  }
+  setup_atexit=1;
+}
+
+void setup_uid(int euid_or_uid) {
+  if(getuid()==0) {
+    char *uid_str=getenv("SUDO_UID"),*gid_str=getenv("SUDO_GID");
+    uid_t uid=uid_str?atoi(uid_str):0;
+    gid_t gid=gid_str?atoi(gid_str):0;
+
+    if(euid_or_uid) {
+      if(!(setegid(gid)==0 &&
+           seteuid(uid)==0))
+        cond_printf(0,"Error setegid/seteuid \n");
+    }else {
+      if(!(setgid(gid)==0 &&
+           setuid(uid)==0))
+        cond_printf(0,"Error setgid/setuid \n");
+    }
+  }
+}
+
+#endif
+
 void cond_printf(int v,char* format,...) {
   if((v&verbose) == v) {
     va_list list;
@@ -37,19 +157,6 @@ void s_internal(char* f,char* name,char* file,int line) {
   cond_printf(2,"%s %d s(%s) %lu \n",file,line,name,(intptr_t)f);
   dealloc(f);
 }
-
-#ifdef _WIN32
-setenv(const char* name,const char* value,int overwrite) {
-  char* s_=cat((char*)name,"=",(char*)value,NULL);
-  _putenv(s_);
-  s(s_);
-}
-unsetenv(const char* name) {
-  char* s_=cat((char*)name,"=",NULL);
-  _putenv(s_);
-  s(s_);
-}
-#endif
 
 char* s_decode(char* str) {
   int count,i,write,escape=0;
@@ -137,186 +244,11 @@ int free_cmdline(char** argv) {
   return 1;
 }
 
-char* uname(void) {
-#ifndef HAVE_WINDOWS_H
-  char *p=system_("uname");
-  char *p2;
-  p2=remove_char("\r\n",p);
-  s(p);
-  return downcase(p2);
-#else
-  return q("windows");
-#endif
-}
-
-char* uname_m(void) {
-#ifndef HAVE_WINDOWS_H
-  char *p=system_("uname -m");
-  char *p2;
-  p2=remove_char("\r\n",p);
-  s(p);
-  if(strcmp(p2,"i686")==0) {
-    s(p2);
-    return q("x86");
-  }
-  if(strcmp(p2,"amd64")==0) {
-    s(p2);
-    return q("x86-64");
-  }
-  if(strcmp(p2,"aarch64")==0) {
-    s(p2);
-    return q("arm64");
-  }
-  if(strcmp(p2,"armv6l")==0 ||
-     strcmp(p2,"armv7l")==0) {
-    char* result=system_("readelf -A /proc/self/exe |grep Tag_ABI_VFP_args|wc -l");
-    char* result2=remove_char("\r\n",result);
-    s(result);
-    if(strcmp(result2,"0")!=0) {
-      s(result2);
-      return q("armhf");
-    }else {
-      s(result2);
-      return q("armel");
-    }
-  }
-  return substitute_char('-','_',p2);
-#else
-#if defined(_WIN64)
-  return q("x86-64");
-#elif defined(_WIN32)
-  BOOL isWow64 = FALSE;
-  LPFN_ISWOW64PROCESS fnIsWow64Process  = (LPFN_ISWOW64PROCESS)
-    GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
-  if(fnIsWow64Process) {
-    if (!fnIsWow64Process(GetCurrentProcess(), &isWow64))
-      return q("x86");
-    if(isWow64)
-      return q("x86-64");
-    else
-      return q("x86");
-  }
-  else
-    return q("x86");
-#endif
-#endif
-}
-
-char* which(char* cmd) {
-#ifndef HAVE_WINDOWS_H
-  char* which_cmd=cat("command -v \"",cmd,"\"",NULL);
-#else
-  if((cmd[0]=='.' && cmd[1]=='/')|| /* relative path */
-     position_char("/:",cmd)!=-1) { /* have no path element */
-    cmd=substitute_char('\\','/',q(cmd));
-    return truename(cmd);
-  }
-  char* which_cmd=cat("cmd /c where ",cmd,"",NULL);
-#endif
-  cond_printf(1,"which cmd:%s\n",which_cmd);
-  char* p=system_(which_cmd);
-  cond_printf(1,"which result:%s\n",p);
-  p=substitute_char('\0','\r',substitute_char('\0','\n',p));
-  char* p2=p?remove_char("\r\n",p):q("");
-  s(p),s(which_cmd);
-  return p2;
-}
-
-LVal directory(char* path) {
-  LVal ret=0;
-#ifndef HAVE_WINDOWS_H
-  DIR* dir=opendir(path);
-  struct dirent *dirent;
-
-  if(dir==NULL)
-    return 0;
-  while((dirent=readdir(dir))!=0) {
-    char* str=q(dirent->d_name);
-    if(dirent->d_type&DT_DIR)
-      str=s_cat2(str,q("/"));
-    ret=conss(str,ret);
-  }
-  closedir(dir);
-#else
-  WIN32_FIND_DATA fd;
-  char *p=cat(path,"*.*",NULL);
-  HANDLE dir=FindFirstFile(p,&fd);
-  if(dir==INVALID_HANDLE_VALUE)
-    return 0;
-  do {
-    if(!(strcmp(fd.cFileName,".")==0 ||
-         strcmp(fd.cFileName,"..")==0)) {
-      char* str=q(fd.cFileName);
-      if(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
-        str=s_cat2(str,q(SLASH));
-      ret=conss(str,ret);
-    }
-  }while(FindNextFile(dir,&fd)!=0);
-  s(p);
-  FindClose(dir);
-#endif
-  return ret;
-}
-
-void signal_callback_handler(int signum) {
-  printf("Caught signal %d\n",signum);
-  exit(1);
-}
-
-LVal atexit_delete=0;
-int setup_atexit=0;
-void atexit_handler(void) {
-  LVal n,l;
-  for(l=atexit_delete;l;l=n) {
-    delete_file(firsts(l));
-    s(firsts(l));
-    n=rest(l);
-    dealloc((void*)l);
-  }
-}
-
-void delete_at_exit(char* file_to_delete) {
-#ifndef HAVE_WINDOWS_H
-  atexit_delete=conss(q(file_to_delete),atexit_delete);
-  if(!setup_atexit) {
-    signal(SIGHUP,  signal_callback_handler);
-    signal(SIGINT,  signal_callback_handler);
-    signal(SIGPIPE, signal_callback_handler);
-    signal(SIGQUIT, signal_callback_handler);
-    signal(SIGTERM, signal_callback_handler);
-    atexit(atexit_handler);
-  }
-  setup_atexit=1;
-#endif
-}
-
-void setup_uid(int euid_or_uid) {
-#ifndef HAVE_WINDOWS_H
-  if(getuid()==0) {
-    char *uid_str=getenv("SUDO_UID"),*gid_str=getenv("SUDO_GID");
-    uid_t uid=uid_str?atoi(uid_str):0;
-    gid_t gid=gid_str?atoi(gid_str):0;
-
-    if(euid_or_uid) {
-      if(!(setegid(gid)==0 &&
-           seteuid(uid)==0))
-        cond_printf(0,"Error setegid/seteuid \n");
-    }else {
-      if(!(setgid(gid)==0 &&
-           setuid(uid)==0))
-        cond_printf(0,"Error setgid/setuid \n");
-    }
-  }
-#endif
-}
-
 int lock_apply(char* symbol,int remove) {
   char *p=s_cat(configdir(),q("tmp/"),NULL);
   int ret=0;
   ensure_directories_exist(p),s(p);
   p=s_cat(configdir(),q("tmp/lock."PACKAGE"."),q(symbol),NULL);
-#ifdef HAVE_WINDOWS_H
-#else
   if(remove<2) {
     cond_printf(1,"%slock!:%s\n",remove?"un":"",symbol);
     while(remove?rmdir(p):mkdir(p,0700));
@@ -324,7 +256,6 @@ int lock_apply(char* symbol,int remove) {
     ret=directory_exist_p(p);
     cond_printf(1,"lock %s exist status=%d",symbol,ret);
   }
-#endif
   s(p);
   return ret;
 }
