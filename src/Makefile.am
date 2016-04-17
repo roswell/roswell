@@ -20,7 +20,7 @@ gend.h: FORCE
 cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c \
-	html.c html-sbcl-bin.c \
+	register-commands.c html.c html-sbcl-bin.c \
 	$(ros_utils) \
 	cmd-internal.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c \
