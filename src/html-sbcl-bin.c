@@ -1,5 +1,6 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
+LVal atag_list(char* filename);
 
 LVal filter_sbcl_uri(LVal v) {
   char* str=subseq(firsts(v),-3,0);
@@ -50,7 +51,6 @@ char* sbcl_bin(char* file) {
   return str;
 }
 
-/*gcc html.c -DROSWELL_HTML_TEST util.c util_list.c util_dir.c util_string.c util_system.c*/
 #ifdef ROSWELL_HTML_TEST
 char* lispdir(void) {
   return NULL;
@@ -58,7 +58,7 @@ char* lispdir(void) {
 char** argv_orig;
 int verbose=0;
 int main(int argc,char** argv) {
-  verbose=1;
+  verbose=0;
   printf("version is %s\n",sbcl_bin(argv[1]));
 }
 #endif

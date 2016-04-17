@@ -1,6 +1,11 @@
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
 
+ros_utils= util.c util_list.c util_string.c util_dir.c util-file.c util-file_windows.c util-system.c util-system_windows.c
+check_PROGRAMS = html_sbcl
+html_sbcl_SOURCES =  html.c html-sbcl-bin.c $(ros_utils)
+html_sbcl_CFLAGS = "-D ROSWELL_HTML_TEST"
+
 gend.h: FORCE
 	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
 	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
@@ -15,8 +20,7 @@ cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c \
 	html.c html-sbcl-bin.c \
-	util_list.c util.c util_string.c util_dir.c util-file.c util-file_windows.c \
-	util-system.c util-system_windows.c \
+	$(ros_utils) \
 	cmd-internal.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c \
 	cmd-install.c install-sbcl-bin.c install-sbcl-bin_windows.c

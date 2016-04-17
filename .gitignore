@@ -3,9 +3,9 @@
 .deps
 src/ros
 src/ros.exe
+src/html_sbcl
+src/html_sbcl.exe
 src/gend.h
-src/gen
-src/gen.exe
 Makefile
 Makefile.in
 configure
