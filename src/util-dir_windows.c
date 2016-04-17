@@ -12,7 +12,7 @@ char* truename(const char* path) {
   char ret[MAX_PATH];
   DWORD dwret;
   dwret=GetFullPathName(path,sizeof(ret)/sizeof(ret[0]),ret,NULL);
-  return dwret?q(ret):which((char*)path)
+  return dwret?q(ret):which((char*)path);
 }
 
 int ensure_directories_exist (char* path) {
