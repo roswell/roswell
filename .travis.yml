@@ -1,21 +1,5 @@
 language: c
 sudo: false
-
-matrix:
-  include:
-    - sudo: required
-      os: linux
-      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
-    - sudo: required
-      os: linux
-      env: METHOD=debian
-    - sudo: required
-      os: linux
-      env: METHOD=documents
-    - sudo: required
-      os: linux
-      env: METHOD=valgrind XCFLAGS="-g -O0"
-
 env:
   global:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
@@ -37,6 +21,23 @@ env:
 os:
   - osx
   - linux
+
+matrix:
+  allow_failures:
+    - env: METHOD=brew
+  include:
+    - sudo: required
+      os: linux
+      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
+    - sudo: required
+      os: linux
+      env: METHOD=debian
+    - sudo: required
+      os: linux
+      env: METHOD=documents
+    - sudo: required
+      os: linux
+      env: METHOD=valgrind XCFLAGS="-g -O0"
 
 #branches:
 #  except:
@@ -74,7 +75,7 @@ install:
 
 script:
   - if [ "$METHOD" = "documents" ]; then rm documents/man/* documents/html/*; fi
-  - if [ "$METHOD" = "documents" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make clean;make;sudo make install; fi
+  - if [ "$METHOD" = "documents" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make;sudo make install; fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then
@@ -84,7 +85,7 @@ script:
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros install prove; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then run-prove roswell-test.asd; fi
+  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then run-prove roswell-test.asd 2>&1 ; fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
   - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros install prove;ros ./scripts/debian.ros; fi

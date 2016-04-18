@@ -1,3 +1,3 @@
 roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
-roslisp_DATA = $(wildcard *.lisp) $(wildcard *.ros) $(wildcard *.asd)
+roslisp_DATA = $(wildcard *.lisp) $(wildcard *.ros) $(wildcard *.asd) default
 

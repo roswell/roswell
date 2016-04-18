@@ -39,6 +39,13 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                    :collect "--load"
                                    :collect (format nil "~A" i))
 			   " dump output -f roswell")
+                   t nil)
+      (ros:roswell `("template" "add" "-f"
+                                ,(namestring (make-pathname :name "default"
+                                                            :type nil
+                                                            :defaults *load-pathname*))
+                                "--optional" "NAME" "'#.(pathname-name (merge-pathnames ros.sub.init:*filename*))'"
+                                "--" "DATETIME" "'#.(get-universal-time)'")
                    t nil))))
 
 (push :ros.sub.setup *features*)

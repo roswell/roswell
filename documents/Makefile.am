@@ -5,7 +5,7 @@
 # http://pandoc.org/README.html#using-variables-in-templates
 # https://github.com/jgm/pandoc-templates/blob/master/default.man
 
-MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md
+MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md ros-template.md
 # separated by semicolons
 PANDOC_AUTHORS="Roswell Project Team"
 
@@ -25,7 +25,7 @@ CLEANFILES = $(HTMLS)
 endif
 
 if HTML_GENERATE
-HTMLS = $(MDS:%.md=html/%.html) html/ros.css
+HTMLS = $(MDS:%.md=html/%.html)
 html/%.html: %.md
 	which pandoc
 # awk hack --- check every underlined words for its corresponding md file, replacing it to an appropriate markdown link to html file if it exist (e.g. _ros-use_ -> check ros-use.md -> [ros-use](ros-use.html) )
