@@ -14,13 +14,14 @@ ros [options] template add [OPTIONS] TEMPLATE ARGS...
 
 |#
 
-#-ros.match
-(ros:include "match")
 #-ros.util
 (ros:include "util")
 
+(unless (find-package :trivia)
+  (ql:quickload :trivia :silent t))
+
 (defpackage :ros.script.template
-  (:use :cl :ros.util :ros.match :alexandria))
+  (:use :cl :ros.util :trivia :alexandria))
 
 (in-package :ros.script.template)
 
@@ -74,6 +75,7 @@ ros [options] template add [OPTIONS] TEMPLATE ARGS...
 
 (defvar *if-exists* :error)
 (defvar *name* nil)
+(unless (ignore-errors (symbol-function 'add-template))
 (defun add-template (args)
   (match args
     ((list* "-f" rest)           (let ((*if-exists* :overwrite)) (add-template rest)))
@@ -91,6 +93,7 @@ ros [options] template add [OPTIONS] TEMPLATE ARGS...
        (write (list :arguments (parse-args args)
                     :source (read-file-to-string template))
               :stream s)))))
+)
 
 (defvar *required*)
 (defvar *optional*)
@@ -146,11 +149,13 @@ ros [options] template add [OPTIONS] TEMPLATE ARGS...
       ((list* name default "--" rest)     p2 (parse-keywords rest))
       ((list  name default)     p2))))
 
+(unless (ignore-errors (symbol-function 'parse-rest))
 (defun parse-rest (args)
   (ematch args
     ((list* "--" _) (error "unexpected use of --"))
     ((list* _ rest) (error ">2 arguments after rest arguments"))
     ((list  name) (setf name *rest*))))
+)
 
 ;;; ros template rm
 

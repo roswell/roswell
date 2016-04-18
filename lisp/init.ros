@@ -1,16 +1,17 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Creates a new ros script, optionally based on a template.
-exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 #-ros.util
 (ros:include "util")
-#-ros.match
-(ros:include "match")
+
+(unless (find-package :trivia)
+  (ql:quickload :trivia :silent t))
 
 (defpackage :ros.sub.init
-  (:use :cl :ros.util :ros.match)
+  (:use :cl :ros.util :trivia)
   (:export
    #:*filename*))
 
@@ -26,9 +27,12 @@ When FILENAME is \"-\", it renders the output to stdout.
   (ros:quit 1))
 
 (defvar *filename*)
+(defvar *template-dir* (merge-pathnames "templates/" (homedir)))
+
 (defun main (main cmd &optional filename (template (when filename (find-template-or-lose filename))) &rest argv)
   (assert (equal main "main"))
   (assert (equal cmd "init"))
+  (ensure-directories-exist *template-dir*)
   (match filename
     (nil
      (usage))
@@ -49,23 +53,12 @@ When FILENAME is \"-\", it renders the output to stdout.
 (defun read-and-reprint-string (string)
   (princ-to-string (read-from-string string)))
 
-(defvar *template-dir* (merge-pathnames "templates/" (homedir)))
-(ensure-directories-exist *template-dir*)
-
 (defun find-template-or-lose (filename)
   "try to find a tempalte with a given filename, return \"default\" when failed"
   (let ((path (merge-pathnames filename *template-dir*)))
     (if (probe-file path)
         filename
         "default")))
-
-(defun slurp (stream)
-  "http://www.ymeme.com/slurping-a-file-common-lisp-83.html"
-  (let ((seq (make-array (file-length stream)
-                         :element-type 'character
-                         :fill-pointer t)))
-    (setf (fill-pointer seq) (read-sequence seq stream))
-    seq))
 
 (defun read-file (path)
   (with-open-file (s path :if-does-not-exist :error)
