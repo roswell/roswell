@@ -32,7 +32,10 @@ ros [options] template add [OPTIONS] TEMPLATE ARGS...
   (format t "~&~{~(~a~)~%~}" '(add rm show list)) ;; this also serves as the bash completion candidates
   (ros:quit 1))
 
+(defvar *template-dir* (merge-pathnames "templates/" (homedir)))
+
 (defun main (&rest argv)
+  (ensure-directories-exist *template-dir*)
   (match argv
     ((list* _ _ "list" _)
      (list-templates))
@@ -51,8 +54,6 @@ ros [options] template add [OPTIONS] TEMPLATE ARGS...
     (_
      (usage))))
 
-(defvar *template-dir* (merge-pathnames "templates/" (homedir)))
-(ensure-directories-exist *template-dir*)
 ;;; ros template add
 
 (defun slurp (stream)
