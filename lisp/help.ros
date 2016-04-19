@@ -91,7 +91,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (format s "Usage: ~A [OPTIONS] run [OPTIONS] [-- implementation-native-options...]~%~%" (ros:opt "wargv0"))
        (option s (nthcdr 4 *options*))) ;; fix me
       ((equal (third argv) "install")
-       (let ((path (merge-pathnames "impls/ALL/ALL/quicklisp/" (homedir))))
+       (let ((path (ros:opt "quicklisp")))
          (unless (probe-file (merge-pathnames "setup.lisp" path))
            (ros:roswell '("install" "quicklisp"))))
        (ros:quicklisp :environment nil)

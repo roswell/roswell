@@ -91,7 +91,7 @@
    (let ((uid (sb-posix:getenv "SUDO_UID")))
      (sb-posix:setuid (parse-integer uid))))
   (let ((archive (ros:opt "download.archive"))
-        (path (merge-pathnames "impls/ALL/ALL/quicklisp/" (homedir))))
+        (path (ros:opt "quicklisp")))
     (quicklisp-patch path)
     (cond
       ((probe-file (merge-pathnames "setup.lisp" path))

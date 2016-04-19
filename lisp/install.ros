@@ -12,7 +12,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (in-package :ros.install)
 
-(when (probe-file (merge-pathnames "impls/ALL/ALL/quicklisp/setup.lisp" (homedir)))
+(when (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
   (ros:include "util-install-quicklisp"))
 
 (defun main (subcmd impl/version &rest argv)
