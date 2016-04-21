@@ -98,7 +98,7 @@ AC_ARG_WITH([zsh-completion],
     AS_HELP_STRING([--with-zsh-completion@<:@=INSTALL_DIR@:>@],
         [Install the zsh auto-completion script in this directory.]),
     [ZSH_COMPLETION_DIR=$withval],
-    [with_zsh_completion=yes])
+    [with_zsh_completion=no])
 
 dnl AS_IF([test "x$with_zsh_completion" = "xyes"],
 dnl       [PKG_CHECK_MODULES([ZSH_COMPLETION], [zsh-completion >= 2.0],

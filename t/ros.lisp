@@ -111,26 +111,4 @@
 
 (!e "ros init")
 
-(ok (probe-file "t/test-template"))
-(! "ros template rm test-template")
-(! "ros template list" "")
-
-(! "ros template add t/test-template AUTHOR")
-(!e "ros template add t/test-template AUTHOR") ;; overwrite error
-(! "ros template add -f t/test-template AUTHOR") ;; force overwrite
-(! "ros template list"
-   "test-template")
-(! "ros template show test-template")
-(! "ros init - test-template BOB" "my name is BOB")
-(! "ros template rm test-template")
-(! "ros template list" "")
-
-(! "ros template add t/test-template --optional AUTHOR '\"Alice\"'")
-(! "ros template list" "test-template")
-(! "ros template show test-template")
-(! "ros init - test-template BOB" "my name is BOB")
-(! "ros init - test-template" "my name is Alice")
-(! "ros template rm test-template")
-(! "ros template list" "")
-
 (ros:quit (if (finalize) 0 1))
