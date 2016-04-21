@@ -79,6 +79,7 @@ AC_ARG_ENABLE([html_generation],
    esac],[])
 AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
+with_bash_completion=yes
 AC_ARG_WITH([bash-completion],
     AS_HELP_STRING([--with-bash-completion@<:@=INSTALL_DIR@:>@],
         [Install the bash auto-completion script in this directory.]),
@@ -93,7 +94,7 @@ dnl          [with_bash_completion=no])])
 AC_SUBST([BASH_COMPLETION_DIR])
 AM_CONDITIONAL([ENABLE_BASH_COMPLETION],[test "x$with_bash_completion" != "xno"])
 
-
+with_zsh_completion=yes
 AC_ARG_WITH([zsh-completion],
     AS_HELP_STRING([--with-zsh-completion@<:@=INSTALL_DIR@:>@],
         [Install the zsh auto-completion script in this directory.]),
