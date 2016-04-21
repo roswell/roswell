@@ -170,7 +170,7 @@ void star_set_opt(void) {
   char*lisp=get_opt("lisp",1);
   lisp=lisp?lisp:get_opt("*lisp",0);
   set_opt(&local_opt,"impl",determin_impl(lisp));
-  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"impls",SLASH,"ALL",SLASH,"ALL",SLASH,"quicklisp",SLASH,NULL)));
+  set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"lisp",SLASH,"quicklisp",SLASH,NULL)));
   set_opt(&local_opt,"argv0",argv_orig[0]);
   set_opt(&local_opt,"wargv0",which(argv_orig[0]));
   set_opt(&local_opt,"homedir",q(config));
