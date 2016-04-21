@@ -105,6 +105,5 @@
    ;;"build"
    ))
 
-(!e "ros init")
 
 (ros:quit (if (finalize) 0 1))
