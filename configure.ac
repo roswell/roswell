@@ -79,12 +79,13 @@ AC_ARG_ENABLE([html_generation],
    esac],[])
 AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
-with_bash_completion=yes
-AC_ARG_WITH([bash-completion],
-    AS_HELP_STRING([--with-bash-completion@<:@=INSTALL_DIR@:>@],
-        [Install the bash auto-completion script in this directory.]),
-    [BASH_COMPLETION_DIR=$withval],
-    [with_bash_completion=no])
+dnl FIX ME. PKG_CHECK_MODULES fails with pkg-config.
+with_bash_completion=no
+dnl AC_ARG_WITH([bash-completion],
+dnl     AS_HELP_STRING([--with-bash-completion@<:@=INSTALL_DIR@:>@],
+dnl         [Install the bash auto-completion script in this directory.]),
+dnl     [BASH_COMPLETION_DIR=$withval],
+dnl     [with_bash_completion=no])
 
 dnl AS_IF([test "x$with_bash_completion" = "xyes"],
 dnl       [PKG_CHECK_MODULES([BASH_COMPLETION], [bash-completion >= 2.0],
@@ -94,12 +95,13 @@ dnl          [with_bash_completion=no])])
 AC_SUBST([BASH_COMPLETION_DIR])
 AM_CONDITIONAL([ENABLE_BASH_COMPLETION],[test "x$with_bash_completion" != "xno"])
 
-with_zsh_completion=yes
-AC_ARG_WITH([zsh-completion],
-    AS_HELP_STRING([--with-zsh-completion@<:@=INSTALL_DIR@:>@],
-        [Install the zsh auto-completion script in this directory.]),
-    [ZSH_COMPLETION_DIR=$withval],
-    [with_zsh_completion=no])
+dnl FIX ME.
+with_zsh_completion=no
+dnl AC_ARG_WITH([zsh-completion],
+dnl     AS_HELP_STRING([--with-zsh-completion@<:@=INSTALL_DIR@:>@],
+dnl         [Install the zsh auto-completion script in this directory.]),
+dnl     [ZSH_COMPLETION_DIR=$withval],
+dnl     [with_zsh_completion=no])
 
 dnl AS_IF([test "x$with_zsh_completion" = "xyes"],
 dnl       [PKG_CHECK_MODULES([ZSH_COMPLETION], [zsh-completion >= 2.0],
