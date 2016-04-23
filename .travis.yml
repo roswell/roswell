@@ -119,5 +119,4 @@ after_success:
        git checkout -b release origin/release;
        git branch -D master;
        git checkout -b master origin/master;
-       git branch;
-       (git log -n 1 --oneline|grep "bump version to") && make release-2; fi
+       (git log -n 1 --oneline|grep "bump version to") && (git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github;make release-2;) fi
