@@ -2,6 +2,7 @@
 (when (cl:find-package :ros.install.util)
   (pushnew :ros.install.util *features*))
 
+(ros:quicklisp :environment nil)
 (unless (find-package :plump)
   (ql:quickload '(:plump) :silent t))
 
