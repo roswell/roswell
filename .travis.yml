@@ -114,6 +114,10 @@ after_success:
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git remote rename origin old;
        git remote add origin "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git";
+       git fetch origin release;
+       git fetch origin master;
        git checkout -b release origin/release;
-       git checkout master;git branch;
+       git branch -D master;
+       git checkout -b master origin/master;
+       git branch;
        (git log -n 1 --oneline|grep "bump version to") && make release-2; fi
