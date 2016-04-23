@@ -34,10 +34,10 @@ matrix:
       env: METHOD=debian
     - sudo: required
       os: linux
-      env: METHOD=documents
+      env: METHOD=valgrind XCFLAGS="-g -O0"
     - sudo: required
       os: linux
-      env: METHOD=valgrind XCFLAGS="-g -O0"
+      env: METHOD=documents
 
 #branches:
 #  except:
@@ -104,12 +104,15 @@ after_success:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
+  - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
+  - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
   - if [ "$METHOD" = "documents" ]; then git branch;git status; fi
   - if [ "$METHOD" = "documents" ]; then git checkout $TRAVIS_BRANCH;git add -u;git add documents/man/* documents/html/*; fi
   - if [ "$METHOD" = "documents" ]; then git commit -m "[ci skip] documents update"; fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
-       git checkout $TRAVIS_BRANCH;(git log -n 1 --oneline|grep "bump version to") && printf "it's a commit for release!!"; fi
-  - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
-  - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
+       git remote set-url origin "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git";
+       git checkout -b release origin/release;
+       git checkout master;git branch;
+       (git log -n 1 --oneline|grep "bump version to") && make release-2; fi
