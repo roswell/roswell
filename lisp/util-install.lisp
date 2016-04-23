@@ -2,10 +2,6 @@
 (when (cl:find-package :ros.install.util)
   (pushnew :ros.install.util *features*))
 
-(ros:quicklisp :environment nil)
-(unless (find-package :plump)
-  (ql:quickload '(:plump) :silent t))
-
 (defpackage :ros.install
   (:use :cl :ros.util)
   (:export :*build-hook*))
@@ -51,14 +47,3 @@
             (declare (ignore condition))
             (format t "SIGINT detected, cleaning up the partially installed files~%")
             (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
-
-(defun github-version (user project filter)
-  (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
-    (unless (and (probe-file file)
-                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download (format nil "https://github.com/~A/~A/releases.atom" user project) file))
-    (nreverse
-     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "link")
-           for href = (plump:get-attribute link "href")
-           when (eql (aref href 0) #\/)
-             collect (funcall filter href)))))
