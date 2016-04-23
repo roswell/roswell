@@ -1,3 +1,9 @@
+roswell (0.0.5.61-1) unstable; urgency=low
+
+  * Fix: broken caused by ECL's website change.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 23 Apr 2016 18:24:26 +0900
+
 roswell (0.0.5.60-1) unstable; urgency=low
 
   * Change: quicklispdir changed ~/.roswell/impls/ALL/ALL/quicklisp -> ~/.roswell/lisp/quicklisp.
