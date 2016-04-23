@@ -113,6 +113,7 @@ after_success:
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git remote set-url origin "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git";
+       git fetch;git remote -v;
        git checkout -b release origin/release;
        git checkout master;git branch;
        (git log -n 1 --oneline|grep "bump version to") && make release-2; fi
