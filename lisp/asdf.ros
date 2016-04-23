@@ -7,6 +7,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:include "util")
 
+#-ros.install.util
+(ros:include "util-install")
+
 (if (find-package :ros.sub.asdf)
     (push :ros.sub.asdf *features*)
     (defpackage :ros.sub.asdf
@@ -18,17 +21,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ql:quickload '(:plump) :silent t))
 
 (defun asdf-get-version ()
-  (let ((file (merge-pathnames "tmp/asdf.html" (homedir))))
-    (format *error-output* "Checking version to install....~%")
-    (unless (and (probe-file file)
-                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download "https://github.com/fare/asdf/releases.atom" file))
-    (nreverse
-     (loop for link in (plump:get-elements-by-tag-name
-                        (plump:parse file) "link")
-           for href = (plump:get-attribute link "href")
-           when (eql (aref href 0) #\/)
-             collect (subseq href (1+ (position #\/ href :from-end t)))))))
+  (format *error-output* "Checking version to install....~%")
+  (ros.install::github-version
+   "fare" "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
 
 (defvar *subcommands*
   '(("install" . asdf-install)

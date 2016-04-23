@@ -4,19 +4,17 @@
 (defvar *ecl-options*
   '())
 
-(defvar *ecl-base-uri* "https://common-lisp.net/project/ecl/files/release/")
-
 (defun ecl-get-version ()
-  (let ((file (merge-pathnames "tmp/ecl.html" (homedir))))
-    (format *error-output* "Checking version to install....~%")
-    (download *ecl-base-uri* file)
-    (loop
-       for x in (plump:get-elements-by-tag-name
-                 (plump:parse (merge-pathnames "tmp/ecl.html" (homedir))) "a")
-       for text = (plump:text x)
-       for href = (plump:get-attribute x "href")
-       when (eql #\/(aref text (1- (length text))))
-       collect (subseq href 0 (1- (length href))))))
+  (format *error-output* "Checking version to install....~%")
+  (github-version "roswell" "mirror-ecl"
+                  (lambda (href)
+                    (let ((a (subseq href (1+ (position #\/ href :from-end t)))))
+                      (subseq a (position-if #'digit-char-p a))))))
+
+(defun ecl-version-filename (version)
+  (find-if (lambda (x) (ignore-errors (equal (subseq x (- (length x) (length version))) version)))
+           (github-version "roswell" "mirror-ecl"
+                           (lambda (href) (subseq href (1+ (position #\/ href :from-end t)))))))
 
 (defun ecl-msys (argv)
   (unless (ros:getenv "MSYSCON")
@@ -41,13 +39,13 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" *ecl-base-uri* (getf argv :version) "/ecl-"
-                                  (getf argv :version) ".tgz"))
+  (set-opt "download.uri" (format nil "https://github.com/roswell/mirror-ecl/archive/~A.tar.gz" (ecl-version-filename (getf argv :version))))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
-  (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
+  (print (format nil "src/mirror-ecl-~A/" (ecl-version-filename (getf argv :version))))
+  (set-opt "src" (merge-pathnames (format nil "src/mirror-ecl-~A/" (ecl-version-filename (getf argv :version))) (homedir)))
   (labels ((with (opt default)
              (set-opt opt
                       (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
