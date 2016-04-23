@@ -1,3 +1,10 @@
+roswell (0.0.5.60-1) unstable; urgency=low
+
+  * Change: quicklispdir changed ~/.roswell/impls/ALL/ALL/quicklisp -> ~/.roswell/lisp/quicklisp.
+  * Change: completion file installantion disabled.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 23 Apr 2016 09:52:27 +0900
+
 roswell (0.0.5.59-1) unstable; urgency=low
 
   * Fix:Error when 'ros delete IMPL'.
