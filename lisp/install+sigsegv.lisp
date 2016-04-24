@@ -1,9 +1,10 @@
 (in-package :ros.install)
 
 (defvar *sigsegv-version* "2.10")
+(defvar *sigsegv-uri* "http://ftpmirror.gnu.org/libsigsegv/")
 
 (defun sigsegv-setup (argv)
-  (let* ((uri (format nil "http://ftpmirror.gnu.org/libsigsegv/libsigsegv-~A.tar.gz" *sigsegv-version*))
+  (let* ((uri (format nil "~Alibsigsegv-~A.tar.gz" *sigsegv-uri* *sigsegv-version*))
          (pos (position #\/ uri :from-end t))
          (path (merge-pathnames (format nil "archives/~A" (subseq uri (1+ pos))) (homedir)))
          (expand-dir (merge-pathnames (format nil "src/libsigsegv-~A/" *sigsegv-version*) (homedir))))

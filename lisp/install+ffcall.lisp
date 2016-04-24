@@ -1,9 +1,9 @@
 (in-package :ros.install)
 
 (defvar *ffcall-version* "1.10")
-
+(defvar *ffcall-archive-uri* "http://www.haible.de/bruno/gnu/")
 (defun ffcall-setup (argv)
-  (let* ((uri (format nil "http://www.haible.de/bruno/gnu/ffcall-~A.tar.gz" *ffcall-version*))
+  (let* ((uri (format nil "~Affcall-~A.tar.gz" *ffcall-archive-uri* *ffcall-version*))
          (pos (position #\/ uri :from-end t))
          (path (merge-pathnames (format nil "archives/~A" (subseq uri (1+ pos))) (homedir)))
          (expand-dir (merge-pathnames (format nil "src/ffcall-~A/" *ffcall-version*) (homedir))))

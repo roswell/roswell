@@ -1,11 +1,14 @@
 (in-package :ros.install)
 
+(defvar *clisp-base-uri* "http://ftp.gnu.org/pub/gnu/clisp/release/")
+(defvar *clisp-archive-uri* "http://sourceforge.net/projects/clisp/files/clisp/")
+
 (defun clisp-get-version ()
   (let ((file (merge-pathnames "tmp/clisp.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download "http://ftp.gnu.org/pub/gnu/clisp/release/" file))
+      (download *clisp-base-uri* file))
     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
           for href = (plump:get-attribute link "href") for len = (1- (length href))
           when (and (eql (aref href len) #\/)
@@ -27,7 +30,7 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
-  (set-opt "download.uri" (format nil "~@{~A~}" "http://sourceforge.net/projects/clisp/files/clisp/"
+  (set-opt "download.uri" (format nil "~@{~A~}" *clisp-archive-uri*
                                   (getf argv :version) "/clisp-"  (getf argv :version) ".tar.bz2"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos

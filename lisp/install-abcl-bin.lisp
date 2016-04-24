@@ -2,10 +2,11 @@
 (in-package :ros.install)
 (ql:quickload '(:plump :simple-date-time :split-sequence :cl-ppcre) :silent t)
 
+(defvar *abcl-base-uri* "https://common-lisp.net/project/armedbear/releases/")
 (defun abcl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
-    (download "https://common-lisp.net/project/armedbear/releases/" file)
+    (download *abcl-base-uri* file)
     (loop for a in (plump:get-elements-by-tag-name
                     (plump:parse file) "a")
        for x = (string-right-trim "/" (plump:get-attribute a "href"))
@@ -18,8 +19,6 @@
       (setf (getf argv :version) (first (abcl-bin-get-version)))))
   (cons t argv))
 
-;;"https://common-lisp.net/project/armedbear/releases/1.3.3/abcl-bin-1.3.3.tar.gz"
-
 (defun abcl-bin-impl ()
   (merge-pathnames (format nil "impls/~A/~A/abcl-bin/" (uname-m) (uname)) (homedir)))
 
@@ -27,7 +26,7 @@
   (set-opt "as" (getf argv :version))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" "https://common-lisp.net/project/armedbear/releases/"
+  (set-opt "download.uri" (format nil "~@{~A~}" *abcl-base-uri*
                                   (getf argv :version) "/abcl-bin-" (getf argv :version)".tar.gz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos 

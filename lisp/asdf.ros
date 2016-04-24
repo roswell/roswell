@@ -29,11 +29,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   '(("install" . asdf-install)
     ("use" . asdf-use)
     ("list" . asdf-list)))
+(defvar *asdf-base-uri* "https://github.com/fare/asdf/archive/")
 
 (defun asdf-install (&optional version &rest r)
   (declare (ignorable r))
   (setf version (or version (first (asdf-get-version))))
-  (let ((url (format nil "https://github.com/fare/asdf/archive/~A.tar.gz" version))
+  (let ((url (format nil "~A~A.tar.gz" *asdf-base-uri* version))
         (file (merge-pathnames (format nil "archives/asdf-~A.tar.gz" version) (homedir)))
         (src (merge-pathnames "src/" (homedir))))
     (unless (probe-file file)
