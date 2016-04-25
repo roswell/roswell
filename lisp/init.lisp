@@ -27,7 +27,7 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :ensure-using-downloaded-asdf :include
-           :roswell :exec :setenv :unsetenv :with-lock-held :version)
+           :roswell :exec :setenv :unsetenv :version)
   (:documentation "Roswell backend."))
 
 (in-package :ros)
@@ -160,66 +160,6 @@ have the latest asdf, and this file has a workaround for this.
   (cl:load (make-pathname
 	    :defaults #.*load-pathname*
 	    :name name :type "lisp")))
-
-(defun lock-path (name)
-  (unless (stringp name)
-    (setq name (funcall (read-from-string "ql-http::urlstring") name)))
-  (loop for c across " :/\\"
-     do (setf name (remove c name)))
-  (merge-pathnames (format nil "lock.roswell.~A/" name)
-                   (ensure-directories-exist (merge-pathnames "tmp/" (ros:opt "homedir")))))
-
-(defun take-lock (name)
-  (declare (ignorable name))
-  #+sbcl
-  (ignore-errors (sb-posix:mkdir (lock-path name) #o700))
-  #-sbcl t)
-
-(defun release-lock (name)
-  (declare (ignorable name))
-  #+sbcl(loop :until (ignore-errors (sb-posix:rmdir (lock-path name))))
-  #-sbcl t)
-
-(defmacro with-lock-held ((name &key oneshot) &optional success failure)
-  (let ((name- (gensym "name"))
-        (oneshot- (gensym "oneshot")))
-    `(let ((,name- ,name)
-           (,oneshot- ,oneshot))
-       (if (if ,oneshot-
-               (take-lock ,name-)
-               (or (restart-bind ((force-release-lock
-                                   (lambda () (release-lock ,name-))
-                                    :report-function
-                                    (lambda (stream)
-                                      ;; fixme: is this correct?
-                                      (format stream
-                                              "Force removing the lockfile ~a ~
-                                              and continue" ,name-))))
-                     (loop until (take-lock ,name-)))
-                   t))
-           (unwind-protect ,success
-             (release-lock ,name-))
-           ,failure))))
-
-(eval-when (:execute)
-  (ignore-errors
-    (let* ((*error-output* (make-broadcast-stream))
-           (compile-file* (find-symbol (string :compile-file*) :uiop/lisp-build))
-           (origin (fdefinition compile-file*)))
-      (unless (get compile-file* :roswell-modified)
-        (setf (fdefinition compile-file*)
-              (lambda (input-file &rest keys
-                       &key output-file warnings-file
-                         #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl
-                         &allow-other-keys)
-                (declare (ignore
-                          output-file warnings-file
-                          #+clisp lib-file #+(or clasp ecl mkcl) object-file #+sbcl emit-cfasl))
-                (let ((name (namestring input-file)))
-                  (ros:with-lock-held (name)
-                    (apply origin input-file keys)))))
-        (setf (get compile-file* :roswell-modified) t))
-      (get compile-file* :roswell-modified))))
 
 #+quicklisp
 (let ((path (merge-pathnames "local-projects/" (opt "homedir"))))
@@ -379,7 +319,6 @@ have the latest asdf, and this file has a workaround for this.
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
   (loop :for elt :in list
      :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
-
 
 #+clisp
 (unless (find :ros.init *features*)
