@@ -3,7 +3,7 @@
   (pushnew :ros.install.util *features*))
 
 (defpackage :ros.install
-  (:use :cl :ros.util)
+  (:use :cl :ros.util :ros.locations)
   (:export :*build-hook*))
 
 (in-package :ros.install)
