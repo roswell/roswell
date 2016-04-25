@@ -7,9 +7,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:include "util")
 
-#-ros.locations
-(ros:include "locations")
-
 #-ros.install.util
 (ros:include "util-install")
 

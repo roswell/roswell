@@ -2,6 +2,9 @@
 (when (cl:find-package :ros.install.util)
   (pushnew :ros.install.util *features*))
 
+#-ros.locations
+(ros:include "locations")
+
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
   (:export :*build-hook*))
