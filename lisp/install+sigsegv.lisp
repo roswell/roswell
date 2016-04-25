@@ -1,7 +1,6 @@
 (in-package :ros.install)
 
 (defvar *sigsegv-version* "2.10")
-(defvar *sigsegv-uri* "http://ftpmirror.gnu.org/libsigsegv/")
 
 (defun sigsegv-setup (argv)
   (let* ((uri (format nil "~Alibsigsegv-~A.tar.gz" *sigsegv-uri* *sigsegv-version*))

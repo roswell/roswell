@@ -4,7 +4,6 @@
 (defvar *ecl-options*
   '())
 
-(defvar *ecl-archive-uri* "https://github.com/roswell/mirror-ecl/archive/")
 (defun ecl-get-version ()
   (format *error-output* "Checking version to install....~%")
   (github-version "roswell" "mirror-ecl"
@@ -40,7 +39,7 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~A~A.tar.gz" *ecl-archive-uri* (ecl-version-filename (getf argv :version))))
+  (set-opt "download.uri" (format nil "~A~A.tar.gz" *ecl-uri* (ecl-version-filename (getf argv :version))))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))

@@ -31,7 +31,6 @@
     ("wtimer" nil "Compiling with safepoints and thruptions,replace setitimer with a background thread." t)
     ("ud2-breakpoints" nil "use the UD2 instruction which generates SIGILL instead." nil)
     ("32x16-divide" nil "affects the definition of a lot of things in bignum.lisp.not needed for X86." nil)))
-(defvar *sbcl-base-uri* "https://github.com/sbcl/sbcl/archive/")
 
 (defun sbcl-get-version ()
   (format *error-output* "Checking version to install....~%")
@@ -61,7 +60,7 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" *sbcl-base-uri* "sbcl-"
+  (set-opt "download.uri" (format nil "~@{~A~}" *sbcl-uri* "sbcl-"
                                   (getf argv :version) ".tar.gz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
@@ -115,7 +114,7 @@
 (defun sbcl-patch (argv)
   #+darwin
   (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir)))
-        (uri "https://gist.githubusercontent.com/snmsts/e8e4fd4bd5e458ac45e8/raw/bb7f1cd2e8e9a914f4e9b1b5acf889ecf75dfe0c/posix-tests.patch"))
+        (uri *sbcl-patch1-uri*))
     (format t "~&Downloading patch: ~A~%" uri)
     (download uri file)
     (ros.util:chdir (get-opt "src"))

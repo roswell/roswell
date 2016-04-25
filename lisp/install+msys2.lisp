@@ -8,7 +8,6 @@
 ;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 (defvar *msys2-arch* #+x86-64 "x86_64" #-x86-64 "i686") ;; TBD ARM windows?
 (defvar *msys2-bits* #+x86-64 "64" #-x86-64 "32")
-(defvar *msys2-base-uri* "http://kent.dl.sourceforge.net/project/")
 (defun msys2-setup (argv)
   (let ((path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" *msys2-basever*) (homedir)))
         (msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
@@ -21,7 +20,7 @@
 		     (get-opt "download.force"))
 	     (download
 	      (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
-                      *msys2-base-uri*
+                      *msys2-uri*
 		      *msys2-arch* *msys2-arch* *msys2-basever*) path))
            (format t " done.~%")
            (expand path

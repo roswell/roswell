@@ -4,13 +4,12 @@
 #+win32
 (ql:quickload :zip :silent t)
 
-(defvar *ccl-base-uri* "http://ccl.clozure.com/ftp/pub/release/")
 (defun ccl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/ccl-bin.html" (homedir))))
     (format *error-output* "Checking version to install...~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download *ccl-base-uri* file))
+      (download *ccl-bin-uri* file))
     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
           for href = (plump:get-attribute link "href")
           for len = (length href)
@@ -39,7 +38,7 @@
     (set-opt "as" (getf argv :version))
     (when (position "--without-install" (getf argv :argv) :test 'equal)
       (set-opt "without-install" t))
-    (set-opt "download.uri" (format nil "~@{~A~}" *ccl-base-uri*
+    (set-opt "download.uri" (format nil "~@{~A~}" *ccl-bin-uri*
                                     (getf argv :version) "/ccl-" (getf argv :version) "-" uname ccl-uname-m (if (equal uname "windows")
                                                                                                                 ".zip"".tar.gz")))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
