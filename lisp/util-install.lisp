@@ -50,3 +50,14 @@
             (declare (ignore condition))
             (format t "SIGINT detected, cleaning up the partially installed files~%")
             (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
+
+(defun github-version (uri project filter)
+  (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
+    (unless (and (probe-file file)
+                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+      (download uri file))
+    (nreverse
+     (loop for link in (read-call "plump:get-elements-by-tag-name" (read-call "plump:parse" file) "link")
+           for href = (read-call "plump:get-attribute" link "href")
+           when (eql (aref href 0) #\/)
+             collect (funcall filter href)))))

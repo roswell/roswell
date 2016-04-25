@@ -6,14 +6,14 @@
 
 (defun ecl-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (github-version "roswell" "mirror-ecl"
+  (github-version *ecl-git-version-uri* "ecl"
                   (lambda (href)
                     (let ((a (subseq href (1+ (position #\/ href :from-end t)))))
                       (subseq a (position-if #'digit-char-p a))))))
 
 (defun ecl-version-filename (version)
   (find-if (lambda (x) (ignore-errors (equal (subseq x (- (length x) (length version))) version)))
-           (github-version "roswell" "mirror-ecl"
+           (github-version *ecl-git-version-uri* "ecl"
                            (lambda (href) (subseq href (1+ (position #\/ href :from-end t)))))))
 
 (defun ecl-msys (argv)

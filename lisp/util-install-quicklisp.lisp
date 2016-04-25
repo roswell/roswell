@@ -177,17 +177,6 @@
                  :second 0))
 ;;(parse-date "22-Aug-2015 18:19  ")
 
-(defun github-version (user project filter)
-  (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
-    (unless (and (probe-file file)
-                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download (format nil "https://github.com/~A/~A/releases.atom" user project) file))
-    (nreverse
-     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "link")
-           for href = (plump:get-attribute link "href")
-           when (eql (aref href 0) #\/)
-             collect (funcall filter href)))))
-
 (asdf:defsystem :roswell.install.abcl-bin :components ((:file "install-abcl-bin")))
 (asdf:defsystem :roswell.install.ccl-bin  :components ((:file "install-ccl-bin")))
 (asdf:defsystem :roswell.install.clisp    :components ((:file "install-clisp")))

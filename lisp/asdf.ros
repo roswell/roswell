@@ -13,7 +13,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (if (find-package :ros.sub.asdf)
     (push :ros.sub.asdf *features*)
     (defpackage :ros.sub.asdf
-      (:use :cl :ros.util)))
+      (:use :cl :ros.util :ros.locations)))
 
 (in-package :ros.sub.asdf)
 (ros:quicklisp :environment nil)
@@ -23,7 +23,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (defun asdf-get-version ()
   (format *error-output* "Checking version to install....~%")
   (ros.install::github-version
-   "fare" "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
+   *asdf-git-version-uri* "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
 
 (defvar *subcommands*
   '(("install" . asdf-install)

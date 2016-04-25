@@ -34,7 +34,7 @@
 
 (defun sbcl-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (github-version "sbcl" "sbcl" (lambda (href) (subseq href (1+ (position #\- href :from-end t))))))
+  (github-version *sbcl-git-version-uri* "sbcl" (lambda (href) (subseq href (1+ (position #\- href :from-end t))))))
 
 (defun sbcl-msys (argv)
   (unless (or (ros:getenv "MSYSCON")
