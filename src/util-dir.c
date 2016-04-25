@@ -69,7 +69,7 @@ int delete_directory(char* pathspec,int recursive) {
 #endif
 
 char* homedir(void) {
-  char *c=q_(PACKAGE"_HOME");
+  char *c=upcase(q_(PACKAGE"_HOME"));
   char *env=getenv(c);
   s(c);
   return env?append_trail_slash(q(env)):
