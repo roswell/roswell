@@ -1,3 +1,10 @@
+roswell (0.0.5.62-1) unstable; urgency=low
+
+  * Change: stop using lock. (reported by gos-k that mkdir fails)
+  * Fix: envvar 'ROSWELL_HOME' was not working (reported by Alex Dunn)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 25 Apr 2016 14:51:59 +0900
+
 roswell (0.0.5.61-1) unstable; urgency=low
 
   * Fix: broken caused by ECL's website change.
