@@ -16,7 +16,7 @@
           (or (ros:opt ,downcased)
               ,uri
               (ros:roswell '("roswell-internal-use" "version" ,downcased) :string t))))
-       (push ,name *locations*))))
+       (push ,downcased *locations*))))
 
 (defuri clisp-version-uri "http://ftp.gnu.org/pub/gnu/clisp/release/")
 (defuri 7za-uri       "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
