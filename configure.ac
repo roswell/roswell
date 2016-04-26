@@ -33,23 +33,18 @@ AC_CHECK_HEADERS(windows.h)
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
   [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=http://prdownloads.sourceforge.net/sbcl/]])],
-  [SBCL_BIN_BASE_URI=$withval],[SBCL_BIN_BASE_URI="http://prdownloads.sourceforge.net/sbcl/"])
-AC_DEFINE_UNQUOTED([SBCL_BIN_BASE_URI],["${SBCL_BIN_BASE_URI}"],[uri for sbcl master])
-
-AC_ARG_WITH([quicklisp_base],
-  [AC_HELP_STRING([--with-quicklisp-base=URI],[set URI for quicklisp [default=http://beta.quicklisp.org/]])],
-  [QUICKLISP_BASE_URI=$withval],[QUICKLISP_BASE_URI="http://beta.quicklisp.org/"])
-AC_DEFINE_UNQUOTED([QUICKLISP_BASE_URI],["${QUICKLISP_BASE_URI}"],[uri for quicklisp])
+  [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="http://prdownloads.sourceforge.net/sbcl/"])
+AC_DEFINE_UNQUOTED([SBCL_BIN_URI],["${SBCL_BIN_URI}"],[uri for sbcl master])
 
 AC_ARG_WITH([platformhtml_base],
   [AC_HELP_STRING([--with-platformhtml-base=URI],[set URI for platform.html [default=http://www.sbcl.org/]])],
-  [PLATFORM_HTML_BASE_URI=$withval],[PLATFORM_HTML_BASE_URI="http://www.sbcl.org/"])
-AC_DEFINE_UNQUOTED([PLATFORM_HTML_BASE_URI],["${PLATFORM_HTML_BASE_URI}"],[uri for platform.html])
+  [PLATFORM_HTML_URI=$withval],[PLATFORM_HTML_URI="http://www.sbcl.org/"])
+AC_DEFINE_UNQUOTED([PLATFORM_HTML_URI],["${PLATFORM_HTML_URI}"],[uri for platform.html])
 
 AC_ARG_WITH([platformhtml_backup_base],
   [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default is gist]])],
-  [PLATFORM_HTML_BACKUP_BASE_URI=$withval],[PLATFORM_HTML_BACKUP_BASE_URI="https://gist.githubusercontent.com/snmsts/12f0cf8567b8e26ae15f/raw/0b9134f9820c195e1ca84d382176777ec989183e/"])
-AC_DEFINE_UNQUOTED([PLATFORM_HTML_BACKUP_BASE_URI],["${PLATFORM_HTML_BACKUP_BASE_URI}"],[backup uri for platform.html])
+  [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="https://gist.githubusercontent.com/snmsts/12f0cf8567b8e26ae15f/raw/0b9134f9820c195e1ca84d382176777ec989183e/"])
+AC_DEFINE_UNQUOTED([PLATFORM_HTML_BACKUP_URI],["${PLATFORM_HTML_BACKUP_URI}"],[backup uri for platform.html])
 
 # man file (ros.1) generation switch
 AC_ARG_ENABLE([manual_generation],

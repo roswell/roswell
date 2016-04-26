@@ -82,6 +82,10 @@ int cmd_internal_version (int argc,char **argv,struct sub_command* cmd) {
       printf("%s\n",PACKAGE_STRING);
     }else if(strcmp(argv[1],"revision")==0) {
       printf("%s\n",ROS_REVISION);
+    }else if(strcmp(argv[1],"sbcl-bin-version-uri")==0) {
+      printf("%s\n",PLATFORM_HTML_URI);
+    }else if(strcmp(argv[1],"sbcl-bin-uri")==0) {
+      printf("%s\n",SBCL_BIN_URI);
     }else
       return 1;
   }
