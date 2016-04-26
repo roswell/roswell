@@ -66,7 +66,7 @@
              release)))))))
 
 (defun quicklisp-argv-parse (argv)
-  (set-opt "download.uri" (format nil "~A~A" *quicklisp-uri* "quicklisp.lisp"))
+  (set-opt "download.uri" (format nil "~A~A" (quicklisp-uri) "quicklisp.lisp"))
   (set-opt "download.archive" (merge-pathnames (format nil "archives/~A" "quicklisp.lisp") (homedir)))
   (cons t argv))
 

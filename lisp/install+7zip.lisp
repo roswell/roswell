@@ -8,13 +8,14 @@
 (ql:quickload :zip :silent t)
 
 (defun 7za ()
-  (let* ((pos (position #\/ *7za-uri* :from-end t))
+  (let* ((uri (7za-uri))
+         (pos (position #\/ uri :from-end t))
 	 (pos2 (when pos
-		 (position #\/ *7za-uri* :from-end t :end pos)))
+		 (position #\/ uri :from-end t :end pos)))
 	 (pos3 (if pos2
-		   (position #\/ *7za-uri* :from-end t :end pos2)
+		   (position #\/ uri :from-end t :end pos2)
                    0))
-	 (version (when pos2 (subseq *7za-uri* (1+ pos3) pos2)))
+	 (version (when pos2 (subseq uri (1+ pos3) pos2)))
 	 (prefix (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) "7za" version) (homedir))))
     (values (merge-pathnames "7za.exe" prefix) version)))
 
@@ -32,8 +33,8 @@
       (if (probe-file (merge-pathnames "7za.exe" prefix))
           (format t "7zip already setup~%")
 	  (progn
-	    (format t "archive=~A extract ~A~%" archive *7za-uri*)
-	    (download *7za-uri* (ensure-directories-exist archive))
+	    (format t "archive=~A extract ~A~%" archive (7za-uri))
+	    (download (7za-uri) (ensure-directories-exist archive))
 	    (unzip archive (ensure-directories-exist prefix)))))
     (cons t argv)))
 

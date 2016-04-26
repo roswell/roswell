@@ -5,7 +5,7 @@
     (format *error-output* "Checking version to install....~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download *clisp-version-uri* file))
+      (download (clisp-version-uri) file))
     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
           for href = (plump:get-attribute link "href") for len = (1- (length href))
           when (and (eql (aref href len) #\/)
@@ -27,7 +27,7 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
-  (set-opt "download.uri" (format nil "~@{~A~}" *clisp-uri*
+  (set-opt "download.uri" (format nil "~@{~A~}" (clisp-uri)
                                   (getf argv :version) "/clisp-"  (getf argv :version) ".tar.bz2"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
@@ -62,7 +62,7 @@
 (defun clisp-patch (argv)
   #+darwin
   (let ((file (merge-pathnames "tmp/clisp.patch" (homedir)))
-        (uri *clisp-patch1-uri*))
+        (uri (clisp-patch1-uri)))
     (format t "~&Downloading patch: ~A~%" uri)
     (download uri file)
     (ros.util:chdir (get-opt "src"))

@@ -2,7 +2,7 @@
 
 (defvar *ffcall-version* "1.10")
 (defun ffcall-setup (argv)
-  (let* ((uri (format nil "~Affcall-~A.tar.gz" *ffcall-uri* *ffcall-version*))
+  (let* ((uri (format nil "~Affcall-~A.tar.gz" (ffcall-uri) *ffcall-version*))
          (pos (position #\/ uri :from-end t))
          (path (merge-pathnames (format nil "archives/~A" (subseq uri (1+ pos))) (homedir)))
          (expand-dir (merge-pathnames (format nil "src/ffcall-~A/" *ffcall-version*) (homedir))))

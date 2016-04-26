@@ -20,7 +20,7 @@
 		     (get-opt "download.force"))
 	     (download
 	      (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
-                      *msys2-uri*
+                      (msys2-uri)
 		      *msys2-arch* *msys2-arch* *msys2-basever*) path))
            (format t " done.~%")
            (expand path

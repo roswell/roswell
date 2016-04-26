@@ -5,7 +5,7 @@
 (defun abcl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
-    (download *abcl-bin-uri* file)
+    (download (abcl-bin-uri) file)
     (loop for a in (plump:get-elements-by-tag-name
                     (plump:parse file) "a")
        for x = (string-right-trim "/" (plump:get-attribute a "href"))
@@ -25,7 +25,7 @@
   (set-opt "as" (getf argv :version))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" *abcl-bin-uri*
+  (set-opt "download.uri" (format nil "~@{~A~}" (abcl-bin-uri)
                                   (getf argv :version) "/abcl-bin-" (getf argv :version)".tar.gz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos 

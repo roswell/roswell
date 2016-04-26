@@ -34,7 +34,7 @@
 
 (defun sbcl-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (github-version *sbcl-git-version-uri* "sbcl" (lambda (href) (subseq href (1+ (position #\- href :from-end t))))))
+  (github-version (sbcl-git-version-uri) "sbcl" (lambda (href) (subseq href (1+ (position #\- href :from-end t))))))
 
 (defun sbcl-msys (argv)
   (unless (or (ros:getenv "MSYSCON")
@@ -60,7 +60,7 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" *sbcl-uri* "sbcl-"
+  (set-opt "download.uri" (format nil "~@{~A~}" (sbcl-uri) "sbcl-"
                                   (getf argv :version) ".tar.gz"))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
@@ -114,7 +114,7 @@
 (defun sbcl-patch (argv)
   #+darwin
   (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir)))
-        (uri *sbcl-patch1-uri*))
+        (uri (sbcl-patch1-uri)))
     (format t "~&Downloading patch: ~A~%" uri)
     (download uri file)
     (ros.util:chdir (get-opt "src"))
