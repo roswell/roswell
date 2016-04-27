@@ -28,7 +28,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (defvar *subcommands*
   '(("install" . asdf-install)
     ("use" . asdf-use)
-    ("list" . asdf-list)))
+    ("list" . asdf-list)
+    ("delete" . asdf-delete)))
 
 (defun asdf-install (&optional version &rest r)
   (declare (ignorable r))
@@ -67,9 +68,13 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (dolist (i (asdf-get-version))
     (format t "~A~%" i)))
 
+(defun usage ()
+  (let ((s *error-output*))
+    (format s "Usage: ~A asdf install/use/list/delete version ~%" (ros:opt "wargv0"))))
+
 (defun main (? asdf &optional subcmd &rest argv)
   (declare (ignorable ? asdf argv))
   (if subcmd
       (let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
         (apply fun argv))
-      (format t "secret.~A~%" *package*)))
+       (usage)))
