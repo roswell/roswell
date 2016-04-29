@@ -108,6 +108,7 @@ int download_simple (char* uri,char* path,int opt) {
     }
     download_count=0,content_length=0;
     curl_easy_setopt(curl, CURLOPT_URL, uri);
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, PACKAGE_STRING);
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
