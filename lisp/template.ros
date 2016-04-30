@@ -1,0 +1,34 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|manage templates
+exec ros -Q -- $0 "$@"
+|#
+
+#-ros.util
+(ros:include "util")
+
+(defpackage :ros.script.template.3670908195
+  (:use :cl :ros.util))
+(in-package :ros.script.template.3670908195)
+
+(defvar *sub* '(("rm" . template-rm)
+                ("install" . template-install)))
+
+(defvar *repositries* '(github)) ;; github should be the choice in 2016...
+
+(defun main (method command &optional sub &rest argv)
+  (declare (ignorable argv method command))
+  (funcall (cdr (assoc sub *sub* :test #'equal)) argv))
+
+(defun template-install (name)
+  (loop for i in *repositries*
+        until (apply i name)))
+
+(defun github (name &rest argv)
+  (declare (ignorable argv))
+  (let* ((pos (position #\/ name))
+         (owner (subseq name 0 pos))
+         (name (subseq name (1+ pos))))
+    (clone-github owner name)))
+
+;;; vim: set ft=lisp lisp:
