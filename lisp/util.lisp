@@ -6,7 +6,7 @@
   (:use :cl)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
            :parse-version-spec :download :expand :sh :version :chdir
-           :core-extention))
+           :core-extention :clone-github))
 
 (in-package :ros.util)
 
@@ -107,3 +107,14 @@ ccl-bin      -> (\"ccl-bin\" nil)
              (setf (config (format nil "~A.version" (config "default.lisp")))
                    version))))
     t))
+
+(defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates"))
+  (unless (ros.util:which "git")
+    (error "require git"))
+  (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) (homedir))))
+    (if (uiop:probe-file* dir)
+        ()
+        (uiop:run-program
+         (format nil "git clone https://github.com/~A/~A.git ~A"
+                 owner name
+                 (namestring (ensure-directories-exist dir)))))))
