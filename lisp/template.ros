@@ -12,6 +12,7 @@ exec ros -Q -- $0 "$@"
 (in-package :ros.script.template.3670908195)
 
 (defvar *sub* '(("rm" . template-rm)
+                ("delete" . template-rm)
                 ("install" . template-install)))
 
 (defvar *repositries* '(github)) ;; github should be the choice in 2016...
@@ -23,6 +24,10 @@ exec ros -Q -- $0 "$@"
 (defun template-install (name)
   (loop for i in *repositries*
         until (apply i name)))
+
+(defun template-rm (name)
+  (uiop/filesystem:delete-directory-tree
+   (merge-pathnames (format nil "~A/~A/" "templates" name) (homedir))))
 
 (defun github (name &rest argv)
   (declare (ignorable argv))
