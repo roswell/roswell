@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|manage templates
-exec ros -Q -- $0 "$@"
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 #-ros.util
@@ -19,7 +19,8 @@ exec ros -Q -- $0 "$@"
 
 (defun main (method command &optional sub &rest argv)
   (declare (ignorable argv method command))
-  (funcall (cdr (assoc sub *sub* :test #'equal)) argv))
+  (let ((func (cdr (assoc sub *sub* :test #'equal))))
+    (when func (funcall func  argv))))
 
 (defun template-install (name)
   (loop for i in *repositries*
