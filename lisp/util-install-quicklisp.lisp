@@ -183,7 +183,7 @@
 (asdf:defsystem :roswell.install.ecl      :components ((:file "install-ecl")))
 (asdf:defsystem :roswell.install.sbcl-bin :components ((:file "install-sbcl-bin")))
 (asdf:defsystem :roswell.install.sbcl     :components ((:file "install-sbcl")))
-(asdf:defsystem :roswell.install.7zip+    :components ((:file "install+7zip")))
+(asdf:defsystem :roswell.install.7zip+    :components ((:file "install+7zip")) :depends-on (:zip))
 (asdf:defsystem :roswell.install.ffcall+  :components ((:file "install+ffcall")))
 (asdf:defsystem :roswell.install.msys2+   :components ((:file "install+msys2")))
 (asdf:defsystem :roswell.install.sigsegv+ :components ((:file "install+sigsegv")))
