@@ -16,17 +16,18 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (declare (ignore cmd))
   (if (and (equal subcmd "main") name)
       (let* ((date (get-universal-time))
-             path)
-        (setq path
+             (path
               (or (probe-file (merge-pathnames (format nil "templates/~A/template.asd" name) (ros.util:homedir)))
                   (unless (find #\/ name)
                     (let ((dir (directory (merge-pathnames (format nil "templates/*/~A/template.asd" name) (ros.util:homedir)))))
-                      (unless (= (length dir) 1)
-                        (format *error-output* "ambiguous ~{~A~%~}" dir)
-                        (quit -1))
-                      (setq name (format nil "~{~A~^/~}" (last (pathname-directory (first dir)) 2)))
-                      ;; [fix me] '2' is not apropriate.
-                      (first dir)))))
+                      (cond
+                        ((>= (length dir) 2)
+                         (format *error-output* "ambiguous ~{~A~%~}" dir)
+                         (quit -1))
+                        ((= 1 (length dir))
+                         (setq name (format nil "~{~A~^/~}" (last (pathname-directory (first dir)) 2)))
+                         (first dir))
+                        (t nil)))))))
         (when path
           (load path)
           (ql:quickload name :silent t)
