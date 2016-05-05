@@ -118,12 +118,14 @@ char* _getenv(const char* name) {
 
 char* get_opt(const char* name,int env) {
   char* ret=NULL;
+  cond_printf(1,"get_opt(%s,%d)",name,env);
   if(env)ret=_getenv(name);
   if(!ret) {
     ret=_get_opt(local_opt,name);
     if(!ret)
       ret=_get_opt(global_opt,name);
   }
+  cond_printf(1,"=%s\n",ret);
   return ret;
 }
 
