@@ -30,7 +30,7 @@
        (let ((imp (format nil "roswell.install.~A" impl)))
          (and (or (read-call "ql-dist:find-system" imp)
                   (read-call "ql:where-is-system" imp))
-              (read-call "ql:quickload" imp))))
+              (read-call "ql:quickload" imp :silent t))))
       (and ;; before setup quicklisp
        (find impl '("sbcl-bin" "quicklisp") :test 'equal)
        (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*)))))
