@@ -2,13 +2,13 @@
 #include "util.h"
 
 #ifdef HAVE_WINDOWS_H
-setenv(const char* name,const char* value,int overwrite) {
+int setenv(const char* name,const char* value,int overwrite) {
   char* s_=cat((char*)name,"=",(char*)value,NULL);
   _putenv(s_);
   s(s_);
 }
 
-unsetenv(const char* name) {
+int unsetenv(const char* name) {
   char* s_=cat((char*)name,"=",NULL);
   _putenv(s_);
   s(s_);
@@ -82,6 +82,7 @@ void setup_uid(int euid_or_uid) {
 }
 
 int lock_apply(char* symbol,int remove) {
+  return 0;
 }
 
 #endif
