@@ -119,14 +119,20 @@ void setup_uid(int euid_or_uid) {
   }
 }
 
+int mklockdir(char* path) {
+  return mkdir(path,0700);
+}
+
+#endif
+
 int lock_apply(char* symbol,int remove) {
-  char *p=s_cat(configdir(),q("tmp/"),NULL);
+  char *p=s_cat(configdir(),q("tmp"),q(SLASH),NULL);
   int ret=0;
   ensure_directories_exist(p),s(p);
-  p=s_cat(configdir(),q("tmp/lock."PACKAGE"."),q(symbol),NULL);
+  p=s_cat(configdir(),q("tmp"SLASH"lock."PACKAGE"."),q(symbol),NULL);
   if(remove<2) {
     cond_printf(1,"%slock!:%s\n",remove?"un":"",symbol);
-    while(remove?rmdir(p):mkdir(p,0700));
+    while(remove?rmdir(p):mklockdir(p));
   }else{ /* prove lockfile*/
     ret=directory_exist_p(p);
     cond_printf(1,"lock %s exist status=%d",symbol,ret);
@@ -134,8 +140,6 @@ int lock_apply(char* symbol,int remove) {
   s(p);
   return ret;
 }
-
-#endif
 
 void cond_printf(int v,char* format,...) {
   if((v&verbose) == v) {

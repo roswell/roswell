@@ -150,6 +150,7 @@ char* which(char* cmd);
 LVal directory(char* path);
 void delete_at_exit(char* file_to_delete);
 void setup_uid(int euid_or_uid);
+int mklockdir(char* path);
 int lock_apply(char* symbol,int remove);
 
 int proccmd(int argc,char** argv,LVal option,LVal command);

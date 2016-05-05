@@ -81,8 +81,8 @@ void delete_at_exit(char* file_to_delete) {
 void setup_uid(int euid_or_uid) {
 }
 
-int lock_apply(char* symbol,int remove) {
-  return 0;
+int mklockdir(char* path) {
+  return SHCreateDirectoryEx(NULL,path,NULL)!=ERROR_SUCCESS;
 }
 
 #endif
