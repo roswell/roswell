@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|experimantal
+#|[WIP] indent lisp source
 exec ros -Q -- $0 "$@"
 |#
 (defpackage :ros.script.fmt.3665046980
