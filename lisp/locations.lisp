@@ -42,3 +42,5 @@
 
 (defuri sbcl-bin-version-uri)
 (defuri sbcl-bin-uri)
+
+(defuri slime-uri "https://github.com/slime/slime.git")
