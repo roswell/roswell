@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|manage templates
+#|[WIP] Manage templates
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
