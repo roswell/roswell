@@ -10,8 +10,11 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.install.util
 (ros:include "util-install")
 
+#-ros.swank.util
+(ros:include "util-swank")
+
 (defpackage :ros.script.swank.3671440529
-  (:use :cl :ros.locations :ros.util))
+  (:use :cl :ros.locations :ros.util :ros.swank.util))
 
 (in-package :ros.script.swank.3671440529)
 
@@ -73,14 +76,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (format *error-output* "~A is not appropriate format. ~% quicklisp dist for XXXX.XX.XX , slime version for X.XX.~%" name)
   (ros:quit 1))
 
-(defun swank-write-version (name)
-  (with-open-file (out (merge-pathnames "lisp/swank/version.txt" (homedir))
-                       :direction :output
-                       :if-exists :supersede)
-    (format out "~A" name)))
-
 (defun swank-write-helper (name)
-  (declare (ignore name)))
+  (declare (ignore name))
+  "(shell-command-to-string \"ros config show swank.version\")"
+  "(shell-command-to-string \"ros roswell-internal-use version confdir\")")
 
 (defun swank-install (name &rest argv)
   "two type of name would be accepted 'date format' or 'version'"

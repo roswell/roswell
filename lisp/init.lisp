@@ -27,7 +27,7 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :ensure-using-downloaded-asdf :include
-           :roswell :exec :setenv :unsetenv :version)
+           :roswell :exec :setenv :unsetenv :version :swank)
   (:documentation "Roswell backend."))
 
 (in-package :ros)
@@ -160,6 +160,11 @@ have the latest asdf, and this file has a workaround for this.
   (cl:load (make-pathname
 	    :defaults #.*load-pathname*
 	    :name name :type "lisp")))
+
+(defun swank (&rest params)
+  (unless (cl:find-package :ros.swank.util)
+    (include "util-swank"))
+  (apply (read-from-string "ros.swank.util:swank") params))
 
 #+quicklisp
 (let ((path (merge-pathnames "local-projects/" (opt "homedir"))))
