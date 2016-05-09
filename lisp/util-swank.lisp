@@ -10,22 +10,22 @@
   (:export :swank :swank-write-version))
 
 (in-package :ros.swank.util)
-(defvar *version-file* (merge-pathnames "lisp/swank/version.txt" (homedir)))
 
 (defun swank-write-version (name)
-  (setf (config "asdf.version") name))
+  (setf (config "swank.version") name))
 
 (defun swank-read-version ()
-  (config "asdf.version"))
+  (config "swank.version"))
 
-(defun swank (&key port style (version (swank-read-version)) delete load-contribs dont-close)
+(defun swank (&key port style (version (swank-read-version)) delete load-contribs dont-close start)
   (when delete
     (ignore-errors (delete-package (find-package :swank-loader))))
   (load (merge-pathnames (format nil "lisp/swank/~A/swank-loader.lisp" version) (homedir)))
   (funcall (read-from-string "swank-loader:init")
            :delete delete
            :load-contribs load-contribs)
-  (funcall (read-from-string "swank:create-server")
-           :port (or port (symbol-value (read-from-string "swank::default-server-port")))
-           :style (or style (symbol-value (read-from-string "swank:*communication-style*")))
-           :dont-close (or dont-close)))
+  (when port
+    (funcall (read-from-string "swank:create-server")
+             :port port
+             :style (or style (symbol-value (read-from-string "swank:*communication-style*")))
+             :dont-close (or dont-close))))
