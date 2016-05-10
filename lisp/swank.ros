@@ -76,10 +76,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (format *error-output* "~A is not appropriate format. ~% quicklisp dist for XXXX.XX.XX , slime version for X.XX.~%" name)
   (ros:quit 1))
 
-(defun swank-write-helper (name)
-  (declare (ignore name))
-  "(shell-command-to-string \"ros config show swank.version\")"
-  "(shell-command-to-string \"ros roswell-internal-use version confdir\")")
+(defun swank-write-helper ()
+  (uiop:copy-file
+   (make-pathname
+    :defaults #.*load-pathname*
+    :name "helper" :type "el")
+   (merge-pathnames "helper.el" (homedir))))
 
 (defun swank-install (name &rest argv)
   "two type of name would be accepted 'date format' or 'version'"
@@ -95,6 +97,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
          (swank-from-ql name)))
      (t (name-error name)))
    (swank-write-version name)
-   (swank-write-helper name))
+   (swank-write-helper))
 
 ;;; vim: set ft=lisp lisp:

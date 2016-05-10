@@ -17,7 +17,7 @@
 (defun swank-read-version ()
   (config "swank.version"))
 
-(defun swank (&key port style (version (swank-read-version)) delete load-contribs dont-close start)
+(defun swank (&key port style (version (swank-read-version)) delete load-contribs dont-close)
   (when delete
     (ignore-errors (delete-package (find-package :swank-loader))))
   (load (merge-pathnames (format nil "lisp/swank/~A/swank-loader.lisp" version) (homedir)))
@@ -25,7 +25,13 @@
            :delete delete
            :load-contribs load-contribs)
   (when port
-    (funcall (read-from-string "swank:create-server")
-             :port port
-             :style (or style (symbol-value (read-from-string "swank:*communication-style*")))
-             :dont-close (or dont-close))))
+    (if (boundp (read-from-string "swank::*coding-system*"))
+        (funcall (read-from-string "swank:create-server")
+                 :port port
+                 :style (or style (symbol-value (read-from-string "swank:*communication-style*")))
+                 :dont-close (or dont-close)
+                 :coding )
+        (funcall (read-from-string "swank:create-server")
+                 :port port
+                 :style (or style (symbol-value (read-from-string "swank:*communication-style*")))
+                 :dont-close (or dont-close)))))
