@@ -7,7 +7,7 @@
 
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
-  (:export :*build-hook*))
+  (:export :*build-hook* :install-impl :probe-impl-script :read-call))
 
 (in-package :ros.install)
 
