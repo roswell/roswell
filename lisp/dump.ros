@@ -4,16 +4,16 @@
 exec ros -- $0 "$@"
 |#
 
-#-ros.util
-(ros:include "util")
+(progn
+  #-ros.util
+  (ros:include "util")
+  (unless (find-package :uiop)
+    #-quicklisp(require :uiop)
+    #+quicklisp(ql:quickload :uiop :silent t)))
 
 (defpackage :ros.dump
   (:use :cl :ros.util))
 (in-package :ros.dump)
-
-(unless (find-package :uiop)
-  #-quicklisp(require :uiop)
-  #+quicklisp(ql:quickload :uiop :silent t))
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
