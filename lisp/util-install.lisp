@@ -1,6 +1,4 @@
 (cl:in-package :cl-user)
-(when (cl:find-package :ros.install.util)
-  (pushnew :ros.install.util *features*))
 
 #-ros.locations
 (ros:include "locations")
@@ -61,3 +59,5 @@
            for href = (read-call "plump:get-attribute" link "href")
            when (eql (aref href 0) #\/)
              collect (funcall filter href)))))
+
+(pushnew :ros.install.util *features*)
