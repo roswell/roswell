@@ -4,11 +4,16 @@
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
+(progn
 #-ros.util
 (ros:include "util")
 
 #-ros.install.util
 (ros:include "util-install")
+
+(ros:quicklisp :environment nil)
+(unless (find-package :plump)
+  (ql:quickload '(:plump) :silent t)))
 
 (if (find-package :ros.sub.asdf)
     (push :ros.sub.asdf *features*)
@@ -16,9 +21,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
       (:use :cl :ros.util :ros.locations)))
 
 (in-package :ros.sub.asdf)
-(ros:quicklisp :environment nil)
-(unless (find-package :plump)
-  (ql:quickload '(:plump) :silent t))
 
 (defun asdf-get-version ()
   (format *error-output* "Checking version to install....~%")
