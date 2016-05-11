@@ -3,12 +3,12 @@
 #|launch emacs with slime
 exec ros -L sbcl-bin -- $0 "$@"
 |#
+#-ros.util
+(ros:include "util")
+
 (defpackage :ros.sub.emacs
   (:use :cl))
 (in-package :ros.sub.emacs)
-
-#-ros.util
-(ros:include "util")
 
 (defun main (&rest argv)
   (let ((path (merge-pathnames "slime-helper.el" (ros:opt "quicklisp"))))
