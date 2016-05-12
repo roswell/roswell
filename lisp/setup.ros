@@ -11,28 +11,63 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :ros.script.setup.3672012282)
 
-(defun main (&rest argv)
+(defun dump-filter (name)
+  (lambda (file)
+    (ignore-errors
+     (with-open-file (in file)
+       (let (line pos package)
+         (and (equal (read-line in) "#!/bin/sh")
+              (equal "#|" (subseq (setq line (read-line in)) 0 2))
+              (equal "|#" (subseq line (- (length line) 2) (length line)))
+              (equal "#|" (subseq (setq line (read-line in)) 0 2))
+              (setq line (ql::split-spaces (read-line in)))
+              (setq pos (position "-m" line :test 'equal))
+              (equal (nth (1+ pos) line) name)
+              (equal "|#" (subseq (read-line in) 0 2))
+              (eql 'progn (first (read in)))
+              (eql 'defpackage (first (setq line (read in))))
+              (setq package (second line))
+              (eql 'in-package (first (setq line (read in))))
+              (eql package (second line))
+              (> (parse-integer (subseq (string package) (1+ (position #\. (string package) :from-end t))))
+                 3500000000)
+              (setq in (make-string-input-stream
+                        (with-output-to-string (o)
+                          (loop for l = (read-line in nil nil)
+                                while l
+                                do (format o "~A~%" (remove #\: l))))))
+              (loop with end = (gensym)
+                    for i = (read in nil end)
+                    until (eql i end)
+                    always (member (first i) '(defun defvar defparameter)))))))))
+
+(defun main (&optional (dump "roswell") &rest argv)
   (declare (ignorable argv))
   #-win32
   (ignore-errors
    (require :sb-posix)
    (sb-posix:setgid (parse-integer (sb-posix:getenv "SUDO_GID")))
    (sb-posix:setuid (parse-integer (sb-posix:getenv "SUDO_UID"))))
-  (format *error-output* "Installing Quicklisp...~%")
-  (ros:roswell '("install" "quicklisp") :interactive nil)
+  (unless (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
+    (format *error-output* "Installing Quicklisp...~%")
+    (ros:roswell '("install" "quicklisp") :interactive nil))
   #+win32
   (progn
     (format *error-output* "Installing 7zip...~%")
     (ros:roswell '("install" "7zip+") :interactive nil))
   ;;  if(argc==1) ??
-  (let ((dir (append (directory (make-pathname :defaults *load-pathname* :name :wild))
-                     (directory (merge-pathnames "cmds/*.ros" (homedir))))))
+  (let ((dir (remove-if-not
+              (dump-filter dump)
+              (append (directory (make-pathname :defaults "~/work/roswell/lisp/" :name :wild :type "ros"))
+                      (directory (merge-pathnames "cmds/*.ros" (ros.util:homedir)))
+                      (directory (merge-pathnames "bin/*" (ros.util:homedir)))))))
     (unless (ignore-errors
              (when (> (parse-integer (ros.util:version :date))
                       (loop for i in dir
                             maximize (file-write-date i)))
                (format *error-output* "up to date. stop~%")
                t))
+      (format *error-output* "building dump:~A~%" dump)
       (ros:roswell `("-L " "sbcl-bin " "--eval "
 			   #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
 			   ,@(loop :for i :in dir
