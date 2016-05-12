@@ -11,6 +11,17 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :ros.script.setup.3672012282)
 
+(defun split-spaces (line)
+  (loop with from = 0
+        with length = (length line)
+        for to from 0 
+        when (or (eql length to)
+                 (eql (aref line to) #\space))
+          collect (prog1
+                      (subseq line from to)
+                    (setq from (1+ to)))
+        until (eql length to)))
+
 (defun dump-filter (name)
   (lambda (file)
     (ignore-errors
@@ -20,7 +31,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (equal "#|" (subseq (setq line (read-line in)) 0 2))
               (equal "|#" (subseq line (- (length line) 2) (length line)))
               (equal "#|" (subseq (setq line (read-line in)) 0 2))
-              (setq line (ql::split-spaces (read-line in)))
+              (setq line (split-spaces (read-line in)))
               (setq pos (position "-m" line :test 'equal))
               (equal (nth (1+ pos) line) name)
               (equal "|#" (subseq (read-line in) 0 2))
@@ -35,7 +46,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                         (with-output-to-string (o)
                           (loop for l = (read-line in nil nil)
                                 while l
-                                do (format o "~A~%" (remove #\: l))))))
+                                do (format o "~A~%" (subst #\_ #\: l))))))
               (loop with end = (gensym)
                     for i = (read in nil end)
                     until (eql i end)
@@ -59,8 +70,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (let ((dir (remove-if-not
               (dump-filter dump)
               (append (directory (make-pathname :defaults "~/work/roswell/lisp/" :name :wild :type "ros"))
-                      (directory (merge-pathnames "cmds/*.ros" (ros.util:homedir)))
-                      (directory (merge-pathnames "bin/*" (ros.util:homedir)))))))
+                      (directory (merge-pathnames "cmds/*.ros" (homedir)))
+                      (directory (merge-pathnames "bin/*" (homedir)))))))
     (unless (ignore-errors
              (when (> (parse-integer (ros.util:version :date))
                       (loop for i in dir
