@@ -128,7 +128,8 @@
                          (format nil "src/sbcl-~A/customize-target-features.lisp"
                                  (getf argv :version)) (homedir)))
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
-    (format out "~s"
+    (let ((*package* (find-package :ros.install)))
+      (format out "~s"
             `(lambda (list)
                (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
                                when (get-opt name)
@@ -137,7 +138,7 @@
                  (if (second i)
                      (pushnew (first i) list)
                      (setf list (remove (first i) list))))
-               list)))
+               list))))
   (cons t argv))
 
 (defun sbcl-make (argv)
