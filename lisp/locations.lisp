@@ -44,3 +44,5 @@
 (defuri sbcl-bin-uri)
 
 (defuri slime-uri "https://github.com/slime/slime.git")
+
+(push :ros.locations *features*)
