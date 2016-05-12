@@ -1,8 +1,9 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|[WIP] indent lisp source
-exec ros -Q -- $0 "$@"
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
+(progn)
 (defpackage :ros.script.fmt.3665046980
   (:use :cl))
 (in-package :ros.script.fmt.3665046980)

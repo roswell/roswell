@@ -4,8 +4,9 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-#-ros.util
-(ros:include "util")
+(progn
+  #-ros.util
+  (ros:include "util"))
 
 (defpackage :ros.script.setup.3672012282
   (:use :cl :ros.util))

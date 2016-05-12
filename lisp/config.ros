@@ -4,8 +4,9 @@
 exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
-#-ros.util
-(ros:include "util")
+(progn
+  #-ros.util
+  (ros:include "util"))
 
 (defpackage :ros.script.config.3668210854
   (:use :cl))

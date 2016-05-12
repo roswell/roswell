@@ -3,6 +3,7 @@
 #|Run repl
 exec ros -Q -- $0 "$@"
 |#
+(progn)
 (defpackage :ros.script.run.3668210999
   (:use :cl))
 (in-package :ros.script.run.3668210999)

@@ -3,8 +3,9 @@
 #|launch emacs with slime
 exec ros -L sbcl-bin -- $0 "$@"
 |#
-#-ros.util
-(ros:include "util")
+(progn
+  #-ros.util
+  (ros:include "util"))
 
 (defpackage :ros.script.emacs.3672012160
   (:use :cl))
