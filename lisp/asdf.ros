@@ -15,10 +15,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (unless (find-package :plump)
     (ql:quickload '(:plump) :silent t)))
 
-(defpackage :ros.sub.asdf
-      (:use :cl :ros.util :ros.locations))
-
-(in-package :ros.sub.asdf)
+(defpackage :ros.script.asdf.3672011844
+  (:use :cl :ros.util :ros.locations))
+(in-package :ros.script.asdf.3672011844)
 
 (defun asdf-get-version ()
   (format *error-output* "Checking version to install....~%")

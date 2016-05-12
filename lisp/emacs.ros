@@ -6,9 +6,9 @@ exec ros -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:include "util")
 
-(defpackage :ros.sub.emacs
+(defpackage :ros.script.emacs.3672012160
   (:use :cl))
-(in-package :ros.sub.emacs)
+(in-package :ros.script.emacs.3672012160)
 
 (defun main (&rest argv)
   (let ((path (merge-pathnames "slime-helper.el" (ros:opt "quicklisp"))))

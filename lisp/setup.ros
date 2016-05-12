@@ -7,9 +7,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:include "util")
 
-(defpackage :ros.sub.setup
+(defpackage :ros.script.setup.3672012282
   (:use :cl :ros.util))
-(in-package :ros.sub.setup)
+(in-package :ros.script.setup.3672012282)
 
 (defun main (&rest argv)
   (declare (ignorable argv))

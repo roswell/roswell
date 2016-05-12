@@ -7,10 +7,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:include "util")
 
-(defpackage :ros.sub.init
+(defpackage :ros.script.init.3672012201
   (:use :cl :ros))
-
-(in-package :ros.sub.init)
+(in-package :ros.script.init.3672012201)
 
 (defun main (subcmd cmd &optional name &rest r)
   (declare (ignore cmd))

@@ -7,10 +7,9 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 #-ros.util
 (ros:include "util")
 
-(defpackage :ros.sub.list
+(defpackage :ros.script.list.3672012243
   (:use :cl :ros.util))
-
-(in-package :ros.sub.list)
+(in-package :ros.script.list.3672012243)
 
 (defun installed (&rest r)
   (cond

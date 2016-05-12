@@ -3,9 +3,9 @@
 #|Wait forever
 exec ros -Q -- $0 "$@"
 |#
-(defpackage :ros.sub.wait
+(defpackage :ros.script.wait.3672012352
   (:use :cl))
-(in-package :ros.sub.wait)
+(in-package :ros.script.wait.3672012352)
 
 (defun main (&rest argv)
   (declare (ignorable argv))
