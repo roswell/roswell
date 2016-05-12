@@ -2,7 +2,6 @@
 (when (cl:find-package :ros.swank.util)
   (pushnew :ros.swank.util *features*))
 
-#-ros.util
 (ros:include "util")
 
 (defpackage :ros.swank.util

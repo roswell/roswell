@@ -156,10 +156,13 @@ have the latest asdf, and this file has a workaround for this.
                               (symbol-value symbol)))))
         t))))
 
+(defvar *included-names* '())
 (defun include (name)
-  (cl:load (make-pathname
-	    :defaults #.*load-pathname*
-	    :name name :type "lisp")))
+  (unless (find name *included-names* :test 'equal)
+    (cl:load (make-pathname
+              :defaults #.*load-pathname*
+              :name name :type "lisp"))
+    (push name *included-names*)))
 
 (defun swank (&rest params)
   (unless (cl:find-package :ros.swank.util)

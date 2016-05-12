@@ -5,13 +5,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  #-ros.util
   (ros:include "util")
-
-  #-ros.install.util
   (ros:include "util-install")
-
-  #-ros.swank.util
   (ros:include "util-swank"))
 
 (defpackage :ros.script.swank.3671440529

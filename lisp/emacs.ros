@@ -4,7 +4,6 @@
 exec ros -L sbcl-bin -- $0 "$@"
 |#
 (progn
-  #-ros.util
   (ros:include "util"))
 
 (defpackage :ros.script.emacs.3672012160

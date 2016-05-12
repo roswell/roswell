@@ -1,6 +1,5 @@
 (cl:in-package :cl-user)
 
-#-ros.locations
 (ros:include "locations")
 
 (defpackage :ros.install
