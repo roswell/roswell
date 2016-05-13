@@ -50,10 +50,10 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (loop with end = (gensym)
                     for i = (read in nil end)
                     until (eql i end)
-                    always (member (first i) '(defun defvar defparameter)))))))))
+                    always (member (first i) '(defun defvar defparameter quote)))))))))
 
-(defun main (&optional (dump "roswell") &rest argv)
-  (declare (ignorable argv))
+(defun main (method subcmd &optional (dump "roswell") &rest argv)
+  (declare (ignorable argv method subcmd))
   #-win32
   (ignore-errors
    (require :sb-posix)
@@ -69,7 +69,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   ;;  if(argc==1) ??
   (let ((dir (remove-if-not
               (dump-filter dump)
-              (append (directory (make-pathname :defaults "~/work/roswell/lisp/" :name :wild :type "ros"))
+              (append (directory (make-pathname :defaults *load-pathname* :name :wild :type "ros"))
                       (directory (merge-pathnames "cmds/*.ros" (homedir)))
                       (directory (merge-pathnames "bin/*" (homedir)))))))
     (unless (ignore-errors
