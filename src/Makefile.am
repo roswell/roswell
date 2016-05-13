@@ -1,5 +1,5 @@
 AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
-roslispdir = $(datadir)/common-lisp/source/$(PACKAGE)
+roslispdir = $(sysconfdir)/$(PACKAGE)
 
 ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_windows.c \
 	util-file.c util-file_windows.c util-system.c util-system_windows.c util-cmdline.c
