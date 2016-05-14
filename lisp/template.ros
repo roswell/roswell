@@ -13,14 +13,15 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defvar *sub* '(("rm" . template-rm)
                 ("delete" . template-rm)
-                ("install" . template-install)))
+                ("install" . template-install)
+                ("list" . template-list)))
 
 (defvar *repositries* '(github)) ;; github should be the choice in 2016...
 
 (defun main (method command &optional sub &rest argv)
   (declare (ignorable argv method command))
   (let ((func (cdr (assoc sub *sub* :test #'equal))))
-    (when func (funcall func  argv))))
+    (when func (funcall func argv))))
 
 (defun template-install (name)
   (loop for i in *repositries*
@@ -29,6 +30,11 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (defun template-rm (name)
   (uiop/filesystem:delete-directory-tree
    (merge-pathnames (format nil "~A/~A/" "templates" name) (homedir))))
+
+(defun template-list (name)
+  (declare (ignore name))
+  (loop for x in (directory (merge-pathnames "templates/*/*/" (homedir)))
+        do (format t "~{~A~^/~}~%" (last (pathname-directory x) 2))))
 
 (defun github (name &rest argv)
   (declare (ignorable argv))
