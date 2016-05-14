@@ -2,7 +2,7 @@ language: c
 sudo: false
 env:
   global:
-    - PATH=/usr/i686-w64-mingw32/bin:~/.roswell/bin:~/.linuxbrew/bin:$PATH
+    - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=$TRAVIS_BRANCH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
@@ -28,7 +28,7 @@ matrix:
   include:
     - sudo: required
       os: linux
-      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32" WINE=wine
+      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
     - sudo: required
       os: linux
       env: METHOD=debian
@@ -80,8 +80,8 @@ script:
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then
        sh bootstrap;CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
-  - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make;make install; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ] || [ "$METHOD" = "cross" ]; then $WINE ros version; fi
+  - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
+  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros install prove; fi
