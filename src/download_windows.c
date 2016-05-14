@@ -14,7 +14,7 @@ int download_simple (char* uri,char* path,int opt) {
   bodyfile = fopen(path_partial,"wb");
   if (bodyfile == NULL) {
     s(path_partial);
-    return -1;
+    return 1;
   }
   download_out=0==(download_opt=opt)?stderr:stdout;
   URL_COMPONENTS u;
@@ -37,7 +37,7 @@ int download_simple (char* uri,char* path,int opt) {
   u.lpszExtraInfo  = NULL;
   if(!InternetCrackUrl(uri,(DWORD)strlen(uri),0,&u)) {
     fclose(bodyfile);
-    return -4;
+    return 4;
   }
   HINTERNET hSession = InternetOpen("WinInet",INTERNET_OPEN_TYPE_PRECONFIG,NULL,NULL,0);
   HINTERNET hConnection = InternetConnect(hSession,szHostName,u.nPort,NULL,NULL,INTERNET_SERVICE_HTTP,0,0);
@@ -47,7 +47,7 @@ int download_simple (char* uri,char* path,int opt) {
     dwFlags = dwFlags | INTERNET_FLAG_SECURE| INTERNET_FLAG_IGNORE_CERT_DATE_INVALID| INTERNET_FLAG_IGNORE_CERT_CN_INVALID;
   }else {
     fclose(bodyfile);
-    return -3;
+    return 3;
   }
   HINTERNET hRequest = HttpOpenRequest(hConnection,"GET",szUrlPath,NULL,NULL,NULL,dwFlags,0);
 
@@ -58,11 +58,11 @@ int download_simple (char* uri,char* path,int opt) {
     content_length=dwContentLen;
   if(!HttpQueryInfo(hRequest,HTTP_QUERY_STATUS_CODE|HTTP_QUERY_FLAG_NUMBER,&dwStatusCode,&dwLength,0)) {
     fclose(bodyfile);
-    return -6;
+    return 6;
   }
   if(HTTP_STATUS_OK != dwStatusCode) {
     fclose(bodyfile);
-    return -5;
+    return 5;
   }
   char pData[10000];
   DWORD dwBytesRead = 1;
@@ -76,6 +76,6 @@ int download_simple (char* uri,char* path,int opt) {
   fprintf(download_out, "\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
-  return ret?0:-7;
+  return ret?0:7;
 }
 #endif

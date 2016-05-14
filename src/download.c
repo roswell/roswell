@@ -62,14 +62,14 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *opt)
   return nitems * size;
 }
 /* return value:
- *  0 success
- * -1 fopen failed
- * -2 curl initialization failed
- * -3 scheme is neither http nor https
- * -4 faild to parse the URL (InternetCrackUrl) (windows)
- * -5 https responce status is not HTTP_STATUS_OK (windows)
- * -6 HttpQueryInfo failed (windows)
- * -7 rename failure
+ * 0 success
+ * 1 fopen failed
+ * 2 curl initialization failed
+ * 3 scheme is neither http nor https
+ * 4 faild to parse the URL (InternetCrackUrl) (windows)
+ * 5 https responce status is not HTTP_STATUS_OK (windows)
+ * 6 HttpQueryInfo failed (windows)
+ * 7 rename failure
  */
 #ifndef HAVE_WINDOWS_H
 int download_simple (char* uri,char* path,int opt) {
@@ -78,7 +78,7 @@ int download_simple (char* uri,char* path,int opt) {
   bodyfile = fopen(path_partial,"wb");
   if (bodyfile == NULL) {
     s(path_partial);
-    return -1;
+    return 1;
   }
   download_out=0==(download_opt=opt)?stderr:stdout;
 
@@ -122,10 +122,10 @@ int download_simple (char* uri,char* path,int opt) {
     fclose(bodyfile);
   }
   if(res != CURLE_OK)
-    return -2;
+    return 2;
   fprintf(download_out, "\n");
   int ret=rename_file(path_partial,path);
   s(path_partial);
-  return ret?0:-7;
+  return ret?0:7;
 }
 #endif
