@@ -63,3 +63,4 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
             (format *error-output* "~&~A~%" e)
             (quit -1))))
       ()))
+;;; vim: set ft=lisp lisp:

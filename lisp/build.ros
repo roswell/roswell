@@ -45,3 +45,4 @@ exec ros -Q +R -- $0 "$@"
               do (setf exec (parse-argv line))))
     (ros:roswell `(,exec "dump" "executable" ,@(cddr argv))
                  :interactive nil)))
+;;; vim: set ft=lisp lisp:

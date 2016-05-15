@@ -42,5 +42,4 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
          (owner (subseq name 0 pos))
          (name (subseq name (1+ pos))))
     (clone-github owner name)))
-
 ;;; vim: set ft=lisp lisp:

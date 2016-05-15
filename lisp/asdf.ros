@@ -72,4 +72,5 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (if subcmd
       (let ((fun (cdr (assoc subcmd *subcommands* :test 'equal))))
         (apply fun argv))
-       (usage)))
+      (usage)))
+;;; vim: set ft=lisp lisp:

@@ -100,5 +100,4 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
      (t (name-error name)))
    (swank-write-version name)
    (swank-write-helper))
-
 ;;; vim: set ft=lisp lisp:

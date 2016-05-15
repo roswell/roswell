@@ -66,3 +66,4 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                     (format t "~&clear config ~S~%" verstring)
                     (setf (config verstring) "")))
                  (t (format *error-output* "~&~A is not installed yet.~%" impl-name)))))))))
+;;; vim: set ft=lisp lisp:

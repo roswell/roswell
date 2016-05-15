@@ -86,3 +86,4 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                    :collect (format nil "~A" i))
 			   " dump output -f roswell")
                    t nil))))
+;;; vim: set ft=lisp lisp:

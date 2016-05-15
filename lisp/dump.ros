@@ -99,3 +99,4 @@ exec ros -- $0 "$@"
                (funcall func (rest r))
                (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))
         (t (format t "~{~a~%~}" (mapcar #'car *subcmds*)))))
+;;; vim: set ft=lisp lisp:

@@ -20,3 +20,4 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                                "--eval \"(indent-region (point-min) (point-max))\""
                                "--eval \"(save-buffer)\""
                                "--eval \"(kill-emacs)\""))))
+;;; vim: set ft=lisp lisp:

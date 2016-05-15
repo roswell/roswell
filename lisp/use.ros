@@ -22,3 +22,4 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
       (unless (use (first argv))
         (format *error-output* "Error: unable to use '~A'~%" (first argv))
         (ros:quit 1))))
+;;; vim: set ft=lisp lisp:
