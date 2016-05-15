@@ -24,7 +24,8 @@ extern LVal register_runtime_options(LVal opt);
 int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
 
 #define SETUP_SYSTEM(sys,msg) {\
-    fprintf(stderr,"%s",msg);  \
+    cond_printf(0,"%s",msg);   \
+    cond_printf(1,"%s\n",sys); \
     int ret=System(sys);       \
     s(sys);                    \
     if(ret) {                  \
