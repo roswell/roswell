@@ -16,12 +16,19 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defvar *sub* '(("rm" . swank-rm)
                 ("delete" . swank-rm)
-                ("install" . swank-install)))
+                ("install" . swank-install)
+                ("list" . swank-list)))
+
+(defun usage ()
+  (let ((s *error-output*))
+    (format s "Usage: ~A swank install/use/list/delete version ~%" (ros:opt "wargv0"))))
 
 (defun main (method command &optional sub &rest argv)
   (declare (ignorable argv method command))
   (let ((func (cdr (assoc sub *sub* :test #'equal))))
-    (when func (apply func argv))))
+    (when func
+      (ros:quit (apply func argv))))
+  (usage))
 
 (defun swank-from-git (name)
   (let* ((str (slime-uri))
@@ -31,8 +38,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (ros.util:clone-github
      (subseq str (1+ start) end)
      (subseq str (1+ end) end2)
-     :path "lisp/swank" :branch (format nil "v~A" name) :alias name
-     ))
+     :path "lisp/swank" :branch (format nil "v~A" name) :alias name))
   :git)
 
 (defun swank-from-ql (name)
