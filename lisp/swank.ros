@@ -1,13 +1,16 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|[WIP] manage swank version for roswell
+#|[WIP] Manage swank version for roswell
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
   (ros:include "util")
   (ros:include "util-install")
-  (ros:include "util-swank"))
+  (ros:include "util-swank")
+  (ros:quicklisp :environment nil)
+  (unless (find-package :plump)
+    (ql:quickload '(:plump) :silent t)))
 
 (defpackage :ros.script.swank.3671440529
   (:use :cl :ros.locations :ros.util :ros.swank.util))
@@ -19,16 +22,13 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                 ("install" . swank-install)
                 ("list" . swank-list)))
 
+(defun swank-get-version ()
+  (ros.install::github-version
+   (swank-git-version-uri) "swank" (lambda (href) (subseq href (+ 2 (position #\/ href :from-end t))))))
+
 (defun usage ()
   (let ((s *error-output*))
     (format s "Usage: ~A swank install/use/list/delete version ~%" (ros:opt "wargv0"))))
-
-(defun main (method command &optional sub &rest argv)
-  (declare (ignorable argv method command))
-  (let ((func (cdr (assoc sub *sub* :test #'equal))))
-    (when func
-      (ros:quit (apply func argv))))
-  (usage))
 
 (defun swank-from-git (name)
   (let* ((str (slime-uri))
@@ -61,10 +61,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                 release-file)
       (with-open-file (in release-file)
         (loop for line = (read-line in nil nil)
-           while line
-           for list = (ql-util:split-spaces line)
-           when (equal (first list) "slime")
-           do (download (second list) archive-file)))
+              while line
+              for list = (ql-util:split-spaces line)
+              when (equal (first list) "slime")
+                do (download (second list) archive-file)))
       (uiop/filesystem:delete-directory-tree (ensure-directories-exist extract-path) :validate t)
       (expand archive-file (ensure-directories-exist extract-path))
       (prog1
@@ -89,15 +89,27 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   "two type of name would be accepted 'date format' or 'version'"
   (declare (ignorable argv))
   (unless (loop for x across name
-             always (or (digit-char-p x)
-                        (eql x #\.)))
+                always (or (digit-char-p x)
+                           (eql x #\.)))
     (name-error name))
-   (case (count #\. name)
-     (1 (swank-from-git name))
-     (2 (or
-         (ignore-errors (swank-from-git name)) ;; 2.10.1 couldn't be install without this line.
-         (swank-from-ql name)))
-     (t (name-error name)))
-   (swank-write-version name)
-   (swank-write-helper))
+  (case (count #\. name)
+    (1 (swank-from-git name))
+    (2 (or
+        (ignore-errors (swank-from-git name)) ;; 2.10.1 couldn't be install without this line.
+        (swank-from-ql name)))
+    (t (name-error name)))
+  (swank-write-version name)
+  (swank-write-helper))
+
+(defun swank-list (&rest r)
+  (declare (ignorable r))
+  (dolist (i (swank-get-version))
+    (format t "~A~%" i)))
+
+(defun main (method command &optional sub &rest argv)
+  (declare (ignorable argv method command))
+  (let ((func (cdr (assoc sub *sub* :test #'equal))))
+    (when func
+      (ros:quit (apply func argv))))
+  (usage))
 ;;; vim: set ft=lisp lisp:

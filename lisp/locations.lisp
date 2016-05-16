@@ -35,10 +35,12 @@
 (defuri asdf-git-version-uri "https://github.com/fare/asdf/releases.atom")
 (defuri ecl-git-version-uri  "https://github.com/roswell/mirror-ecl/releases.atom")
 (defuri sbcl-git-version-uri "https://github.com/sbcl/sbcl/releases.atom")
+(defuri swank-git-version-uri"https://github.com/slime/slime/releases.atom")
 
 (defuri asdf-uri "https://github.com/fare/asdf/archive/")
 (defuri ecl-uri  "https://github.com/roswell/mirror-ecl/archive/")
 (defuri sbcl-uri "https://github.com/sbcl/sbcl/archive/")
+(defuri swank-uri "https://github.com/slime/slime/")
 
 (defuri sbcl-bin-version-uri)
 (defuri sbcl-bin-uri)
