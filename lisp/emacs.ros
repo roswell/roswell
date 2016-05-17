@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|launch emacs with slime
+#|Launch emacs
 exec ros -L sbcl-bin -- $0 "$@"
 |#
 (progn
