@@ -32,12 +32,12 @@
 (defuri sbcl-patch1-uri  "https://gist.githubusercontent.com/snmsts/e8e4fd4bd5e458ac45e8/raw/bb7f1cd2e8e9a914f4e9b1b5acf889ecf75dfe0c/posix-tests.patch")
 (defuri clisp-patch1-uri "https://raw.githubusercontent.com/Homebrew/homebrew/2fb8cb1a2279f80dc89900b3ebaca9e5afc90494/Library/Formula/clisp.rb")
 
-(defuri asdf-git-version-uri "https://github.com/fare/asdf/releases.atom")
+(defuri asdf-git-version-uri "https://github.com/roswell/asdf/releases.atom")
 (defuri ecl-git-version-uri  "https://github.com/roswell/mirror-ecl/releases.atom")
 (defuri sbcl-git-version-uri "https://github.com/sbcl/sbcl/releases.atom")
 (defuri swank-git-version-uri"https://github.com/slime/slime/releases.atom")
 
-(defuri asdf-uri "https://github.com/fare/asdf/archive/")
+(defuri asdf-uri "https://github.com/roswell/asdf/archive/")
 (defuri ecl-uri  "https://github.com/roswell/mirror-ecl/archive/")
 (defuri sbcl-uri "https://github.com/sbcl/sbcl/archive/")
 (defuri swank-uri "https://github.com/slime/slime/")
