@@ -23,6 +23,7 @@
 (defuri abcl-bin-uri  "https://common-lisp.net/project/armedbear/releases/")
 (defuri ccl-bin-uri   "http://ccl.clozure.com/ftp/pub/release/")
 (defuri clisp-uri     "http://sourceforge.net/projects/clisp/files/clisp/")
+(defuri cmu-bin-uri   "https://common-lisp.net/project/cmucl/downloads/release/")
 (defuri quicklisp-uri "http://beta.quicklisp.org/")
 
 (defuri ffcall-uri    "http://www.haible.de/bruno/gnu/")

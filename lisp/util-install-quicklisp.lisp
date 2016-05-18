@@ -177,13 +177,22 @@
                  :second 0))
 ;;(parse-date "22-Aug-2015 18:19  ")
 
-(asdf:defsystem :roswell.install.abcl-bin :components ((:file "install-abcl-bin")))
-(asdf:defsystem :roswell.install.ccl-bin  :components ((:file "install-ccl-bin")))
-(asdf:defsystem :roswell.install.clisp    :components ((:file "install-clisp")))
-(asdf:defsystem :roswell.install.ecl      :components ((:file "install-ecl")))
-(asdf:defsystem :roswell.install.sbcl-bin :components ((:file "install-sbcl-bin")))
-(asdf:defsystem :roswell.install.sbcl     :components ((:file "install-sbcl")))
-(asdf:defsystem :roswell.install.7zip+    :components ((:file "install+7zip")) :depends-on (:zip))
-(asdf:defsystem :roswell.install.ffcall+  :components ((:file "install+ffcall")))
-(asdf:defsystem :roswell.install.msys2+   :components ((:file "install+msys2")))
-(asdf:defsystem :roswell.install.sigsegv+ :components ((:file "install+sigsegv")))
+(defmacro system (file &key depends-on)
+  `(asdf:defsystem
+       ,(read-from-string
+         (format nil ":roswell.install.~A~A"
+                 (subseq file 8) (if (find #\+ file) "+""")))
+     :components ((:file ,file))
+     ,@(when depends-on `(:depends-on ,depends-on))))
+
+(system "install-abcl-bin")
+(system "install-ccl-bin")
+(system "install-cmu-bin")
+(system "install-clisp")
+(system "install-ecl")
+(system "install-sbcl-bin")
+(system "install-sbcl")
+(system "install+7zip" :depends-on (:zip))
+(system "install+ffcall")
+(system "install+msys2")
+(system "install+sigsegv")
