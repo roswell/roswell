@@ -96,8 +96,7 @@
                      cmu-bin-argv-parse2
                      cmu-bin-download
                      cmu-bin-expand
-                     ;;setup
-                     ))
+                     setup))
       *install-cmds*)
 
 (push `("cmu-bin" . ,(list 'cmu-bin-help)) *help-cmds*)
