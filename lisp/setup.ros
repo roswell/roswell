@@ -46,7 +46,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                         (with-output-to-string (o)
                           (loop for l = (read-line in nil nil)
                                 while l
-                                do (format o "~A~%" (subst #\_ #\: l))))))
+                                do (format o "~A~%" (substitute #\_ #\: l))))))
               (loop with end = (gensym)
                     for i = (read in nil end)
                     until (eql i end)
@@ -72,6 +72,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (append (directory (make-pathname :defaults *load-pathname* :name :wild :type "ros"))
                       (directory (merge-pathnames "cmds/*.ros" (homedir)))
                       (directory (merge-pathnames "bin/*" (homedir)))))))
+    (unless (zerop (ros:verbose))
+      (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir)
+      (force-output *error-output*))
     (unless (ignore-errors
              (when (> (parse-integer (ros.util:version :date))
                       (loop for i in dir
