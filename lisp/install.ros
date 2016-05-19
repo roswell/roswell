@@ -31,6 +31,9 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
           ((or (read-call "ql-dist:find-system" imp)
                (read-call "ql:where-is-system" imp))
            (read-call "install-system-script" imp))
+          (version
+           (format *error-output* "install from github ~A/~A" imp version)
+           (clone-github imp version :path "local-projects"))
           (t (error "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" imp)))))
