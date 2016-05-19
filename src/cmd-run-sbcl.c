@@ -17,15 +17,16 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
   char* control_stack_size=get_opt("control-stack-size",0);
+  char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   LVal ret=0;
 
   int issystem=(strcmp("system",version)==0);
   char *bin=issystem?
     strcmp(impl,"sbcl32")==0?truename(which("sbcl32")):truename(which("sbcl")):
     cat(impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
-  unsetenv("SBCL_HOME");
+  setenv("SBCL_HOME",sbcl_home,1);
 
-  s(arch),s(os);
+  s(arch),s(os),s(sbcl_home);
   ret=conss(bin,ret);
 
   /* runtime options from here */
