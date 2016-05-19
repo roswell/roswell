@@ -27,11 +27,10 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :ensure-using-downloaded-asdf :include
-           :roswell :exec :setenv :unsetenv :version :swank)
+           :roswell :exec :setenv :unsetenv :version :swank :verbose)
   (:documentation "Roswell backend."))
 
 (in-package :ros)
-(defvar *verbose* 0)
 (defvar *argv* nil)
 (defvar *ros-opts* nil)
 (defvar *main* nil)
@@ -61,6 +60,9 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun opt (param)
   (second (assoc param (ros-opts) :test 'equal)))
+
+(defun verbose ()
+  (values (parse-integer (ros:opt "verbose"))))
 
 (or
  (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
