@@ -1,3 +1,17 @@
+roswell (0.0.6.63-1) unstable; urgency=low
+
+  * New: support cmu-bin for install and run.
+  * Improve: 'ros swank' implementation still WIP.
+  * Bugfix: SBCL_HOME is not set correct when dump are specified.
+  * Bugfix: fix implicit 'ros setup' invoke error.
+  * Change: download internal command return positive number.
+  * Change: ros lisp files will be install in ${prefix}/etc.
+  * Change: 'ros setup' make dump which include files in ~/.roswell/bin and require dump 'roswell'
+  * Change: roswell download has user agent.
+  * Change: uri's are configurable.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 21 May 2016 02:47:32 +0900
+
 roswell (0.0.5.62-1) unstable; urgency=low
 
   * Change: stop using lock. (reported by gos-k that mkdir fails)
