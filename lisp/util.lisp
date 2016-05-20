@@ -109,14 +109,25 @@ ccl-bin      -> (\"ccl-bin\" nil)
     t))
 
 (defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates") branch)
-  (unless (ros.util:which "git")
-    (error "require git"))
-  (setq branch (if branch (format nil "-b ~A" branch) ""))
-  (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) (homedir))))
-    (if (uiop:probe-file* dir)
-        ()
-        (uiop:run-program
-         (format nil "git clone ~A https://github.com/~A/~A.git ~A"
-                 branch
-                 owner name
-                 (namestring (ensure-directories-exist dir)))))))
+  (if (ros.util:which "git")
+      (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) (homedir))))
+        (setq branch (if branch (format nil "-b ~A" branch) ""))
+        (if (uiop:probe-file* dir)
+            ()
+            (uiop:run-program
+             (format nil "git clone ~A https://github.com/~A/~A.git ~A"
+                     branch
+                     owner name
+                     (namestring (ensure-directories-exist dir))))))
+      (let* ((path/ (merge-pathnames (format nil "~A/~A.tgz" path alias) (homedir)))
+             (dir (merge-pathnames ".expand/" (make-pathname :defaults path/ :name nil :type nil))))
+        (uiop:delete-directory-tree dir :if-does-not-exist :ignore :validate t)
+        (setq branch (or branch "master"))
+        (download (format nil "https://github.com/~A/archive/~A.tar.gz" alias branch)
+                  path/)
+        (expand path/ (ensure-directories-exist dir))
+        (rename-file (first (directory (merge-pathnames "*/" dir)))
+                     (merge-pathnames (format nil "~A/~A/" path alias) (homedir)))
+        (delete-file path/)
+        (uiop:delete-directory-tree dir :if-does-not-exist :ignore :validate t)
+        t)))
