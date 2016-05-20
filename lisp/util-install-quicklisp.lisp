@@ -135,10 +135,10 @@
             (*trace-output*    (make-broadcast-stream)))
         (if (ql:where-is-system system)
             (progn (ql:quickload system)
-                   (asdf:oos 'asdf:load-op system :force t))
+                   (ignore-errors(asdf:oos 'asdf:load-op system :force t)))
             (ql:quickload system)))
+      (format *error-output* "~&[~a/3] Processing build-hook.." (incf step))
       (when *build-hook*
-        (format *error-output* "~&[~a/3] Processing build-hook.." (incf step))
         (funcall *build-hook*))
       (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
                                          roswell/ subdirectory of the system..." (incf step))
