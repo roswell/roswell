@@ -131,7 +131,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (declare (ignore argv))
   (let ((version (find-version)))
     (mapc
-     #'uiop:run-program
+     (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
      `("git checkout release"
        "git merge master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
