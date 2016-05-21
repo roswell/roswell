@@ -28,8 +28,10 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
            (install-impl imp version subcmd argv))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            (read-call "install-ros" sub))
-          ((or (read-call "ql-dist:find-system" imp)
-               (read-call "ql:where-is-system" imp))
+          ((progn
+             (read-call "quicklisp-client:register-local-projects")
+             (or (read-call "ql-dist:find-system" imp)
+                 (read-call "ql:where-is-system" imp)))
            (read-call "install-system-script" imp))
           (version
            (format *error-output* "install from github ~A/~A" imp version)
