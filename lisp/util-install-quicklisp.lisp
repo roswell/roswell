@@ -190,6 +190,7 @@
      ,@(when depends-on `(:depends-on ,depends-on))))
 
 (system "install-abcl-bin")
+(system "install-allegro")
 (system "install-ccl-bin")
 (system "install-cmu-bin")
 (system "install-clisp")
