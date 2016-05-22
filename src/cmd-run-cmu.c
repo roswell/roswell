@@ -18,6 +18,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
   char* control_stack_size=get_opt("control-stack-size",0);
+  char* cmucllib=cat(impl_path,"lib/cmucl/lib",NULL);  
   char* cmu_version=get_opt("version",0);
   char *bin;
   LVal ret=0;
@@ -32,6 +33,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
     bin=truename(bin);
   }else
     bin=cat(impl_path,SLASH,"bin",SLASH,"lisp",EXE_EXTENTION,NULL);
+  setenv("CMUCLLIB",cmucllib,1);
 
   ret=conss(bin,ret);
   /* runtime options from here */
