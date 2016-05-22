@@ -228,9 +228,9 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
   if(rc)
     star_rc();
   char** arg=determin_args(argc,argv);
+  char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
   if(arg && file_exist_p(arg[0])) {
     int i;
-    char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
     arg=star_wrap(arg);
     setenv("ROS_OPTS",opts,1);
     if(verbose&1 ||testing) {
@@ -239,10 +239,21 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
         fprintf(stderr,"%s ",arg[i]);
       cond_printf(0,"\nROS_OPTS %s\n",getenv("ROS_OPTS"));
     }
-    s(opts);
     testing?exit(EXIT_SUCCESS):exec_arg(arg);
+  }else if(!arg) {
+    LVal ret=0;
+    ret=conss(argv_orig[0],ret);
+    ret=conss(q("-L"),ret);
+    ret=conss(q(DEFAULT_IMPL),ret);
+    ret=conss(s_cat2(q(lispdir()),q("run.ros")),ret);
+    ret=conss(get_opt("impl",0),ret);
+    ret=conss(get_opt("program",0),ret);
+    ret=conss(get_opt("restart",0),ret);
+    ret=conss(get_opt("verbose",0),ret);
+    exec_arg(stringlist_array(nreverse(ret)));
   }
-  cond_printf(0,"%s is not installed.stop.\n",get_opt("impl",0));
+  s(opts);
+  cond_printf(0,"%s is not exist.stop.\n",arg[0]);
   return 1;
 }
 
