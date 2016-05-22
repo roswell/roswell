@@ -72,7 +72,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (append (directory (make-pathname :defaults *load-pathname* :name :wild :type "ros"))
                       (directory (merge-pathnames "cmds/*.ros" (homedir)))
                       (directory (merge-pathnames "bin/*" (homedir)))))))
-    (unless (zerop (ros:verbose))
+    (when (ros:verbose)
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir)
       (force-output *error-output*))
     (unless (ignore-errors

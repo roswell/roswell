@@ -62,7 +62,9 @@ have the latest asdf, and this file has a workaround for this.
   (second (assoc param (ros-opts) :test 'equal)))
 
 (defun verbose ()
-  (values (parse-integer (ros:opt "verbose"))))
+  (let ((ret (parse-integer (ros:opt "verbose"))))
+    (if (zerop ret)
+        nil ret)))
 
 (or
  (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
