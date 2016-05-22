@@ -11,14 +11,14 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   /*[binpath for lisp] -quiet -core param -eval init.lisp
     -noinit -nositeinit [terminating NULL] that total 9 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,SLASH,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
   char* control_stack_size=get_opt("control-stack-size",0);
-  char* cmucllib=cat(impl_path,"lib/cmucl/lib",NULL);  
+  char* cmucllib=cat(impl_path,"lib"SLASH"cmucl"SLASH"lib",NULL);
   char* cmu_version=get_opt("version",0);
   char *bin;
   LVal ret=0;
@@ -32,7 +32,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
       s(bin),bin=which("cmucl");
     bin=truename(bin);
   }else
-    bin=cat(impl_path,SLASH,"bin",SLASH,"lisp",EXE_EXTENTION,NULL);
+    bin=cat(impl_path,"bin",SLASH,"lisp",EXE_EXTENTION,NULL);
   setenv("CMUCLLIB",cmucllib,1);
 
   ret=conss(bin,ret);
@@ -40,7 +40,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss(q("-quiet"),ret);
   if(image) {
-    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(impl_path,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-core"),ret);
       ret=conss(q(path),ret);
