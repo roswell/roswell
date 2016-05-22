@@ -6,7 +6,7 @@
     (format *error-output* "Checking version to install...~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download (cmu-bin-uri) file))
+      (download (format nil "~Arelease/" (cmu-bin-uri))  file))
     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
        for href = (plump:get-attribute link "href")
        for len = (length href)
@@ -27,6 +27,10 @@
   (or (cdr (assoc (uname-m) *cmu-uname-m-alist* :test 'equal))
       (uname-m)))
 
+(defun cmu-bin-archive-uri (version extra)
+  (format nil "~@{~A~}" (cmu-bin-uri) "release/"
+          version "/cmucl-" version "-" cmu-uname-m "-" uname (if extra ".extra" "") ".tar.bz2"))
+
 (defun cmu-bin-argv-parse (argv)
   (let ((uname (uname))
         (cmu-uname-m (cmu-uname-m)))
@@ -34,8 +38,7 @@
     (set-opt "as" (getf argv :version))
     (when (position "--without-install" (getf argv :argv) :test 'equal)
       (set-opt "without-install" t))
-    (set-opt "download.uri" (format nil "~@{~A~}" (cmu-bin-uri)
-                                    (getf argv :version) "/cmucl-" (getf argv :version) "-" cmu-uname-m "-" uname ".tar.bz2"))
+    (set-opt "download.uri" (cmu-bin-archive-uri (getf argv :version) nil))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                   (when pos 
                                     (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
@@ -45,8 +48,7 @@
   (let ((uname (uname))
         (cmu-uname-m (cmu-uname-m)))
     (format *error-output* "~&Installing extra cmu-bin/~A...~%" (getf argv :version))
-    (set-opt "download.uri" (format nil "~@{~A~}" (cmu-bin-uri)
-                                    (getf argv :version) "/cmucl-" (getf argv :version) "-" cmu-uname-m "-" uname ".extra.tar.bz2"))
+    (set-opt "download.uri" (cmu-bin-archive-uri (getf argv :version) t))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                   (when pos 
                                     (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
