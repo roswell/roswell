@@ -8,7 +8,7 @@ env:
   matrix:
     - METHOD=brew
     - METHOD=ci LISP=sbcl-bin
-    - METHOD=ci LISP=cmu-bin
+    - METHOD=ci LISP=cmu-bin/2016-05
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=clisp

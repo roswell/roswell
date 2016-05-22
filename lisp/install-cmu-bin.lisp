@@ -30,8 +30,8 @@
 (defun cmu-bin-archive-uri (version extra)
   (let ((uname (uname))
         (cmu-uname-m (cmu-uname-m)))
-    (format nil "~@{~A~}" (cmu-bin-uri) "release/"
-            version "/cmucl-" version "-" cmu-uname-m "-" uname (if extra ".extra" "") ".tar.bz2")))
+    (format nil "~@{~A~}" (cmu-bin-uri) (if (find #\- version) "snapshots/" "release/")
+            (substitute #\/ #\- version) "/cmucl-" version "-" cmu-uname-m "-" uname (if extra ".extra" "") ".tar.bz2")))
 
 (defun cmu-bin-argv-parse (argv)
   (format *error-output* "~&Installing cmu-bin/~A...~%" (getf argv :version))
