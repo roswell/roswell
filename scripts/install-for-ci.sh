@@ -9,11 +9,8 @@ ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local}
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
-CMU_DIR="$LISP_IMPLS_DIR/cmucl"
 ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
 
-CMU_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2016/02/cmucl-2016-02-x86-linux.tar.bz2"
-CMU_EXTRA_TARBALL_URL="https://common-lisp.net/project/cmucl/downloads/snapshots/2016/02/cmucl-2016-02-x86-linux.extra.tar.bz2"
 ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl100express/linux86/acl100express-linux-x86.bz2"
 ALLEGRO_DMG_URL="http://www.franz.com/ftp/pub/acl100express/macosx86/acl100express-macosx-x86.dmg"
 
@@ -81,26 +78,6 @@ apt_unless_installed () {
             sudo apt-get install "$1"
         fi
     fi
-}
-
-install_cmucl () {
-    if [ `uname` = "Darwin" ]; then
-        brew install homebrew/binary/cmucl
-    else
-        if ! [ -f "$LISP_IMPLS_BIN/cmucl" ]; then
-            apt_unless_installed libc6-i386
-            fetch "$CMU_TARBALL_URL" "$HOME/cmucl.tar.bz2"
-            extract -j "$HOME/cmucl.tar.bz2" "$CMU_DIR"
-            fetch "$CMU_EXTRA_TARBALL_URL" "$HOME/cmucl-extra.tar.bz2"
-            extract -j "$HOME/cmucl-extra.tar.bz2" "$CMU_DIR"
-
-            export CMUCLLIB="$CMU_DIR/lib/cmucl/lib"
-            install_script "$LISP_IMPLS_BIN/cmucl" \
-            "export CMUCLLIB=\"$CMU_DIR/lib/cmucl/lib\"" \
-            "exec \"$CMU_DIR/bin/lisp\" \"\$@\""
-        fi
-    fi
-    PATH="$LISP_IMPLS_BIN:$PATH" ros use cmucl/system
 }
 
 install_abcl () {
@@ -174,6 +151,10 @@ log "ros --version"
 log "ros setup"
 
 case "$LISP" in
+    cmu|cmucl)
+        apt_unless_installed libc6-i386
+        LISP=cmu-bin
+        ;;
     # 'ccl' is an alias for 'ccl-bin'
     ccl)
         LISP=ccl-bin
@@ -204,9 +185,6 @@ case "$LISP" in
             ros install $LISP
             ros use $LISP
         fi
-        ;;
-    cmu|cmucl)
-        install_cmucl
         ;;
     abcl)
         install_abcl
