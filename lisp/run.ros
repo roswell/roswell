@@ -1,12 +1,31 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Run repl
-exec ros -Q -- $0 "$@"
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 (progn)
 (defpackage :ros.script.run.3668210999
   (:use :cl))
 (in-package :ros.script.run.3668210999)
-(defun main (&rest argv)
-  (declare (ignorable argv)))
+
+(defun probe-impl-script (impl)
+  (ignore-errors
+   (let ((imp (format nil "roswell.run.~A" impl)))
+     (and (or (ql-dist:find-system imp)
+              (ql:where-is-system imp))
+          (ql:quickload imp :silent t)))))
+
+(defvar *run-assoc* nil "move to different package")
+;; ("regexp match with impl" "system name to load" "package:name-of-the-function")
+
+(defun main (system program restart verbose)
+  (let* ((pos (position #\/ system))
+         (version (subseq system (1+ pos)))
+         (system (subseq system 0 pos))
+         (verbose (parse-integer verbose :junk-allowed t)))
+    (if (or (probe-impl-script system))
+        (progn :do :something)
+        (progn
+          (format *error-output* " ")
+          ))))
 ;;; vim: set ft=lisp lisp:
