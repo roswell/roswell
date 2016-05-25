@@ -8,7 +8,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.run.3668210999)
 
-(defun probe-impl-script (impl)
+(defun probe-run-script (impl)
   (ignore-errors
    (let ((imp (format nil "roswell.run.~A" impl)))
      (and (or (ql-dist:find-system imp)
@@ -19,13 +19,14 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 ;; ("regexp match with impl" "system name to load" "package:name-of-the-function")
 
 (defun main (system program restart verbose)
+  (declare (ignorable program restart))
   (let* ((pos (position #\/ system))
          (version (subseq system (1+ pos)))
          (system (subseq system 0 pos))
          (verbose (parse-integer verbose :junk-allowed t)))
-    (if (or (probe-impl-script system))
+    (declare (ignorable version verbose))
+    (if (or (probe-run-script system))
         (progn :do :something)
         (progn
-          (format *error-output* " ")
-          ))))
+          (format *error-output* " ")))))
 ;;; vim: set ft=lisp lisp:
