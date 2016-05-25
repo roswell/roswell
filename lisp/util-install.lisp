@@ -4,7 +4,7 @@
 
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
-  (:export :*build-hook* :install-impl :probe-impl-script :read-call :*ros-path*
+  (:export :*build-hook* :install-impl :probe-install-script :read-call :*ros-path*
            :install-system-script))
 
 (in-package :ros.install)
@@ -23,7 +23,7 @@
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
-(defun probe-impl-script (impl)
+(defun probe-install-script (impl)
   (or (ignore-errors
        (let ((imp (format nil "roswell.install.~A" impl)))
          (and (or (read-call "ql-dist:find-system" imp)

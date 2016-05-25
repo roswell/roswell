@@ -24,7 +24,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
         (setq version (subseq impl/version (1+ pos))
               imp (subseq impl/version 0 pos))
         (setq imp impl/version))
-    (cond ((probe-impl-script imp)
+    (cond ((probe-install-script imp)
            (install-impl imp version subcmd argv))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            (read-call "install-ros" sub))
