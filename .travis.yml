@@ -14,7 +14,7 @@ env:
     - METHOD=ci LISP=clisp
     - METHOD=ci LISP=alisp
     - METHOD=ci LISP=abcl
-    - METHOD=ci LISP=ccl
+    - METHOD=ci LISP=ccl-bin
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
   
