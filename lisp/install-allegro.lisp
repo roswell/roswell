@@ -52,15 +52,28 @@
 (defun allegro-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
   (let* ((impls (merge-pathnames (format nil "impls/~A/~A/allegro/" (uname-m) (uname)) (homedir)))
-         (path (merge-pathnames (format nil "~A/" (get-opt "as")) impls)))
-    (expand (get-opt "download.archive") (ensure-directories-exist impls))
-    (and (probe-file path)
-         (uiop/filesystem:delete-directory-tree 
-          path :validate t))
-    (ql-impl-util:rename-directory
-     (merge-pathnames (format nil "acl~A/" (getf argv :version)) impls)
-     (merge-pathnames (format nil "~A/" (get-opt "as")) impls)))
-  (cons t argv))
+         (path (merge-pathnames (format nil "~A/" (get-opt "as")) impls))
+         (uname (allegro-uname)))
+    (cond
+      ((equal uname "macos")
+       (let ((mount-dir (string-right-trim
+                         (format nil "~%")
+                         (uiop:run-program
+                          (format nil "hdiutil attach ~A | awk -F '\t' 'END{print $NF}'" (get-opt "download.archive"))
+                          :output :string))))
+         (uiop:run-program (format nil "cp -r ~A/AllegroCLexpress.app/Contents/Resources/ ~A"
+                                   mount-dir
+                                   (ensure-directories-exist (merge-pathnames (format nil "~A/" (get-opt "as")) impls))))
+         (uiop:run-program (format nil "hdiutil detach \"~A\"" mount-dir))))
+      (t
+       (expand (get-opt "download.archive") (ensure-directories-exist impls))
+       (and (probe-file path)
+            (uiop/filesystem:delete-directory-tree 
+             path :validate t))
+       (ql-impl-util:rename-directory
+        (merge-pathnames (format nil "acl~A/" (getf argv :version)) impls)
+        (merge-pathnames (format nil "~A/" (get-opt "as")) impls))))
+    (cons t argv)))
 
 (defun allegro-help (argv)
   (format t "allegro install options~%")
