@@ -17,6 +17,7 @@ struct run_impl_t impls_to_run[]={
   {"cmucl",&cmd_run_cmu},
   {"acl",&cmd_run_acl},
   {"alisp",&cmd_run_acl},
+  {"allegro",&cmd_run_acl},
 };
 
 LVal run_commands=(LVal)NULL;

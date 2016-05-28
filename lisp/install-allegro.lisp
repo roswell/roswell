@@ -82,7 +82,7 @@
                      allegro-argv-parse
                      allegro-download
                      allegro-expand
-                     #+nil setup))
+                     setup))
       *install-cmds*)
 
 (push `("allegro" . ,(list 'allegro-help)) *help-cmds*)

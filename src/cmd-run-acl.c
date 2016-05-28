@@ -13,7 +13,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   /*[binpath for alisp] --qq -I param -e init.lisp
     [terminating NULL] that total 7 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,"alisp",SLASH,version,NULL);
+  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,"allegro",SLASH,version,NULL);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -24,7 +24,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss((strcmp("system",version)==0)?
             truename(which(lisp)):
-            cat(impl_path,SLASH,"bin",SLASH,lisp,EXE_EXTENTION,NULL),ret);
+            cat(impl_path,SLASH,lisp,EXE_EXTENTION,NULL),ret);
   /* runtime options from here */
   ret=conss(q("-qq"),ret);
   if(acl_version) {
