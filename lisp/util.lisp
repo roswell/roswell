@@ -27,10 +27,10 @@
     (unless (zerop (length result))
       result)))
 
-(defun download (uri file &key proxy)
+(defun download (uri file &key proxy (verbose t))
   (declare (ignorable proxy))
   (ensure-directories-exist file)
-  (ros:roswell `("roswell-internal-use" "download" ,uri ,file) :interactive nil))
+  (ros:roswell `("roswell-internal-use" "download" ,uri ,file ,@(unless verbose '("1"))) :interactive nil))
 
 (defun expand (archive dest &key verbose)
   (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
