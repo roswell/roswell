@@ -7,12 +7,12 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
   matrix:
     - METHOD=brew
+    - METHOD=ci LISP=alisp
     - METHOD=ci LISP=sbcl-bin
     - METHOD=ci LISP=cmu-bin/2016-05
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=clisp
-    - METHOD=ci LISP=alisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl-bin
     - METHOD=ci LISP=sbcl/1.1.14

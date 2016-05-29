@@ -9,10 +9,6 @@ ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local}
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
-ALLEGRO_DIR="$LISP_IMPLS_DIR/acl"
-
-ALLEGRO_TARBALL_URL="http://www.franz.com/ftp/pub/acl100express/linux86/acl100express-linux-x86.bz2"
-ALLEGRO_DMG_URL="http://www.franz.com/ftp/pub/acl100express/macosx86/acl100express-macosx-x86.dmg"
 
 log () {
     echo "$ $1"
@@ -106,28 +102,6 @@ install_ecl () {
     fi
 }
 
-install_allegro () {
-    if ! [ -f "$LISP_IMPLS_BIN/alisp" ]; then
-        if [ `uname` = "Darwin" ]; then
-            fetch "$ALLEGRO_DMG_URL" "$HOME/acl.dmg"
-            mkdir -p $ALLEGRO_DIR
-            mount_dir=`hdiutil attach $HOME/acl.dmg | awk -F '\t' 'END{print $NF}'`
-            cp -r $mount_dir/AllegroCLexpress.app/Contents/Resources/ $ALLEGRO_DIR/
-            # mv $LISP_IMPLS_DIR/Resources $LISP_IMPLS_DIR/acl
-            hdiutil detach "$mount_dir"
-            install_script "$LISP_IMPLS_BIN/alisp" \
-                "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
-        else
-            apt_unless_installed libc6-i386
-            fetch "$ALLEGRO_TARBALL_URL" "$HOME/acl.bz2"
-            extract -j "$HOME/acl.bz2" "$ALLEGRO_DIR"
-            install_script "$LISP_IMPLS_BIN/alisp" \
-                "exec \"$ALLEGRO_DIR/alisp\" \"\$@\""
-        fi
-    fi
-    PATH="$LISP_IMPLS_BIN:$PATH" ros use alisp/system
-}
-
 if ! which ros ; then
     echo "Installing Roswell..."
 
@@ -151,6 +125,9 @@ log "ros --version"
 log "ros setup"
 
 case "$LISP" in
+    alisp)
+        LISP=allegro
+        ;;
     cmu|cmucl)
         apt_unless_installed libc6-i386
         LISP=cmu-bin
@@ -191,9 +168,6 @@ case "$LISP" in
         ;;
     ecl)
         install_ecl
-        ;;
-    allegro|alisp)
-        install_allegro
         ;;
     sbcl-bin)
         ros use $LISP
