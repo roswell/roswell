@@ -19,7 +19,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (defvar *repositries* '(github)) ;; github should be the choice in 2016...
 
 (defun main (method command &optional sub &rest argv)
-  (declare (ignorable argv method command))
+  (declare (ignorable method command))
   (let ((func (cdr (assoc sub *sub* :test #'equal))))
     (when func (funcall func argv))))
 
