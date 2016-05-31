@@ -127,7 +127,10 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun run-program (args &key output)
   (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
-      (funcall #1# (format nil "~{~A~^ ~}" args) :output output #+(and sbcl win32) :force-shell #+(and sbcl win32) nil)
+      (funcall #1# (format nil "~{~A~^ ~}" args)
+               :output output
+               #+(and sbcl win32) :force-shell #+(and sbcl win32) nil
+               :error-output :interactive)
       (with-output-to-string (out)
         #+sbcl(funcall (read-from-string "sb-ext:run-program")
                        (first args) (mapcar #'princ-to-string (rest args))
