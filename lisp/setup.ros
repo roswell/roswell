@@ -71,6 +71,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (dump-filter dump)
               (append (directory (make-pathname :defaults *load-pathname* :name :wild :type "ros"))
                       (directory (merge-pathnames "cmds/*.ros" (homedir)))
+                      (directory (merge-pathnames "lisp/*.lisp" (homedir)))
                       (directory (merge-pathnames "bin/*" (homedir)))))))
     (when (ros:verbose)
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir)
