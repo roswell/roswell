@@ -11,6 +11,8 @@ extern size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream);
 int download_simple (char* uri,char* path,int opt) {
   FILE *bodyfile;
   char* path_partial=cat(path,".partial",NULL);
+  int retry=0;
+ LOOP:
   bodyfile = fopen(path_partial,"wb");
   if (bodyfile == NULL) {
     s(path_partial);
@@ -68,12 +70,18 @@ int download_simple (char* uri,char* path,int opt) {
   DWORD dwBytesRead = 1;
   download_count=0;
   while (dwBytesRead) {
-    InternetReadFile(hRequest, pData, 99, &dwBytesRead);
+    InternetReadFile(hRequest, pData, sizeof(pData), &dwBytesRead);
     pData[dwBytesRead] = 0;
     write_data(pData,dwBytesRead,1,bodyfile);
   }
   fclose(bodyfile);
   fprintf(download_out, "\n");
+  if(content_length!=0 &&
+     content_length > download_count &&
+     retry++ < 10) {
+    fprintf(download_out, "retry %d\n",retry);
+    goto LOOP;
+  }
   int ret=rename_file(path_partial,path);
   s(path_partial);
   return ret?0:7;
