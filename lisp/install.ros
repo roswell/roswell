@@ -36,7 +36,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
           (version
            (format *error-output* "install from github ~A/~A" imp version)
            (clone-github imp version :path "local-projects"))
-          (t (error "'~A' is not a valid target for 'install' -- It should be a name of either:
+          (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" imp)))))
 ;;; vim: set ft=lisp lisp:
