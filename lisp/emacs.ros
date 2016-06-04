@@ -10,12 +10,27 @@ exec ros -L sbcl-bin -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.emacs.3672012160)
 
+(defvar *verbose-p* (string= "1" (ros:opt "verbose")))
+
+(defmacro mute-error-if-not-verbose (&body body)
+  "Execute the body, catches (and hide) any error if *verbose-p* is nil."
+  `(handler-case
+       ,@body
+     (error (condition)
+       (if *verbose-p*
+	   (error condition)
+	   (values nil condition)))))
+
 (defun main (&rest argv)
   (let ((path (merge-pathnames "slime-helper.el" (ros:opt "quicklisp"))))
     (unless (probe-file path)
       (ros:roswell '("-L" "sbcl-bin" "-s" "quicklisp-slime-helper" "-q") :interactive nil))
-    ;; TODO ignore-errors only when backtraces are not "activated".
-    (ignore-errors
-      (ros:exec `("emacs" "-l" ,(namestring path) "--eval" "(setq inferior-lisp-program \"ros -Q run\")"
-			  ,@(cddr argv))))))
+    ;; This enable to set verbosity only for this file (instead of whole roswell).
+    (when (and (= 3 (length argv))
+	       (string= "--verbose" (third argv)))
+      (setf *verbose-p* t))    
+    (mute-error-if-not-verbose
+     (ros:exec
+	 `("emacs" "-l" ,(namestring path) "--eval"
+		   "(setq inferior-lisp-program \"ros -Q run\")" ,@(cddr argv))))))
 ;;; vim: set ft=lisp lisp:
