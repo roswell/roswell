@@ -249,7 +249,8 @@ int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
     ret=conss(s_cat2(q(lispdir()),q("run.ros")),ret); 
     ret=conss(q(get_opt("impl",0)),ret); 
     ret=conss(q(get_opt("program",0)?get_opt("program",0):""),ret); 
-    ret=conss(q(get_opt("restart",0)?get_opt("restart",0):""),ret); 
+    ret=conss(q(get_opt("restart",0)?get_opt("restart",0):""),ret);
+    ret=conss(q(get_opt("script",0)?get_opt("script",0):""),ret);
     ret=conss(q(get_opt("verbose",0)),ret); 
     exec_arg(stringlist_array(nreverse(ret)));
   }

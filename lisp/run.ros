@@ -11,15 +11,15 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.run))
 (in-package :ros.script.run.3668210999)
 
-(defun main (system program restart verbose)
-  (declare (ignorable program restart))
+(defun main (system program restart script verbose)
   (let* ((pos (position #\/ system))
          (version (subseq system (1+ pos)))
          (system (subseq system 0 pos))
          (verbose (parse-integer verbose :junk-allowed t)))
     (declare (ignorable version verbose))
-    (if (or (probe-run-script system))
-        (progn :do :something)
+    (if (and (probe-run-script system)
+             (functionp ros:*main*))
+        (funcall ros:*main* system version program restart script verbose)
         (progn
-          (format *error-output* " ")))))
+          (format *error-output* "not supported impl:~A~%" system)))))
 ;;; vim: set ft=lisp lisp:

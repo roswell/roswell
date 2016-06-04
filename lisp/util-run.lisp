@@ -7,6 +7,7 @@
 
 (defun probe-run-script (impl)
   (ignore-errors
+   (quicklisp-client:register-local-projects)
    (let ((imp (format nil "roswell.run.~A" impl)))
      (and (or (ql-dist:find-system imp)
               (ql:where-is-system imp))
