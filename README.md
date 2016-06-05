@@ -21,6 +21,10 @@ Checkout [issues list](https://github.com/roswell/roswell/issues) if you are int
 
 See our [github wiki](https://github.com/roswell/roswell/wiki).
 We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
+* [Linux (arch)](https://github.com/roswell/roswell/wiki/1.-Installation#linux)
+* [Mac OS X (brew)](https://github.com/roswell/roswell/wiki/1.-Installation#mac-os-x--homebrew-----use-the-custom-tap)
+* [Windows](https://github.com/roswell/roswell/wiki/1.-Installation#windows)
+* [Building from Source](https://github.com/roswell/roswell/wiki/1.-Installation#building-from-source)
 
 ## Features
 

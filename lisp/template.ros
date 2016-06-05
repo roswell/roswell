@@ -11,30 +11,57 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :ros.script.template.3670908195)
 
-(defvar *sub* '(("rm" . template-rm)
-                ("delete" . template-rm)
-                ("install" . template-install)
-                ("list" . template-list)))
+(defvar *subcommands* '(("rm" . template-rm)
+			("delete" . template-rm)
+			("install" . template-install)
+			("list" . template-list)
+			("help" . help)))
 
 (defvar *repositries* '(github)) ;; github should be the choice in 2016...
 
+(defun usage ()
+  (format *error-output*
+	  "~&***WIP*** Usage: ~A ~{~A~^/~} ~%"
+	  (ros:opt "wargv0")
+	  (mapcar #'car *subcommands*)))
+
+(defun help (_)
+  (declare (ignore _))
+  "Print usage and subcommands description"
+  (usage)
+  (loop
+     for (command . func) in *subcommands*
+     do
+       (format *error-output* "~&~15A ~A" command (documentation func 'function))))
+
+
 (defun main (method command &optional sub &rest argv)
   (declare (ignorable method command))
-  (let ((func (cdr (assoc sub *sub* :test #'equal))))
-    (when func (funcall func argv))))
+  (let ((func (cdr (assoc sub *subcommands* :test #'equal))))
+    (if func
+	(funcall func argv)
+	(usage))))
 
 (defun template-install (name)
-  (loop for i in *repositries*
-        until (apply i name)))
+  "Install (clone) a new template from github repository."
+  (loop
+     for i in *repositries*
+     until (apply i name)))
 
 (defun template-rm (name)
+  "Remove (delete) a template."
   (uiop/filesystem:delete-directory-tree
    (merge-pathnames (format nil "~A/~A/" "templates" name) (homedir))))
 
 (defun template-list (name)
+  "List the installed templates"
   (declare (ignore name))
-  (loop for x in (directory (merge-pathnames "templates/*/*/" (homedir)))
-        do (format t "~{~A~^/~}~%" (last (pathname-directory x) 2))))
+  (let* ((wildcard (merge-pathnames "templates/*/*/" (homedir)))
+	 (templates (directory wildcard)))
+    (unless templates
+      (format *error-output* "~&No template found in ~S." wildcard))
+    (loop for x in templates
+       do (format t "~{~A~^/~}~%" (last (pathname-directory x) 2)))))
 
 (defun github (name &rest argv)
   (declare (ignorable argv))
