@@ -292,7 +292,6 @@ have the latest asdf, and this file has a workaround for this.
   (cl:write (cl:eval (read-from-string arg))))
 
 (defun script (cmd arg &rest rest)
-  (declare (ignorable cmd))
   (setf *argv* rest)
   (flet ((body (in)
            (let ((line(read-line in)))
