@@ -24,19 +24,19 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
         (setq version (subseq impl/version (1+ pos))
               imp (subseq impl/version 0 pos))
         (setq imp impl/version))
+    (read-call "quicklisp-client:register-local-projects")
     (cond ((probe-install-script imp)
            (install-impl imp version subcmd argv))
           ((probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))
            (read-call "install-ros" sub))
-          ((progn
-             (read-call "quicklisp-client:register-local-projects")
-             (or (read-call "ql-dist:find-system" imp)
-                 (read-call "ql:where-is-system" imp)))
+          ((or (read-call "ql-dist:find-system" imp)
+               (read-call "ql:where-is-system" imp))
            (read-call "install-system-script" imp))
           (version
            (format *error-output* "install from github ~A/~A" imp version)
            (clone-github imp version :path "local-projects"))
           (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
-+ a common lisp installation ~%" imp)))))
++ a common lisp installation ~%" imp)
+             (ros:quit 1)))))
 ;;; vim: set ft=lisp lisp:
