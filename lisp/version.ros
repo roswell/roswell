@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Show the roswell version information
-exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
@@ -23,9 +23,12 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
             (version "package") revision
             (version "cc"))
     (unless (zerop (length curl))
-      (format *error-output* "libcurl ~A~%" curl))
+      (format *error-output* "libcurl=~A~%" curl))
     (unless (zerop (length asdf))
-      (format *error-output* "ASDF ~A~%" asdf))
+      (format *error-output* "ASDF=~A~%" asdf))
+    (format *error-output* "Quicklisp=~A~%Dist=~A~%"
+            (ql:client-version)
+            (ql-dist:version (ql-dist:find-dist "quicklisp")))
     (format *error-output* "lispdir='~A'~%" (version "lispdir"))
     (unless (zerop (length conf))
       (format *error-output* "configdir='~A'~%" conf))))
