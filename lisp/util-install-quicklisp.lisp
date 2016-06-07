@@ -145,7 +145,7 @@
       (when *build-hook*
         (funcall *build-hook*))
       (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
-                                         roswell/ subdirectory of the system..." (incf step))
+                                         roswell/ subdirectory of the system...~%" (incf step))
       (let ((scripts (directory (merge-pathnames "roswell/*.*" (ql:where-is-system system)))))
         (if scripts
             (format t "~&Found ~a scripts:~{ ~a~}~%"
