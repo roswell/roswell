@@ -4,8 +4,9 @@
 
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
-  (:export :*build-hook* :install-impl :probe-install-script :read-call :*ros-path*
-           :install-system-script))
+  (:export :*build-hook* :install-impl :probe-impl :read-call :*ros-path*
+   :install-system-script :install-impl-if-probed :install-script-if-probed
+           :install-system-if-probed))
 
 (in-package :ros.install)
 
@@ -23,7 +24,7 @@
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
-(defun probe-install-script (impl)
+(defun probe-impl (impl)
   (or (ignore-errors
        (let ((imp (format nil "roswell.install.~A" impl)))
          (and (or (read-call "ql-dist:find-system" imp)
@@ -48,6 +49,26 @@
             (declare (ignore condition))
             (format t "SIGINT detected, cleaning up the partially installed files~%")
             (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
+
+(defun install-impl-if-probed (imp version subcmd argv)
+  (let ((result (probe-impl imp)))
+    (when result
+      (install-impl imp version subcmd argv)
+      result)))
+
+(defun install-script-if-probed (impl/version)
+  (let* (sub
+         (result (probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))))
+    (when result
+      (read-call "install-ros" sub)
+      result)))
+
+(defun install-system-if-probed (imp)
+  (let ((result (or (read-call "ql-dist:find-system" imp)
+                    (read-call "ql:where-is-system" imp))))
+    (when result
+      (read-call "install-system-script" imp)
+      result)))
 
 (defun github-version (uri project filter)
   (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
