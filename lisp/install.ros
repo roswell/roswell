@@ -19,7 +19,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (let* (imp
          (pos (position #\/ impl/version))
          (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
-         version sub)
+         version)
     (if pos
         (setq version (subseq impl/version (1+ pos))
               imp (subseq impl/version 0 pos))
@@ -29,10 +29,15 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
           ((install-script-if-probed impl/version))
           ((install-system-if-probed imp))
           (version
-           (format *error-output* "install from github ~A/~A" imp version)
-           (clone-github imp version :path "local-projects"))
+           ;; tbd: think how to set version for impl,branch/tag/hash for git.
+           (format *error-output* "install from github ~A/~A~%" imp version)
+           (clone-github imp version :path "local-projects")
+           (read-call "quicklisp-client:register-local-projects")
+           (or (install-impl-if-probed version nil subcmd argv)
+               (install-system-if-probed version)))
           (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" imp)
-             (ros:quit 1)))))
+             (ros:quit 1)))
+    (ros:exec `(,(ros:opt "argv0") "setup"))))
 ;;; vim: set ft=lisp lisp:
