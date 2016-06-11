@@ -105,7 +105,7 @@ int sbcl_bin_expand(struct install_options* param) {
   ensure_directories_exist(dist_path);
   argv[2]=cat(home,"archives",SLASH,archive,NULL);
   argv[4]=cat(home,"src",SLASH,NULL);
-  return !cmd_tar(5,argv,NULL);
+  return !cmd_tar(cons(argv,5),NULL);
 }
 
 int sbcl_bin_install(struct install_options* param) {

@@ -87,7 +87,11 @@ int download(struct install_options* param) {
   return 1;
 }
 
-int cmd_install(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_install) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   install_cmds *cmds=NULL;
   struct install_options param;
   quicklisp=1;

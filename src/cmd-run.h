@@ -21,8 +21,6 @@ extern char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
 extern LVal register_runtime_options(LVal opt);
 
-int cmd_run_star(int argc,char **argv,struct sub_command* cmd);
-
 #define SETUP_SYSTEM(sys,msg) {\
     cond_printf(0,"%s",msg);   \
     cond_printf(1,"%s\n",sys); \

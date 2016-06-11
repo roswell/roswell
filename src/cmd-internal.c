@@ -5,12 +5,20 @@
 
 LVal internal_commands=(LVal)NULL;
 
-int cmd_download (int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_download) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   int opt=argc>3?atoi(argv[3]):0;
   return argc>=3?(1&opt?0:fprintf(opt?stdout:stderr,"Downloading %s\n",argv[1])),download_simple(argv[1],argv[2],opt>2?0:opt):0;
 }
 
-int cmd_uname (int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_uname) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   if(argc==1) {
     printf("%s\n",uname());
   }else if(argc==2) {
@@ -20,7 +28,11 @@ int cmd_uname (int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-int cmd_which (int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_which) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   if(argc==2) {
     char* str=which(argv[1]);
     printf("%s\n",str);
@@ -29,7 +41,11 @@ int cmd_which (int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-int cmd_impl (int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_impl) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+  
   if(argc==1 && get_opt("default.lisp",0)) {
     char* impl=determin_impl(get_opt("default.lisp",0));
     printf("%s\n",impl);
@@ -43,7 +59,11 @@ int cmd_impl (int argc,char **argv,struct sub_command* cmd) {
   return 0;
 }
 
-int cmd_internal_version (int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_internal_version) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   if(argc==1) {
     printf("%s\n",PACKAGE_VERSION);
   }else if (argc==2) {
@@ -101,7 +121,11 @@ char* core_extention(char *impl) {
   return q("core");
 }
 
-int cmd_internal_core_extention (int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_internal_core_extention) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   if (argc==2)
     printf("%s\n",core_extention(argv[1]));
   return 0;
@@ -119,7 +143,11 @@ void register_cmd_internal(void) {
   internal_commands=cmds;
 }
 
-int cmd_internal(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_internal) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   setup_uid(0);
   return proccmd(argc-1,&(argv[1]),(LVal)NULL,internal_commands);
 }
@@ -145,7 +173,11 @@ char* lispdir(void) {
   return lisp_path;
 }
 
-int opt_version(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(opt_version) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   fprintf(stderr,"%s",PACKAGE_STRING);
   if(strlen(ROS_REVISION)>0)
     fprintf(stderr,"(%s)",ROS_REVISION);

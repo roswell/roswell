@@ -1,6 +1,7 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
 #include "cmd-run.h"
+DEF_SUBCMD(cmd_run_star);
 
 struct run_impl_t impls_to_run[]={
   {"sbcl",&cmd_run_sbcl},
@@ -23,7 +24,11 @@ struct run_impl_t impls_to_run[]={
 LVal run_commands=(LVal)NULL;
 LVal run_options =(LVal)NULL;
 
-int cmd_run(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_run) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   char* current=get_opt("program",0);
   cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current) {
@@ -44,7 +49,11 @@ int cmd_run(int argc,char **argv,struct sub_command* cmd) {
   }
 }
 
-int cmd_script(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_script) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   char* current=get_opt("program",0);
   cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   cond_printf(1,"current=%s\n",current);
@@ -63,14 +72,18 @@ int cmd_script(int argc,char **argv,struct sub_command* cmd) {
     }
     set_opt(&local_opt,"script",result);
     s(result);
-    cmd_run_star(1,tmp,cmd);
+    cmd_run_star(cons(tmp,1),cmd);
   }
   return 0;
 }
 
 static int script_frontend_sentinel=0;
 
-int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_script_frontend) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   FILE* in;
   char buf[800];
   int i=0,j,c;
@@ -79,7 +92,7 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   char** argv_gen;
   struct opts* opt;
   if(script_frontend_sentinel)
-    return cmd_script(argc,argv,cmd);
+    return cmd_script(cons(argv,argc),cmd);
   script_frontend_sentinel=1;
   if(strcmp(argv[0],"--")==0)
     ++argv,--argc;
@@ -91,7 +104,7 @@ int cmd_script_frontend(int argc,char **argv,struct sub_command* cmd) {
   if((in=fopen(argv[0],"rb"))!=NULL) {
     if(fgetc(in)!='#'||fgetc(in)!='!') {
       fclose(in);
-      cmd_script(argc,argv,cmd);
+      cmd_script(cons(argv,argc),cmd);
     }
     for(i=0;i<3;++i)
       while((c=fgetc(in))!=EOF && c!='\n');
@@ -224,7 +237,11 @@ char** determin_args(int argc,char **argv) {
   return arg;
 }
 
-int cmd_run_star(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_run_star) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   star_set_opt();
   if(rc)
     star_rc();

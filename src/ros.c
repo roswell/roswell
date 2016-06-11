@@ -58,7 +58,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
       for(p=option;p;p=Next(p)) {
         struct sub_command* fp=firstp(p);
         if(strcmp(&argv[0][2],fp->name)==0) {
-          int result= fp->call(argc,argv,fp);
+          int result= fp->call(cons(argv,argc),fp);
           if(fp->terminating) {
             cond_printf(1,"terminating:%s\n",argv[0]);
             exit(result);
@@ -73,7 +73,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
         for(p=option;p;p=Next(p)) {
           struct sub_command* fp=firstp(p);
           if(fp->short_name&&strcmp(argv[0],fp->short_name)==0) {
-            int result= fp->call(argc,argv,fp);
+            int result= fp->call(cons(argv,argc),fp);
             if(fp->terminating) {
               cond_printf(1,"terminating:%s\n",argv[0]);
               exit(result);
@@ -106,7 +106,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
       struct sub_command* fp=firstp(p);
       if(fp->name) {
         if(strcmp(fp->name,argv[0])==0)
-          exit(fp->call(argc,argv,fp));
+          exit(fp->call(cons(argv,argc),fp));
         if(strcmp(fp->name,"*")==0)
           p2=p;
       }
@@ -132,7 +132,7 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     }
     if(p2) {
       struct sub_command* fp=firstp(p2);
-      exit(fp->call(argc,argv,fp));
+      exit(fp->call(cons(argv,argc),fp));
     }
     fprintf(stderr,"invalid command\n");
     proccmd(1,tmp,top_options,top_commands);

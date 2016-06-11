@@ -3,7 +3,8 @@
 #define __OPT_H__
 #include "util.h"
 struct sub_command;
-typedef int (*sub_command_fnc)(int argc,char **argv,struct sub_command* cmd);
+typedef LVal (*sub_command_fnc)(LVal arg,struct sub_command* cmd);
+#define DEF_SUBCMD(fname) LVal fname(LVal arg_,struct sub_command* cmd)
 
 struct opts {
   const char* name;
@@ -29,6 +30,8 @@ extern struct opts* global_opt;
 extern struct opts* local_opt;
 extern int quicklisp;
 extern int rc;
+DEF_SUBCMD(opt_version);
+DEF_SUBCMD(cmd_internal);
 
 LVal add_command(LVal cmd,const char* name,const char* short_name,sub_command_fnc call,int show_opt,int terminating);
 struct opts* load_opts(const char* path);
@@ -39,5 +42,5 @@ char* get_opt(const char* name,int env);
 char* _get_opt(struct opts* opt,const char* name);
 char* sexp_opts(struct opts* opt);
 void free_opts(struct opts* opt);
-int cmd_tar(int argc,char **argv,struct sub_command* cmd);
+DEF_SUBCMD (cmd_tar);
 #endif

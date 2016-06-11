@@ -1,15 +1,17 @@
 #include "opt.h"
 
-extern int opt_version(int argc,char **argv,struct sub_command* cmd);
-extern int cmd_internal(int argc,char **argv,struct sub_command* cmd);
 extern void register_cmd_run(void);
 extern void register_cmd_install(void);
 extern void register_cmd_internal(void);
 
-#define OPT_SETVAL(sym,rexp)                                    \
-  int opt_##sym(int argc,char** argv,struct sub_command* cmd) { \
-    sym=rexp;                                                   \
-    cond_printf(1,"opt:%s:%d\n",cmd->name,sym);                 \
+#define OPT_SETVAL(sym,rexp)                          \
+  DEF_SUBCMD(opt_##sym) {                             \
+    char** argv=firstp(arg_);                         \
+    int argc=(int)rest(arg_);                         \
+    dealloc((void*)arg_);                             \
+                                                      \
+    sym=rexp;                                         \
+    cond_printf(1,"opt:%s:%d\n",cmd->name,sym);       \
     return 1;}
 
 OPT_SETVAL(verbose,(strcmp(cmd->name,"verbose")==0)?1|verbose<<1:verbose>>1)
@@ -17,7 +19,11 @@ OPT_SETVAL(testing,1+testing)
 OPT_SETVAL(rc,(strcmp(cmd->name,"rc")==0)?1:0)
 OPT_SETVAL(quicklisp,(strcmp(cmd->name,"quicklisp")==0)?1:0)
 
-int opt_program0(int argc,char** argv,struct sub_command* cmd) {
+DEF_SUBCMD(opt_program0) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   if(cmd->name) {
     char* current=get_opt("program",0);
     current=cat(current?current:"","(:",cmd->name,")",NULL);
@@ -26,7 +32,11 @@ int opt_program0(int argc,char** argv,struct sub_command* cmd) {
   return 1;
 }
 
-int opt_take1(int argc,char** argv,struct sub_command* cmd) {
+DEF_SUBCMD(opt_take1) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   const char* arg=cmd->name;
   if(arg && argc>1)
     set_opt(&local_opt,arg,argv[1]);
@@ -34,7 +44,11 @@ int opt_take1(int argc,char** argv,struct sub_command* cmd) {
 }
 
 #define OPT_APPEND(sym)                                            \
-  int opt_##sym(int argc,char** argv,struct sub_command* cmd) {    \
+  DEF_SUBCMD(opt_##sym) {                                          \
+    char** argv=firstp(arg_);                                      \
+    int argc=(int)rest(arg_);                                      \
+    dealloc((void*)arg_);                                          \
+                                                                   \
     if(cmd->name && argc>1) {                                      \
       char* current=get_opt(#sym,0);                               \
       current=s_cat(current?q(current):q(""),                      \

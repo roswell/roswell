@@ -46,7 +46,11 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   return ret;
 }
 
-int cmd_tar(int argc,char **argv,struct sub_command* cmd) {
+DEF_SUBCMD(cmd_tar) {
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
+
   const char *filename = NULL;
   const char *outputpath = NULL;
   int flags=0, mode, opt;
