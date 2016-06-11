@@ -11,6 +11,7 @@
 (in-package :ros.install)
 
 (defvar *ros-path* nil)
+(defvar *help-cmds* nil)
 (defvar *install-cmds* nil)
 (defvar *list-cmd* nil)
 
