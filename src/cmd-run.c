@@ -280,7 +280,7 @@ void register_cmd_run(void) {
   /*options*/
   run_options=register_runtime_options(run_options);
   run_options=add_command(run_options,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
-  /*run_options=add_command(run_options,"version",NULL,cmd_run_version,OPT_SHOW_NONE,0);*/
+
   run_options=nreverse(run_options);
 
   /*commands*/
