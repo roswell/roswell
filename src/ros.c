@@ -31,41 +31,51 @@ int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option
   return ret;
 }
 
+char** proc_alias(int argc,char** argv) {
+  char* builtin[][2]= {
+    {"-V","version"},
+    {"-h","help"},
+    {"-?","help"},
+    //{"build","dump executable"},
+  };
+  int i;
+  for (i=0;i<sizeof(builtin)/sizeof(char*[2]);++i) 
+    if(!strcmp(builtin[i][0],argv[0])) {
+      argv[0]=builtin[i][1];
+      break;
+    }
+  return argv;
+}
+
 int proccmd(int argc,char** argv,LVal option,LVal command) {
   int pos;
-  char* alias=NULL;
-  if(!strcmp(argv[0],"-V"))
-    alias="version";
-  else if(!strcmp(argv[0],"-h") || !strcmp(argv[0],"-?"))
-    alias="help";
-  else alias=argv[0];
-
   cond_printf(1,"proccmd:%s\n",argv[0]);
-  if(alias[0]=='-' || alias[0]=='+') {
-    if(alias[0]=='-' &&
-       alias[1]=='-') { /*long option*/
+  argv=proc_alias(argc,argv);
+  if(argv[0][0]=='-' || argv[0][0]=='+') {
+    if(argv[0][0]=='-' &&
+       argv[0][1]=='-') { /*long option*/
       LVal p;
       for(p=option;p;p=Next(p)) {
         struct sub_command* fp=firstp(p);
-        if(strcmp(&alias[2],fp->name)==0) {
+        if(strcmp(&argv[0][2],fp->name)==0) {
           int result= fp->call(argc,argv,fp);
           if(fp->terminating) {
-            cond_printf(1,"terminating:%s\n",alias);
+            cond_printf(1,"terminating:%s\n",argv[0]);
             exit(result);
           }else
             return result;
         }
       }
-      cond_printf(1,"proccmd:invalid? %s\n",alias);
+      cond_printf(1,"proccmd:invalid? %s\n",argv[0]);
     }else { /*short option*/
-      if(alias[1]!='\0') {
+      if(argv[0][1]!='\0') {
         LVal p;
         for(p=option;p;p=Next(p)) {
           struct sub_command* fp=firstp(p);
-          if(fp->short_name&&strcmp(alias,fp->short_name)==0) {
+          if(fp->short_name&&strcmp(argv[0],fp->short_name)==0) {
             int result= fp->call(argc,argv,fp);
             if(fp->terminating) {
-              cond_printf(1,"terminating:%s\n",alias);
+              cond_printf(1,"terminating:%s\n",argv[0]);
               exit(result);
             }else
               return result;
@@ -95,26 +105,26 @@ int proccmd(int argc,char** argv,LVal option,LVal command) {
     for(p=command;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
       if(fp->name) {
-        if(strcmp(fp->name,alias)==0)
+        if(strcmp(fp->name,argv[0])==0)
           exit(fp->call(argc,argv,fp));
         if(strcmp(fp->name,"*")==0)
           p2=p;
       }
     }
-    if(command==top_commands && position_char(".",alias)==-1) {
+    if(command==top_commands && position_char(".",argv[0])==-1) {
       /* local commands*/
       char* cmddir=configdir();
-      char* cmdpath=cat(cmddir,alias,".ros",NULL);
+      char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
       if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
         proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       s(cmddir),s(cmdpath);
       /* systemwide commands*/
       cmddir=subcmddir();
-      cmdpath=cat(cmddir,alias,".ros",NULL);
+      cmdpath=cat(cmddir,argv[0],".ros",NULL);
       if(directory_exist_p(cmddir)) {
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
-        s(cmdpath);cmdpath=cat(cmddir,"+",alias,".ros",NULL);
+        s(cmdpath);cmdpath=cat(cmddir,"+",argv[0],".ros",NULL);
         if(file_exist_p(cmdpath))
           proccmd_with_subcmd(cmdpath,"main",argc,argv,top_options,top_commands);
       }
