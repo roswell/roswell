@@ -93,16 +93,22 @@ Options:
 
 ### Managing/Installing Several Lisp Installations
 
+    $ ros install               # displays a list of all installable implementations
+    
     $ ros install sbcl-bin      # default sbcl
     $ ros install sbcl          # The newest released version of sbcl
     $ ros install ccl-bin       # default prebuilt binary of ccl
     $ ros install sbcl/1.2.0    # A specific version of sbcl
+    
     $ ros list installed sbcl   # Listing the installed implementations
     $ ros run -- --version      # check which implementation is used
     SBCL 1.2.15
     $ ros use sbcl/1.2.3        # change the default implementation
 
+To use an implementation that was not installed by roswell, use i.e. `ros use sbcl/system`.
+
 The list of supported implementations continues to grow!
+
 
 ### Scripting with Roswell
 
