@@ -10,7 +10,7 @@ exec ros -L sbcl-bin -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.emacs.3672012160)
 
-(defvar *verbose-p* (string= "1" (ros:opt "verbose")))
+(defvar *verbose-p* nil)
 
 (defmacro mute-error-if-not-verbose (&body body)
   "Execute the body, catches (and hide) any error if *verbose-p* is nil."
@@ -21,16 +21,15 @@ exec ros -L sbcl-bin -- $0 "$@"
 	   (error condition)
 	   (values nil condition)))))
 
-(defun main (&rest argv)
-  (let ((path (merge-pathnames "slime-helper.el" (ros:opt "quicklisp"))))
+(defun main (cmd &rest argv)
+  (declare (ignore cmd))
+  (let ((path (merge-pathnames "slime-helper.el" (ros:opt "quicklisp")))
+        (*verbose-p* (or (ros:verbose)
+                         (ros:opt "emacs.verbose"))))
     (unless (probe-file path)
       (ros:roswell '("-L" "sbcl-bin" "-s" "quicklisp-slime-helper" "-q") :interactive nil))
-    ;; This enable to set verbosity only for this file (instead of whole roswell).
-    (when (and (= 3 (length argv))
-	       (string= "--verbose" (third argv)))
-      (setf *verbose-p* t))    
     (mute-error-if-not-verbose
      (ros:exec
-	 `("emacs" "-l" ,(namestring path) "--eval"
-		   "(setq inferior-lisp-program \"ros -Q run\")" ,@(cddr argv))))))
+      `("emacs" "-l" ,(namestring path) "--eval"
+                "(setq inferior-lisp-program \"ros -Q run\")" ,@argv)))))
 ;;; vim: set ft=lisp lisp:

@@ -154,7 +154,7 @@ int mklockdir(char* path);
 int lock_apply(char* symbol,int remove);
 
 int proccmd(int argc,char** argv,LVal option,LVal command);
-int proccmd_with_subcmd(char* path,char* subcmd,int argc,char** argv,LVal option,LVal command);
+int proccmd_with_subcmd(char* path,int argc,char** argv,LVal option,LVal command);
 
 char* sbcl_bin(char* file);
 char* ccl_binname(char* bit);

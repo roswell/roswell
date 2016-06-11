@@ -35,8 +35,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (format *error-output* "~&~15A ~A" command (documentation func 'function))))
 
 
-(defun main (method command &optional sub &rest argv)
-  (declare (ignorable method command))
+(defun main (cmd &optional sub &rest argv)
+  (declare (ignore cmd))
   (let ((func (cdr (assoc sub *subcommands* :test #'equal))))
     (if func
 	(funcall func argv)

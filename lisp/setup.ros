@@ -52,8 +52,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                     until (eql i end)
                     always (member (first i) '(defun defvar defparameter quote)))))))))
 
-(defun main (method subcmd &optional (dump "roswell") &rest argv)
-  (declare (ignorable argv method subcmd))
+(defun main (cmd &optional (dump "roswell") &rest argv)
+  (declare (ignore cmd argv))
   #-win32
   (ignore-errors
    (require :sb-posix)

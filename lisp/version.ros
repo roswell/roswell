@@ -11,8 +11,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :ros.script.version.3668210994)
 
-(defun main (&rest argv)
-  (declare (ignorable argv))
+(defun main (cmd &rest argv)
+  (declare (ignore cmd argv))
   (let ((revision (version "revision"))
         (curl (version "curl"))
         (asdf (version "asdf"))

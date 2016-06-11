@@ -92,11 +92,11 @@ exec ros -- $0 "$@"
     #+(or sbcl ccl)
     ("executable" dump-executable)))
 
-(defun main (subcmd cmd &rest r)
-  (cond ((and (equal subcmd "main") r)
-         (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
-           (if func
-               (funcall func (rest r))
-               (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd))))
-        (t (format t "~{~a~%~}" (mapcar #'car *subcmds*)))))
+(defun main (cmd &rest r)
+  (if r
+      (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
+        (if func
+            (funcall func (rest r))
+            (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd)))
+      (format t "~{~a~%~}" (mapcar #'car *subcmds*))))
 ;;; vim: set ft=lisp lisp:

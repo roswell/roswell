@@ -12,8 +12,8 @@ exec ros +R +Q -L sbcl-bin -m roswell -- $0 "$@"
 
 (in-package :ros.script.use.3672012320)
 
-(defun main (subcmd impl/version &rest argv)
-  (declare (ignorable subcmd impl/version))
+(defun main (cmd &rest argv)
+  (declare (ignore cmd))
   (if (null argv)
       (progn
         (format *error-output* "Possible target candidates:~%")

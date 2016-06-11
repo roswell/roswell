@@ -32,12 +32,11 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
         (delete-file path)
         (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
 
-(defun main (subcmd cmd &rest r)
+(defun main (cmd &rest r)
   (declare (ignore cmd))
   (let* ((default (config "default.lisp"))
          (verstring (format nil "~A.version" default))
          (config (format nil "~A/~A" default (config verstring))))
-    ;; (print (list subcmd cmd r default verstring config))
     (cond
       ((null r)
        (format *error-output* "Usage: ros delete dump [IMAGES...]~%")
@@ -49,8 +48,6 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
        (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
        (finish-output *error-output*)
        (ros:roswell '("list" "installed") *standard-output*))
-      ((not (equal subcmd "main"))
-       (error "what is this?"))
       ((equal (first r) "dump")
        (delete-dump (rest r)))
       (t

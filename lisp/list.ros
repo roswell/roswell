@@ -85,8 +85,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                (dolist (v (funcall cmd))
                  (format t "~A~%" v))))))))
 
-(defun main (subcmd cmd &rest r)
-  (declare (ignorable subcmd cmd))
+(defun main (cmd &rest r)
+  (declare (ignore cmd))
   (if (null r)
       (progn
         (format *error-output* "Possible subcommands:~%")

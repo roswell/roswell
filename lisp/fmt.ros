@@ -8,9 +8,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.fmt.3665046980)
 
-(defun main (&rest argv)
+(defun main (cmd &rest argv)
   "go fmt like something it should be implemented in common lisp"
-  (declare (ignorable argv))
+  (declare (ignore cmd argv))
   (loop for file in (append (directory "*.lisp")
                             (directory "*.ros"))
      do (ros:roswell `("emacs" "-Q" "-q" "--batch"

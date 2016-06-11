@@ -11,7 +11,6 @@
 (in-package :ros.install)
 
 (defvar *ros-path* nil)
-(defvar *help-cmds* nil)
 (defvar *install-cmds* nil)
 (defvar *list-cmd* nil)
 
@@ -34,10 +33,8 @@
        (find impl '("sbcl-bin" "quicklisp") :test 'equal)
        (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*)))))
 
-(defun install-impl (impl version subcmd argv)
-  (let ((cmds (cond
-                ((equal subcmd "install") (cdr (assoc impl *install-cmds* :test #'equal)))
-                ((equal subcmd "help") (cdr (assoc impl *help-cmds* :test #'equal))))))
+(defun install-impl (impl version argv)
+  (let ((cmds (cdr (assoc impl *install-cmds* :test #'equal))))
     (when cmds
       (let ((param `(t :target ,impl :version ,version :argv ,argv)))
         (handler-case
@@ -50,10 +47,10 @@
             (format t "SIGINT detected, cleaning up the partially installed files~%")
             (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
 
-(defun install-impl-if-probed (imp version subcmd argv)
+(defun install-impl-if-probed (imp version argv)
   (let ((result (probe-impl imp)))
     (when result
-      (install-impl imp version subcmd argv)
+      (install-impl imp version argv)
       result)))
 
 (defun install-script-if-probed (impl/version)

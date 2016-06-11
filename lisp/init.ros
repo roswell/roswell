@@ -11,9 +11,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros))
 (in-package :ros.script.init.3672012201)
 
-(defun main (subcmd cmd &optional name &rest r)
+(defun main (cmd &optional name &rest r)
   (declare (ignore cmd))
-  (if (and (equal subcmd "main") name)
+  (if name
       (let* ((date (get-universal-time))
              (path
               (or (probe-file (merge-pathnames (format nil "templates/~A/template.asd" name) (ros.util:homedir)))

@@ -15,7 +15,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (in-package :ros.script.install.3671936092)
 
-(defun main (subcmd impl/version &rest argv)
+(defun main (cmd impl/version &rest argv)
+  (declare (ignore cmd))
   (let* (imp
          (pos (position #\/ impl/version))
          (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
@@ -25,7 +26,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
               imp (subseq impl/version 0 pos))
         (setq imp impl/version))
     (read-call "quicklisp-client:register-local-projects")
-    (cond ((install-impl-if-probed imp version subcmd argv))
+    (cond ((install-impl-if-probed imp version argv))
           ((install-script-if-probed impl/version))
           ((install-system-if-probed imp))
           (version
@@ -33,7 +34,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
            (format *error-output* "install from github ~A/~A~%" imp version)
            (clone-github imp version :path "local-projects")
            (read-call "quicklisp-client:register-local-projects")
-           (or (install-impl-if-probed version nil subcmd argv)
+           (or (install-impl-if-probed version nil argv)
                (install-system-if-probed version)))
           (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system

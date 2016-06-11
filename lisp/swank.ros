@@ -106,8 +106,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (dolist (i (swank-get-version))
     (format t "~A~%" i)))
 
-(defun main (method command &optional sub &rest argv)
-  (declare (ignorable argv method command))
+(defun main (cmd &optional sub &rest argv)
+  (declare (ignore cmd))
   (let ((func (cdr (assoc sub *sub* :test #'equal))))
     (when func
       (ros:quit (apply func argv))))
