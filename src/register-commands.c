@@ -100,7 +100,7 @@ LVal register_runtime_options() {
   return nreverse(opt);
 }
 
-void register_runtime_commands(void) {
+LVal register_runtime_commands(void) {
   top.command=register_cmd_install(top.command);
   top.command=add_command(top.command,"roswell-internal-use",NULL,cmd_internal,0,1);
   register_cmd_internal();
