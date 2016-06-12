@@ -21,8 +21,7 @@ struct run_impl_t impls_to_run[]={
   {"allegro",&cmd_run_acl},
 };
 
-LVal run_commands=(LVal)NULL;
-LVal run_options =(LVal)NULL;
+struct proc_opt run;
 
 DEF_SUBCMD(cmd_run) {
   char** argv=firstp(arg_);
@@ -33,16 +32,16 @@ DEF_SUBCMD(cmd_run) {
   cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current) {
     char* tmp[]={(char*)cmd->name,"--"};
-    return proccmd(2,tmp,top_options,top_commands);
+    return proccmd(2,tmp,&top);
   }else {
     int i;
-    for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],run_options,run_commands));
+    for(i=1;i<argc;i+=proccmd(argc-i,&argv[i],&run));
     if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
       char* tmp[]={"--"};
-      proccmd(1,tmp,run_options,run_commands);
+      proccmd(1,tmp,&run);
     }else {
       char* tmp[]={"--",ROS_RUN_REPL};
-      proccmd(1,tmp,run_options,run_commands);
+      proccmd(1,tmp,&run);
     }
     cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
     return i;
@@ -60,7 +59,7 @@ DEF_SUBCMD(cmd_script) {
   if(argc==1 && !current &&
      strcmp(argv[0],"--")==0) {
     char* tmp[]={"help","--"};
-    return proccmd(2,tmp,top_options,top_commands);
+    return proccmd(2,tmp,&top);
   }else {
     char* result=q("");
     char* tmp[]={"script"};
@@ -122,7 +121,7 @@ DEF_SUBCMD(cmd_script_frontend) {
   for(j=i;i<j+argc;++i)
     argv_gen[i]=argv[i-j];
   j=i;
-  for(i=0;i<j;i+=proccmd(j-i,&argv_gen[i],top_options,top_commands));
+  for(i=0;i<j;i+=proccmd(j-i,&argv_gen[i],&top));
   return 0;
 }
 
@@ -278,13 +277,13 @@ DEF_SUBCMD(cmd_run_star) {
 
 void register_cmd_run(void) {
   /*options*/
-  run_options=register_runtime_options(run_options);
-  run_options=add_command(run_options,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
+  run.option=register_runtime_options((LVal)NULL);
+  run.option=add_command(run.option,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
 
-  run_options=nreverse(run_options);
+  run.option=nreverse(run.option);
 
   /*commands*/
-  top_options=add_command(top_options,""             ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
-  top_commands=add_command(top_commands,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
-  top_commands=add_command(top_commands,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top.option =add_command(top.option,""            ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top.command=add_command(top.command,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
+  top.command=add_command(top.command,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
 }

@@ -3,7 +3,7 @@
 #include "cmd-run.h"
 #include "gend.h"
 
-LVal internal_commands=(LVal)NULL;
+struct proc_opt internal;
 
 DEF_SUBCMD(cmd_download) {
   char** argv=firstp(arg_);
@@ -78,11 +78,11 @@ DEF_SUBCMD(cmd_internal_version) {
     if(ev) {
       char *cmd=cat("(progn(format t\"~A~%\"(or(ignore-errors(getf(symbol-value(read-from-string \"ros.util::*version*\")) :",ev,
                     "))(ros:quit 1))) (ros:quit 0))",NULL);
-      {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-      {char* p[]={"-L",DEFAULT_IMPL};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-      {char* p[]={"-m","roswell"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-      {char* p[]={"--eval",cmd};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
-      {char* p[]={"run"};proccmd(sizeof(p)/sizeof(p[0]),p,top_options,top_commands);}
+      {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"-L",DEFAULT_IMPL};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"-m","roswell"};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"--eval",cmd};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"run"};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
       s(cmd);
     }else if(strncmp(argv[1],"cc",2)==0) {
       printf("%s\n",ROS_COMPILE_ENVIRONMENT);
@@ -132,7 +132,7 @@ DEF_SUBCMD(cmd_internal_core_extention) {
 }
 
 void register_cmd_internal(void) {
-  LVal cmds=internal_commands;
+  LVal cmds=0;
   cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
   cmds=add_command(cmds,"download",NULL,cmd_download,0,1);
   cmds=add_command(cmds,"uname",NULL,cmd_uname,0,1);
@@ -140,7 +140,7 @@ void register_cmd_internal(void) {
   cmds=add_command(cmds,"impl",NULL,cmd_impl,0,1);
   cmds=add_command(cmds,"version",NULL,cmd_internal_version,0,1);
   cmds=add_command(cmds,"core-extention",NULL,cmd_internal_core_extention,0,1);
-  internal_commands=cmds;
+  internal.command=cmds;
 }
 
 DEF_SUBCMD(cmd_internal) {
@@ -149,7 +149,7 @@ DEF_SUBCMD(cmd_internal) {
   dealloc((void*)arg_);
 
   setup_uid(0);
-  return proccmd(argc-1,&(argv[1]),(LVal)NULL,internal_commands);
+  return proccmd(argc-1,&(argv[1]),&internal);
 }
 
 char* lispdir(void) {

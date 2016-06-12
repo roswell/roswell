@@ -153,8 +153,13 @@ void setup_uid(int euid_or_uid);
 int mklockdir(char* path);
 int lock_apply(char* symbol,int remove);
 
-int proccmd(int argc,char** argv,LVal option,LVal command);
-int proccmd_with_subcmd(char* path,int argc,char** argv,LVal option,LVal command);
+struct proc_opt {
+  LVal option;
+  LVal command;
+};
+
+int proccmd(int argc,char** argv,struct proc_opt *popt);
+int proccmd_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt);
 
 char* sbcl_bin(char* file);
 char* ccl_binname(char* bit);

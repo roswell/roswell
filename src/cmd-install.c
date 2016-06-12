@@ -165,7 +165,7 @@ DEF_SUBCMD(cmd_install) {
           for(j=0;j<argc_;++j)
             fprintf(stderr,"argv[%d]=%s,",j,tmp[j]);
         }
-        for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],top_options,top_commands));
+        for(i=0;i<argc_;i+=proccmd(argc_-i,&tmp[i],&top));
         for(j=0;j<argc_;s(tmp[j++]));
         dealloc(tmp);
         return 0;
@@ -178,12 +178,12 @@ DEF_SUBCMD(cmd_install) {
     }
   }else {
     char* tmp[]={"help","install"};
-    proccmd(2,tmp,top_options,top_commands);
+    proccmd(2,tmp,&top);
     exit(EXIT_SUCCESS);
   }
   return 0;
 }
 
-void register_cmd_install(void) {
-  top_commands=add_command(top_commands,"install"    ,NULL,cmd_install,1,1);
+LVal register_cmd_install(LVal a) {
+  return add_command(a,"install"    ,NULL,cmd_install,1,1);
 }

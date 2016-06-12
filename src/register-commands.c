@@ -1,7 +1,7 @@
 #include "opt.h"
 
 extern void register_cmd_run(void);
-extern void register_cmd_install(void);
+extern LVal register_cmd_install(LVal);
 extern void register_cmd_internal(void);
 
 #define OPT_SETVAL(sym,rexp)                          \
@@ -100,10 +100,10 @@ LVal register_runtime_options() {
   return nreverse(opt);
 }
 
-LVal register_runtime_commands() {
-  register_cmd_install();
-  top_commands=add_command(top_commands,"roswell-internal-use",NULL,cmd_internal,0,1);
+void register_runtime_commands(void) {
+  top.command=register_cmd_install(top.command);
+  top.command=add_command(top.command,"roswell-internal-use",NULL,cmd_internal,0,1);
   register_cmd_internal();
   register_cmd_run();
-  return nreverse(top_commands);
+  return nreverse(top.command);
 }

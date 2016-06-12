@@ -24,8 +24,7 @@ struct sub_command {
 #define OPT_SHOW_NONE (0)
 #define OPT_SHOW_HELP (1)
 
-extern LVal top_commands;
-extern LVal top_options;
+extern struct proc_opt top;
 extern struct opts* global_opt;
 extern struct opts* local_opt;
 extern int quicklisp;
