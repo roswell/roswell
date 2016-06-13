@@ -78,11 +78,11 @@ DEF_SUBCMD(cmd_internal_version) {
     if(ev) {
       char *cmd=cat("(progn(format t\"~A~%\"(or(ignore-errors(getf(symbol-value(read-from-string \"ros.util::*version*\")) :",ev,
                     "))(ros:quit 1))) (ros:quit 0))",NULL);
-      {char* p[]={"--no-rc"};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"-L",DEFAULT_IMPL};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"-m","roswell"};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"--eval",cmd};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"run"};proccmd(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"--no-rc"};proc_opt(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"-L",DEFAULT_IMPL};proc_opt(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"-m","roswell"};proc_opt(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"--eval",cmd};proc_opt(sizeof(p)/sizeof(p[0]),p,&top);}
+      {char* p[]={"run"};proc_opt(sizeof(p)/sizeof(p[0]),p,&top);}
       s(cmd);
     }else if(strncmp(argv[1],"cc",2)==0) {
       printf("%s\n",ROS_COMPILE_ENVIRONMENT);
@@ -132,6 +132,7 @@ DEF_SUBCMD(cmd_internal_core_extention) {
 }
 
 void register_cmd_internal(void) {
+  proc_opt_init(&internal);
   LVal cmds=0;
   cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
   cmds=add_command(cmds,"download",NULL,cmd_download,0,1);
@@ -149,7 +150,7 @@ DEF_SUBCMD(cmd_internal) {
   dealloc((void*)arg_);
 
   setup_uid(0);
-  return proccmd(argc-1,&(argv[1]),&internal);
+  return proc_opt(argc-1,&(argv[1]),&internal);
 }
 
 char* lispdir(void) {

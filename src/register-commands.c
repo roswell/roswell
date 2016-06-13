@@ -100,10 +100,17 @@ LVal register_runtime_options() {
   return nreverse(opt);
 }
 
-LVal register_runtime_commands(void) {
-  top.command=register_cmd_install(top.command);
-  top.command=add_command(top.command,"roswell-internal-use",NULL,cmd_internal,0,1);
+LVal register_runtime_commands(struct proc_opt* top_) {
+  top_->command=register_cmd_install(top_->command);
+  top_->command=add_command(top_->command,"roswell-internal-use",NULL,cmd_internal,0,1);
   register_cmd_internal();
   register_cmd_run();
-  return nreverse(top.command);
+  return nreverse(top_->command);
+}
+
+void register_top(struct proc_opt* top_) {
+  proc_opt_init(top_);
+  top_->option=register_runtime_options();
+  top_->command=register_runtime_commands(top_);
+  top_->top=(LVal)top_;
 }

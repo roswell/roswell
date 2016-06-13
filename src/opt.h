@@ -24,7 +24,6 @@ struct sub_command {
 #define OPT_SHOW_NONE (0)
 #define OPT_SHOW_HELP (1)
 
-extern struct proc_opt top;
 extern struct opts* global_opt;
 extern struct opts* local_opt;
 extern int quicklisp;
@@ -42,4 +41,17 @@ char* _get_opt(struct opts* opt,const char* name);
 char* sexp_opts(struct opts* opt);
 void free_opts(struct opts* opt);
 DEF_SUBCMD (cmd_tar);
+
+struct proc_opt {
+  LVal option;
+  LVal command;
+  LVal top;
+};
+
+void proc_opt_init(struct proc_opt *popt);
+int proc_opt(int argc,char** argv,struct proc_opt *popt);
+int proc_opt_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt);
+void register_top(struct proc_opt* opt);
+extern struct proc_opt top;
+
 #endif
