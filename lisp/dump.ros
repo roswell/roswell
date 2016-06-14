@@ -32,7 +32,9 @@ exec ros -- $0 "$@"
                  #+sbcl
                  (sb-ext:save-lisp-and-die path)
                  #+ccl
-                 (ccl:save-application path)))))
+                 (ccl:save-application path)
+                 #+clisp
+                 (ext:saveinitmem path :quiet t)))))
     (cond
       ((null params)
        (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (ros:opt "argv0")))
@@ -84,7 +86,18 @@ exec ros -- $0 "$@"
          #'(lambda ()
              (setf ros:*argv* (rest (ccl::command-line-arguments)))
              (ros:run cmds))
-         :prepend-kernel t))
+         :prepend-kernel t)
+        #+clisp
+        (ext:saveinitmem
+         path
+         :quiet t
+         :executable 0
+         :norc t
+         :script nil
+         :init-function
+         #'(lambda ()
+             (setf ros:*argv* ext:*args*)
+             (ros:run cmds))))
       (format *error-output* "Usage: ros dump executable help~%")))
 
 (defvar *subcmds*
