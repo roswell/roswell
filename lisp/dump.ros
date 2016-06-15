@@ -97,7 +97,20 @@ exec ros -- $0 "$@"
          :init-function
          #'(lambda ()
              (setf ros:*argv* ext:*args*)
-             (ros:run cmds))))
+             (ros:run cmds)))
+        #+cmucl
+        (progn
+          (ext:gc :full t)
+          (setf ext:*batch-mode* nil)
+          (setf ext::*gc-run-time* 0)
+          (ext:save-lisp
+           path
+           :executable t
+           :init-function
+           #'(lambda ()
+               (setf ros:*argv* ext:*command-line-strings*)
+               (ros:run cmds))
+           :process-command-line nil)))
       (format *error-output* "Usage: ros dump executable help~%")))
 
 (defvar *subcmds*
