@@ -83,7 +83,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                (format *error-output* "up to date. stop~%")
                t))
       (format *error-output* "building dump:~A~%" dump)
-      (ros:roswell `("-L " "sbcl-bin " "--eval "
+      (ros:roswell `("+R" "-L " "sbcl-bin " "--eval "
 			   #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
 			   ,@(loop :for i :in dir
                                    :collect "--load"
