@@ -48,9 +48,9 @@ struct proc_opt {
   LVal top;
 };
 
-void proc_opt_init(struct proc_opt *popt);
-int proc_opt(int argc,char** argv,struct proc_opt *popt);
-int proc_opt_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt);
+void dispatch_init(struct proc_opt *popt);
+int dispatch(int argc,char** argv,struct proc_opt *popt);
+int dispatch_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt);
 void register_top(struct proc_opt* opt);
 extern struct proc_opt top;
 

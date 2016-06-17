@@ -109,7 +109,7 @@ LVal register_runtime_commands(struct proc_opt* top_) {
 }
 
 void register_top(struct proc_opt* top_) {
-  proc_opt_init(top_);
+  dispatch_init(top_);
   top_->option=register_runtime_options();
   top_->command=register_runtime_commands(top_);
   top_->top=(LVal)top_;

@@ -26,10 +26,10 @@ int main(int argc,char **argv) {
   unset_opt(opts,"program");
   s(path);
   if(argc==1)
-    {char* tmp[]={"help"};proc_opt(1,tmp,&top);}
+    {char* tmp[]={"help"};dispatch(1,tmp,&top);}
   else
-    for(i=1;i<argc;i+=proc_opt(argc-i,&argv[i],&top));
+    for(i=1;i<argc;i+=dispatch(argc-i,&argv[i],&top));
   if(get_opt("program",0))
-    {char* tmp[]={"run","-q","--"};proc_opt(3,tmp,&top);}
+    {char* tmp[]={"run","-q","--"};dispatch(3,tmp,&top);}
   free_opts(global_opt);
 }

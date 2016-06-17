@@ -165,7 +165,7 @@ DEF_SUBCMD(cmd_install) {
           for(j=0;j<argc_;++j)
             fprintf(stderr,"argv[%d]=%s,",j,tmp[j]);
         }
-        for(i=0;i<argc_;i+=proc_opt(argc_-i,&tmp[i],&top));
+        for(i=0;i<argc_;i+=dispatch(argc_-i,&tmp[i],&top));
         for(j=0;j<argc_;s(tmp[j++]));
         dealloc(tmp);
         return 0;
@@ -178,7 +178,7 @@ DEF_SUBCMD(cmd_install) {
     }
   }else {
     char* tmp[]={"help","install"};
-    proc_opt(2,tmp,&top);
+    dispatch(2,tmp,&top);
     exit(EXIT_SUCCESS);
   }
   return 0;

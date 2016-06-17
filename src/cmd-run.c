@@ -32,16 +32,16 @@ DEF_SUBCMD(cmd_run) {
   cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   if(argc==1 && !current) {
     char* tmp[]={(char*)cmd->name,"--"};
-    return proc_opt(2,tmp,&top);
+    return dispatch(2,tmp,&top);
   }else {
     int i;
-    for(i=1;i<argc;i+=proc_opt(argc-i,&argv[i],&run));
+    for(i=1;i<argc;i+=dispatch(argc-i,&argv[i],&run));
     if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
       char* tmp[]={"--"};
-      proc_opt(1,tmp,&run);
+      dispatch(1,tmp,&run);
     }else {
       char* tmp[]={"--",ROS_RUN_REPL};
-      proc_opt(1,tmp,&run);
+      dispatch(1,tmp,&run);
     }
     cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
     return i;
@@ -59,7 +59,7 @@ DEF_SUBCMD(cmd_script) {
   if(argc==1 && !current &&
      strcmp(argv[0],"--")==0) {
     char* tmp[]={"help","--"};
-    return proc_opt(2,tmp,&top);
+    return dispatch(2,tmp,&top);
   }else {
     char* result=q("");
     char* tmp[]={"script"};
@@ -121,7 +121,7 @@ DEF_SUBCMD(cmd_script_frontend) {
   for(j=i;i<j+argc;++i)
     argv_gen[i]=argv[i-j];
   j=i;
-  for(i=0;i<j;i+=proc_opt(j-i,&argv_gen[i],&top));
+  for(i=0;i<j;i+=dispatch(j-i,&argv_gen[i],&top));
   return 0;
 }
 
