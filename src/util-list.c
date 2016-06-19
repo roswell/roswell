@@ -140,6 +140,17 @@ void sL(LVal v) {
     break;
   }
 }
+LVal stringlist(char* first,...) {
+  LVal ret=conss(q_(first),0);
+  char* i;
+  va_list list;
+  va_start(list,first);
+
+  for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*))
+    ret=conss(q_(i),ret);
+  va_end(list);
+  return nreverse(ret);
+}
 
 char** stringlist_array(LVal v) {
   LVal vi=v;
@@ -151,4 +162,13 @@ char** stringlist_array(LVal v) {
     arg[c]=q(firsts(v));
   sL(vi);
   return arg;
+}
+
+LVal array_stringlist(char** argv) {
+  LVal ret=0;
+  char** p;
+  for(p=argv;*p!=NULL;++p)
+    ret=conss(*p,ret);
+  dealloc(argv);
+  return nreverse(ret);
 }
