@@ -84,6 +84,7 @@
 (! "ros list")
 (! "ros list installed")
 (! "ros list dump")
+(! (format nil "ros help install ~A" (ros:opt "default.lisp")))
 
 #+sbcl
 (when (equal (ros:opt "default.lisp") "sbcl-bin")

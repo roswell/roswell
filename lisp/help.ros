@@ -111,6 +111,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                      do (format s "~A~%" (subseq i len))))
            (let ((impl (second argv)))
              (ql:quickload (format nil "roswell.install.~A" impl) :silent t)
-             (funcall (read-from-string"ros.install::install-impl") impl nil "help" nil))))
+             (set (read-from-string "ros.install::*install-cmds*")
+                  (symbol-value (read-from-string "ros.install::*help-cmds*")))
+             (funcall (read-from-string"ros.install::install-impl") impl nil nil))))
       (t (ros:exec `("man" ,(format nil "ros-~A" (first argv))))))))
 ;;; vim: set ft=lisp lisp:
