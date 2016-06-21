@@ -99,7 +99,7 @@ LVal split_string(char* string,char* by);
 void sL(LVal l);
 LVal stringlist(char* first,...);
 char** stringlist_array(LVal v);
-LVal array_stringlist(char** argv);
+LVal array_stringlist(int argc,char** argv);
 
 void cond_printf (int v,char* format,...);
 void* alloc(size_t bytes);

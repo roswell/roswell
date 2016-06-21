@@ -179,11 +179,10 @@ char** stringlist_array(LVal v) {
   return arg;
 }
 
-LVal array_stringlist(char** argv) {
+LVal array_stringlist(int argc,char** p) {
   LVal ret=0;
-  char** p;
-  for(p=argv;*p!=NULL;++p)
-    ret=conss(*p,ret);
-  dealloc(argv);
+  int i;
+  for(i=0;i<argc;++p,++i)
+    ret=conss(q_(*p),ret);
   return nreverse(ret);
 }
