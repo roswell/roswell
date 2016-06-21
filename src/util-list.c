@@ -83,11 +83,26 @@ LVal first(LVal v) {
 LVal rest(LVal v) {
   struct Cons* l=(struct Cons*)v;
   return l->next;
- }
+}
+
+LVal nrest(LVal v) {
+  struct Cons* l=(struct Cons*)v;
+  LVal ret=l->next;
+  sL(first(v));
+  dealloc(l);
+  return ret;
+}
 
 LVal nthcdr(int n,LVal v) {
   for(;n>0;--n) {
     v=rest(v);
+  }
+  return v;
+}
+
+LVal nnthcdr(int n,LVal v) {
+  for(;n>0;--n) {
+    v=nrest(v);
   }
   return v;
 }

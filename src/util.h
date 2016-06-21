@@ -89,7 +89,9 @@ char* firsts(LVal l);
 void* firstp(LVal l);
 LVal first(LVal v);
 LVal rest(LVal v);
+LVal nrest(LVal v);
 LVal nthcdr(int n,LVal v);
+LVal nnthcdr(int n,LVal v);
 int length(LVal l);
 
 void print_list(LVal v);
