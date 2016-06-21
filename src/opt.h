@@ -50,7 +50,7 @@ struct proc_opt {
 
 void dispatch_init(struct proc_opt *popt);
 int dispatch(int argc,char** argv,struct proc_opt *popt);
-int dispatch_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt);
+LVal dispatch22(LVal arg,struct proc_opt *popt);
 void register_top(struct proc_opt* opt);
 extern struct proc_opt top;
 
