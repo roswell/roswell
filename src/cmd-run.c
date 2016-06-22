@@ -277,7 +277,8 @@ DEF_SUBCMD(cmd_run_star) {
 
 void register_cmd_run(void) {
   /*options*/
-  run.option=register_runtime_options((LVal)NULL);
+  dispatch_init(&run);
+  run.option=register_runtime_options();
   run.option=add_command(run.option,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
 
   run.option=nreverse(run.option);
