@@ -6,8 +6,6 @@ extern void register_cmd_internal(void);
 
 #define OPT_SETVAL(sym,rexp)                          \
   DEF_SUBCMD(opt_##sym) {                             \
-    char** argv=firstp(arg_);                         \
-    int argc=(int)rest(arg_);                         \
     dealloc((void*)arg_);                             \
                                                       \
     sym=rexp;                                         \
@@ -20,8 +18,6 @@ OPT_SETVAL(rc,(strcmp(cmd->name,"rc")==0)?1:0)
 OPT_SETVAL(quicklisp,(strcmp(cmd->name,"quicklisp")==0)?1:0)
 
 DEF_SUBCMD(opt_program0) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
   dealloc((void*)arg_);
 
   if(cmd->name) {
