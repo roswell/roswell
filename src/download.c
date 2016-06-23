@@ -99,11 +99,15 @@ int download_simple (char* uri,char* path,int opt) {
       pos=position_char(":",current);
       if(pos!=-1)
         current[pos]='\0',port=current+pos+1,uri=current;
+      cond_printf(1,"proxy uri=%s",uri);
       curl_easy_setopt(curl, CURLOPT_PROXY, uri);
-      if(port)
+      if(port) {
+        cond_printf(1," port=%s",port);
         curl_easy_setopt(curl, CURLOPT_PROXYPORT,atoi(port));
+      }
       if(userpwd)
         curl_easy_setopt(curl, CURLOPT_PROXYUSERPWD, userpwd);
+      cond_printf(1,"\n");
       s(reserve);
     }
     download_count=0,content_length=0;
