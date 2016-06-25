@@ -6,35 +6,32 @@
 struct proc_opt internal;
 
 DEF_SUBCMD(cmd_download) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
-
-  int opt=argc>3?atoi(argv[3]):0;
-  return argc>=3?(1&opt?0:fprintf(opt?stdout:stderr,"Downloading %s\n",argv[1])),download_simple(argv[1],argv[2],opt>2?0:opt):0;
+  int argc=length(arg_);
+  int opt=argc>3?atoi(firsts(nthcdr(3,arg_))):0;
+  return argc>=3?
+    (1&opt?
+     0:
+     fprintf(opt?stdout:stderr,"Downloading %s\n",firsts(nthcdr(1,arg_)))),
+    download_simple(firsts(nthcdr(1,arg_)),firsts(nthcdr(2,arg_)),opt>2?0:opt):0;
 }
 
 DEF_SUBCMD(cmd_uname) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
 
   if(argc==1) {
     printf("%s\n",uname());
   }else if(argc==2) {
-    if(strncmp(argv[1],"-m",2)==0)
+    if(strncmp(firsts(nthcdr(1,arg_)),"-m",2)==0)
       printf("%s\n",uname_m());
   }
   return 0;
 }
 
 DEF_SUBCMD(cmd_which) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
 
   if(argc==2) {
-    char* str=which(argv[1]);
+    char* str=which(firsts(nthcdr(1,arg_)));
     printf("%s\n",str);
     s(str);
   }
@@ -42,9 +39,7 @@ DEF_SUBCMD(cmd_which) {
 }
 
 DEF_SUBCMD(cmd_impl) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
   
   if(argc==1 && get_opt("default.lisp",0)) {
     char* impl=determin_impl(get_opt("default.lisp",0));
@@ -52,7 +47,7 @@ DEF_SUBCMD(cmd_impl) {
     s(impl);
   }
   if(argc==2) {
-    char* impl=determin_impl(argv[1]);
+    char* impl=determin_impl(firsts(nthcdr(1,arg_)));
     printf("%s\n",impl);
     s(impl);
   }
@@ -60,19 +55,18 @@ DEF_SUBCMD(cmd_impl) {
 }
 
 DEF_SUBCMD(cmd_internal_version) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
+  char* arg1=firsts(nthcdr(1,arg_));
 
   if(argc==1) {
     printf("%s\n",PACKAGE_VERSION);
   }else if (argc==2) {
     char* ev=NULL;
-    if(strcmp(argv[1],"date")==0) {
+    if(strcmp(arg1,"date")==0) {
       ev= "date";
-    }else if (strcmp(argv[1],"lisp")==0) {
+    }else if (strcmp(arg1,"lisp")==0) {
       ev= "version";
-    }else if (strcmp(argv[1],"dump")==0) {
+    }else if (strcmp(arg1,"dump")==0) {
       ev= "roswell";
     }
     if(ev) {
@@ -84,27 +78,27 @@ DEF_SUBCMD(cmd_internal_version) {
       {char* p[]={"--eval",cmd};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
       {char* p[]={"run"};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
       s(cmd);
-    }else if(strncmp(argv[1],"cc",2)==0) {
+    }else if(strncmp(arg1,"cc",2)==0) {
       printf("%s\n",ROS_COMPILE_ENVIRONMENT);
-    }else if(strncmp(argv[1],"curl",4)==0) {
+    }else if(strncmp(arg1,"curl",4)==0) {
 #ifdef HAVE_CURL_CURL_H
       printf("%s\n",LIBCURL_VERSION);
 #endif
-    }else if(strncmp(argv[1],"asdf",4)==0) {
+    }else if(strncmp(arg1,"asdf",4)==0) {
       char *asdf= get_opt("asdf.version",0);
       if(asdf)
         printf("%s\n",asdf);
-    }else if(strncmp(argv[1],"lispdir",7)==0) {
+    }else if(strncmp(arg1,"lispdir",7)==0) {
       printf("%s\n",lispdir());
-    }else if(strncmp(argv[1],"confdir",7)==0) {
+    }else if(strncmp(arg1,"confdir",7)==0) {
       printf("%s\n",configdir());
-    }else if(strcmp(argv[1],"package")==0) {
+    }else if(strcmp(arg1,"package")==0) {
       printf("%s\n",PACKAGE_STRING);
-    }else if(strcmp(argv[1],"revision")==0) {
+    }else if(strcmp(arg1,"revision")==0) {
       printf("%s\n",ROS_REVISION);
-    }else if(strcmp(argv[1],"sbcl-bin-version-uri")==0) {
+    }else if(strcmp(arg1,"sbcl-bin-version-uri")==0) {
       printf("%s\n",PLATFORM_HTML_URI);
-    }else if(strcmp(argv[1],"sbcl-bin-uri")==0) {
+    }else if(strcmp(arg1,"sbcl-bin-uri")==0) {
       printf("%s\n",SBCL_BIN_URI);
     }else
       return 1;
@@ -122,12 +116,11 @@ char* core_extention(char *impl) {
 }
 
 DEF_SUBCMD(cmd_internal_core_extention) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
+  char* arg1=firsts(nthcdr(1,arg_));
 
   if (argc==2)
-    printf("%s\n",core_extention(argv[1]));
+    printf("%s\n",core_extention(arg1));
   return 0;
 }
 
@@ -150,7 +143,7 @@ DEF_SUBCMD(cmd_internal) {
   dealloc((void*)arg_);
 
   setup_uid(0);
-  return dispatch(argc-1,&(argv[1]),&internal);
+  return dispatch22(array_stringlist(argc-1,&(argv[1])),&internal);
 }
 
 char* lispdir(void) {
@@ -175,10 +168,6 @@ char* lispdir(void) {
 }
 
 DEF_SUBCMD(opt_version) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
-
   fprintf(stderr,"%s",PACKAGE_STRING);
   if(strlen(ROS_REVISION)>0)
     fprintf(stderr,"(%s)",ROS_REVISION);

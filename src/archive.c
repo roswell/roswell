@@ -47,9 +47,8 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 }
 
 DEF_SUBCMD(cmd_tar) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
+  char** argv=stringlist_array(arg_);
 
   const char *filename = NULL;
   const char *outputpath = NULL;
