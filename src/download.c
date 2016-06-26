@@ -87,7 +87,10 @@ int download_simple (char* uri,char* path,int opt) {
   curl = curl_easy_init();
   if(curl) {
     char* current=get_opt("ros.proxy",1);
-    if(current) {
+    int lenuri=strlen(uri);
+    int https=(lenuri>5 && strncmp("https",uri,5)==0);
+    int httponly= get_opt("proxy.http.only",0) && strcmp(get_opt("proxy.http.only",0),"1")==0;
+    if(current&& ((https && !httponly) || !https)) {
       /*<[protocol://][user:password@]proxyhost[:port]>*/
       char *reserve,*protocol=NULL,*userpwd=NULL,*port=NULL,*uri=NULL;
       int pos=position_char("/",current);

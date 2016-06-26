@@ -68,7 +68,7 @@ install:
       cp proxy $HOME/.rosproxy/proxy;
     fi
   - $HOME/.rosproxy/proxy daemon
-  - mkdir ~/.roswell;echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
+  - mkdir ~/.roswell;echo "ros.proxy	0	localhost:5000" > ~/.roswell/config;echo "proxy.http.only	0	1" >> ~/.roswell/config
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
