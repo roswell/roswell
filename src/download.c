@@ -91,7 +91,7 @@ int download_simple (char* uri,char* path,int opt) {
       /*<[protocol://][user:password@]proxyhost[:port]>*/
       char *reserve,*protocol=NULL,*userpwd=NULL,*port=NULL,*uri=NULL;
       int pos=position_char("/",current);
-      reserve=current=_q(current);
+      reserve=current=q_(current);
       if(pos>0 && current[pos-1]==':' && current[pos+1]=='/')
         protocol=current,current[pos-1]='\0',current=current+pos+2;
       pos=position_char("@",current);
