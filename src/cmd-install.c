@@ -88,8 +88,11 @@ int download(struct install_options* param) {
 }
 
 DEF_SUBCMD(cmd_install) {
-  int argc=length(arg_);
+  char** argv=firstp(arg_);
+  int argc=(int)rest(arg_);
+  dealloc((void*)arg_);
 
+  cond_printf(1,"cmd_install:\n");
   install_cmds *cmds=NULL;
   struct install_options param;
   quicklisp=1;
@@ -101,7 +104,7 @@ DEF_SUBCMD(cmd_install) {
     int ret=1,k;
     for(k=1;k<argc;++k) {
       int i,pos;
-      param.impl=firsts(nthcdr(k,arg_));
+      param.impl=argv[k];
       pos=position_char("/",param.impl);
       if(pos!=-1) {
         param.version=subseq(param.impl,pos+1,0);
@@ -144,24 +147,24 @@ DEF_SUBCMD(cmd_install) {
         char** tmp;
         char* install_ros=s_cat2(lispdir(),q("install.ros"));
         if(verbose&1) {
-          fprintf(stderr,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
+          cond_printf(1,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
           for(i=0;i<argc;++i)
-            fprintf(stderr,"%s:",firsts(nthcdr(i,arg_)));
-          fprintf(stderr,"\n");
+            cond_printf(1,"%s:",argv[i]);
+          cond_printf(1,"\n");
         }
         tmp=(char**)alloc(sizeof(char*)*(argc+9));
         i=0;
         tmp[i++]=q("--");
         tmp[i++]=install_ros;
         tmp[i++]=q("install");
-        tmp[i++]=q(firsts(nthcdr(1,arg_)));
-        for(j=2;j<argc;tmp[i++]=q(firsts(nthcdr(j++,arg_))));
+        tmp[i++]=q(argv[1]);
+        for(j=2;j<argc;tmp[i++]=q(argv[j++]));
         argc_=i;
         if(verbose&1) {
           int j;
-          fprintf(stderr,"argc_=%d",argc_);
+          cond_printf(1,"argc_=%d",argc_);
           for(j=0;j<argc_;++j)
-            fprintf(stderr,"argv[%d]=%s,",j,tmp[j]);
+            cond_printf(1,"argv[%d]=%s,",j,tmp[j]);
         }
         for(i=0;i<argc_;i+=dispatch(argc_-i,&tmp[i],&top));
         for(j=0;j<argc_;s(tmp[j++]));

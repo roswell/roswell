@@ -49,7 +49,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
 DEF_SUBCMD(cmd_tar) {
   int argc=length(arg_);
   char** argv=stringlist_array(arg_);
-
+  cond_printf(1,"cmd_tar:%d\n",argc);
   const char *filename = NULL;
   const char *outputpath = NULL;
   int flags=0, mode, opt;

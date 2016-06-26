@@ -36,8 +36,8 @@ void sbcl_bin_check_file(char* file) {
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
+  cond_printf(1,"sbcl_version_bin\n");
   ensure_directories_exist(platforms_html);
-
   if(!param->version) {
     int ret;
     printf("No SBCL version specified. Downloading platform-table.html to see the available versions...\n");
@@ -67,6 +67,7 @@ int sbcl_bin_download(struct install_options* param) {
   char* home=configdir();
   char* arch=arch_(param);
   char* uri=get_opt("sbcl-bin-uri",0);
+  cond_printf(1,"sbcl_bin_download\n");
   do {
     if (!(strcmp(arch, "armhf-linux")))
       param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-","arm-linux",SLASH,NULL);
@@ -96,6 +97,7 @@ char* sbcl_bin_extention(struct install_options* param) {
 }
 
 int sbcl_bin_expand(struct install_options* param) {
+  cond_printf(1,"sbcl_bin_expand\n");
   char* argv[6]={"","-xf",NULL,"-C",NULL,NULL};
   char* archive=download_archive_name(param);
   char* dist_path=param->expand_path;
@@ -105,7 +107,7 @@ int sbcl_bin_expand(struct install_options* param) {
   ensure_directories_exist(dist_path);
   argv[2]=cat(home,"archives",SLASH,archive,NULL);
   argv[4]=cat(home,"src",SLASH,NULL);
-  return !cmd_tar(cons(argv,5),NULL);
+  return !cmd_tar(array_stringlist(5,argv),NULL);
 }
 
 int sbcl_bin_install(struct install_options* param) {
@@ -118,7 +120,7 @@ int sbcl_bin_install(struct install_options* param) {
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   char* install_root=q(impl_path);
   char* log_path=cat(home,"impls/log/",impl,"-",version,"/install.log",NULL);
-  fprintf(stderr,"Building %s/%s...",impl,version);
+  cond_printf(0,"Building %s/%s...",impl,version);
   ensure_directories_exist(impl_path);
   ensure_directories_exist(log_path);
   change_directory(src);
