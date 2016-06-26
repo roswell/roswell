@@ -67,7 +67,7 @@ install:
       curl -L https://github.com/snmsts/roswell-proxy/releases/download/v0.3/v0.3-$TRAVIS_OS_NAME.tgz |tar xzf -;
       cp proxy $HOME/.rosproxy/proxy;
     fi
-  - ./proxy daemon
+  - $HOME/.rosproxy/proxy daemon
   - mkdir ~/.roswell;echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
