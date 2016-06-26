@@ -56,12 +56,12 @@ DEF_SUBCMD(cmd_impl) {
 
 DEF_SUBCMD(cmd_internal_version) {
   int argc=length(arg_);
-  char* arg1=firsts(nthcdr(1,arg_));
 
   if(argc==1) {
     printf("%s\n",PACKAGE_VERSION);
   }else if (argc==2) {
     char* ev=NULL;
+    char* arg1=firsts(nthcdr(1,arg_));
     if(strcmp(arg1,"date")==0) {
       ev= "date";
     }else if (strcmp(arg1,"lisp")==0) {
@@ -125,7 +125,7 @@ DEF_SUBCMD(cmd_internal_core_extention) {
 }
 
 void register_cmd_internal(void) {
-  dispatch_init(&internal);
+  dispatch_init(&internal,"internal");
   LVal cmds=0;
   cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
   cmds=add_command(cmds,"download",NULL,cmd_download,0,1);

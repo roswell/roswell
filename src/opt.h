@@ -43,12 +43,13 @@ void free_opts(struct opts* opt);
 DEF_SUBCMD (cmd_tar);
 
 struct proc_opt {
+  char* name;
   LVal option;
   LVal command;
   LVal top;
 };
 
-void dispatch_init(struct proc_opt *popt);
+void dispatch_init(struct proc_opt *popt,char* name_);
 int dispatch(int argc,char** argv,struct proc_opt *popt);
 LVal dispatch22(LVal arg,struct proc_opt *popt);
 void register_top(struct proc_opt* opt);

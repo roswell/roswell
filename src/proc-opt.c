@@ -11,10 +11,6 @@ int dispatch_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt) 
   return ret;
 }
 
-int dispatch_with_subcmd22(char* path,LVal arg,struct proc_opt *popt) {
-  return dispatch22(conss(q_(path),arg),popt);
-}
-
 char** proc_alias(int argc,char** argv,struct proc_opt *popt) {
   char* builtin[][2]= {
     {"-V","version"},
@@ -40,8 +36,8 @@ LVal proc_alias22(LVal arg,struct proc_opt *popt) {
     //{"build","dump executable"},
   };
   int i;
-  cond_printf(1,"proc_alias22:\n");
-  for (i=0;i<sizeof(builtin)/sizeof(char*[2]);++i) 
+  cond_printf(1,"proc_alias22: arg0=%s repeat=%d\n",arg0,sizeof(builtin)/sizeof(char*[2]));
+  for (i=0;i<sizeof(builtin)/sizeof(char*[2]);++i)
     if(!strcmp(builtin[i][0],arg0))
       return conss(q_(builtin[i][1]),nrest(arg));
   return arg;
@@ -84,6 +80,7 @@ int proc_options(int argc,char** argv,struct proc_opt *popt) {
 
 LVal proc_options22(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
+  cond_printf(1,"proc_options22:\n");
   if(arg0[0]=='-' &&
      arg0[1]=='-') { /*long option*/
     LVal p;
@@ -195,32 +192,36 @@ void proc_cmd22(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
   char* tmp[]={"help"};
   LVal p,p2=0;
+  
+  cond_printf(1,"proc_cmd22#:\n");
   /* search internal commands.*/
   for(p=popt->command;p;p=Next(p)) {
     struct sub_command* fp=firstp(p);
     if(fp->name) {
+      cond_printf(1,"fname=%s,arg0=%s\n",fp->name,arg0);
       if(strcmp(fp->name,arg0)==0)
         exit(fp->call(arg,fp));
       if(strcmp(fp->name,"*")==0)
         p2=p;
     }
   }
+
   if(popt->top && position_char(".",arg0)==-1) {
     /* local commands*/
     char* cmddir=configdir();
     char* cmdpath=cat(cmddir,arg0,".ros",NULL);
     if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
-      dispatch_with_subcmd22(cmdpath,arg,popt);
+      dispatch22 (conss(q_(cmdpath),arg),popt);
     s(cmddir),s(cmdpath);
     /* systemwide commands*/
     cmddir=subcmddir();
     cmdpath=cat(cmddir,arg0,".ros",NULL);
     if(directory_exist_p(cmddir)) {
       if(file_exist_p(cmdpath))
-        dispatch_with_subcmd22(cmdpath,arg,popt);
+        dispatch22(conss(q_(cmdpath),arg),popt);
       s(cmdpath);cmdpath=cat(cmddir,"+",arg0,".ros",NULL);
       if(file_exist_p(cmdpath))
-        dispatch_with_subcmd22(cmdpath,arg,popt);
+        dispatch22(conss(q_(cmdpath),arg),popt);
     }
     s(cmddir),s(cmdpath);
   }
@@ -247,7 +248,7 @@ int dispatch(int argc,char** argv,struct proc_opt *popt) {
 
 LVal dispatch22(LVal arg,struct proc_opt *popt) {
   int pos;
-  cond_printf(1,"dispatch22:%s\n",firsts(arg));
+  cond_printf(1,"dispatch22:%s,name=%s\n",firsts(arg),popt->name);
   arg=proc_alias22(arg,popt);
   char* arg0=firsts(arg);
   if(arg0[0]=='-' || arg0[0]=='+')
@@ -259,7 +260,8 @@ LVal dispatch22(LVal arg,struct proc_opt *popt) {
   return nnthcdr(1,arg);
 }
 
-void dispatch_init(struct proc_opt *popt) {
+void dispatch_init(struct proc_opt *popt,char* name_) {
+  popt->name=q_(name_);
   popt->option=(LVal)0;
   popt->command=(LVal)0;
   popt->top=0;
