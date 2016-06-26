@@ -63,6 +63,12 @@ before_install:
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
+  - if ! [ -f "$HOME/.rosproxy/proxy" ]; then
+      curl -L https://github.com/snmsts/roswell-proxy/releases/download/v0.3/v0.3-$TRAVIS_OS_NAME.tgz |tar xzf -;
+      cp proxy $HOME/.rosproxy/proxy;
+    fi
+  - ./proxy daemon
+  - mkdir ~/.roswell;
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
@@ -72,6 +78,10 @@ install:
   - if [ $METHOD = brew ]; then brew tap roswell/roswell; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
+
+cache:
+  directories:
+    - $HOME/.rosproxy
 
 script:
   - if [ "$METHOD" = "documents" ]; then rm documents/man/* documents/html/*; fi
