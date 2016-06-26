@@ -86,11 +86,12 @@ int download_simple (char* uri,char* path,int opt) {
   CURLcode res=!CURLE_OK;
   curl = curl_easy_init();
   if(curl) {
-    char* current=q(get_opt("ros.proxy",1));
+    char* current=get_opt("ros.proxy",1);
     if(current) {
       /*<[protocol://][user:password@]proxyhost[:port]>*/
-      char *reserve=current,*protocol=NULL,*userpwd=NULL,*port=NULL,*uri=NULL;
+      char *reserve,*protocol=NULL,*userpwd=NULL,*port=NULL,*uri=NULL;
       int pos=position_char("/",current);
+      reserve=current=_q(current);
       if(pos>0 && current[pos-1]==':' && current[pos+1]=='/')
         protocol=current,current[pos-1]='\0',current=current+pos+2;
       pos=position_char("@",current);
