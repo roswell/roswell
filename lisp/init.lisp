@@ -271,7 +271,13 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun eval (cmd arg &rest rest)
   (declare (ignorable cmd rest))
-  (cl:eval (read-from-string arg)))
+  (loop with start = 0
+        with end = (gensym)
+        with exp
+        do (multiple-value-setq (exp start)
+             (read-from-string arg nil end :start start))
+        until (eql exp end)
+        do (cl:eval exp)))
 
 (defun restart (cmd arg &rest rest)
   (declare (ignorable cmd rest))
