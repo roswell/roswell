@@ -45,48 +45,54 @@ Roswell has git-like subcommands which resemble that of cl-launch, buildapp and 
 
 ```
 $ ros
-Usage: ros [OPTIONS] [Command arguments...]
-Usage: ros [OPTIONS] [[--] script-path arguments...]
+Usage: /usr/local/bin/ros [OPTIONS] [Command arguments...]
+Usage: /usr/local/bin/ros [OPTIONS] [[--] script-path arguments...]
 
 Commands:
-    install  Install archive and build it for roswell environment
-    config   Get and set options
-    setup    Initial setup
-    version  Show the roswell version information
-    help     Show Command help
-    run      Run repl
-    use      change default implementation
-    init     create new ros script
-    dump     Dump image for faster startup or Make Executable
-    delete   Delete installed implementations
-    list     List Information
-    emacs    launch emacs with slime
-    build
+   run       Run repl
+   install   Install a given implementation or a system for roswell environment
+   build     Make executable from script.
+   use       change default implementation
+   init      Creates a new ros script, optionally based on a template.
+   list      List Information
+   asdf      manage asdf version
+   config    Get and set options
+   delete    Delete installed implementations
+   dump      Dump image for faster startup or Make Executable
+   emacs     Launch emacs
+   fmt       [WIP] indent lisp source
+   help      Show Command help
+   setup     Initial setup
+   swank     [WIP] Manage swank version for roswell
+   template  [WIP] Manage templates
+   version   Show the roswell version information
+   wait      Wait forever
 
 Options:
-    -w CODE     --wrap CODE          shell wrapper CODE to run in roswell
-    -m IMAGE    --image IMAGE        build from Lisp image IMAGE
-    -L NAME     --lisp NAME          try use these LISP implementation
-    -l FILE     --load FILE          load lisp FILE while building
-    -S X        --source-registry X  override source registry of asdf systems
-    -s SYSTEM   --system SYSTEM      load asdf SYSTEM while building
+                --version            Print version information and quit
+   -w  CODE     --wrap CODE          Run roswell with a shell wrapper CODE,
+   -m  IMAGE    --image IMAGE        continue from Lisp image IMAGE
+   -L  NAME     --lisp NAME          Run roswell with a lisp impl NAME[/VERSION].
+   -l  FILE     --load FILE          load lisp FILE while building
+   -S  X        --source-registry X  override source registry of asdf systems
+   -s  SYSTEM   --system SYSTEM      load asdf SYSTEM while building
                 --load-system SYSTEM same as above (buildapp compatibility)
-    -p PACKAGE  --package PACKAGE    change current package to PACKAGE
-    -sp SP      --system-package SP  combination of -s SP and -p SP
-    -e FORM     --eval FORM          evaluate FORM while building
+   -p  PACKAGE  --package PACKAGE    change current package to PACKAGE
+   -sp SP       --system-package SP  combination of -s SP and -p SP
+   -e  FORM     --eval FORM          evaluate FORM while building
                 --require MODULE     require MODULE while building
-    -q          --quit               quit lisp here
-    -r FUNC     --restart FUNC       restart from build by calling (FUNC)
-    -E FUNC     --entry FUNC         restart from build by calling (FUNC argv)
-    -i FORM     --init FORM          evaluate FORM after restart
-    -ip FORM    --print FORM         evaluate and princ FORM after restart
-    -iw FORM    --write FORM         evaluate and write FORM after restart
-    -F FORM     --final FORM         evaluate FORM before dumping IMAGE
-    -R          --rc                 try read /etc/rosrc, ~/.roswell/init.lisp
-    +R          --no-rc              skip /etc/rosrc, ~/.roswell/init.lisp
-    -Q          --quicklisp          use quicklisp (default)
-    +Q          --no-quicklisp       do not use quicklisp
-    -v          --verbose            be quite noisy while building
+   -q           --quit               quit lisp here
+   -r  FUNC     --restart FUNC       restart from build by calling (FUNC)
+   -E  FUNC     --entry FUNC         restart from build by calling (FUNC argv)
+   -i  FORM     --init FORM          evaluate FORM after restart
+   -ip FORM     --print FORM         evaluate and princ FORM after restart
+   -iw FORM     --write FORM         evaluate and write FORM after restart
+   -F  FORM     --final FORM         evaluate FORM before dumping IMAGE
+   -R           --rc                 try read /etc/rosrc, ~/.roswell/init.lisp
+   +R           --no-rc              skip /etc/rosrc, ~/.roswell/init.lisp
+   -Q           --quicklisp          use quicklisp (default)
+   +Q           --no-quicklisp       do not use quicklisp
+   -v           --verbose            be quite noisy while building
                 --quiet              be quite quiet while building (default)
                 --test               for test purpose
 ```
