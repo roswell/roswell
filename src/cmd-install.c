@@ -71,7 +71,6 @@ int download(struct install_options* param) {
   if(!file_exist_p(impl_archive)
      || get_opt("download.force",1)) {
     printf("Downloading %s\n",url);
-    /*TBD proxy support... etc*/
     if(url) {
       ensure_directories_exist(impl_archive);
       int status = download_simple(url,impl_archive,0);
@@ -185,6 +184,7 @@ DEF_SUBCMD(cmd_install) {
   return 0;
 }
 
-LVal register_cmd_install(LVal a) {
-  return add_command(a,"install"    ,NULL,cmd_install,1,1);
+struct proc_opt* register_cmd_install(struct proc_opt* top) {
+  top->command=add_command(top->command,"install"    ,NULL,cmd_install,1,1);
+  return top;
 }

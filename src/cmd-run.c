@@ -275,16 +275,16 @@ DEF_SUBCMD(cmd_run_star) {
   return 1;
 }
 
-void register_cmd_run(void) {
+struct proc_opt* register_cmd_run(struct proc_opt* top) {
   /*options*/
   dispatch_init(&run,"run");
-  run.option=register_runtime_options();
+  register_runtime_options(&run);
   run.option=add_command(run.option,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
-
   run.option=nreverse(run.option);
 
   /*commands*/
-  top.option =add_command(top.option,""            ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
-  top.command=add_command(top.command,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
-  top.command=add_command(top.command,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top->option =add_command(top->option,""            ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top->command=add_command(top->command,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
+  top->command=add_command(top->command,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  return top;
 }

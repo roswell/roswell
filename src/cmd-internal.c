@@ -124,9 +124,10 @@ DEF_SUBCMD(cmd_internal_core_extention) {
   return 0;
 }
 
-void register_cmd_internal(void) {
-  dispatch_init(&internal,"internal");
+struct proc_opt* register_cmd_internal(struct proc_opt* top_) {
   LVal cmds=0;
+  top_->command=add_command(top_->command,"roswell-internal-use",NULL,cmd_internal,0,1);
+  dispatch_init(&internal,"internal");
   cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
   cmds=add_command(cmds,"download",NULL,cmd_download,0,1);
   cmds=add_command(cmds,"uname",NULL,cmd_uname,0,1);
@@ -135,6 +136,7 @@ void register_cmd_internal(void) {
   cmds=add_command(cmds,"version",NULL,cmd_internal_version,0,1);
   cmds=add_command(cmds,"core-extention",NULL,cmd_internal_core_extention,0,1);
   internal.command=cmds;
+  return top_;
 }
 
 DEF_SUBCMD(cmd_internal) {

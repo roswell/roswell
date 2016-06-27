@@ -1,8 +1,8 @@
 #include "opt.h"
 
-extern void register_cmd_run(void);
-extern LVal register_cmd_install(LVal);
-extern void register_cmd_internal(void);
+struct proc_opt* register_cmd_run(struct proc_opt* top);
+struct proc_opt* register_cmd_install(struct proc_opt* top);
+struct proc_opt* register_cmd_internal(struct proc_opt* top_);
 
 #define OPT_SETVAL(sym,rexp)                          \
   DEF_SUBCMD(opt_##sym) {                             \
@@ -59,8 +59,8 @@ OPT_APPEND(program)
 OPT_APPEND(restart)
 OPT_APPEND(final)
 
-LVal register_runtime_options() {
-  LVal opt=0;
+struct proc_opt* register_runtime_options(struct proc_opt* cmd) {
+  LVal opt=cmd->option;
   opt=add_command(opt,"version" ,NULL,opt_version,1,1);
   opt=add_command(opt,"wrap","-w",opt_take1,1,0);
   opt=add_command(opt,"image","-m",opt_take1,1,0);
@@ -93,20 +93,21 @@ LVal register_runtime_options() {
   opt=add_command(opt,"quiet",NULL,opt_verbose,1,0);
   opt=add_command(opt,"test",NULL,opt_testing,1,0);
   opt=add_command(opt,"stdin",NULL,opt_program,0,0);
-  return nreverse(opt);
+  cmd->option=nreverse(opt);
+  return cmd;
 }
 
-LVal register_runtime_commands(struct proc_opt* top_) {
-  top_->command=register_cmd_install(top_->command);
-  top_->command=add_command(top_->command,"roswell-internal-use",NULL,cmd_internal,0,1);
-  register_cmd_internal();
-  register_cmd_run();
-  return nreverse(top_->command);
+struct proc_opt* register_runtime_commands(struct proc_opt* top_) {
+  top_=register_cmd_install(top_);
+  top_=register_cmd_internal(top_);
+  top_=register_cmd_run(top_);
+  top_->command=nreverse(top_->command);
+  return top_;
 }
 
 void register_top(struct proc_opt* top_) {
   dispatch_init(top_,"top");
-  top_->option=register_runtime_options();
-  top_->command=register_runtime_commands(top_);
+  top_=register_runtime_options(top_);
+  top_=register_runtime_commands(top_);
   top_->top=(LVal)top_;
 }
