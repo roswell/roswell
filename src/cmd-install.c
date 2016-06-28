@@ -98,6 +98,7 @@ DEF_SUBCMD(cmd_install) {
   param.os=uname();
   param.arch=uname_m();
   param.arch_in_archive_name=0;
+  param.exact_version=0;
   param.expand_path=NULL;
   if(argc!=1) {
     int ret=1,k;
@@ -139,7 +140,8 @@ DEF_SUBCMD(cmd_install) {
             save_opts(path,opt);
           }
           s(home),s(path),s(v);
-        }
+        }else
+          exit(EXIT_FAILURE);
       }
       {
         int i,j,argc_;
@@ -170,11 +172,10 @@ DEF_SUBCMD(cmd_install) {
         dealloc(tmp);
         return 0;
       }
-      if(param.version)s(param.version);
+      if(param.version)
+        s(param.version);
       s(param.impl),s(param.arch),s(param.os);
       s(param.expand_path);
-      if(!ret)
-        exit(EXIT_FAILURE);
     }
   }else {
     char* tmp[]={"help","install"};

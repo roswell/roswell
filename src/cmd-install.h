@@ -8,6 +8,7 @@ struct install_options {
   char* os;
   char* arch;
   int arch_in_archive_name;
+  int exact_version;
   void* opt;
   char* expand_path; /*expand dist */
 };

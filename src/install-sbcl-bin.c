@@ -38,6 +38,7 @@ int sbcl_version_bin(struct install_options* param) {
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
   cond_printf(1,"sbcl_version_bin\n");
   ensure_directories_exist(platforms_html);
+  param->exact_version=!!param->version;
   if(!param->version) {
     int ret;
     printf("No SBCL version specified. Downloading platform-table.html to see the available versions...\n");
@@ -68,6 +69,7 @@ int sbcl_bin_download(struct install_options* param) {
   char* arch=arch_(param);
   char* uri=get_opt("sbcl-bin-uri",0);
   cond_printf(1,"sbcl_bin_download\n");
+  int retry=10;
   do {
     if (!(strcmp(arch, "armhf-linux")))
       param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-","arm-linux",SLASH,NULL);
@@ -76,7 +78,7 @@ int sbcl_bin_download(struct install_options* param) {
     impls_sbcl_bin.uri=cat(uri?uri:SBCL_BIN_URI ,"sbcl-",param->version,
                            "-",arch,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);
-    if(!result) {
+    if(!result && !param->exact_version) {
       int len = strlen(param->version)-1;
       if('1'<= param->version[len] && param->version[len] <= '9') {
         param->version[len]--;
@@ -86,9 +88,9 @@ int sbcl_bin_download(struct install_options* param) {
         return 0;
       }
     }
-  }while (!result);
+  }while (!result && retry--);
   s(arch),s(home);
-  return 1;
+  return !!result;
 }
 #ifndef HAVE_WINDOWS_H
 
