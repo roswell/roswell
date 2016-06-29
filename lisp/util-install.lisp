@@ -79,4 +79,10 @@
            when (eql (aref href 0) #\/)
              collect (funcall filter href)))))
 
+#+win32
+(defun mingw-namestring (path)
+  (string-right-trim (format nil "~%")
+                     (uiop:run-program `(,(sh) "-lc" ,(format nil "cd ~S;pwd" (uiop:native-namestring path)))
+                                       :output :string)))
+
 (pushnew :ros.install.util *features*)

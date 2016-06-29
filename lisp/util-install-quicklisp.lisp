@@ -71,12 +71,6 @@
   ;;TBD
   (declare (ignore path)))
 
-#+win32
-(defun mingw-namestring (path)
-  (string-right-trim (format nil "~%")
-                     (uiop:run-program `(,(sh) "-lc" ,(format nil "cd ~S;pwd" (uiop:native-namestring path)))
-                                       :output :string)))
-
 (defun start (argv)
   (ensure-directories-exist (homedir))
   #+win32
