@@ -62,10 +62,6 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (unless (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
     (format *error-output* "Installing Quicklisp...~%")
     (ros:roswell '("install" "quicklisp") :interactive nil))
-  #+win32
-  (progn
-    (format *error-output* "Installing 7zip...~%")
-    (ros:roswell '("install" "7zip+") :interactive nil))
   ;;  if(argc==1) ??
   (let ((dir (remove-if-not
               (dump-filter dump)
