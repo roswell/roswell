@@ -12,7 +12,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (ql:quickload '(:plump) :silent t)))
 
 (defpackage :ros.script.asdf.3672011844
-  (:use :cl :ros.util :ros.locations))
+  (:use :cl :ros.util :ros.locations :ros.install))
 (in-package :ros.script.asdf.3672011844)
 
 (defun asdf-get-version ()
