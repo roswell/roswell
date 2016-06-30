@@ -6,7 +6,7 @@
   (:use :cl :ros.util :ros.locations)
   (:export :*build-hook* :install-impl :probe-impl :read-call :*ros-path*
    :install-system-script :install-impl-if-probed :install-script-if-probed
-           :install-system-if-probed))
+           :install-system-if-probed :mingw-namestring))
 
 (in-package :ros.install)
 
