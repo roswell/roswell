@@ -1,3 +1,15 @@
+roswell (0.0.6.64-1) unstable; urgency=low
+
+  * New: Support Allegro Common Lisp 10 Express edition via 'ros install alisp'
+  * New: Support CMUCL by 'ros install cmu-bin'
+  * New: 'ros install roswell/jscl' will introduce jscl (partial support)
+  * New: 'ros run' changed to scriptable see 'https://github.com/roswell/jscl'
+  * Change: Muted backtrace when emacs is not found. (by mpsyco)
+  * Change: Show quicklisp information when 'ros version'
+  * Change: Ignore .roswell/init.lisp when setup.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 01 Jul 2016 12:08:16 +0900
+
 roswell (0.0.6.63-1) unstable; urgency=low
 
   * New: support cmu-bin for install and run.
