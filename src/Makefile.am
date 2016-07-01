@@ -1,6 +1,4 @@
-AM_CPPFLAGS = -DLISP_PATH=\"$(roslispdir)\" -DMAN_PATH=\"$(mandir)\"
 roslispdir = $(sysconfdir)/$(PACKAGE)
-
 ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_windows.c \
 	util-file.c util-file_windows.c util-system.c util-system_windows.c util-cmdline.c proc-opt.c
 check_PROGRAMS = html_sbcl
@@ -12,7 +10,9 @@ gend.h: FORCE
 	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
 	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
 	printf '#ifdef HAVE_WINDOWS_H\n'  >> $@.tmp
-	printf '#define WIN_LISP_PATH \"%s\"' "`cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
+	printf '#define LISP_PATH \"%s\"' "`cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
+	printf '\n#else\n'  >> $@.tmp
+	printf '#define LISP_PATH \"%s\"' "$(roslispdir)" >> $@.tmp
 	printf '\n#endif\n'  >> $@.tmp
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	rm -f $@.tmp

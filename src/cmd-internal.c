@@ -152,21 +152,22 @@ char* lispdir(void) {
   char *w=which(argv_orig[0]);
   char *ros_bin=pathname_directory(truename(w));
   char* ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
-  char* lisp_path=NULL;
-  s(ros_bin),s(w);
   if(directory_exist_p(ros_bin_lisp)) {
-    lisp_path=ros_bin_lisp;
-  }else {
-    s(ros_bin_lisp);
-#if defined(WIN_LISP_PATH)
-    if(lisp_path==NULL)
-      lisp_path=q(WIN_LISP_PATH);
-#endif
-    if(lisp_path==NULL)
-      lisp_path=q(LISP_PATH);
-    lisp_path=append_trail_slash(lisp_path);
+    s(ros_bin),s(w);
+    return ros_bin_lisp; /* $(bindir)/lisp/ */
   }
-  return lisp_path;
+  s(ros_bin_lisp);
+
+  ros_bin[strlen(ros_bin)-1]='\0';
+  ros_bin=pathname_directory(truename(w));
+  
+  ros_bin_lisp=cat(ros_bin,"etc"SLASH PACKAGE_STRING SLASH,NULL);
+  s(ros_bin),s(w);
+  if(directory_exist_p(ros_bin_lisp))
+    return ros_bin_lisp; /* $(bindir)/../etc/roswell/ */
+  s(ros_bin_lisp);
+
+  return append_trail_slash(q(LISP_PATH));
 }
 
 DEF_SUBCMD(opt_version) {
