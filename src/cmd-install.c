@@ -37,8 +37,8 @@ int start(struct install_options* param) {
   ensure_directories_exist(localprojects);
   s(localprojects);
   if(installed_p(param)) {
-    printf("%s/%s is already installed. Try (TBD) for the forced re-installation.\n",param->impl,param->version?param->version:"");
-    return 0;
+    printf("%s/%s is already installed.\n",param->impl,param->version?param->version:"");
+    exit(EXIT_SUCCESS);
   }
   if(install_running_p(param)) {
     printf("It seems another installation process for $1/$2 is in progress somewhere in the system.\n");
