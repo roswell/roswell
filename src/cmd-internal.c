@@ -160,7 +160,7 @@ DEF_SUBCMD(cmd_internal) {
 
 char* lispdir(void) {
   static char *result=NULL;
-  char *w,*ros_bin,*ros_bin_lisp
+  char *w,*ros_bin,*ros_bin_lisp;
   if(result)
     return q(result);
 
