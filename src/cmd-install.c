@@ -130,6 +130,7 @@ DEF_SUBCMD(cmd_install) {
           char* path=cat(home,"config",NULL);
           char* v=cat(param.impl,".version",NULL);
           char* version=param.version;
+          cond_printf(1,"impl %s util attr = %d version= %s \n",param.impl,install_impl->util,version);
           if(!install_impl->util) {
             int i;
             for(i=0;version[i]!='\0';++i)
@@ -138,15 +139,18 @@ DEF_SUBCMD(cmd_install) {
             set_opt(opts,"default.lisp",param.impl);
             set_opt(opts,v,version);
             save_opts(path,opt);
+            global_opt=opt;
           }
           s(home),s(path),s(v);
         }else
           exit(EXIT_FAILURE);
+        cond_printf(1,"done with install impl \n");
       }
       {
         int i,j,argc_;
         char** tmp;
         char* install_ros=s_cat2(lispdir(),q("install.ros"));
+        cond_printf(1,"%s \n",install_ros);
         if(verbose&1) {
           cond_printf(1,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
           for(i=0;i<argc;++i)
@@ -163,7 +167,7 @@ DEF_SUBCMD(cmd_install) {
         argc_=i;
         if(verbose&1) {
           int j;
-          cond_printf(1,"argc_=%d",argc_);
+          cond_printf(1,"argc_=%d ",argc_);
           for(j=0;j<argc_;++j)
             cond_printf(1,"argv[%d]=%s,",j,tmp[j]);
         }

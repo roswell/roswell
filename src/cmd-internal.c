@@ -148,38 +148,39 @@ DEF_SUBCMD(cmd_internal) {
   return dispatch22(array_stringlist(argc-1,&(argv[1])),&internal);
 }
 
-char* lispdir(void) {
-  char *w=which(argv_orig[0]);
-  char *ros_bin=pathname_directory(truename(w));
-  char* ros_bin_lisp;
-  s(w);
-
-  ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
-  if(directory_exist_p(ros_bin_lisp)) {
-    s(ros_bin);
-    return ros_bin_lisp; /* $(bindir)/lisp/ */
+#define LISPDIR_CANDIDATE(candidate) {    \
+    ros_bin_lisp=candidate;               \
+    if(directory_exist_p(ros_bin_lisp)) { \
+      result=q(ros_bin_lisp);             \
+      s(ros_bin);                         \
+      return ros_bin_lisp;                \
+    }                                     \
+    s(ros_bin_lisp);                      \
   }
-  s(ros_bin_lisp);
+
+char* lispdir(void) {
+  static char *result=NULL;
+  char *w,*ros_bin,*ros_bin_lisp
+  if(result)
+    return q(result);
+
+  w=which(argv_orig[0]);
+  ros_bin=pathname_directory(truename(w));
+  s(w);
+  
+  /* $(bindir)/lisp/ */
+  LISPDIR_CANDIDATE(cat(ros_bin,"lisp",SLASH,NULL));
 
   ros_bin[strlen(ros_bin)-1]='\0';
   ros_bin=pathname_directory(ros_bin);
 
-  ros_bin_lisp=cat(ros_bin,"lisp",SLASH,NULL);
-  if(directory_exist_p(ros_bin_lisp)) {
-    s(ros_bin);
-    return ros_bin_lisp; /* $(bindir)/../lisp/ */
-  }
-  s(ros_bin_lisp);
-
-  ros_bin_lisp=cat(ros_bin,"etc"SLASH PACKAGE_STRING SLASH,NULL);
-  if(directory_exist_p(ros_bin_lisp)) {
-    s(ros_bin);
-    return ros_bin_lisp; /* $(bindir)/../etc/roswell/ */
-  }
-  s(ros_bin_lisp);
+  /* $(bindir)/../lisp/ */
+  LISPDIR_CANDIDATE(cat(ros_bin,"lisp",SLASH,NULL));
+  /* $(bindir)/../etc/roswell/ */
+  LISPDIR_CANDIDATE(cat(ros_bin,"etc"SLASH PACKAGE_STRING SLASH,NULL));
   s(ros_bin);
-
-  return append_trail_slash(q(LISP_PATH));
+  result=append_trail_slash(q(LISP_PATH));
+  return q(result);
 }
 
 DEF_SUBCMD(opt_version) {

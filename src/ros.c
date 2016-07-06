@@ -19,6 +19,7 @@ int main(int argc,char **argv) {
   argv_orig=argv;
   argc_orig=argc;
 
+  lispdir();
   register_top(&top);
 
   global_opt=load_opts(path);
