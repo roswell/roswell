@@ -22,9 +22,10 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
   }
   if(content_length) {
     int i;
+    w=s_cat2(w,q("["));
     for(i=0;i<download_width;++i)
       w=s_cat2(w,q((i>=(download_count/(content_length/(download_width)))?" ":"#")));
-    w=s_cat2(w,qsprintf(8," %3d%%",(100*(download_count/100))/(content_length/100)));
+    w=s_cat2(w,qsprintf(8,"]%3d%%",(100*(download_count/100))/(content_length/100)));
   }else {
     int current,aux;
     aux=1024>download_count?' ':1024*1024>download_count?(current=download_count/1024,'K'):
