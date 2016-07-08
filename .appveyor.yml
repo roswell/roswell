@@ -23,24 +23,22 @@ build_script:
   - if "%METHOD%"=="cross" msys%MSYS2_BITS%\usr\bin\bash -lc "mkdir /tmp;cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make"
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%
   - if "%METHOD%"=="cross" mkdir roswell
-  - if "%METHOD%"=="cross" mkdir roswell\bin
-  - if "%METHOD%"=="cross" mkdir roswell\etc
-  - if "%METHOD%"=="cross" mkdir roswell\etc\roswell
+  - if "%METHOD%"=="cross" mkdir roswell\lisp
   - if "%METHOD%"=="cross" mkdir roswell\documents
   - if "%METHOD%"=="cross" mkdir roswell\documents\html
-  - if "%METHOD%"=="cross" copy src\ros.exe roswell\bin
-  - if "%METHOD%"=="cross" copy lisp\*.lisp roswell\etc\roswell
-  - if "%METHOD%"=="cross" copy lisp\*.ros  roswell\etc\roswell
+  - if "%METHOD%"=="cross" copy src\ros.exe roswell
+  - if "%METHOD%"=="cross" copy lisp\*.lisp roswell\lisp
+  - if "%METHOD%"=="cross" copy lisp\*.ros  roswell\lisp
   - if "%METHOD%"=="cross" copy documents\html\*.html roswell\documents\html
   - if "%METHOD%"=="cross" copy scripts\chm.ros roswell\documents
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
-  - if "%METHOD%"=="cross" bin\ros version
-  - if "%METHOD%"=="cross" bin\ros setup
-  - if "%METHOD%"=="cross" bin\ros version=t run
-  - if "%METHOD%"=="cross" bin\ros documents\chm.ros
+  - if "%METHOD%"=="cross" ros version
+  - if "%METHOD%"=="cross" ros setup
+  - if "%METHOD%"=="cross" ros version=t run
+  - if "%METHOD%"=="cross" ros documents\chm.ros
   - if "%METHOD%"=="cross" "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" documents\roswell.hhp || copy nul nul > nul
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%
-  - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/bin/ros.exe roswell/etc/roswell\*.* roswell/documents/roswell.chm
+  - if "%METHOD%"=="cross" 7z a Roswell-%MSYS2_ARCH%.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install"
 
 test_script:
