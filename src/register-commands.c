@@ -6,8 +6,6 @@ struct proc_opt* register_cmd_internal(struct proc_opt* top_);
 
 #define OPT_SETVAL(sym,rexp)                          \
   DEF_SUBCMD(opt_##sym) {                             \
-    dealloc((void*)arg_);                             \
-                                                      \
     sym=rexp;                                         \
     cond_printf(1,"opt:%s:%d\n",cmd->name,sym);       \
     return 1;}
@@ -18,8 +16,6 @@ OPT_SETVAL(rc,(strcmp(cmd->name,"rc")==0)?1:0)
 OPT_SETVAL(quicklisp,(strcmp(cmd->name,"quicklisp")==0)?1:0)
 
 DEF_SUBCMD(opt_program0) {
-  dealloc((void*)arg_);
-
   if(cmd->name) {
     char* current=get_opt("program",0);
     current=cat(current?current:"","(:",cmd->name,")",NULL);
@@ -29,30 +25,26 @@ DEF_SUBCMD(opt_program0) {
 }
 
 DEF_SUBCMD(opt_take1) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
-
+  int argc=length(arg_);
   const char* arg=cmd->name;
   if(arg && argc>1)
-    set_opt(&local_opt,arg,argv[1]);
+    set_opt(&local_opt,arg,firsts(nthcdr(1,arg_)));
   return 2;
 }
 
-#define OPT_APPEND(sym)                                            \
-  DEF_SUBCMD(opt_##sym) {                                          \
-    char** argv=firstp(arg_);                                      \
-    int argc=(int)rest(arg_);                                      \
-    dealloc((void*)arg_);                                          \
-                                                                   \
-    if(cmd->name && argc>1) {                                      \
-      char* current=get_opt(#sym,0);                               \
-      current=s_cat(current?q(current):q(""),                      \
-                    q("(:"),q(cmd->name),q(" \""),                 \
-                    escape_string(argv[1]),q("\")"),NULL);         \
-      set_opt(&local_opt,#sym,current);                            \
-    }                                                              \
-    return 2;                                                      \
+#define OPT_APPEND(sym)                                    \
+  DEF_SUBCMD(opt_##sym) {                                  \
+    int argc=length(arg_);                                 \
+                                                           \
+    if(cmd->name && argc>1) {                              \
+      char* current=get_opt(#sym,0);                       \
+      current=s_cat(current?q(current):q(""),              \
+                    q("(:"),q(cmd->name),q(" \""),         \
+                    escape_string(firsts(nthcdr(1,arg_))), \
+                    q("\")"),NULL);                        \
+      set_opt(&local_opt,#sym,current);                    \
+    }                                                      \
+    return 2;                                              \
   }
 
 OPT_APPEND(program)

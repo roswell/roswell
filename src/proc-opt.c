@@ -43,44 +43,9 @@ LVal proc_alias22(LVal arg,struct proc_opt *popt) {
   return arg;
 }
 
-int proc_options(int argc,char** argv,struct proc_opt *popt) {
-  if(argv[0][0]=='-' &&
-     argv[0][1]=='-') { /*long option*/
-    LVal p;
-    for(p=popt->option;p;p=Next(p)) {
-      struct sub_command* fp=firstp(p);
-      if(strcmp(&argv[0][2],fp->name)==0) {
-        int result= fp->call(cons(argv,argc),fp);
-        if(fp->terminating) {
-          cond_printf(1,"terminating:%s\n",argv[0]);
-          exit(result);
-        }else
-          return result;
-      }
-    }
-    cond_printf(1,"dispatch:invalid? %s\n",argv[0]);
-  }else { /*short option*/
-    if(argv[0][1]!='\0') {
-      LVal p;
-      for(p=popt->option;p;p=Next(p)) {
-        struct sub_command* fp=firstp(p);
-        if(fp->short_name&&strcmp(argv[0],fp->short_name)==0) {
-          int result= fp->call(cons(argv,argc),fp);
-          if(fp->terminating) {
-            cond_printf(1,"terminating:%s\n",argv[0]);
-            exit(result);
-          }else
-            return result;
-        }
-      }
-    }
-  }
-  return 1;
-}
-
-LVal proc_options22(LVal arg,struct proc_opt *popt) {
+LVal proc_options(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
-  cond_printf(1,"proc_options22:\n");
+  cond_printf(1,"proc_options:\n");
   if(arg0[0]=='-' &&
      arg0[1]=='-') { /*long option*/
     LVal p;
@@ -92,7 +57,7 @@ LVal proc_options22(LVal arg,struct proc_opt *popt) {
           cond_printf(1,"terminating:%s\n",arg0);
           exit(result);
         }else
-          return result;
+          return nnthcdr(result,arg);
       }
     }
     cond_printf(1,"dispatch:invalid? %s\n",arg0);
@@ -107,7 +72,7 @@ LVal proc_options22(LVal arg,struct proc_opt *popt) {
             cond_printf(1,"terminating:%s\n",arg0);
             exit(result);
           }else
-            return result;
+            return nnthcdr(result,arg);
         }
       }
     }
@@ -237,9 +202,12 @@ int dispatch(int argc,char** argv,struct proc_opt *popt) {
   int pos;
   cond_printf(1,"dispatch:%s\n",argv[0]);
   argv=proc_alias(argc,argv,popt);
-  if(argv[0][0]=='-' || argv[0][0]=='+')
-    return proc_options(argc,argv,popt);
-  else if((pos=position_char("=",argv[0]))!=-1)
+  if(argv[0][0]=='-' || argv[0][0]=='+') {
+    LVal arg=proc_options(array_stringlist(argc,argv),popt);
+    int ret=argc-length(arg);
+    sL(arg);
+    return ret;
+  }else if((pos=position_char("=",argv[0]))!=-1)
     return proc_set(argc,argv,popt,pos);
   else
     proc_cmd(argc,argv,popt);
@@ -252,7 +220,7 @@ LVal dispatch22(LVal arg,struct proc_opt *popt) {
   arg=proc_alias22(arg,popt);
   char* arg0=firsts(arg);
   if(arg0[0]=='-' || arg0[0]=='+')
-    return proc_options22(arg,popt);
+    return proc_options(arg,popt);
   else if((pos=position_char("=",arg0))!=-1)
     return proc_set22(arg,popt,pos);
   else

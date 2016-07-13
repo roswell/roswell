@@ -125,6 +125,11 @@ DEF_SUBCMD(cmd_script_frontend) {
   return 0;
 }
 
+DEF_SUBCMD(cmd_script_frontend22) {
+  char** argv=stringlist_array(arg_);
+  return cmd_script_frontend(cons(argv,length(arg_)),cmd);
+}
+
 int setup(void) {
   if(lock_apply("setup",2))
     return 0; /* lock file exists */
@@ -275,15 +280,20 @@ DEF_SUBCMD(cmd_run_star) {
   return 1;
 }
 
+DEF_SUBCMD(cmd_run_star22) {
+  char** argv=stringlist_array(arg_);
+  return cmd_run_star(cons(argv,length(arg_)),cmd);
+}
+
 struct proc_opt* register_cmd_run(struct proc_opt* top) {
   /*options*/
   dispatch_init(&run,"run");
   register_runtime_options(&run);
-  run.option=add_command(run.option,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
+  run.option=add_command(run.option,"",NULL,cmd_run_star22,OPT_SHOW_NONE,1);
   run.option=nreverse(run.option);
 
   /*commands*/
-  top->option =add_command(top->option,""            ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
+  top->option =add_command(top->option,""            ,NULL,cmd_script_frontend22,OPT_SHOW_NONE,1);
   top->command=add_command(top->command,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
   top->command=add_command(top->command,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
   return top;
