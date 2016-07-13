@@ -5,6 +5,8 @@ env:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=$TRAVIS_BRANCH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
+    - ROSWELL_PLATFORMHTML_BASE=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
+    - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
     - METHOD=brew
     - METHOD=ci LISP=alisp

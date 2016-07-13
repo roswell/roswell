@@ -9,6 +9,9 @@ dependencies:
 machine:
   environment:
     PATH: ~/.roswell/bin:~/.linuxbrew/bin:$PATH
+    ROSWELL_PLATFORMHTML_BASE: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
+    ROSWELL_SBCL_BIN_URI: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
+
 test:
   post:
     - sh bootstrap
