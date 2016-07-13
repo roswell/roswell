@@ -15,7 +15,7 @@ machine:
 test:
   post:
     - sh bootstrap
-    - ./configure
+    - ./configure --with-platformhtml-base=$ROSWELL_PLATFORMHTML_BASE --with-sbcl-bin-base=$ROSWELL_SBCL_BIN_URI
     - make -j4
     - sudo make install
     - ros version
