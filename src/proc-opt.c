@@ -80,23 +80,7 @@ LVal proc_options(LVal arg,struct proc_opt *popt) {
   return nnthcdr(1,arg);
 }
 
-int proc_set(int argc,char** argv,struct proc_opt *popt,int pos) {
-  char *l,*r;
-  l=subseq(argv[0],0,pos);
-  r=subseq(argv[0],pos+1,0);
-  if(r)
-    set_opt(&local_opt,l,r);
-  else{
-    struct opts* opt=global_opt;
-    struct opts** opts=&opt;
-    unset_opt(opts, l);
-    global_opt=*opts;
-  }
-  s(l),s(r);
-  return 1;
-}
-
-LVal proc_set22(LVal arg,struct proc_opt *popt,int pos) {
+LVal proc_set(LVal arg,struct proc_opt *popt,int pos) {
   char* arg0=firsts(arg);
   char *l,*r;
   l=subseq(arg0,0,pos);
@@ -207,9 +191,10 @@ int dispatch(int argc,char** argv,struct proc_opt *popt) {
     int ret=argc-length(arg);
     sL(arg);
     return ret;
-  }else if((pos=position_char("=",argv[0]))!=-1)
-    return proc_set(argc,argv,popt,pos);
-  else
+  }else if((pos=position_char("=",argv[0]))!=-1) {
+    sL(proc_set(array_stringlist(argc,argv),popt,pos));
+    return 1;
+  }else
     proc_cmd(argc,argv,popt);
   return 1;
 }
@@ -222,7 +207,7 @@ LVal dispatch22(LVal arg,struct proc_opt *popt) {
   if(arg0[0]=='-' || arg0[0]=='+')
     return proc_options(arg,popt);
   else if((pos=position_char("=",arg0))!=-1)
-    return proc_set22(arg,popt,pos);
+    return proc_set(arg,popt,pos);
   else
     proc_cmd22(arg,popt);
   return nnthcdr(1,arg);
