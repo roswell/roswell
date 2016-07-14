@@ -4,10 +4,10 @@ struct proc_opt* register_cmd_run(struct proc_opt* top);
 struct proc_opt* register_cmd_install(struct proc_opt* top);
 struct proc_opt* register_cmd_internal(struct proc_opt* top_);
 
-#define OPT_SETVAL(sym,rexp)                          \
-  DEF_SUBCMD(opt_##sym) {                             \
-    sym=rexp;                                         \
-    cond_printf(1,"opt:%s:%d\n",cmd->name,sym);       \
+#define OPT_SETVAL(sym,rexp)                    \
+  DEF_SUBCMD(opt_##sym) {                       \
+    sym=rexp;                                   \
+    cond_printf(1,"opt:%s:%d\n",cmd->name,sym); \
     return 1;}
 
 OPT_SETVAL(verbose,(strcmp(cmd->name,"verbose")==0)?1|verbose<<1:verbose>>1)

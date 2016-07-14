@@ -140,12 +140,8 @@ struct proc_opt* register_cmd_internal(struct proc_opt* top_) {
 }
 
 DEF_SUBCMD(cmd_internal) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
-
   setup_uid(0);
-  return dispatch22(array_stringlist(argc-1,&(argv[1])),&internal);
+  return dispatch22(nnthcdr(1,arg_),&internal);
 }
 
 #define LISPDIR_CANDIDATE(candidate) {    \

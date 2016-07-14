@@ -24,9 +24,8 @@ struct run_impl_t impls_to_run[]={
 struct proc_opt run;
 
 DEF_SUBCMD(cmd_run) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
+  char** argv=stringlist_array(arg_);
 
   char* current=get_opt("program",0);
   cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
@@ -49,9 +48,9 @@ DEF_SUBCMD(cmd_run) {
 }
 
 DEF_SUBCMD(cmd_script) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  cond_printf(1,"cmd_script\n");
+  int argc=length(arg_);
+  char** argv=stringlist_array(arg_);
 
   char* current=get_opt("program",0);
   cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
@@ -79,9 +78,8 @@ DEF_SUBCMD(cmd_script) {
 static int script_frontend_sentinel=0;
 
 DEF_SUBCMD(cmd_script_frontend) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
+  int argc=length(arg_);
+  char** argv=stringlist_array(arg_);
 
   FILE* in;
   char buf[800];
@@ -90,8 +88,9 @@ DEF_SUBCMD(cmd_script_frontend) {
   char** argv_;
   char** argv_gen;
   struct opts* opt;
+  cond_printf(1,"cmd_script_frontend:%d\n",script_frontend_sentinel);
   if(script_frontend_sentinel)
-    return cmd_script(cons(argv,argc),cmd);
+    return cmd_script(array_stringlist(argc,argv),cmd);
   script_frontend_sentinel=1;
   if(strcmp(argv[0],"--")==0)
     ++argv,--argc;
@@ -103,7 +102,7 @@ DEF_SUBCMD(cmd_script_frontend) {
   if((in=fopen(argv[0],"rb"))!=NULL) {
     if(fgetc(in)!='#'||fgetc(in)!='!') {
       fclose(in);
-      cmd_script(cons(argv,argc),cmd);
+      cmd_script(array_stringlist(argc,argv),cmd);
     }
     for(i=0;i<3;++i)
       while((c=fgetc(in))!=EOF && c!='\n');
@@ -123,11 +122,6 @@ DEF_SUBCMD(cmd_script_frontend) {
   j=i;
   for(i=0;i<j;i+=dispatch(j-i,&argv_gen[i],&top));
   return 0;
-}
-
-DEF_SUBCMD(cmd_script_frontend22) {
-  char** argv=stringlist_array(arg_);
-  return cmd_script_frontend(cons(argv,length(arg_)),cmd);
 }
 
 int setup(void) {
@@ -293,7 +287,7 @@ struct proc_opt* register_cmd_run(struct proc_opt* top) {
   run.option=nreverse(run.option);
 
   /*commands*/
-  top->option =add_command(top->option,""            ,NULL,cmd_script_frontend22,OPT_SHOW_NONE,1);
+  top->option =add_command(top->option,""            ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
   top->command=add_command(top->command,ROS_RUN_REPL ,NULL,cmd_run,OPT_SHOW_HELP,1);
   top->command=add_command(top->command,"*"          ,NULL,cmd_script_frontend,OPT_SHOW_NONE,1);
   return top;

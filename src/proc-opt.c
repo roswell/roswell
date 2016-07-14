@@ -45,12 +45,14 @@ LVal proc_alias22(LVal arg,struct proc_opt *popt) {
 
 LVal proc_options(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
-  cond_printf(1,"proc_options:\n");
+  cond_printf(1,"proc_options:%s:%s\n",arg0,popt->name);
   if(arg0[0]=='-' &&
      arg0[1]=='-') { /*long option*/
     LVal p;
+
     for(p=popt->option;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
+      cond_printf(1,"fpname='%s'\n",fp->name);
       if(strcmp(&arg0[2],fp->name)==0) {
         int result= fp->call(arg,fp);
         if(fp->terminating) {
@@ -97,52 +99,12 @@ LVal proc_set(LVal arg,struct proc_opt *popt,int pos) {
   return nnthcdr(1,arg);
 }
 
-void proc_cmd(int argc,char** argv,struct proc_opt *popt) {
-  char* tmp[]={"help"};
-  LVal p,p2=0;
-  /* search internal commands.*/
-  for(p=popt->command;p;p=Next(p)) {
-    struct sub_command* fp=firstp(p);
-    if(fp->name) {
-      if(strcmp(fp->name,argv[0])==0)
-        exit(fp->call(cons(argv,argc),fp));
-      if(strcmp(fp->name,"*")==0)
-        p2=p;
-    }
-  }
-  if(popt->top && position_char(".",argv[0])==-1) {
-    /* local commands*/
-    char* cmddir=configdir();
-    char* cmdpath=cat(cmddir,argv[0],".ros",NULL);
-    if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
-      dispatch_with_subcmd(cmdpath,argc,argv,popt);
-    s(cmddir),s(cmdpath);
-    /* systemwide commands*/
-    cmddir=subcmddir();
-    cmdpath=cat(cmddir,argv[0],".ros",NULL);
-    if(directory_exist_p(cmddir)) {
-      if(file_exist_p(cmdpath))
-        dispatch_with_subcmd(cmdpath,argc,argv,popt);
-      s(cmdpath);cmdpath=cat(cmddir,"+",argv[0],".ros",NULL);
-      if(file_exist_p(cmdpath))
-        dispatch_with_subcmd(cmdpath,argc,argv,popt);
-    }
-    s(cmddir),s(cmdpath);
-  }
-  if(p2) {
-    struct sub_command* fp=firstp(p2);
-    exit(fp->call(cons(argv,argc),fp));
-  }
-  fprintf(stderr,"invalid command\n");
-  dispatch(1,tmp,&top);
-}
-
-void proc_cmd22(LVal arg,struct proc_opt *popt) {
+void proc_cmd(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
   char* tmp[]={"help"};
   LVal p,p2=0;
   
-  cond_printf(1,"proc_cmd22#:\n");
+  cond_printf(1,"proc_cmd:\n");
   /* search internal commands.*/
   for(p=popt->command;p;p=Next(p)) {
     struct sub_command* fp=firstp(p);
@@ -184,7 +146,7 @@ void proc_cmd22(LVal arg,struct proc_opt *popt) {
 
 int dispatch(int argc,char** argv,struct proc_opt *popt) {
   int pos;
-  cond_printf(1,"dispatch:%s\n",argv[0]);
+  cond_printf(1,"dispatch:%s:%s\n",argv[0],popt->name);
   argv=proc_alias(argc,argv,popt);
   if(argv[0][0]=='-' || argv[0][0]=='+') {
     LVal arg=proc_options(array_stringlist(argc,argv),popt);
@@ -194,8 +156,9 @@ int dispatch(int argc,char** argv,struct proc_opt *popt) {
   }else if((pos=position_char("=",argv[0]))!=-1) {
     sL(proc_set(array_stringlist(argc,argv),popt,pos));
     return 1;
-  }else
-    proc_cmd(argc,argv,popt);
+  }else {
+    proc_cmd(array_stringlist(argc,argv),popt);
+  }
   return 1;
 }
 
@@ -209,7 +172,7 @@ LVal dispatch22(LVal arg,struct proc_opt *popt) {
   else if((pos=position_char("=",arg0))!=-1)
     return proc_set(arg,popt,pos);
   else
-    proc_cmd22(arg,popt);
+    proc_cmd(arg,popt);
   return nnthcdr(1,arg);
 }
 
