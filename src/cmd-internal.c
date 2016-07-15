@@ -72,11 +72,8 @@ DEF_SUBCMD(cmd_internal_version) {
     if(ev) {
       char *cmd=cat("(progn(format t\"~A~%\"(or(ignore-errors(getf(symbol-value(read-from-string \"ros.util::*version*\")) :",ev,
                     "))(ros:quit 1))) (ros:quit 0))",NULL);
-      {char* p[]={"--no-rc"};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"-L",DEFAULT_IMPL};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"-m","roswell"};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"--eval",cmd};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
-      {char* p[]={"run"};dispatch(sizeof(p)/sizeof(p[0]),p,&top);}
+      LVal arg=stringlist("--no-rc","-L",DEFAULT_IMPL,"-m","roswell","--eval",cmd,"run",NULL);
+      for(;arg;arg=dispatch22(arg,&top));
       s(cmd);
     }else if(strncmp(arg1,"cc",2)==0) {
       printf("%s\n",ROS_COMPILE_ENVIRONMENT);

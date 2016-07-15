@@ -52,7 +52,6 @@ LVal proc_options(LVal arg,struct proc_opt *popt) {
 
     for(p=popt->option;p;p=Next(p)) {
       struct sub_command* fp=firstp(p);
-      cond_printf(1,"fpname='%s'\n",fp->name);
       if(strcmp(&arg0[2],fp->name)==0) {
         int result= fp->call(arg,fp);
         if(fp->terminating) {

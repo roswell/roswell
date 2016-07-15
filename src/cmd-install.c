@@ -88,7 +88,6 @@ int download(struct install_options* param) {
 
 DEF_SUBCMD(cmd_install) {
   int argc=length(arg_);
-  //char** argv=stringlist_array(arg_);
 
   cond_printf(1,"cmd_install:\n");
   install_cmds *cmds=NULL;
@@ -181,8 +180,7 @@ DEF_SUBCMD(cmd_install) {
       s(param.expand_path);
     }
   }else {
-    char* tmp[]={"help","install"};
-    dispatch(2,tmp,&top);
+    dispatch22(stringlist("help","install",NULL),&top);
     exit(EXIT_SUCCESS);
   }
   return 0;
