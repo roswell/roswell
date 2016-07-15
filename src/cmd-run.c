@@ -33,10 +33,7 @@ DEF_SUBCMD(cmd_run) {
   else {
     int i;
     for(i=1;i<argc;i+=dispatch(argc-i,&argv[i],&run));
-    if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0)
-      dispatch22(stringlist("--",NULL),&top);
-    else
-      dispatch22(stringlist("--",ROS_RUN_REPL,NULL),&top);
+    dispatch22(stringlist("--",NULL),&run);
     cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
     return i;
   }
