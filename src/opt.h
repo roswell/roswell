@@ -50,7 +50,6 @@ struct proc_opt {
 };
 
 void dispatch_init(struct proc_opt *popt,char* name_);
-int dispatch(int argc,char** argv,struct proc_opt *popt);
 LVal dispatch22(LVal arg,struct proc_opt *popt);
 void register_top(struct proc_opt* opt);
 extern struct proc_opt top;

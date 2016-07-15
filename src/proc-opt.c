@@ -131,24 +131,6 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
   dispatch22(stringlist("help",NULL),&top);
 }
 
-int dispatch(int argc,char** argv,struct proc_opt *popt) {
-  int pos;
-  cond_printf(1,"dispatch:%s:%s\n",argv[0],popt->name);
-  argv=proc_alias(argc,argv,popt);
-  if(argv[0][0]=='-' || argv[0][0]=='+') {
-    LVal arg=proc_options(array_stringlist(argc,argv),popt);
-    int ret=argc-length(arg);
-    sL(arg);
-    return ret;
-  }else if((pos=position_char("=",argv[0]))!=-1) {
-    sL(proc_set(array_stringlist(argc,argv),popt,pos));
-    return 1;
-  }else {
-    proc_cmd(array_stringlist(argc,argv),popt);
-  }
-  return 1;
-}
-
 LVal dispatch22(LVal arg,struct proc_opt *popt) {
   int pos;
   cond_printf(1,"dispatch22:%s,name=%s\n",firsts(arg),popt->name);

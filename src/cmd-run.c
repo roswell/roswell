@@ -25,17 +25,15 @@ struct proc_opt run;
 
 DEF_SUBCMD(cmd_run) {
   int argc=length(arg_);
-  char** argv=stringlist_array(arg_);
   char* current=get_opt("program",0);
-  cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,firsts(arg_));
   if(argc==1 && !current)
     return dispatch22(stringlist((char*)cmd->name,"--",NULL),&top);
   else {
-    int i;
-    for(i=1;i<argc;i+=dispatch(argc-i,&argv[i],&run));
+    for(arg_=nnthcdr(1,arg_);arg_;arg_=dispatch22(arg_,&run));
     dispatch22(stringlist("--",NULL),&run);
-    cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
-    return i;
+    cond_printf(1,"cmd_%s ends here\n",cmd->name);
+    return 0;
   }
 }
 
@@ -70,7 +68,6 @@ static int script_frontend_sentinel=0;
 
 DEF_SUBCMD(cmd_script_frontend) {
   int argc=length(arg_);
-  char** argv=stringlist_array(arg_);
 
   FILE* in;
   char buf[800];
@@ -81,19 +78,19 @@ DEF_SUBCMD(cmd_script_frontend) {
   struct opts* opt;
   cond_printf(1,"cmd_script_frontend:%d\n",script_frontend_sentinel);
   if(script_frontend_sentinel)
-    return cmd_script(array_stringlist(argc,argv),cmd);
+    return cmd_script(arg_,cmd);
   script_frontend_sentinel=1;
-  if(strcmp(argv[0],"--")==0)
-    ++argv,--argc;
-  cond_printf(1,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  if(strcmp(firsts(arg_),"--")==0)
+    arg_=nnthcdr(1,arg_),argc--;
+  cond_printf(1,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,firsts(arg_));
 
   for(opt=local_opt;opt;opt=opt->next)
     if(strcmp(opt->name,"lisp")==0)
       opt->name=s_cat(q("*"),opt->name,NULL);
-  if((in=fopen(argv[0],"rb"))!=NULL) {
+  if((in=fopen(firsts(arg_),"rb"))!=NULL) {
     if(fgetc(in)!='#'||fgetc(in)!='!') {
       fclose(in);
-      cmd_script(array_stringlist(argc,argv),cmd);
+      cmd_script(arg_,cmd);
     }
     for(i=0;i<3;++i)
       while((c=fgetc(in))!=EOF && c!='\n');
@@ -109,9 +106,12 @@ DEF_SUBCMD(cmd_script_frontend) {
   for(i=0;i<argc_-2&&strcmp(argv_[i+2],"$0")!=0;++i)
     argv_gen[i]=argv_[i+2];
   for(j=i;i<j+argc;++i)
-    argv_gen[i]=argv[i-j];
+    argv_gen[i]=firsts(nthcdr(i-j,arg_));
   j=i;
-  for(i=0;i<j;i+=dispatch(j-i,&argv_gen[i],&top));
+  {
+    LVal arg=array_stringlist(j,argv_gen);
+    for(;arg;arg=dispatch22(arg,&top));
+  }
   return 0;
 }
 
