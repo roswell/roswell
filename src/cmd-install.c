@@ -145,8 +145,8 @@ DEF_SUBCMD(cmd_install) {
         cond_printf(1,"done with install impl \n");
       }
       {
-        int i,j,argc_;
-        char** tmp;
+        int i,j;
+        LVal tmp=0;
         char* install_ros=s_cat2(lispdir(),q("install.ros"));
         cond_printf(1,"%s \n",install_ros);
         if(verbose&1) {
@@ -155,23 +155,19 @@ DEF_SUBCMD(cmd_install) {
             cond_printf(1,"%s:",firsts(nthcdr(i,arg_)));
           cond_printf(1,"\n");
         }
-        tmp=(char**)alloc(sizeof(char*)*(argc+9));
-        i=0;
-        tmp[i++]=q("--");
-        tmp[i++]=install_ros;
-        tmp[i++]=q("install");
-        tmp[i++]=q(firsts(nthcdr(1,arg_)));
-        for(j=2;j<argc;tmp[i++]=q(firsts(nthcdr(j++,arg_))));
-        argc_=i;
+        tmp=conss(q("--"),tmp);
+        tmp=conss(install_ros,tmp);
+        tmp=conss(q("install"),tmp);
+        tmp=conss(q(firsts(nthcdr(1,arg_))),tmp);
+        for(j=2;j<argc;tmp=conss(q(firsts(nthcdr(j++,arg_))),tmp));
+        tmp=nreverse(tmp);
         if(verbose&1) {
-          int j;
+          int j,argc_=length(tmp);
           cond_printf(1,"argc_=%d ",argc_);
           for(j=0;j<argc_;++j)
-            cond_printf(1,"argv[%d]=%s,",j,tmp[j]);
+            cond_printf(1,"argv[%d]=%s,",j,firsts(nthcdr(j,tmp)));
         }
-        for(i=0;i<argc_;i+=dispatch(argc_-i,&tmp[i],&top));
-        for(j=0;j<argc_;s(tmp[j++]));
-        dealloc(tmp);
+        for(;tmp;tmp=dispatch22(tmp,&top));
         return 0;
       }
       if(param.version)

@@ -26,22 +26,17 @@ struct proc_opt run;
 DEF_SUBCMD(cmd_run) {
   int argc=length(arg_);
   char** argv=stringlist_array(arg_);
-
   char* current=get_opt("program",0);
   cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
-  if(argc==1 && !current) {
-    char* tmp[]={(char*)cmd->name,"--"};
-    return dispatch(2,tmp,&top);
-  }else {
+  if(argc==1 && !current)
+    return dispatch22(stringlist((char*)cmd->name,"--",NULL),&top);
+  else {
     int i;
     for(i=1;i<argc;i+=dispatch(argc-i,&argv[i],&run));
-    if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0) {
-      char* tmp[]={"--"};
-      dispatch(1,tmp,&run);
-    }else {
-      char* tmp[]={"--",ROS_RUN_REPL};
-      dispatch(1,tmp,&run);
-    }
+    if(strcmp((char*)cmd->name,ROS_RUN_REPL)!=0)
+      dispatch22(stringlist("--",NULL),&top);
+    else
+      dispatch22(stringlist("--",ROS_RUN_REPL,NULL),&top);
     cond_printf(1,"cmd_%s ends here %d\n",cmd->name,i);
     return i;
   }
@@ -56,10 +51,9 @@ DEF_SUBCMD(cmd_script) {
   cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
   cond_printf(1,"current=%s\n",current);
   if(argc==1 && !current &&
-     strcmp(argv[0],"--")==0) {
-    char* tmp[]={"help","--"};
-    return dispatch(2,tmp,&top);
-  }else {
+     strcmp(argv[0],"--")==0)
+    return dispatch22(stringlist("help","--",NULL),&top);
+  else {
     char* result=q("");
     char* tmp[]={"script"};
     int i=strcmp(argv[0],"--")==0?1:0;

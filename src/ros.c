@@ -27,10 +27,10 @@ int main(int argc,char **argv) {
   unset_opt(opts,"program");
   s(path);
   if(argc==1)
-    {char* tmp[]={"help"};dispatch(1,tmp,&top);}
+    dispatch22(stringlist("help",NULL),&top);
   else
-    for(i=1;i<argc;i+=dispatch(argc-i,&argv[i],&top));
+    for(LVal arg=array_stringlist(argc-1,argv+1);arg;arg=dispatch22(arg,&top));
   if(get_opt("program",0))
-    {char* tmp[]={"run","-q","--"};dispatch(3,tmp,&top);}
+    dispatch22(stringlist("run","-q","--",NULL),&top);
   free_opts(global_opt);
 }

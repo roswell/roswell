@@ -1,16 +1,5 @@
 #include "opt.h"
 
-int dispatch_with_subcmd(char* path,int argc,char** argv,struct proc_opt *popt) {
-  char** argv2=(char**)alloc(sizeof(char*)*(argc+1));
-  int i,ret;
-  for(i=0;i<argc;++i)
-    argv2[i+1]=argv[i];
-  argv2[0]=path;
-  ret=dispatch(argc+1,argv2,popt);
-  dealloc(argv2);
-  return ret;
-}
-
 char** proc_alias(int argc,char** argv,struct proc_opt *popt) {
   char* builtin[][2]= {
     {"-V","version"},
@@ -100,7 +89,6 @@ LVal proc_set(LVal arg,struct proc_opt *popt,int pos) {
 
 void proc_cmd(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
-  char* tmp[]={"help"};
   LVal p,p2=0;
   
   cond_printf(1,"proc_cmd:\n");
@@ -140,7 +128,7 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
     exit(fp->call(arg,fp));
   }
   fprintf(stderr,"invalid command\n");
-  dispatch(1,tmp,&top);
+  dispatch22(stringlist("help",NULL),&top);
 }
 
 int dispatch(int argc,char** argv,struct proc_opt *popt) {
