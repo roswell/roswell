@@ -26,10 +26,11 @@ int main(int argc,char **argv) {
   struct opts** opts=&global_opt;
   unset_opt(opts,"program");
   s(path);
+  LVal arg;
   if(argc==1)
     dispatch22(stringlist("help",NULL),&top);
   else
-    for(LVal arg=array_stringlist(argc-1,argv+1);arg;arg=dispatch22(arg,&top));
+    for(arg=array_stringlist(argc-1,argv+1);arg;arg=dispatch22(arg,&top));
   if(get_opt("program",0))
     dispatch22(stringlist("run","-q","--",NULL),&top);
   free_opts(global_opt);
