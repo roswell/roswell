@@ -22,7 +22,7 @@ bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c \
 	register-commands.c html.c html-sbcl-bin.c \
 	$(ros_utils) \
-	cmd-internal.c \
+	cmd-internal.c cmd-script.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clisp.c cmd-run-ecl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c \
 	cmd-install.c install-sbcl-bin.c install-sbcl-bin_windows.c
 
