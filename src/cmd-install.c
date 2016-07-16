@@ -167,7 +167,7 @@ DEF_SUBCMD(cmd_install) {
           for(j=0;j<argc_;++j)
             cond_printf(1,"argv[%d]=%s,",j,firsts(nthcdr(j,tmp)));
         }
-        for(;tmp;tmp=dispatch22(tmp,&top));
+        for(;tmp;tmp=dispatch(tmp,&top));
         return 0;
       }
       if(param.version)
@@ -176,7 +176,7 @@ DEF_SUBCMD(cmd_install) {
       s(param.expand_path);
     }
   }else {
-    dispatch22(stringlist("help","install",NULL),&top);
+    dispatch(stringlist("help","install",NULL),&top);
     exit(EXIT_SUCCESS);
   }
   return 0;

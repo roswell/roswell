@@ -28,10 +28,10 @@ int main(int argc,char **argv) {
   s(path);
   LVal arg;
   if(argc==1)
-    dispatch22(stringlist("help",NULL),&top);
+    dispatch(stringlist("help",NULL),&top);
   else
-    for(arg=array_stringlist(argc-1,argv+1);arg;arg=dispatch22(arg,&top));
+    for(arg=array_stringlist(argc-1,argv+1);arg;arg=dispatch(arg,&top));
   if(get_opt("program",0))
-    dispatch22(stringlist("run","-q","--",NULL),&top);
+    dispatch(stringlist("run","-q","--",NULL),&top);
   free_opts(global_opt);
 }

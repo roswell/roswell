@@ -73,7 +73,7 @@ DEF_SUBCMD(cmd_internal_version) {
       char *cmd=cat("(progn(format t\"~A~%\"(or(ignore-errors(getf(symbol-value(read-from-string \"ros.util::*version*\")) :",ev,
                     "))(ros:quit 1))) (ros:quit 0))",NULL);
       LVal arg=stringlist("--no-rc","-L",DEFAULT_IMPL,"-m","roswell","--eval",cmd,"run",NULL);
-      for(;arg;arg=dispatch22(arg,&top));
+      for(;arg;arg=dispatch(arg,&top));
       s(cmd);
     }else if(strncmp(arg1,"cc",2)==0) {
       printf("%s\n",ROS_COMPILE_ENVIRONMENT);
@@ -138,7 +138,7 @@ struct proc_opt* register_cmd_internal(struct proc_opt* top_) {
 
 DEF_SUBCMD(cmd_internal) {
   setup_uid(0);
-  return dispatch22(nnthcdr(1,arg_),&internal);
+  return dispatch(nnthcdr(1,arg_),&internal);
 }
 
 #define LISPDIR_CANDIDATE(candidate) {    \

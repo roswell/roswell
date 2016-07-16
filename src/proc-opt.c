@@ -1,22 +1,6 @@
 #include "opt.h"
 
-char** proc_alias(int argc,char** argv,struct proc_opt *popt) {
-  char* builtin[][2]= {
-    {"-V","version"},
-    {"-h","help"},
-    {"-?","help"},
-    //{"build","dump executable"},
-  };
-  int i;
-  for (i=0;i<sizeof(builtin)/sizeof(char*[2]);++i) 
-    if(!strcmp(builtin[i][0],argv[0])) {
-      argv[0]=builtin[i][1];
-      break;
-    }
-  return argv;
-}
-
-LVal proc_alias22(LVal arg,struct proc_opt *popt) {
+LVal proc_alias(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
   char* builtin[][2]= {
     {"-V","version"},
@@ -25,7 +9,7 @@ LVal proc_alias22(LVal arg,struct proc_opt *popt) {
     //{"build","dump executable"},
   };
   int i;
-  cond_printf(1,"proc_alias22: arg0=%s repeat=%d\n",arg0,sizeof(builtin)/sizeof(char*[2]));
+  cond_printf(1,"proc_alias: arg0=%s repeat=%d\n",arg0,sizeof(builtin)/sizeof(char*[2]));
   for (i=0;i<sizeof(builtin)/sizeof(char*[2]);++i)
     if(!strcmp(builtin[i][0],arg0))
       return conss(q_(builtin[i][1]),nrest(arg));
@@ -109,17 +93,17 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
     char* cmddir=configdir();
     char* cmdpath=cat(cmddir,arg0,".ros",NULL);
     if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
-      dispatch22 (conss(q_(cmdpath),arg),popt);
+      dispatch (conss(q_(cmdpath),arg),popt);
     s(cmddir),s(cmdpath);
     /* systemwide commands*/
     cmddir=subcmddir();
     cmdpath=cat(cmddir,arg0,".ros",NULL);
     if(directory_exist_p(cmddir)) {
       if(file_exist_p(cmdpath))
-        dispatch22(conss(q_(cmdpath),arg),popt);
+        dispatch(conss(q_(cmdpath),arg),popt);
       s(cmdpath);cmdpath=cat(cmddir,"+",arg0,".ros",NULL);
       if(file_exist_p(cmdpath))
-        dispatch22(conss(q_(cmdpath),arg),popt);
+        dispatch(conss(q_(cmdpath),arg),popt);
     }
     s(cmddir),s(cmdpath);
   }
@@ -128,13 +112,13 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
     exit(fp->call(arg,fp));
   }
   fprintf(stderr,"invalid command\n");
-  dispatch22(stringlist("help",NULL),&top);
+  dispatch(stringlist("help",NULL),&top);
 }
 
-LVal dispatch22(LVal arg,struct proc_opt *popt) {
+LVal dispatch(LVal arg,struct proc_opt *popt) {
   int pos;
-  cond_printf(1,"dispatch22:%s,name=%s\n",firsts(arg),popt->name);
-  arg=proc_alias22(arg,popt);
+  cond_printf(1,"dispatch:%s,name=%s\n",firsts(arg),popt->name);
+  arg=proc_alias(arg,popt);
   char* arg0=firsts(arg);
   if(arg0[0]=='-' || arg0[0]=='+')
     return proc_options(arg,popt);

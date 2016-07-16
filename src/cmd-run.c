@@ -28,10 +28,10 @@ DEF_SUBCMD(cmd_run) {
   char* current=get_opt("program",0);
   cond_printf(1,"cmd_%s:argc=%d argv[0]=%s\n",cmd->name,argc,firsts(arg_));
   if(argc==1 && !current)
-    return dispatch22(stringlist((char*)cmd->name,"--",NULL),&top);
+    return dispatch(stringlist((char*)cmd->name,"--",NULL),&top);
   else {
-    for(arg_=nnthcdr(1,arg_);arg_;arg_=dispatch22(arg_,&run));
-    dispatch22(stringlist("--",NULL),&run);
+    for(arg_=nnthcdr(1,arg_);arg_;arg_=dispatch(arg_,&run));
+    dispatch(stringlist("--",NULL),&run);
     cond_printf(1,"cmd_%s ends here\n",cmd->name);
     return 0;
   }
@@ -47,7 +47,7 @@ DEF_SUBCMD(cmd_script) {
   cond_printf(1,"current=%s\n",current);
   if(argc==1 && !current &&
      strcmp(argv[0],"--")==0)
-    return dispatch22(stringlist("help","--",NULL),&top);
+    return dispatch(stringlist("help","--",NULL),&top);
   else {
     char* result=q("");
     char* tmp[]={"script"};
@@ -110,7 +110,7 @@ DEF_SUBCMD(cmd_script_frontend) {
   j=i;
   {
     LVal arg=array_stringlist(j,argv_gen);
-    for(;arg;arg=dispatch22(arg,&top));
+    for(;arg;arg=dispatch(arg,&top));
   }
   return 0;
 }
