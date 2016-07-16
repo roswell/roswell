@@ -40,26 +40,25 @@ DEF_SUBCMD(cmd_run) {
 DEF_SUBCMD(cmd_script) {
   cond_printf(1,"cmd_script\n");
   int argc=length(arg_);
-  char** argv=stringlist_array(arg_);
-
+  char* arg0=firsts(arg_);
+  
   char* current=get_opt("program",0);
-  cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,argv[0]);
+  cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,arg0);
   cond_printf(1,"current=%s\n",current);
   if(argc==1 && !current &&
-     strcmp(argv[0],"--")==0)
+     strcmp(arg0,"--")==0)
     return dispatch(stringlist("help","--",NULL),&top);
   else {
     char* result=q("");
-    char* tmp[]={"script"};
-    int i=strcmp(argv[0],"--")==0?1:0;
-    for (;i<argc;++i) {
-      char* val=escape_string(argv[i]);
+    LVal i=strcmp(arg0,"--")==0?rest(arg_):arg_;
+    for (;i;i=rest(i)) {
+      char* val=escape_string(firsts(i));
       result=cat(result,"\"",val,"\"",NULL);
       s(val);
     }
     set_opt(&local_opt,"script",result);
     s(result);
-    cmd_run_star(cons(tmp,1),cmd);
+    cmd_run_star(stringlist("script",NULL),cmd);
   }
   return 0;
 }
@@ -227,10 +226,9 @@ char** determin_args(int argc,char **argv) {
 }
 
 DEF_SUBCMD(cmd_run_star) {
-  char** argv=firstp(arg_);
-  int argc=(int)rest(arg_);
-  dealloc((void*)arg_);
-
+  int argc=length(arg_);
+  char** argv=stringlist_array(arg_);
+  cond_printf(1,"cmd_run_star:%d:%s\n,argv[0]",argc,argv[0]);
   star_set_opt();
   if(rc)
     star_rc();
@@ -265,16 +263,11 @@ DEF_SUBCMD(cmd_run_star) {
   return 1;
 }
 
-DEF_SUBCMD(cmd_run_star22) {
-  char** argv=stringlist_array(arg_);
-  return cmd_run_star(cons(argv,length(arg_)),cmd);
-}
-
 struct proc_opt* register_cmd_run(struct proc_opt* top) {
   /*options*/
   dispatch_init(&run,"run");
   register_runtime_options(&run);
-  run.option=add_command(run.option,"",NULL,cmd_run_star22,OPT_SHOW_NONE,1);
+  run.option=add_command(run.option,"",NULL,cmd_run_star,OPT_SHOW_NONE,1);
   run.option=nreverse(run.option);
 
   /*commands*/
