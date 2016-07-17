@@ -100,6 +100,7 @@ void star_set_opt(void) {
   set_opt(&local_opt,"wargv0",which(argv_orig[0]));
   set_opt(&local_opt,"homedir",q(config));
   set_opt(&local_opt,"verbose",qsprintf(10,"%d",verbose));
+  set_opt(&local_opt,"lispdir",q(lispdir()));
   if(get_opt("asdf.version",0))
     set_opt(&local_opt,"asdf",get_opt("asdf.version",0));
   s(config);

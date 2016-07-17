@@ -66,7 +66,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
              (subseq (read-line in) 2)))))
 
 (defun commands (stream)
-  (let* ((lispdir (version "lispdir"))
+  (let* ((lispdir (ros:opt "lispdir")) 
          (list (nconc (directory (merge-pathnames "*.ros" lispdir))
                       (directory (merge-pathnames "cmds/*.ros" (homedir)))))
          (max (loop for i in list maximize (length (pathname-name i)))))

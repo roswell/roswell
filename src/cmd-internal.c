@@ -85,8 +85,6 @@ DEF_SUBCMD(cmd_internal_version) {
       char *asdf= get_opt("asdf.version",0);
       if(asdf)
         printf("%s\n",asdf);
-    }else if(strncmp(arg1,"lispdir",7)==0) {
-      printf("%s\n",lispdir());
     }else if(strncmp(arg1,"confdir",7)==0) {
       printf("%s\n",configdir());
     }else if(strcmp(arg1,"package")==0) {
