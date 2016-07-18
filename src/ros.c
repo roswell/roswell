@@ -6,11 +6,6 @@ int argc_orig;
 struct opts* global_opt;
 struct opts* local_opt=NULL;
 
-int verbose=0;
-int testing=0;
-int rc=1;
-int quicklisp=1;
-
 struct proc_opt top;
 
 int main(int argc,char **argv) {

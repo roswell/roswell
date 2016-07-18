@@ -89,23 +89,31 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
   }
 
   if(popt->top && position_char(".",arg0)==-1) {
-    /* local commands*/
-    char* cmddir=configdir();
-    char* cmdpath=cat(cmddir,arg0,".ros",NULL);
-    if(directory_exist_p(cmddir) && file_exist_p(cmdpath))
-      dispatch (conss(q_(cmdpath),arg),popt);
-    s(cmddir),s(cmdpath);
-    /* systemwide commands*/
-    cmddir=subcmddir();
-    cmdpath=cat(cmddir,arg0,".ros",NULL);
-    if(directory_exist_p(cmddir)) {
-      if(file_exist_p(cmdpath))
-        dispatch(conss(q_(cmdpath),arg),popt);
-      s(cmdpath);cmdpath=cat(cmddir,"+",arg0,".ros",NULL);
-      if(file_exist_p(cmdpath))
-        dispatch(conss(q_(cmdpath),arg),popt);
+    LVal list,v;
+    if(module) {
+      list=0;
+    }else {
+      char* cnf=configdir();
+      char* cnf2=subcmddir();
+      list=stringlist(cnf,cnf2,NULL);
+      s(cnf),s(cnf2);
     }
-    s(cmddir),s(cmdpath);
+    for(v=list;v;v=rest(v)) {
+      char* cmddir=firsts(v);
+      char* cmdpath=cat(cmddir,arg0,".ros",NULL);
+      if(directory_exist_p(cmddir)) {
+        if(file_exist_p(cmdpath))
+          dispatch(conss(q_(cmdpath),arg),popt);
+        s(cmdpath);
+        if(!module && !rest(v)) {
+          cmdpath=cat(cmddir,"+",arg0,".ros",NULL);
+          if(file_exist_p(cmdpath))
+            dispatch(conss(q_(cmdpath),arg),popt);
+          s(cmdpath);
+        }
+      }
+    }
+    sL(list);
   }
   if(p2) {
     struct sub_command* fp=firstp(p2);

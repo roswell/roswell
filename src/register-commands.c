@@ -4,16 +4,18 @@ struct proc_opt* register_cmd_run(struct proc_opt* top);
 struct proc_opt* register_cmd_install(struct proc_opt* top);
 struct proc_opt* register_cmd_internal(struct proc_opt* top_);
 
-#define OPT_SETVAL(sym,rexp)                    \
+#define OPT_SETVAL(sym,init,rexp)               \
+  int sym=init;                                 \
   DEF_SUBCMD(opt_##sym) {                       \
     sym=rexp;                                   \
     cond_printf(1,"opt:%s:%d\n",cmd->name,sym); \
     return 1;}
 
-OPT_SETVAL(verbose,(strcmp(cmd->name,"verbose")==0)?1|verbose<<1:verbose>>1)
-OPT_SETVAL(testing,1+testing)
-OPT_SETVAL(rc,(strcmp(cmd->name,"rc")==0)?1:0)
-OPT_SETVAL(quicklisp,(strcmp(cmd->name,"quicklisp")==0)?1:0)
+OPT_SETVAL(verbose,  0,(strcmp(cmd->name,"verbose")==0)?1|verbose<<1:verbose>>1)
+OPT_SETVAL(testing,  0,1+testing)
+OPT_SETVAL(rc,       1,(strcmp(cmd->name,"rc")==0)?1:0)
+OPT_SETVAL(quicklisp,1,(strcmp(cmd->name,"quicklisp")==0)?1:0)
+OPT_SETVAL(module   ,0,1)
 
 DEF_SUBCMD(opt_program0) {
   if(cmd->name) {
@@ -56,6 +58,7 @@ struct proc_opt* register_runtime_options(struct proc_opt* cmd) {
   opt=add_command(opt,"version" ,NULL,opt_version,1,1);
   opt=add_command(opt,"wrap","-w",opt_take1,1,0);
   opt=add_command(opt,"image","-m",opt_take1,1,0);
+  opt=add_command(opt,"module","-M",opt_module,1,0);
   opt=add_command(opt,"lisp","-L",opt_take1,1,0);
 
   /*opt=add_command(opt,"file","-f",opt_program,1,0,"include lisp FILE while building","FILE");*/
