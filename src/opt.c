@@ -83,6 +83,7 @@ int save_opts(const char* path,struct opts* opt) {
 int set_opt(struct opts** opts,const char* name,char* value) {
   int found=0;
   struct opts* opt=*opts;
+  cond_printf(1,"set_opt(%s)='%s'\n",name,value);
 
   while(opt) {
     if(strcmp(opt->name,name)==0) {
