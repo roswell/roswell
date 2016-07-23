@@ -47,6 +47,7 @@ struct proc_opt {
   char* name;
   LVal option;
   LVal command;
+  LVal alias;
   LVal top;
 };
 

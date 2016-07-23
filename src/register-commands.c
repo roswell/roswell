@@ -104,5 +104,9 @@ void register_top(struct proc_opt* top_) {
   dispatch_init(top_,"top");
   top_=register_runtime_options(top_);
   top_=register_runtime_commands(top_);
+  top_->alias=cons((void*)stringlist("-V","version",NULL),top_->alias);
+  top_->alias=cons((void*)stringlist("-h","help",NULL),top_->alias);
+  top_->alias=cons((void*)stringlist("-?","help",NULL),top_->alias);
+  //top_->alias=cons((void*)stringlist("build","dump","executable",NULL),top_->alias);
   top_->top=(LVal)top_;
 }

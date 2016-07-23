@@ -2,17 +2,15 @@
 
 LVal proc_alias(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
-  char* builtin[][2]= {
-    {"-V","version"},
-    {"-h","help"},
-    {"-?","help"},
-    //{"build","dump executable"},
-  };
-  int i;
-  cond_printf(1,"proc_alias: arg0=%s repeat=%d\n",arg0,sizeof(builtin)/sizeof(char*[2]));
-  for (i=0;i<sizeof(builtin)/sizeof(char*[2]);++i)
-    if(!strcmp(builtin[i][0],arg0))
-      return conss(q_(builtin[i][1]),nrest(arg));
+  LVal i,j;
+  if(popt->alias) {
+    for(i=popt->alias;i;i=rest(i))
+      if(!strcmp(firsts(first(i)),arg0)) {
+        for(j=i=nreverse(rest(first(i))),arg=nrest(arg);j;j=rest(j))
+          arg=conss(firsts(j),arg);
+        nreverse(i);
+      }
+  }
   return arg;
 }
 
@@ -141,5 +139,6 @@ void dispatch_init(struct proc_opt *popt,char* name_) {
   popt->name=q_(name_);
   popt->option=(LVal)0;
   popt->command=(LVal)0;
+  popt->alias=0;
   popt->top=0;
 }
