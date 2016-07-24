@@ -9,7 +9,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
  (ignore-errors
    (load "../sn.github/sn.github.asd")))
 (ql:quickload '(:cl-ppcre :split-sequence :sn.github))
-(use-package :sn.github.repos.release)
+(use-package :sn.github.repos.releases)
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)
 (defvar *owner* "roswell")
@@ -150,10 +150,10 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (let ((found (release-exist-p tagname :owner owner :repo repo)))
     (if found
         found
-        (release-create owner repo tagname))))
+        (releases-create owner repo tagname))))
 
 (defun asset-upload (path tagname &key (owner *owner*) (repo *repo*))
-  (release-asset-upload
+  (releases-asset-upload
    owner repo
    (getf (release-exist-p tagname :owner owner :repo repo) :|id|) path))
 
