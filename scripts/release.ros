@@ -9,7 +9,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
  (ignore-errors
    (load "../sn.github/sn.github.asd")))
 (ql:quickload '(:cl-ppcre :split-sequence :sn.github))
-(use-package :sn.github.release)
+(use-package :sn.github.repos.release)
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)
 (defvar *owner* "roswell")
@@ -136,13 +136,13 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
        "git merge master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push --tags"
-       "git push --all"
+       "git push"
        "git checkout master"))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
   (ignore-errors
     (find tagname
-          (sn.github.release::releases-list owner repo)
+          (releases-list owner repo)
           :key (lambda (x) (getf x :|tag_name|))
           :test 'equal)))
 
@@ -150,10 +150,10 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (let ((found (release-exist-p tagname :owner owner :repo repo)))
     (if found
         found
-        (sn.github.release::release-create owner repo tagname))))
+        (release-create owner repo tagname))))
 
 (defun asset-upload (path tagname &key (owner *owner*) (repo *repo*))
-  (sn.github.release::release-asset-upload
+  (release-asset-upload
    owner repo
    (getf (release-exist-p tagname :owner owner :repo repo) :|id|) path))
 
