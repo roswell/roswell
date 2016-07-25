@@ -12,7 +12,12 @@
 
 (defvar *ros-path* nil)
 (defvar *help-cmds* nil)
-(defvar *install-cmds* nil)
+(defvar *install-cmds* nil
+  "An alist whose CAR is a name of installation target as a string (e.g. \"abcl-bin\"),
+and the CDR is a list of functions.
+The functions take one argument ARGV and returns a cons (SUCCESS . ARGV2) where
+SUCCESS is a boolean indicating the success of the installation step and
+ARGV2 contains a (possibly modified) ARGV.")
 (defvar *list-cmd* nil)
 
 (defun set-opt (item val)
