@@ -63,8 +63,9 @@
   (let ((java (ros.util:which "java"))
         (dir (merge-pathnames (format nil "~A/" (get-opt "as")) (abcl-bin-impl))))
     (unless java
-      (warn "JAVA wasn't found in the path.")
-      (return-from abcl-bin-script (cons nil argv)))
+      (format *error-output* "Error: JAVA wasn't found in the path. 'ros use abcl' will fail.~%")
+      (format *error-output* "Installation incomplete.")
+      (ros:quit 1))
     (install-script
      (merge-pathnames "abcl" dir)
      (format
