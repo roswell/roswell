@@ -79,15 +79,25 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ros:quit 1))
 
 (defun swank-write-helper ()
-  (uiop:copy-file
-   (make-pathname
-    :defaults #.*load-pathname*
-    :name "helper" :type "el")
-   (merge-pathnames "helper.el" (homedir))))
+  (let* ((target (merge-pathnames "helper.el" (homedir)))
+         (enough (enough-namestring target (user-homedir-pathname))))
+    (unless (equal (pathname enough) target)
+      (setf enough (format nil "~~/~A" enough)))
+    (uiop:copy-file
+     (make-pathname
+      :defaults #.*load-pathname*
+      :name "helper" :type "el")
+     target)
+    (format *error-output* "~{~A~%~}"
+            `(,(format nil "helper.el installed in ~S" (namestring target)) ""
+              "To use, add this to your ~/.emacs:" ""
+              ,(format nil "  (load (expand-file-name ~S))" enough)))))
 
-(defun swank-install (name &rest argv)
+(defun swank-install (&optional name &rest argv)
   "two type of name would be accepted 'date format' or 'version'"
   (declare (ignorable argv))
+  (unless name
+    (setq name (substitute #\. #\- (ql:dist-version "quicklisp"))))
   (unless (loop for x across name
                 always (or (digit-char-p x)
                            (eql x #\.)))
