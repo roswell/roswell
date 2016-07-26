@@ -21,6 +21,7 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #define SLASH "/"
+#define PATHSEP ":"
 #define EXE_EXTENTION ""
 #define ROSRC "/etc/rosrc"
 #else
@@ -30,6 +31,7 @@
 #include <wininet.h>
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 #define SLASH "\\"
+#define PATHSEP ";"
 #define EXE_EXTENTION ".exe"
 #define ROSRC ""
 #endif

@@ -78,7 +78,6 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
   for(p=popt->command;p;p=Next(p)) {
     struct sub_command* fp=firstp(p);
     if(fp->name) {
-      cond_printf(1,"fname=%s,arg0=%s\n",fp->name,arg0);
       if(strcmp(fp->name,arg0)==0)
         exit(fp->call(arg,fp));
       if(strcmp(fp->name,"*")==0)
@@ -89,7 +88,8 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
   if(popt->top && position_char(".",arg0)==-1) {
     LVal list,v;
     if(module) {
-      list=0;
+      char* PATH=getenv("ROSWELLPATH");
+      list=PATH?split_string(PATH,PATHSEP):0;
     }else {
       char* cnf=configdir();
       char* cnf2=subcmddir();
