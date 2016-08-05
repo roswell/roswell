@@ -75,6 +75,7 @@ exec ros -- $0 "$@"
          out
          :toplevel
          #'(lambda ()
+             (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
              (setf ros:*argv* (rest sb-ext:*posix-argv*))
              (ros:run cmds))
          :executable t
@@ -84,19 +85,21 @@ exec ros -- $0 "$@"
          out
          :toplevel-function
          #'(lambda ()
+             (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
              (setf ros:*argv* (rest (ccl::command-line-arguments)))
              (ros:run cmds))
          :prepend-kernel t)
         #+clisp
         (ext:saveinitmem
-         path
+         out
          :quiet t
          :executable 0
          :norc t
          :script nil
          :init-function
          #'(lambda ()
-             (setf ros:*argv* ext:*args*)
+             (setf *load-pathname* (pathname (first ext:*args*)))
+             (setf ros:*argv* (rest ext:*args*))
              (ros:run cmds)))
         #+cmucl
         (progn
@@ -108,14 +111,15 @@ exec ros -- $0 "$@"
            :executable t
            :init-function
            #'(lambda ()
-               (setf ros:*argv* ext:*command-line-strings*)
+               (setf *load-pathname* (pathname (first extensions:*command-line-strings*)))
+               (setf ros:*argv* (rest extensions:*command-line-strings*))
                (ros:run cmds))
            :process-command-line nil)))
       (format *error-output* "Usage: ros dump executable help~%")))
 
 (defvar *subcmds*
   '(("output" dump-output)
-    #+(or sbcl ccl)
+    #+(or sbcl ccl clisp)
     ("executable" dump-executable)))
 
 (defun main (cmd &rest r)

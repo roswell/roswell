@@ -284,7 +284,10 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun entry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
-  (apply (read-from-string arg) *argv*))
+  (let ((ret (apply (read-from-string arg) *argv*)))
+    (quit (cond ((numberp ret) ret)
+                (ret 0)
+                (t 1)))))
 
 (setf (fdefinition 'init) #'eval)
 
