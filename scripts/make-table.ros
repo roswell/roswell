@@ -5,8 +5,8 @@ exec ros -Q -- $0 "$@"
 |#
 (ql:quickload '(:plump :dexador :cl-ppcre))
 
-(defvar *base-html* "http://sourceforge.net")
-(defvar *root-html* "http://sourceforge.net/projects/sbcl/files/sbcl/")
+(defvar *base-html* "https://sourceforge.net")
+(defvar *root-html* "https://sourceforge.net/projects/sbcl/files/sbcl/")
 
 (defvar *supported-table*
   '((:linux           (:x86 :x86-64 :powerpc :sparc :alpha :mips :mipsel :armel  :armhf))
