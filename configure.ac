@@ -33,12 +33,12 @@ AC_CHECK_HEADERS(windows.h)
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
   [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=http://prdownloads.sourceforge.net/sbcl/]])],
-  [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="http://prdownloads.sourceforge.net/sbcl/"])
+  [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="https://prdownloads.sourceforge.net/sbcl/"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_URI],["${SBCL_BIN_URI}"],[uri for sbcl master])
 
 AC_ARG_WITH([platformhtml_base],
   [AC_HELP_STRING([--with-platformhtml-base=URI],[set URI for platform.html [default=http://www.sbcl.org/]])],
-  [PLATFORM_HTML_URI=$withval],[PLATFORM_HTML_URI="http://www.sbcl.org/platform-table.html"])
+  [PLATFORM_HTML_URI=$withval],[PLATFORM_HTML_URI="https://www.sbcl.org/platform-table.html"])
 AC_DEFINE_UNQUOTED([PLATFORM_HTML_URI],["${PLATFORM_HTML_URI}"],[uri for platform.html])
 
 AC_ARG_WITH([platformhtml_backup_base],
