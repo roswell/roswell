@@ -1,8 +1,8 @@
 (defun roswell-slime-directory ()
   (concat 
-   (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1)
+   (substring (shell-command-to-string "ros roswell-internal-use version confdir 2>/dev/null") 0 -1)
    "lisp/swank/"
-   (substring (shell-command-to-string "ros config show swank.version") 0 -1)
+   (substring (shell-command-to-string "ros config show swank.version 2>/dev/null") 0 -1)
    "/"))
 
 (defvar roswell-slime-contribs '(slime-fancy))
