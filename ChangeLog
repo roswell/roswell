@@ -1,3 +1,12 @@
+roswell (0.0.6.65-1) unstable; urgency=low
+
+  * Improve: 'man ros-build' (by Masataro Asai)
+  * Improve: bind '*load-pathname*' when launched from binary (reported by Gareth Williams)
+  * Improve: show instructions on 'ros swank install' (reported by Masataro Asai)
+  * Imporve: prepare for -M
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 14 Aug 2016 15:49:19 +0900
+
 roswell (0.0.6.64-1) unstable; urgency=low
 
   * New: Support Allegro Common Lisp 10 Express edition via 'ros install alisp'
