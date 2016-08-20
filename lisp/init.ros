@@ -46,7 +46,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                                 "#|-*- mode:lisp -*-|#"
                                 "#| <Put a one-line description here>"
                                 "exec ros -Q -- $0 \"$@\"" "|#"
-                                "(progn ;;init forms" "  )" ""
+                                "(progn ;;init forms" "  #+quicklisp (ql:quickload '() :silent t))" ""
                                 (format nil "(defpackage :ros.script.~A.~A" name date)
                                 "  (:use :cl))"
                                 (format nil "(in-package :ros.script.~A.~A)" name date)
