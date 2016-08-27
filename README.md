@@ -115,6 +115,17 @@ To use an implementation that was not installed by roswell, use i.e. `ros use sb
 
 The list of supported implementations continues to grow!
 
+### Installing scripts
+
+It is also possible to install scripts using `ros install`:
+
+    $ ros install qlot            # will install a program from quicklisp
+    $ ros install fukamachi/qlot  # will install it from the GitHub
+
+To add installable scripts into the system, you need to put roswell
+scripts (files having `.ros` extensions) into a `roswell` subdirectory.
+Take a look at [qlot's roswell/qlot.ros](https://github.com/fukamachi/qlot/tree/master/roswell).
+
 
 ### Scripting with Roswell
 
