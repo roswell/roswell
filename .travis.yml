@@ -77,7 +77,6 @@ install:
   - if [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
-  - if [ $METHOD = brew ]; then brew tap roswell/roswell; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
 
