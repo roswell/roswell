@@ -37,7 +37,7 @@ We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Wind
 * **Novel** : Better integration to the command-line interface (Bash completion, etc)
 * **Novel** : Infrastructure for bundling/installing the scripts to/from a quicklisp system
 * **Novel** : Better support for Windows environment (tested exhaustively)
-* **Novel** : Better integration to CI environment (e.g. Travis-CI, CircleCI, Coverall)
+* **Novel** : Better integration to CI environment (e.g. [Travis-CI](https://github.com/roswell/roswell/wiki/4.1-Travis-CI), [CircleCI](https://github.com/roswell/roswell/wiki/4.2-Circle-CI), [Coveralls](https://github.com/roswell/roswell/wiki/4.3-Coverall))
 
 ## Usage
 
