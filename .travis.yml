@@ -85,7 +85,7 @@ install:
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
-  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get uninstall -qq $APT_UNINSTALL
+  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get uninstall -qq $APT_UNINSTALL; fi
 
 cache:
   directories:
