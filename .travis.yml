@@ -7,77 +7,72 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_PLATFORMHTML_BASE=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
     - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
-  
-os:
-  - osx
-  - linux
-
-matrix:
-  allow_failures:
-    - env: METHOD=brew
-  include:
-    - sudo: required
-      os: linux
-      env: METHOD=ci LISP=alisp APT_UNINSTALL="libc6-i386"
-    - sudo: required
-      os: linux
-      env: METHOD=ci LISP=cmucl APT_UNINSTALL="libc6-i386"
-    - sudo: required
-      os: linux
-      env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
-    - sudo: required
-      os: linux
-      env: METHOD=debian
-    - sudo: required
-      os: linux
-      env: METHOD=valgrind XCFLAGS="-g -O0"
-    - sudo: required
-      os: linux
-      env: METHOD=documents
-    - env: METHOD=brew
-      os: linux
-    - env: METHOD=brew
-      os: osx
-    - env: METHOD=ci LISP=alisp
-      os: linux
-    - env: METHOD=ci LISP=alisp
-      os: osx
-    - env: METHOD=ci LISP=sbcl-bin
-      os: linux
-    - env: METHOD=ci LISP=sbcl-bin
-      os: osx
-    - env: METHOD=ci LISP=cmu-bin/2016-05
-      os: linux
-    - env: METHOD=ci LISP=cmu-bin/2016-05
-      os: osx
-    - env: METHOD=ci LISP=sbcl
-      os: linux
-    - env: METHOD=ci LISP=sbcl
-      os: osx
-    - env: METHOD=ci LISP=ecl
-      os: linux
-    - env: METHOD=ci LISP=ecl
-      os: osx
-    - env: METHOD=ci LISP=clisp
-      os: linux
-    - env: METHOD=ci LISP=clisp
-      os: osx
-    - env: METHOD=ci LISP=abcl
-      os: linux
-    - env: METHOD=ci LISP=abcl
-      os: osx
-    - env: METHOD=ci LISP=ccl-bin
-      os: linux
-    - env: METHOD=ci LISP=ccl-bin
-      os: osx
-    - env: METHOD=ci LISP=sbcl/1.1.14
-      os: linux
-    - env: METHOD=ci LISP=sbcl/1.1.14
-      os: osx
-    - env: METHOD=ci LISP=ccl32
-      os: linux
-    - env: METHOD=ci LISP=ccl32
-      os: osx
+  matrix:
+    allow_failures:
+      - env: METHOD=brew
+    include:
+      - sudo: required
+        os: linux
+        env: METHOD=ci LISP=alisp APT_UNINSTALL="libc6-i386"
+      - sudo: required
+        os: linux
+        env: METHOD=ci LISP=cmucl APT_UNINSTALL="libc6-i386"
+      - sudo: required
+        os: linux
+        env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
+      - sudo: required
+        os: linux
+        env: METHOD=debian
+      - sudo: required
+        os: linux
+        env: METHOD=valgrind XCFLAGS="-g -O0"
+      - sudo: required
+        os: linux
+        env: METHOD=documents
+      - env: METHOD=brew
+        os: linux
+      - env: METHOD=brew
+        os: osx
+      - env: METHOD=ci LISP=alisp
+        os: linux
+      - env: METHOD=ci LISP=alisp
+        os: osx
+      - env: METHOD=ci LISP=sbcl-bin
+        os: linux
+      - env: METHOD=ci LISP=sbcl-bin
+        os: osx
+      - env: METHOD=ci LISP=cmu-bin/2016-05
+        os: linux
+      - env: METHOD=ci LISP=cmu-bin/2016-05
+        os: osx
+      - env: METHOD=ci LISP=sbcl
+        os: linux
+      - env: METHOD=ci LISP=sbcl
+        os: osx
+      - env: METHOD=ci LISP=ecl
+        os: linux
+      - env: METHOD=ci LISP=ecl
+        os: osx
+      - env: METHOD=ci LISP=clisp
+        os: linux
+      - env: METHOD=ci LISP=clisp
+        os: osx
+      - env: METHOD=ci LISP=abcl
+        os: linux
+      - env: METHOD=ci LISP=abcl
+        os: osx
+      - env: METHOD=ci LISP=ccl-bin
+        os: linux
+      - env: METHOD=ci LISP=ccl-bin
+        os: osx
+      - env: METHOD=ci LISP=sbcl/1.1.14
+        os: linux
+      - env: METHOD=ci LISP=sbcl/1.1.14
+        os: osx
+      - env: METHOD=ci LISP=ccl32
+        os: linux
+      - env: METHOD=ci LISP=ccl32
+        os: osx
 
 #branches:
 #  except:
@@ -117,7 +112,7 @@ install:
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
-  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get remove -qq $APT_UNINSTALL; fi
+  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get purge -qq $APT_UNINSTALL; fi
 
 cache:
   directories:
