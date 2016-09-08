@@ -1,5 +1,4 @@
 #!/bin/sh
-fetch
 set -e
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
@@ -127,7 +126,8 @@ log "ros --version"
 log "ros setup"
 
 case "$LISP" in
-    alisp)
+    alisp|allegro)
+	apt_unless_installed libc6-i386
         LISP=allegro
         ;;
     cmu|cmucl)
