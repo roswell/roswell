@@ -158,7 +158,8 @@ DEF_SUBCMD(cmd_run_star) {
     star_rc();
   char** arg=determin_args(argc,argv);
   char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
-  if(arg && file_exist_p(arg[0])) {
+  int exist=0;
+  if(arg && exist=file_exist_p(arg[0])) {
     int i;
     arg=star_wrap(arg);
     setenv("ROS_OPTS",opts,1);
@@ -183,7 +184,8 @@ DEF_SUBCMD(cmd_run_star) {
     exec_arg(stringlist_array(nreverse(ret)));
   }
   s(opts);
-  if(arg)cond_printf(0,"%s is not exist.stop.\n",arg[0]);
+  if(arg)
+    cond_printf(0,exist?"%s is not executable.Missing 32bit glibc?\n":"%s is not exist.stop.\n",arg[0]);
   return 1;
 }
 
