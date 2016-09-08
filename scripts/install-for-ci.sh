@@ -126,7 +126,8 @@ log "ros --version"
 log "ros setup"
 
 case "$LISP" in
-    alisp)
+    alisp|allegro)
+	apt_unless_installed libc6-i386
         LISP=allegro
         ;;
     cmu|cmucl)
