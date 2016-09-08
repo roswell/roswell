@@ -7,18 +7,6 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_PLATFORMHTML_BASE=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
     - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
-  matrix:
-    - METHOD=brew
-    - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=sbcl-bin
-    - METHOD=ci LISP=cmu-bin/2016-05
-    - METHOD=ci LISP=sbcl
-    - METHOD=ci LISP=ecl
-    - METHOD=ci LISP=clisp
-    - METHOD=ci LISP=abcl
-    - METHOD=ci LISP=ccl-bin
-    - METHOD=ci LISP=sbcl/1.1.14
-    - METHOD=ci LISP=ccl32
   
 os:
   - osx
@@ -46,6 +34,50 @@ matrix:
     - sudo: required
       os: linux
       env: METHOD=documents
+    - env: METHOD=brew
+      os: linux
+    - env: METHOD=brew
+      os: osx
+    - env: METHOD=ci LISP=alisp
+      os: linux
+    - env: METHOD=ci LISP=alisp
+      os: osx
+    - env: METHOD=ci LISP=sbcl-bin
+      os: linux
+    - env: METHOD=ci LISP=sbcl-bin
+      os: osx
+    - env: METHOD=ci LISP=cmu-bin/2016-05
+      os: linux
+    - env: METHOD=ci LISP=cmu-bin/2016-05
+      os: osx
+    - env: METHOD=ci LISP=sbcl
+      os: linux
+    - env: METHOD=ci LISP=sbcl
+      os: osx
+    - env: METHOD=ci LISP=ecl
+      os: linux
+    - env: METHOD=ci LISP=ecl
+      os: osx
+    - env:METHOD=ci LISP=clisp
+      os: linux
+    - env:METHOD=ci LISP=clisp
+      os: osx
+    - env:METHOD=ci LISP=abcl
+      os: linux
+    - env:METHOD=ci LISP=abcl
+      os: osx
+    - env:METHOD=ci LISP=ccl-bin
+      os: linux
+    - env:METHOD=ci LISP=ccl-bin
+      os: osx
+    - env: METHOD=ci LISP=sbcl/1.1.14
+      os: linux
+    - env: METHOD=ci LISP=sbcl/1.1.14
+      os: osx
+    - env: METHOD=ci LISP=ccl32
+      os: linux
+    - env: METHOD=ci LISP=ccl32
+      os: osx
 
 #branches:
 #  except:
@@ -85,7 +117,7 @@ install:
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
-  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get uninstall -qq $APT_UNINSTALL; fi
+  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get remove -qq $APT_UNINSTALL; fi
 
 cache:
   directories:
