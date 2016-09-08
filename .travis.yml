@@ -30,10 +30,10 @@ matrix:
   include:
     - sudo: required
       os: linux
-      env: METHOD=ci LISP=alisp
+      env: METHOD=ci LISP=alisp APT_UNINSTALL="libc6-i386"
     - sudo: required
       os: linux
-      env: METHOD=ci LISP=cmucl
+      env: METHOD=ci LISP=cmucl APT_UNINSTALL="libc6-i386"
     - sudo: required
       os: linux
       env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
@@ -85,6 +85,7 @@ install:
   - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
+  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get uninstall -qq $APT_UNINSTALL
 
 cache:
   directories:
