@@ -8,9 +8,26 @@ env:
     - ROSWELL_PLATFORMHTML_BASE=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
     - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
-    allow_failures:
-      - env: METHOD=brew
-    include:
+    - METHOD=brew
+    - METHOD=ci LISP=alisp
+    - METHOD=ci LISP=sbcl-bin
+    - METHOD=ci LISP=cmu-bin/2016-05
+    - METHOD=ci LISP=sbcl
+    - METHOD=ci LISP=ecl
+    - METHOD=ci LISP=clisp
+    - METHOD=ci LISP=abcl
+    - METHOD=ci LISP=ccl-bin
+    - METHOD=ci LISP=sbcl/1.1.14
+    - METHOD=ci LISP=ccl32
+
+os:
+  - osx
+  - linux
+
+matrix:
+  allow_failures:
+    - env: METHOD=brew
+  include:
       - sudo: required
         os: linux
         env: METHOD=ci LISP=alisp APT_UNINSTALL="libc6-i386"
@@ -29,50 +46,6 @@ env:
       - sudo: required
         os: linux
         env: METHOD=documents
-      - env: METHOD=brew
-        os: linux
-      - env: METHOD=brew
-        os: osx
-      - env: METHOD=ci LISP=alisp
-        os: linux
-      - env: METHOD=ci LISP=alisp
-        os: osx
-      - env: METHOD=ci LISP=sbcl-bin
-        os: linux
-      - env: METHOD=ci LISP=sbcl-bin
-        os: osx
-      - env: METHOD=ci LISP=cmu-bin/2016-05
-        os: linux
-      - env: METHOD=ci LISP=cmu-bin/2016-05
-        os: osx
-      - env: METHOD=ci LISP=sbcl
-        os: linux
-      - env: METHOD=ci LISP=sbcl
-        os: osx
-      - env: METHOD=ci LISP=ecl
-        os: linux
-      - env: METHOD=ci LISP=ecl
-        os: osx
-      - env: METHOD=ci LISP=clisp
-        os: linux
-      - env: METHOD=ci LISP=clisp
-        os: osx
-      - env: METHOD=ci LISP=abcl
-        os: linux
-      - env: METHOD=ci LISP=abcl
-        os: osx
-      - env: METHOD=ci LISP=ccl-bin
-        os: linux
-      - env: METHOD=ci LISP=ccl-bin
-        os: osx
-      - env: METHOD=ci LISP=sbcl/1.1.14
-        os: linux
-      - env: METHOD=ci LISP=sbcl/1.1.14
-        os: osx
-      - env: METHOD=ci LISP=ccl32
-        os: linux
-      - env: METHOD=ci LISP=ccl32
-        os: osx
 
 #branches:
 #  except:
