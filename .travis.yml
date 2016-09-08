@@ -58,17 +58,17 @@ matrix:
       os: linux
     - env: METHOD=ci LISP=ecl
       os: osx
-    - env:METHOD=ci LISP=clisp
+    - env: METHOD=ci LISP=clisp
       os: linux
-    - env:METHOD=ci LISP=clisp
+    - env: METHOD=ci LISP=clisp
       os: osx
-    - env:METHOD=ci LISP=abcl
+    - env: METHOD=ci LISP=abcl
       os: linux
-    - env:METHOD=ci LISP=abcl
+    - env: METHOD=ci LISP=abcl
       os: osx
-    - env:METHOD=ci LISP=ccl-bin
+    - env: METHOD=ci LISP=ccl-bin
       os: linux
-    - env:METHOD=ci LISP=ccl-bin
+    - env: METHOD=ci LISP=ccl-bin
       os: osx
     - env: METHOD=ci LISP=sbcl/1.1.14
       os: linux
