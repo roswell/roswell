@@ -1,5 +1,4 @@
 #!/bin/sh
-fetch
 set -e
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
