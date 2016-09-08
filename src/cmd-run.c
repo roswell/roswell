@@ -159,7 +159,7 @@ DEF_SUBCMD(cmd_run_star) {
   char** arg=determin_args(argc,argv);
   char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
   int exist=0;
-  if(arg && exist=file_exist_p(arg[0])) {
+  if(arg && (exist=file_exist_p(arg[0]))) {
     int i;
     arg=star_wrap(arg);
     setenv("ROS_OPTS",opts,1);
