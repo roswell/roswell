@@ -130,7 +130,7 @@ case "$LISP" in
     alisp)
         LISP=allegro
         ;;
-    cmu|cmucl)
+    cmu|cmucl|cmu-bin)
         apt_unless_installed libc6-i386
         LISP=cmu-bin
         ;;
