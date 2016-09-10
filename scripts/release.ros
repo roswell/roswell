@@ -73,7 +73,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                   (format nil " -- ~A <~A>  ~A"
                           (x "git config --get user.name")
                           (x "git config --get user.email")
-                          (x "LANG=C date -R")) "")))
+                          (local-time:format-rfc1123-timestring
+                           nil
+                           (local-time:universal-to-timestamp (get-universal-time)))) "")))
   (with-open-file (out (merge-pathnames "ChangeLog---" *project-path*)
                        :direction :output :if-exists :supersede)
     (uiop/run-program:run-program
