@@ -1,3 +1,10 @@
+roswell (0.0.6.66-1) unstable; urgency=low
+
+  * Change: add quickload template on 'ros init' (by Masataro Asai)
+  * Improve: CI script edited to install libc6-i386 automatically.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 09 Sep 2016 11:18:45 +0900
+
 roswell (0.0.6.65-1) unstable; urgency=low
 
   * Improve: 'man ros-build' (by Masataro Asai)
