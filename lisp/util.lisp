@@ -109,6 +109,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
     t))
 
 (defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates") branch)
+  (format *error-output* "install from github ~A/~A~%" owner name)
   (if (ros.util:which "git")
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) (homedir))))
         (setq branch (if branch (format nil "-b ~A" branch) ""))

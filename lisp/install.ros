@@ -20,19 +20,22 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (let* (imp
          (pos (position #\/ impl/version))
          (*ros-path* (make-pathname :defaults (ros:opt "argv0")))
-         version)
-    (if pos
-        (setq version (subseq impl/version (1+ pos))
-              imp (subseq impl/version 0 pos))
-        (setq imp impl/version))
+         version tag)
+    (cond
+      (pos
+       (setq version (subseq impl/version (1+ pos))
+             imp (subseq impl/version 0 pos)
+             pos (position #\/ version))
+       (when pos
+         (setq tag (subseq version (1+ pos))
+               version (subseq impl/version 0 pos))))
+      (t (setq imp impl/version)))
     (read-call "quicklisp-client:register-local-projects")
     (cond ((install-impl-if-probed imp version argv))
           ((install-script-if-probed impl/version))
           ((install-system-if-probed imp))
           (version
-           ;; tbd: think how to set version for impl,branch/tag/hash for git.
-           (format *error-output* "install from github ~A/~A~%" imp version)
-           (clone-github imp version :path "local-projects")
+           (clone-github imp version :path "local-projects" :branch tag)
            (read-call "quicklisp-client:register-local-projects")
            (or (install-impl-if-probed version nil argv)
                (install-system-if-probed version)))
