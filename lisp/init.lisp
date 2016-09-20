@@ -47,7 +47,8 @@ have the latest asdf, and this file has a workaround for this.
         (cdr (assoc x ext:*environment-list* :test #'string=))))
   #+ecl(ext:getenv x)
   #+sbcl(sb-posix:getenv x)
-  #-(or abcl ecl ccl clisp sbcl cmucl)
+  #+allegro(sys:getenv x)
+  #-(or abcl ecl ccl clisp sbcl cmucl allegro)
   (when (find :asdf *features*)
     (funcall (read-from-string "asdf::getenv") x)))
 
