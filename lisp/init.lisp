@@ -65,10 +65,12 @@ have the latest asdf, and this file has a workaround for this.
   (let ((ret (parse-integer (ros:opt "verbose"))))
     (if (zerop ret)
         nil ret)))
-#-asdf
-(or
- (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
- (ignore-errors (require :asdf)))
+
+(defun ensure-asdf ()
+  #-asdf
+  (or
+   (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
+   (ignore-errors (require :asdf))))
 
 #+(and unix sbcl) ;; from swank
 (progn
