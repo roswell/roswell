@@ -47,16 +47,19 @@ have the latest asdf, and this file has a workaround for this.
         (cdr (assoc x ext:*environment-list* :test #'string=))))
   #+ecl(ext:getenv x)
   #+sbcl(sb-posix:getenv x)
-  #-(or abcl ecl ccl clisp sbcl cmucl) (funcall (read-from-string "asdf::getenv") x))
+  #-(or abcl ecl ccl clisp sbcl cmucl)
+  (when (find :asdf *features*)
+    (funcall (read-from-string "asdf::getenv") x)))
 
 (defun ros-opts (&optional append)
   (when append
     (setf *ros-opts* (append append (ros-opts))))
   (or *ros-opts*
-      (setf *ros-opts*
-            (let((*read-eval*))
-              (or (ignore-errors (read-from-string (getenv "ROS_OPTS")))
-                  '())))))
+      (ignore-errors
+       (setf *ros-opts*
+             (let((*read-eval*))
+               (or (read-from-string (getenv "ROS_OPTS"))
+                   '()))))))
 
 (defun opt (param)
   (second (assoc param (ros-opts) :test 'equal)))
@@ -66,11 +69,14 @@ have the latest asdf, and this file has a workaround for this.
     (if (zerop ret)
         nil ret)))
 
-(defun ensure-asdf ()
-  #-asdf
-  (or
-   (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
-   (ignore-errors (require :asdf))))
+(let (sentinel)
+  (defun ensure-asdf ()
+    (or
+     sentinel
+     (not (setf sentinel t))
+     (find :asdf *features*)
+     (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
+     (ignore-errors (require :asdf)))))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -118,13 +124,14 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun quit (&optional (return-code 0) &rest rest)
   (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
-    (ignore-errors (funcall (read-from-string "asdf::quit") ret))
-    ;; below are for those environments which lacks neither asdf or uiop.
     #+sbcl (ignore-errors (funcall (read-from-string "cl-user::exit") :code ret))
     #+sbcl (ignore-errors (funcall (read-from-string "cl-user::quit") :unix-status ret))
     #+clisp (ext:exit ret)
     #+ccl (ccl:quit ret)
     #+cmucl (unix:unix-exit ret)
+    (ignore-errors
+     (progn (ensure-asdf)
+            (funcall (read-from-string "asdf::quit") ret)))
     t))
 
 (defun run-program (args &key output)
@@ -250,7 +257,7 @@ have the latest asdf, and this file has a workaround for this.
      for arg = (if p (subseq ar 0 p) ar)
      do (if (find :quicklisp *features*)
             (funcall (read-from-string "ql:quickload") arg :silent t)
-            #+asdf(asdf:operate 'asdf:load-op arg))
+            (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg)) 
      while p))
 
 (setf (fdefinition 'load-system)
@@ -311,7 +318,7 @@ have the latest asdf, and this file has a workaround for this.
                (handler-bind
                    (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
                  (funcall #+(or sbcl clisp) 'cl:load
-                          #-(or sbcl clisp) 'asdf::eval-input
+                          #-(or sbcl clisp) (read-from-string "asdf::eval-input")
                           (make-concatenated-stream
                            (make-string-input-stream
                             (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (ignore-errors (truename cl:*load-pathname*)))~A"
