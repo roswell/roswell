@@ -129,7 +129,7 @@ have the latest asdf, and this file has a workaround for this.
     #+sbcl (ignore-errors (funcall (read-from-string "cl-user::quit") :unix-status ret))
     #+clisp (ext:exit ret)
     #+ccl (ccl:quit ret)
-    #+cmucl (unix:unix-exit ret)
+    #+cmucl (progn (finish-output) (finish-output *error-output*) (unix:unix-exit ret))
     (ignore-errors
      (progn (ensure-asdf)
             (funcall (read-from-string "asdf::quit") ret)))
