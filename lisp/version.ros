@@ -8,7 +8,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ros:include "util"))
 
 (defpackage :ros.script.version.3668210994
-  (:use :cl :ros.util))
+  (:use :cl :ros))
 (in-package :ros.script.version.3668210994)
 
 (defun main (cmd &rest argv)
@@ -29,7 +29,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (format *error-output* "Quicklisp=~A~%Dist=~A~%"
             (ql:client-version)
             (ql-dist:version (ql-dist:find-dist "quicklisp")))
-    (format *error-output* "lispdir='~A'~%" (ros:opt "lispdir"))
+    (format *error-output* "lispdir='~A'~%" (opt "lispdir"))
     (unless (zerop (length conf))
       (format *error-output* "configdir='~A'~%" conf))))
 ;;; vim: set ft=lisp lisp:
