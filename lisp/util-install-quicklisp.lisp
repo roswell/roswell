@@ -10,7 +10,7 @@
 (unless (find-package :uiop)
   #+quicklisp(ql:quickload :uiop :silent t))
 
-(ql:quickload '(:simple-date-time :split-sequence :plump) :silent t)
+(ql:quickload '(:simple-date-time :split-sequence :plump :cl-ppcre #+win32 :zip) :silent t)
 
 (in-package :ros.install)
 

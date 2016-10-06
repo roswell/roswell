@@ -1,8 +1,4 @@
 (in-package :ros.install)
-(ros:quicklisp :environment nil)
-
-#+win32
-(ql:quickload :zip :silent t)
 
 (defun ccl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/ccl-bin.html" (homedir))))

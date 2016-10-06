@@ -1,6 +1,4 @@
-
 (in-package :ros.install)
-(ql:quickload '(:plump :simple-date-time :split-sequence :cl-ppcre) :silent t)
 
 (defun abcl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))

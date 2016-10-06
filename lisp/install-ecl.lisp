@@ -1,5 +1,4 @@
 (in-package :ros.install)
-(ql:quickload '(:plump :simple-date-time :split-sequence) :silent t)
 
 (defvar *ecl-options*
   '())
