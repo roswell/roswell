@@ -24,31 +24,14 @@
   (cons t argv))
 
 (defun abcl-bin-download (argv)
-  (loop for repeat = nil
-        do (set-opt "as" (version argv))
-           (set-opt "download.uri" (format nil "~@{~A~}" (abcl-bin-uri)
-                                           (version argv) "/abcl-bin-" (version argv)".tar.gz"))
-           (set-opt "download.archive"
-                    (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                      (when pos 
-                        (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-           (handler-case
-               (if (or (not (probe-file (get-opt "download.archive")))
-                       (get-opt "download.force"))
-                   (progn
-                     (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
-                     ;;TBD proxy support... and other params progress bar?
-                     (download (get-opt "download.uri") (get-opt "download.archive")))
-                   (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
-                           (get-opt "download.uri")))
-             (uiop/run-program:subprocess-error ()
-               (format t "Failure~%")
-               (setf repeat t)))
-        while (and repeat
-                   (incf (getf argv :version-not-specified))
-                   (> (length (funcall *version-func*))
-                      (getf argv :version-not-specified))))
-  (cons (not (get-opt "without-install")) argv))
+  (set-opt "as" (version argv))
+  (set-opt "download.uri" (format nil "~@{~A~}" (abcl-bin-uri)
+                                  (version argv) "/abcl-bin-" (version argv)".tar.gz"))
+  (set-opt "download.archive"
+           (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+             (when pos 
+               (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
+  `((,(get-opt "download.archive") ,(get-opt "download.uri"))))
 
 (defun abcl-bin-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -90,7 +73,7 @@
 
 (push `("abcl-bin" . (,(decide-version 'abcl-bin-get-version)
                        abcl-bin-argv-parse
-                       abcl-bin-download
+                       ,(decide-download 'abcl-bin-download)
                        abcl-bin-expand
                        abcl-bin-script
                        setup))

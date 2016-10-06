@@ -79,6 +79,30 @@
               (getf argv :version-not-specified) 0)))
     (cons t argv)))
 
+(defun decide-download (func)
+  (lambda (argv)
+    (loop for repeat = nil
+          for list = (funcall func argv)
+          do (handler-case
+                 (loop for (archive uri) in list
+                       do (if (or (not (probe-file archive))
+                                  (get-opt "download.force"))
+                              (progn
+                                (format t "~&Downloading archive:~A:" uri)
+                                ;;TBD proxy support... and other params progress bar?
+                                (download uri archive)
+                                (format t "OK~%"))
+                              (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
+                                      uri)))
+               (uiop/run-program:subprocess-error ()
+                 (format t "NG~%")
+                 (setf repeat t)))
+          while (and repeat
+                     (incf (getf argv :version-not-specified))
+                     (> (length (funcall *version-func*))
+                        (getf argv :version-not-specified))))
+    (cons (not (get-opt "without-install")) argv)))
+
 (defun install-running-p (argv)
   ;;TBD
   (declare (ignore argv))

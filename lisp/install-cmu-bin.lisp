@@ -43,17 +43,8 @@
   (set-opt "download.extra.archive" (let ((pos (position #\/ (get-opt "download.extra.uri") :from-end t)))
                                       (when pos 
                                         (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.extra.uri") (1+ pos))) (homedir)))))
-  (loop for archive in (list (get-opt "download.archive") (get-opt "download.extra.archive"))
-        for uri in (list (get-opt "download.uri") (get-opt "download.extra.uri"))
-        do (if (or (not (probe-file archive))
-                   (get-opt "download.force"))
-               (progn
-                 (format t "~&Downloading archive:~A~%" uri)
-                 ;;TBD proxy support... and other params progress bar?
-                 (download uri archive))
-               (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
-                       uri)))
-  (cons (not (get-opt "without-install")) argv))
+  `((,(get-opt "download.archive") ,(get-opt "download.uri"))
+    (,(get-opt "download.extra.archive") ,(get-opt "download.extra.uri"))))
 
 (defun cmu-bin-expand (argv)
   (loop for archive in (list (get-opt "download.archive") (get-opt "download.extra.archive"))
@@ -84,7 +75,7 @@
 
 (push `("cmu-bin" . (,(decide-version 'cmu-bin-get-version)
                       cmu-bin-argv-parse
-                      cmu-bin-download
+                      ,(decide-download 'cmu-bin-download)
                       cmu-bin-expand
                       setup))
       *install-cmds*)

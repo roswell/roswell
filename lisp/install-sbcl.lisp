@@ -79,14 +79,7 @@
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                 (when pos
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-  (if (or (not (probe-file (get-opt "download.archive")))
-          (get-opt "download.force"))
-      (progn
-        (format t "~&Downloading archive: ~A~%" (get-opt "download.uri"))
-        (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download again.~%"
-              (get-opt "download.uri")))
-  (cons t argv))
+  `((,(get-opt "download.archive") ,(get-opt "download.uri"))))
 
 (defun sbcl-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -311,7 +304,7 @@
                    #+win32 sbcl-msys
                    sbcl-start
                    start
-                   sbcl-download
+                   ,(decide-download 'sbcl-download)
                    sbcl-expand
                    sbcl-patch
                    sbcl-config

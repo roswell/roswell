@@ -36,16 +36,8 @@
                                                                                                                 ".zip"".tar.gz")))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                   (when pos 
-                                    (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir))))))
-  (if (or (not (probe-file (get-opt "download.archive")))
-          (get-opt "download.force"))
-      (progn
-        (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
-        ;;TBD proxy support... and other params progress bar?
-        (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
-              (get-opt "download.uri")))
-  (cons (not (get-opt "without-install")) argv))
+                                    (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
+    `((,(get-opt "download.archive") ,(get-opt "download.uri")))))
 
 (defun ccl-bin-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -78,7 +70,7 @@
 
 (push `("ccl-bin" . (,(decide-version 'ccl-bin-get-version)
                       ccl-bin-argv-parse
-                      ccl-bin-download
+                      ,(decide-download 'ccl-bin-download)
                       ccl-bin-expand
                       setup))
       *install-cmds*)

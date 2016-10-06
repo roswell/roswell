@@ -21,27 +21,20 @@
 
 (defun allegro-argv-parse (argv)
   (format *error-output* "~&Installing allegro/~A...~%" (getf argv :version))
-  (set-opt "as" (getf argv :version))
   (cons t argv))
 
 (defun allegro-download (argv)
   (let ((uname (allegro-uname))
         (uname-m (allegro-uname-m)))
+    (set-opt "as" (getf argv :version))
     (set-opt "download.uri" (format nil "~@{~A~}" (allegro-uri)
                                     "/acl" (getf argv :version) "/" uname uname-m "/acl" (getf argv :version)
                                     "-" uname "x-" uname-m (cond ((equal uname "macos") ".dmg")
                                                                  ((equal uname "linu") ".bz2"))))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
                                   (when pos 
-                                    (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir))))))
-  (if (or (not (probe-file (get-opt "download.archive")))
-          (get-opt "download.force"))
-      (progn
-        (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
-        (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
-              (get-opt "download.uri")))
-  (cons t argv))
+                                    (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
+    `((,(get-opt "download.archive") ,(get-opt "download.uri")))))
 
 (defun allegro-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
@@ -86,10 +79,10 @@
   (cons t argv))
 
 (push `("allegro" . (,(decide-version 'allegro-get-version)
-                     allegro-argv-parse
-                     allegro-download
-                     allegro-expand
-                     setup))
+                      allegro-argv-parse
+                      ,(decide-download 'allegro-download)
+                      allegro-expand
+                      setup))
       *install-cmds*)
 
 (push `("allegro" . ,(list 'allegro-help)) *help-cmds*)
