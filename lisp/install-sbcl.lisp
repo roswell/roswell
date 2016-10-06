@@ -306,22 +306,22 @@
        do (fmt name default description)))
   (cons t argv))
 
-(push `("sbcl" . ,(,(decide-version 'sbcl-get-version)
-                    sbcl-argv-parse
-                    #+win32 sbcl-msys
-                    sbcl-start
-                    start
-                    sbcl-download
-                    sbcl-expand
-                    sbcl-patch
-                    sbcl-config
-                    sbcl-make
-                    sbcl-install
-                    #+win32 sbcl-install-win32
-                    sbcl-backup-features
-                    sbcl-make-archive
-                    sbcl-clean
-                    setup))
+(push `("sbcl" . (,(decide-version 'sbcl-get-version)
+                   sbcl-argv-parse
+                   #+win32 sbcl-msys
+                   sbcl-start
+                   start
+                   sbcl-download
+                   sbcl-expand
+                   sbcl-patch
+                   sbcl-config
+                   sbcl-make
+                   sbcl-install
+                   #+win32 sbcl-install-win32
+                   sbcl-backup-features
+                   sbcl-make-archive
+                   sbcl-clean
+                   setup))
       *install-cmds*)
 
 (push `("sbcl" . ,(list 'sbcl-help)) *help-cmds*)
