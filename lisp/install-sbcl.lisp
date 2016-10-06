@@ -38,7 +38,7 @@
 
 (defun sbcl-msys (argv)
   (unless (or (ros:getenv "MSYSCON")
-              (get-opt "without-install"))
+              (get-opt "until-extract"))
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
@@ -53,7 +53,7 @@
     (set-opt "install.force" "t")
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
-    (set-opt "without-install" t))
+    (set-opt "until-extract" t))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (labels ((with (opt)
@@ -96,7 +96,7 @@
                          :if-does-not-exist :create
                          :if-exists nil)
         (format o "~S~%" v))))
-  (cons (not (get-opt "without-install")) argv))
+  (cons (not (get-opt "until-extract")) argv))
 
 (defun sbcl-patch (argv)
   #+darwin
