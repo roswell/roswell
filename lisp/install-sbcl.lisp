@@ -61,11 +61,6 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~@{~A~}" (sbcl-uri) "sbcl-"
-                                  (getf argv :version) ".tar.gz"))
-  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (labels ((with (opt)
@@ -86,6 +81,11 @@
   (cons t argv))
 
 (defun sbcl-download (argv)
+  (set-opt "download.uri" (format nil "~@{~A~}" (sbcl-uri) "sbcl-"
+                                  (getf argv :version) ".tar.gz"))
+  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+                                (when pos
+                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn

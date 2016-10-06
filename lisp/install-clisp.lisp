@@ -28,16 +28,16 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
-  (set-opt "download.uri" (format nil "~@{~A~}" (clisp-uri)
-                                  (getf argv :version) "/clisp-"  (getf argv :version) ".tar.bz2"))
-  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (cons t argv))
 
 (defun clisp-download (argv)
+  (set-opt "download.uri" (format nil "~@{~A~}" (clisp-uri)
+                                  (getf argv :version) "/clisp-"  (getf argv :version) ".tar.bz2"))
+  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+                                (when pos
+                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn

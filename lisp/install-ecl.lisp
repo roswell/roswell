@@ -40,10 +40,6 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "download.uri" (format nil "~A~A.tar.gz" (ecl-uri) (ecl-version-filename (getf argv :version))))
-  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
   (print (format nil "src/mirror-ecl-~A/" (ecl-version-filename (getf argv :version))))
   (set-opt "src" (merge-pathnames (format nil "src/mirror-ecl-~A/" (ecl-version-filename (getf argv :version))) (homedir)))
@@ -57,6 +53,10 @@
   (cons t argv))
 
 (defun ecl-download (argv)
+  (set-opt "download.uri" (format nil "~A~A.tar.gz" (ecl-uri) (ecl-version-filename (getf argv :version))))
+  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+                                (when pos
+                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn

@@ -39,15 +39,15 @@
     (set-opt "as" (getf argv :version))
     (when (position "--without-install" (getf argv :argv) :test 'equal)
       (set-opt "without-install" t))
-    (set-opt "download.uri" (format nil "~@{~A~}" (ccl-bin-uri)
-                                    (getf argv :version) "/ccl-" (getf argv :version) "-" uname ccl-uname-m (if (equal uname "windows")
-                                                                                                                ".zip"".tar.gz")))
-    (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                  (when pos 
-                                    (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
     (cons t argv)))
 
 (defun ccl-bin-download (argv)
+  (set-opt "download.uri" (format nil "~@{~A~}" (ccl-bin-uri)
+                                  (getf argv :version) "/ccl-" (getf argv :version) "-" uname ccl-uname-m (if (equal uname "windows")
+                                                                                                              ".zip"".tar.gz")))
+  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+                                (when pos 
+                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn
