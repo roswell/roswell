@@ -27,20 +27,20 @@
       (uname)))
 
 (defun allegro-argv-parse (argv)
-  (let ((uname (allegro-uname))
-        (uname-m (allegro-uname-m)))
-    (format *error-output* "~&Installing allegro/~A...~%" (getf argv :version))
-    (set-opt "as" (getf argv :version))
-    (cons t argv)))
+  (format *error-output* "~&Installing allegro/~A...~%" (getf argv :version))
+  (set-opt "as" (getf argv :version))
+  (cons t argv))
 
 (defun allegro-download (argv)
-  (set-opt "download.uri" (format nil "~@{~A~}" (allegro-uri)
-                                  "/acl" (getf argv :version) "/" uname uname-m "/acl" (getf argv :version)
-                                  "-" uname "x-" uname-m (cond ((equal uname "macos") ".dmg")
-                                                               ((equal uname "linu") ".bz2"))))
-  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos 
-                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
+  (let ((uname (allegro-uname))
+        (uname-m (allegro-uname-m)))
+    (set-opt "download.uri" (format nil "~@{~A~}" (allegro-uri)
+                                    "/acl" (getf argv :version) "/" uname uname-m "/acl" (getf argv :version)
+                                    "-" uname "x-" uname-m (cond ((equal uname "macos") ".dmg")
+                                                                 ((equal uname "linu") ".bz2"))))
+    (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+                                  (when pos 
+                                    (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir))))))
   (if (or (not (probe-file (get-opt "download.archive")))
           (get-opt "download.force"))
       (progn

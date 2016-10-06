@@ -49,7 +49,7 @@
   (set-opt "download.extra.uri" (cmu-bin-archive-uri (getf argv :version) t))
   (set-opt "download.extra.archive" (let ((pos (position #\/ (get-opt "download.extra.uri") :from-end t)))
                                       (when pos 
-                                        (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download2.uri") (1+ pos))) (homedir)))))
+                                        (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.extra.uri") (1+ pos))) (homedir)))))
   (loop for archive in (list (get-opt "download.archive") (get-opt "download.extra.archive"))
         for uri in (list (get-opt "download.uri") (get-opt "download.extra.uri"))
         do (if (or (not (probe-file archive))
@@ -63,7 +63,7 @@
   (cons (not (get-opt "without-install")) argv))
 
 (defun cmu-bin-expand (argv)
-  (loop for archive in (list (get-opt "download.archive") (get-opt "download2.archive"))
+  (loop for archive in (list (get-opt "download.archive") (get-opt "download.extra.archive"))
         do (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
            (let* ((impls (merge-pathnames (format nil "impls/~A/~A/cmu-bin/~A/" (uname-m) (uname) (get-opt "as")) (homedir)))
                   (path (merge-pathnames (format nil "~A/" (get-opt "as")) impls)))
