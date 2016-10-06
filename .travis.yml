@@ -21,6 +21,7 @@ env:
     - METHOD=ci LISP=ccl32
 
 os:
+  - osx
   - linux
 
 matrix:
