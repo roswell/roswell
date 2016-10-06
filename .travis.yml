@@ -8,7 +8,6 @@ env:
     - ROSWELL_PLATFORMHTML_BASE=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
     - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
-    - METHOD=brew
     - METHOD=ci LISP=alisp
     - METHOD=ci LISP=sbcl-bin
     - METHOD=ci LISP=cmu-bin/2016-05
@@ -17,6 +16,7 @@ env:
     - METHOD=ci LISP=clisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl-bin
+    - METHOD=brew
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
 
