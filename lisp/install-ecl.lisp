@@ -20,13 +20,6 @@
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
-#+nil(defun ecl-version (argv)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (ecl-get-version))
-            (getf argv :version-not-specified) 0)))
-  (cons t argv))
-
 (defun ecl-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
     (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
