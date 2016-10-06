@@ -76,7 +76,8 @@
     (let ((version (getf argv :version)))
       (when (or (null version) (equal version "latest"))
         (setf (getf argv :version) (first (funcall *version-func*))
-              (getf argv :version-not-specified) 0)))))
+              (getf argv :version-not-specified) 0)))
+    (cons t argv)))
 
 (defun install-running-p (argv)
   ;;TBD
