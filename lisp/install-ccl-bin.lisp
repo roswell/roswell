@@ -20,7 +20,8 @@
 (defun ccl-bin-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (ccl-bin-get-version)))))
+      (setf (getf argv :version) (first (ccl-bin-get-version)))
+      (getf argv :version-not-specified) 0))
   (cons t argv))
 
 (defvar *ccl-uname-m-alist*

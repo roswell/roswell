@@ -42,7 +42,7 @@ ARGV2 contains a (possibly modified) ARGV.")
 (defun install-impl (impl version argv)
   (let ((cmds (cdr (assoc impl *install-cmds* :test #'equal))))
     (when cmds
-      (let ((param `(t :target ,impl :version ,version :argv ,argv)))
+      (let ((param `(t :target ,impl :version ,version :version-not-specified nil :argv ,argv)))
         (handler-case
             (loop for call in cmds
                do (setq param (funcall call (rest param)))

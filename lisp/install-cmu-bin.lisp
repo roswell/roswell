@@ -17,7 +17,8 @@
 (defun cmu-bin-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (cmu-bin-get-version)))))
+      (setf (getf argv :version) (first (cmu-bin-get-version))
+            (getf argv :version-not-specified) 0)))
   (cons t argv))
 
 (defvar *cmu-uname-m-alist*

@@ -24,7 +24,8 @@
 (defun ecl-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (ecl-get-version)))))
+      (setf (getf argv :version) (first (ecl-get-version))
+            (getf argv :version-not-specified) 0)))
   (cons t argv))
 
 (defun ecl-argv-parse (argv)

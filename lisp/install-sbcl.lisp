@@ -45,7 +45,8 @@
 (defun sbcl-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (sbcl-get-version)))))
+      (setf (getf argv :version) (first (sbcl-get-version))
+            (getf argv :version-not-specified) 0)))
   (cons t argv))
 
 (defun sbcl-argv-parse (argv)
