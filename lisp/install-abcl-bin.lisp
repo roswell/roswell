@@ -1,19 +1,24 @@
 (in-package :ros.install)
 
+(defvar *abcl-bin-get-version-cache* nil)
+
 (defun abcl-bin-get-version ()
-  (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))
-    (format *error-output* "Checking version to install....~%")
-    (download (abcl-bin-uri) file)
-    (loop for a in (plump:get-elements-by-tag-name
-                    (plump:parse file) "a")
-       for x = (string-right-trim "/" (plump:get-attribute a "href"))
-       when (digit-char-p (aref x 0))
-       collect x)))
+  (or *abcl-bin-get-version-cache*
+      (setf *abcl-bin-get-version-cache*
+            (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))
+              (format *error-output* "Checking version to install....~%")
+              (download (abcl-bin-uri) file)
+              (loop for a in (plump:get-elements-by-tag-name
+                              (plump:parse file) "a")
+                    for x = (string-right-trim "/" (plump:get-attribute a "href"))
+                    when (digit-char-p (aref x 0))
+                      collect x)))))
 
 (defun abcl-bin-version (argv)
+  (setf *version-func* 'abcl-bin-get-version)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (abcl-bin-get-version))
+      (setf (getf argv :version) (first (funcall *version-func*))
             (getf argv :version-not-specified) 0)))
   (cons t argv))
 
@@ -21,27 +26,36 @@
   (merge-pathnames (format nil "impls/~A/~A/abcl-bin/" (uname-m) (uname)) (homedir)))
 
 (defun abcl-bin-argv-parse (argv)
-  (set-opt "as" (getf argv :version))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
   (set-opt "prefix" (abcl-bin-impl))
-  (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (cons t argv))
 
 (defun abcl-bin-download (argv)
-  (set-opt "download.uri" (format nil "~@{~A~}" (abcl-bin-uri)
-                                  (getf argv :version) "/abcl-bin-" (getf argv :version)".tar.gz"))
-  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos 
-                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-  (if (or (not (probe-file (get-opt "download.archive")))
-          (get-opt "download.force"))
-      (progn
-        (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
-        ;;TBD proxy support... and other params progress bar?
-        (download (get-opt "download.uri") (get-opt "download.archive")))
-      (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
-              (get-opt "download.uri")))
+  (loop for repeat = nil
+        do (set-opt "as" (version argv))
+           (set-opt "download.uri" (format nil "~@{~A~}" (abcl-bin-uri)
+                                           (version argv) "/abcl-bin-" (version argv)".tar.gz"))
+           (set-opt "download.archive"
+                    (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+                      (when pos 
+                        (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
+           (handler-case
+               (if (or (not (probe-file (get-opt "download.archive")))
+                       (get-opt "download.force"))
+                   (progn
+                     (format t "~&Downloading archive:~A~%" (get-opt "download.uri"))
+                     ;;TBD proxy support... and other params progress bar?
+                     (download (get-opt "download.uri") (get-opt "download.archive")))
+                   (format t "~&Skip downloading ~A~%specify download.force=t to download it again.~%"
+                           (get-opt "download.uri")))
+             (uiop/run-program:subprocess-error ()
+               (format t "Failure~%")
+               (setf repeat t)))
+        while (and repeat
+                   (incf (getf argv :version-not-specified))
+                   (> (length (funcall *version-func*))
+                      (getf argv :version-not-specified))))
   (cons (not (get-opt "without-install")) argv))
 
 (defun abcl-bin-expand (argv)
@@ -54,7 +68,7 @@
          (uiop/filesystem:delete-directory-tree 
           path :validate t)))
   (ql-impl-util:rename-directory
-   (merge-pathnames (format nil "abcl-bin-~A/" (getf argv :version)) (abcl-bin-impl))
+   (merge-pathnames (format nil "abcl-bin-~A/" (version argv)) (abcl-bin-impl))
    (merge-pathnames (format nil "~A/" (get-opt "as")) (abcl-bin-impl)))
   (cons t argv))
 

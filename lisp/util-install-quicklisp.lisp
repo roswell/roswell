@@ -62,6 +62,14 @@
 (defun installedp (argv)
   (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
 
+(defvar *version-func* nil)
+
+(defun version (argv &optional (f *version-func*))
+  (let ((num (getf argv :version-not-specified)))
+    (if num
+        (nth num (funcall f))
+        (getf argv :version))))
+
 (defun install-running-p (argv)
   ;;TBD
   (declare (ignore argv))
