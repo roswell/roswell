@@ -125,7 +125,7 @@
 
 (push `("ecl" . (#+win32
                  ecl-msys
-                 ,(decide-version ecl-get-version)
+                 ,(decide-version 'ecl-get-version)
                  ecl-argv-parse
                  start
                  ecl-download
