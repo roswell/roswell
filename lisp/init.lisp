@@ -265,9 +265,11 @@ have the latest asdf, and this file has a workaround for this.
       #'system)
 
 (defvar *version-cache* nil)
-(defun version ()
-  (or *version-cache*
-      (setf *version-cache* (roswell '("roswell-internal-use" "version") :string t))))
+(defun version (&optional opt) 
+  (if opt
+      (roswell `("roswell-internal-use" "version" ,(string-downcase (princ-to-string opt))) :string t)
+      (or *version-cache*
+          (setf *version-cache* (roswell '("roswell-internal-use" "version") :string t)))))
 
 (defun package (cmd arg &rest rest)
   (declare (ignorable cmd rest))

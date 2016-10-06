@@ -73,7 +73,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir)
       (force-output *error-output*))
     (unless (ignore-errors
-             (when (> (parse-integer (ros.util:version :date))
+             (when (> (parse-integer (ros:version :date))
                       (loop for i in dir
                             maximize (file-write-date i)))
                (format *error-output* "up to date. stop~%")

@@ -5,7 +5,7 @@
 (defpackage :ros.util
   (:use :cl)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
-           :parse-version-spec :download :expand :sh :version :chdir
+           :parse-version-spec :download :expand :sh :chdir
            :core-extention :clone-github))
 
 (in-package :ros.util)
@@ -64,16 +64,11 @@
       (which "bash")
       "sh"))
 
-(defun version (&optional (opt ""))
-  (ros:roswell `("roswell-internal-use" "version"
-					,(string-downcase opt)) :string t))
-
 (defvar *version*
-  `(
-    :roswell ,(version)
-	     :lisp ,(lisp-implementation-type)
-	     :version ,(lisp-implementation-version)
-	     :date ,(get-universal-time)))
+  `(:roswell ,(ros:version)
+    :lisp ,(lisp-implementation-type)
+    :version ,(lisp-implementation-version)
+    :date ,(get-universal-time)))
 
 (defun parse-version-spec (string)
   "Parse the given version specification string and returns a list of strings (LISP VERSION).
