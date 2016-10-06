@@ -42,13 +42,6 @@
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
-(defun sbcl-version (argv)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (sbcl-get-version))
-            (getf argv :version-not-specified) 0)))
-  (cons t argv))
-
 (defun sbcl-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
     (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
@@ -313,22 +306,22 @@
        do (fmt name default description)))
   (cons t argv))
 
-(push `("sbcl" . ,(list 'sbcl-version
-                        'sbcl-argv-parse
-                        #+win32 'sbcl-msys
-                        'sbcl-start
-                        'start
-                        'sbcl-download
-                        'sbcl-expand
-                        'sbcl-patch
-                        'sbcl-config
-                        'sbcl-make
-                        'sbcl-install
-                        #+win32 'sbcl-install-win32
-                        'sbcl-backup-features
-                        'sbcl-make-archive
-                        'sbcl-clean
-                        'setup))
+(push `("sbcl" . ,(,(decide-version 'sbcl-get-version)
+                    sbcl-argv-parse
+                    #+win32 sbcl-msys
+                    sbcl-start
+                    start
+                    sbcl-download
+                    sbcl-expand
+                    sbcl-patch
+                    sbcl-config
+                    sbcl-make
+                    sbcl-install
+                    #+win32 sbcl-install-win32
+                    sbcl-backup-features
+                    sbcl-make-archive
+                    sbcl-clean
+                    setup))
       *install-cmds*)
 
 (push `("sbcl" . ,(list 'sbcl-help)) *help-cmds*)

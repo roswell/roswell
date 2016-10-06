@@ -4,13 +4,6 @@
 (defun allegro-get-version ()
   (list "100express"))
 
-(defun allegro-version (argv)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (allegro-get-version))
-            (getf argv :version-not-specified) 0)))
-  (cons t argv))
-
 (defvar *allegro-uname-m-alist*
   '(("x86-64" . "x86")))
 
@@ -92,7 +85,7 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("allegro" . (allegro-version
+(push `("allegro" . (,(decide-version 'allegro-get-version)
                      allegro-argv-parse
                      allegro-download
                      allegro-expand

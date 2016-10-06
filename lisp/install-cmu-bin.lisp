@@ -14,13 +14,6 @@
                  (char= (aref href (1- len)) #\/))
        collect (string-right-trim "/" href))))
 
-(defun cmu-bin-version (argv)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (cmu-bin-get-version))
-            (getf argv :version-not-specified) 0)))
-  (cons t argv))
-
 (defvar *cmu-uname-m-alist*
   '(("x86-64" . "x86")))
 
@@ -89,11 +82,11 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("cmu-bin" . (cmu-bin-version
-                     cmu-bin-argv-parse
-                     cmu-bin-download
-                     cmu-bin-expand
-                     setup))
+(push `("cmu-bin" . (,(decide-version 'cmu-bin-get-version)
+                      cmu-bin-argv-parse
+                      cmu-bin-download
+                      cmu-bin-expand
+                      setup))
       *install-cmds*)
 
 (push `("cmu-bin" . ,(list 'cmu-bin-help)) *help-cmds*)

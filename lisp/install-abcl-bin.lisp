@@ -14,14 +14,6 @@
                     when (digit-char-p (aref x 0))
                       collect x)))))
 
-(defun abcl-bin-version (argv)
-  (setf *version-func* 'abcl-bin-get-version)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (funcall *version-func*))
-            (getf argv :version-not-specified) 0)))
-  (cons t argv))
-
 (defun abcl-bin-impl ()
   (merge-pathnames (format nil "impls/~A/~A/abcl-bin/" (uname-m) (uname)) (homedir)))
 
@@ -96,10 +88,10 @@
       java dir))
     (cons t argv)))
 
-(push `("abcl-bin" . (abcl-bin-version
-                      abcl-bin-argv-parse
-                      abcl-bin-download
-                      abcl-bin-expand
-                      abcl-bin-script
-                      setup))
+(push `("abcl-bin" . (,(decide-version 'abcl-bin-get-version)
+                       abcl-bin-argv-parse
+                       abcl-bin-download
+                       abcl-bin-expand
+                       abcl-bin-script
+                       setup))
       *install-cmds*)

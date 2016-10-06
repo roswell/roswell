@@ -13,13 +13,6 @@
                     (char= (aref href (1- len)) #\/))
             collect (string-right-trim "/" href))))
 
-(defun ccl-bin-version (argv)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (ccl-bin-get-version)))
-      (getf argv :version-not-specified) 0))
-  (cons t argv))
-
 (defvar *ccl-uname-m-alist*
   '(("x86-64" . "x86")
     ("armhf" . "arm")))
@@ -30,7 +23,6 @@
 
 (defun ccl-bin-argv-parse (argv)
   (format *error-output* "~&Installing ccl-bin/~A...~%" (getf argv :version))
-  (set-opt "as" (getf argv :version))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
   (cons t argv))
@@ -38,6 +30,7 @@
 (defun ccl-bin-download (argv)
   (let ((uname (uname))
         (ccl-uname-m (ccl-uname-m)))
+    (set-opt "as" (getf argv :version))
     (set-opt "download.uri" (format nil "~@{~A~}" (ccl-bin-uri)
                                     (getf argv :version) "/ccl-" (getf argv :version) "-" uname ccl-uname-m (if (equal uname "windows")
                                                                                                                 ".zip"".tar.gz")))
@@ -83,11 +76,11 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("ccl-bin" . (ccl-bin-version
-                     ccl-bin-argv-parse
-                     ccl-bin-download
-                     ccl-bin-expand
-                     setup))
+(push `("ccl-bin" . (,(decide-version 'ccl-bin-get-version)
+                      ccl-bin-argv-parse
+                      ccl-bin-download
+                      ccl-bin-expand
+                      setup))
       *install-cmds*)
 
 (push `("ccl-bin" . ,(list 'ccl-bin-help)) *help-cmds*)

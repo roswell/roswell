@@ -20,7 +20,7 @@
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
-(defun ecl-version (argv)
+#+nil(defun ecl-version (argv)
   (let ((version (getf argv :version)))
     (when (or (null version) (equal version "latest"))
       (setf (getf argv :version) (first (ecl-get-version))
@@ -130,16 +130,16 @@
     (format t "done.~%"))
   (cons t argv))
 
-(push `("ecl" . ,(list #+win32 ecl-msys
-                       'ecl-version
-                       'ecl-argv-parse
-                       'start
-                       'ecl-download
-                       'ecl-expand
-                       'ecl-config
-                       'ecl-make
-                       'ecl-install
-                       'ecl-clean
-                       'setup
-                       ))
+(push `("ecl" . (#+win32
+                 ecl-msys
+                 ,(decide-version ecl-get-version)
+                 ecl-argv-parse
+                 start
+                 ecl-download
+                 ecl-expand
+                 ecl-config
+                 ecl-make
+                 ecl-install
+                 ecl-clean
+                 setup))
       *install-cmds*)

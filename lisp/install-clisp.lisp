@@ -14,13 +14,6 @@
                     (not (equal "latest/" href)))
             collect (subseq href 0 len))))
 
-(defun clisp-version (argv)
-  (let ((version (getf argv :version)))
-    (when (or (null version) (equal version "latest"))
-      (setf (getf argv :version) (first (clisp-get-version))
-            (getf argv :version-not-specified) 0)))
-  (cons t argv))
-
 (defun clisp-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
     (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
@@ -135,18 +128,18 @@
     (format t "done.~%"))
   (cons t argv))
 
-(push `("clisp" . ,(list 'clisp-version
-                         'clisp-argv-parse
-                         'start
-                         'clisp-download
-                         'clisp-lib
-                         'clisp-expand
-                         'clisp-patch
-                         'clisp-config
-                         'clisp-make
-                         'clisp-install
-                         'clisp-clean
-                         'setup))
+(push `("clisp" . (,(decide-version 'clisp-get-version)
+                    clisp-argv-parse
+                    start
+                    clisp-download
+                    clisp-lib
+                    clisp-expand
+                    clisp-patch
+                    clisp-config
+                    clisp-make
+                    clisp-install
+                    clisp-clean
+                    setup))
       *install-cmds*)
 
 (defun clisp-help (argv)

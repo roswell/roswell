@@ -70,6 +70,14 @@
         (nth num (funcall f))
         (getf argv :version))))
 
+(defun decide-version (function)
+  (lambda (argv)
+    (setf *version-func* function)
+    (let ((version (getf argv :version)))
+      (when (or (null version) (equal version "latest"))
+        (setf (getf argv :version) (first (funcall *version-func*))
+              (getf argv :version-not-specified) 0)))))
+
 (defun install-running-p (argv)
   ;;TBD
   (declare (ignore argv))
