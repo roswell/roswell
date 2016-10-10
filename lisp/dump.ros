@@ -116,14 +116,20 @@ exec ros -- $0 "$@"
        (setf ros:*argv* (rest ext:*args*))
        (ros:run cmds))))
 
-#+cmucl
+
+;;; cmucl
+
+;; cf. https://common-lisp.net/project/cmucl/doc/cmu-user/extensions.html#toc47
+
+;; "This feature is only available on some platforms, as indicated by having the feature
+;; :executable. Currently only x86 ports and the solaris/sparc port have this feature."
+#+(and cmucl executable)
 (defun %dump-executable (cmds out)
   (setf ext:*batch-mode* nil)
   (setf ext::*gc-run-time* 0)
   (ext:save-lisp
    out
    ;; no need to do GC because of :purify t by default
-   ;; https://common-lisp.net/project/cmucl/doc/cmu-user/extensions.html#toc47
    :purify t ; just here to make it explicit
    :executable t
    :init-function
@@ -133,11 +139,20 @@ exec ros -- $0 "$@"
        (ros:run cmds))
    :process-command-line nil))
 
+#-(or sbcl ccl clisp (and cmucl executable))
+(defun %dump-executable (cmds out)
+  "more informative error message"
+  (format *error-output*
+          "
+ros dump executable is supported only when the following features are present:
+ (or sbcl ccl clisp (and cmucl executable))
 
+On CMUCL, :executable is supported on x86, solaris and sparc.
+")
+  (ros:quit 1))
 
 (defvar *subcmds*
   '(("output" dump-output)
-    #+(or sbcl ccl clisp cmucl)
     ("executable" dump-executable)))
 
 (defun main (cmd &rest r)
