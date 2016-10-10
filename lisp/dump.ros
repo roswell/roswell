@@ -48,32 +48,6 @@ exec ros -- $0 "$@"
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
-(defun dump-executable (params)
-  (if params
-      (let ((cmds (let ((*read-eval*))
-                    (read-from-string
-                     (format nil "(~A)"
-                             (ros:opt "restart")))))
-            (out (first params))
-            (actual-out (or (and (equal (second params) "-o") ;; skimped ...
-                                 (third params))
-                            (first params))))
-        (unless cmds
-          (warn "dumping an executable without specifing the initial behaviour."))
-        (when (equalp (pathname-type out) "ros")
-          (let ((*package* (find-package :cl-user))
-                main-list)
-            (ros:script nil out)
-            (setf main-list (let ((*package* (find-package :keyword)))
-                              `((:entry ,(format nil "~S" ros:*main*))))
-                  out (make-pathname :type #-win32 nil #+win32 "exe" :defaults actual-out)
-                  cmds (if (first cmds)
-                           (append cmds main-list)
-                           main-list))))
-        (%dump-executable cmds out))
-      (format *error-output* "Usage: ros dump executable help~%")))
-
-
 #+sbcl
 (defun %dump-executable (cmds out)
   (sb-ext:save-lisp-and-die
@@ -151,6 +125,38 @@ ros dump executable is supported only when the following features are present:
 On CMUCL, :executable is supported on x86, solaris and sparc.
 " cmds out)
   (ros:quit 1))
+
+
+(defun dump-executable (params)
+  (if params
+      (let ((cmds (let ((*read-eval*))
+                    (read-from-string
+                     (format nil "(~A)"
+                             (ros:opt "restart")))))
+            (out (first params))
+            (actual-out (or (and (equal (second params) "-o") ;; skimped ...
+                                 (third params))
+                            (first params))))
+        (unless cmds
+          (warn "dumping an executable without specifing the initial behaviour."))
+        (when (equalp (pathname-type out) "ros")
+          (let ((*package* (find-package :cl-user))
+                main-list)
+            (ros:script nil out)
+            (setf main-list (let ((*package* (find-package :keyword)))
+                              `((:entry ,(format nil "~S" ros:*main*))))
+                  out (make-pathname :type #-win32 nil #+win32 "exe" :defaults actual-out)
+                  cmds (if (first cmds)
+                           (append cmds main-list)
+                           main-list))))
+        (%dump-executable cmds out))
+      (format *error-output* "Usage: ros dump executable help~%")))
+
+
+
+
+
+
 
 (defvar *subcmds*
   '(("output" dump-output)
