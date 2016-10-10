@@ -73,6 +73,10 @@ exec ros -- $0 "$@"
         #+sbcl
         (sb-ext:save-lisp-and-die
          out
+         ;; no need to do GC because of :purify t by default
+         ;; however, this only affects old cheyneyGC
+         ;; http://www.sbcl.org/manual/#Efficiency-Hacks
+         :purify t ; just here to make it explicit
          :toplevel
          #'(lambda ()
              (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
@@ -103,11 +107,13 @@ exec ros -- $0 "$@"
              (ros:run cmds)))
         #+cmucl
         (progn
-          (ext:gc :full t)
           (setf ext:*batch-mode* nil)
           (setf ext::*gc-run-time* 0)
           (ext:save-lisp
            out
+           ;; no need to do GC because of :purify t by default
+           ;; https://common-lisp.net/project/cmucl/doc/cmu-user/extensions.html#toc47
+           :purify t ; just here to make it explicit
            :executable t
            :init-function
            #'(lambda ()
