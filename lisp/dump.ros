@@ -107,7 +107,7 @@ exec ros -- $0 "$@"
           (setf ext:*batch-mode* nil)
           (setf ext::*gc-run-time* 0)
           (ext:save-lisp
-           path
+           out
            :executable t
            :init-function
            #'(lambda ()
