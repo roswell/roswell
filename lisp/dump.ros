@@ -125,7 +125,7 @@ exec ros -- $0 "$@"
 
 (defvar *subcmds*
   '(("output" dump-output)
-    #+(or sbcl ccl clisp)
+    #+(or sbcl ccl clisp cmucl)
     ("executable" dump-executable)))
 
 (defun main (cmd &rest r)
