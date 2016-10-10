@@ -132,6 +132,7 @@ exec ros -- $0 "$@"
    ;; no need to do GC because of :purify t by default
    :purify t ; just here to make it explicit
    :executable t
+   :print-herald nil ; suppress verbose startup message
    :init-function
    #'(lambda ()
        (setf *load-pathname* (pathname (first extensions:*command-line-strings*)))
