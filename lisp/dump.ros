@@ -144,12 +144,12 @@ exec ros -- $0 "$@"
 (defun %dump-executable (cmds out)
   "more informative error message"
   (format *error-output*
-          "
+          "While dumping ~a to ~a:
 ros dump executable is supported only when the following features are present:
  (or sbcl ccl clisp (and cmucl executable))
 
 On CMUCL, :executable is supported on x86, solaris and sparc.
-")
+" cmds out)
   (ros:quit 1))
 
 (defvar *subcmds*
