@@ -48,6 +48,85 @@ exec ros -- $0 "$@"
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
+#+sbcl
+(defun %dump-executable (cmds out)
+  (sb-ext:save-lisp-and-die
+   out
+   ;; no need to do GC because of :purify t by default
+   ;; however, this only affects old cheyneyGC
+   ;; http://www.sbcl.org/manual/#Efficiency-Hacks
+   :purify t ; just here to make it explicit
+   :toplevel
+   #'(lambda ()
+       (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
+       (setf ros:*argv* (rest sb-ext:*posix-argv*))
+       (ros:run cmds))
+   :executable t
+   :save-runtime-options t))
+
+
+#+ccl
+(defun %dump-executable (cmds out)
+  (ccl:save-application
+   out
+   :toplevel-function
+   #'(lambda ()
+       (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
+       (setf ros:*argv* (rest (ccl::command-line-arguments)))
+       (ros:run cmds))
+   :prepend-kernel t))
+
+#+clisp
+(defun %dump-executable (cmds out)
+  (ext:saveinitmem
+   out
+   :quiet t
+   :executable 0
+   :norc t
+   :script nil
+   :init-function
+   #'(lambda ()
+       (setf *load-pathname* (pathname (first ext:*args*)))
+       (setf ros:*argv* (rest ext:*args*))
+       (ros:run cmds))))
+
+
+;;; cmucl
+
+;; cf. https://common-lisp.net/project/cmucl/doc/cmu-user/extensions.html#toc47
+
+;; "This feature is only available on some platforms, as indicated by having the feature
+;; :executable. Currently only x86 ports and the solaris/sparc port have this feature."
+#+(and cmucl executable)
+(defun %dump-executable (cmds out)
+  (setf ext:*batch-mode* nil)
+  (setf ext::*gc-run-time* 0)
+  (ext:save-lisp
+   out
+   ;; no need to do GC because of :purify t by default
+   :purify t ; just here to make it explicit
+   :executable t
+   :print-herald nil ; suppress verbose startup message
+   :init-function
+   #'(lambda ()
+       (setf *load-pathname* (pathname (first extensions:*command-line-strings*)))
+       (setf ros:*argv* (rest extensions:*command-line-strings*))
+       (ros:run cmds))
+   :process-command-line nil))
+
+#-(or sbcl ccl clisp (and cmucl executable))
+(defun %dump-executable (cmds out)
+  "more informative error message"
+  (format *error-output*
+          "While dumping ~a to ~a:
+ros dump executable is supported only when the following features are present:
+ (or sbcl ccl clisp (and cmucl executable))
+
+On CMUCL, :executable is supported on x86, solaris and sparc.
+" cmds out)
+  (ros:quit 1))
+
+
 (defun dump-executable (params)
   (if params
       (let ((cmds (let ((*read-eval*))
@@ -70,56 +149,17 @@ exec ros -- $0 "$@"
                   cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))
-        #+sbcl
-        (sb-ext:save-lisp-and-die
-         out
-         :toplevel
-         #'(lambda ()
-             (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
-             (setf ros:*argv* (rest sb-ext:*posix-argv*))
-             (ros:run cmds))
-         :executable t
-         :save-runtime-options t)
-        #+ccl
-        (ccl:save-application
-         out
-         :toplevel-function
-         #'(lambda ()
-             (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
-             (setf ros:*argv* (rest (ccl::command-line-arguments)))
-             (ros:run cmds))
-         :prepend-kernel t)
-        #+clisp
-        (ext:saveinitmem
-         out
-         :quiet t
-         :executable 0
-         :norc t
-         :script nil
-         :init-function
-         #'(lambda ()
-             (setf *load-pathname* (pathname (first ext:*args*)))
-             (setf ros:*argv* (rest ext:*args*))
-             (ros:run cmds)))
-        #+cmucl
-        (progn
-          (ext:gc :full t)
-          (setf ext:*batch-mode* nil)
-          (setf ext::*gc-run-time* 0)
-          (ext:save-lisp
-           path
-           :executable t
-           :init-function
-           #'(lambda ()
-               (setf *load-pathname* (pathname (first extensions:*command-line-strings*)))
-               (setf ros:*argv* (rest extensions:*command-line-strings*))
-               (ros:run cmds))
-           :process-command-line nil)))
+        (%dump-executable cmds out))
       (format *error-output* "Usage: ros dump executable help~%")))
+
+
+
+
+
+
 
 (defvar *subcmds*
   '(("output" dump-output)
-    #+(or sbcl ccl clisp)
     ("executable" dump-executable)))
 
 (defun main (cmd &rest r)
