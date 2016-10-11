@@ -117,13 +117,14 @@ exec ros -- $0 "$@"
 #-(or sbcl ccl clisp (and cmucl executable))
 (defun %dump-executable (cmds out)
   "more informative error message"
+  (declare (ignorable cmds))
   (format *error-output*
-          "While dumping ~a to ~a:
-ros dump executable is supported only when the following features are present:
- (or sbcl ccl clisp (and cmucl executable))
+          "While dumping to ~a:
+ros dump executable is supported only when the following features are satisfied:
+ (or sbcl ccl ecl clisp (and cmucl executable))
 
 On CMUCL, :executable is supported on x86, solaris and sparc.
-" cmds out)
+" out)
   (ros:quit 1))
 
 
