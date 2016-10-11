@@ -312,6 +312,7 @@ have the latest asdf, and this file has a workaround for this.
   (cl:write (cl:eval (read-from-string arg))))
 
 (defun script (cmd arg &rest rest)
+  "load and evaluate the script"
   (setf *argv* rest)
   (flet ((body (in)
            (let ((line(read-line in)))
