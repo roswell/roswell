@@ -47,8 +47,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                                 "#| <Put a one-line description here>"
                                 "exec ros -Q -- $0 \"$@\"" "|#"
                                 "(progn ;;init forms"
-                                ;; inserted alexandria because of `System "nil" not found`
-                                "  #+quicklisp (ql:quickload '(:alexandria) :silent t))"
+                                "  ;;#+quicklisp (ql:quickload '() :silent t)"
+                                "  )"
                                 ""
                                 (format nil "(defpackage :ros.script.~A.~A" name date)
                                 "  (:use :cl))"
