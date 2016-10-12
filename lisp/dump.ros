@@ -143,6 +143,9 @@ exec ros -- $0 "$@"
 
 #+ecl
 (defun %dump-executable (cmds out ros-file)
+  (format *error-output* "~&; ECL is actually not suppported. Gotcha! ~%")
+  (ros:quit 1)
+  #+nil
   (let* ((tmp (uiop:run-program "mktemp -d" :output '(:string :stripped t)))
          (ros-opts-file (format nil "~a/ros-opts.lisp" tmp))
          objfiles
