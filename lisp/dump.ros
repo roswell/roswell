@@ -49,7 +49,8 @@ exec ros -- $0 "$@"
            (%dump (ensure-directories-exist path) :normal))))))
 
 #+sbcl
-(defun %dump-executable (cmds out)
+(defun %dump-executable (cmds out script)
+  (declare (ignore script))
   (sb-ext:save-lisp-and-die
    out
    ;; no need to do GC because of :purify t by default
@@ -66,7 +67,8 @@ exec ros -- $0 "$@"
 
 
 #+ccl
-(defun %dump-executable (cmds out)
+(defun %dump-executable (cmds out script)
+  (declare (ignore script))
   (ccl:save-application
    out
    :toplevel-function
@@ -77,7 +79,8 @@ exec ros -- $0 "$@"
    :prepend-kernel t))
 
 #+clisp
-(defun %dump-executable (cmds out)
+(defun %dump-executable (cmds out script)
+  (declare (ignore script))
   (ext:saveinitmem
    out
    :quiet t
@@ -114,42 +117,190 @@ exec ros -- $0 "$@"
        (ros:run cmds))
    :process-command-line nil))
 
-#-(or sbcl ccl clisp (and cmucl executable))
-(defun %dump-executable (cmds out)
+
+;;; ecl [WIP]
+
+;; In ecl, we have to explicitly specify ALL object(fasl) files
+;; in order to build a standalone executable.
+;; uiop/image:create-image / dump-image does the similar things.
+
+
+;; cf.https://common-lisp.net/project/ecl/manual/ch34s03.html
+;; c:build-program
+;; {image-name &key lisp-files ld-flags prologue-code epilogue-code}
+
+#+ecl
+(defun print-%-readable-or-lose (sym-name &optional (s *standard-output*))
+  (let ((*print-readably* t))
+    (handler-case
+        (format s
+                "(% ~s '~s)~%"
+                sym-name
+                (ignore-errors
+                  (symbol-value
+                   (read-from-string sym-name))))
+      (print-not-readable ()))))
+
+#+ecl
+(defun %dump-executable (cmds out ros-file)
+  (format *error-output* "~&; ECL is actually not suppported. Gotcha! ~%")
+  (ros:quit 1)
+  #+nil
+  (let* ((tmp (uiop:run-program "mktemp -d" :output '(:string :stripped t)))
+         (ros-opts-file (format nil "~a/ros-opts.lisp" tmp))
+         objfiles
+         (*compile-verbose* t)
+         (*compile-print* t))
+    (format *error-output* "~&; In directory ~a~%" tmp)
+    (unwind-protect
+        (progn
+          (with-open-file (*standard-output*
+                           ros-opts-file
+                           :direction :output
+                           :if-does-not-exist :create)
+            #+nil
+            (prin1
+             `(setf *load-verbose* t
+                    *load-print* t))
+            (terpri)
+            ;; fixme: duplicated, but necessary
+            (prin1
+             `(defpackage :ros
+                 (:use :cl)
+                 (:shadow :load :eval :package :restart :print :write)
+                 (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
+                          :ignore-shebang :ensure-using-downloaded-asdf :include :ensure-asdf
+                          :roswell :exec :setenv :unsetenv :version :swank :verbose)
+                 (:documentation "Roswell backend.")))
+            (terpri)
+            (progn
+              (prin1
+               `(cl:load ,(make-pathname
+                           :name "init"
+                           :type "lisp"
+                           :defaults #.*load-pathname*)))
+              (terpri))
+            #+nil
+            (progn
+              (prin1
+               `(in-package :ros))
+              (terpri)
+              (princ
+               "(defmacro eval-with-printing (&body body)
+                (list* 'progn
+                       (loop for form in body
+                             collect (list 'cl:print (list 'quote form))
+                             collect (list 'cl:terpri)
+                             collect (list 'cl:finish-output)
+                             collect form)))")
+              (terpri)
+              (format *standard-output* "~&(eval-with-printing~&")
+              (terpri)
+              (princ `(defun % (string value)
+                        (ignore-errors
+                          (setf (symbol-value
+                                 (read-from-string string))
+                                value))))
+              (terpri)
+              (princ
+               `(trace %))
+              (terpri)
+              (dolist (sym-name '("QUICKLISP-CLIENT::*LOCAL-PROJECT-DIRECTORIES*"
+                                  "ROS::*ROS-OPTS*"))
+                (print-%-readable-or-lose sym-name))
+              (terpri)
+              (prin1
+               `(format t "~&loading init.ros...~&"))
+              (with-open-file (s (make-pathname
+                                  :name "init"
+                                  :type "lisp"
+                                  :defaults #.*load-pathname*))
+                (ignore-errors
+                  ;; copy and paste
+                  (loop (write-char (read-char s) *standard-output*))))
+              (format *standard-output* "~&)~&")))
+          (format *error-output* "~&finished dumping all special variables.")
+          (proclaim '(optimize (debug 3) (speed 0)))
+          (push (compile-file ros-opts-file
+                              :system-p t
+                              :output-file
+                              (format nil "~a/ros-opts.o" tmp)) objfiles)
+          (push (compile-file ros-file
+                              :system-p t
+                              :output-file
+                              (format nil "~a/script.o" tmp)) objfiles)
+          (c:build-program
+           out
+           :lisp-files ;#+nil
+           ;; objfiles
+           ;; #+nil
+           (nreverse objfiles)
+           :epilogue-code
+           (print
+            `(progn
+               (setf *load-pathname* (pathname (ext:argv 0)))
+               (setf ros:*argv*
+                     (eval
+                      (read-from-string
+                       "(loop :for i :from 0 :below (ext:argc)
+                             :collect (ext:argv i))")))
+               (print ros:*argv*)
+               (ros:run ',cmds)))))
+      ;; (uiop:run-program (format nil "rm -r ~a" tmp))
+      )))
+
+#-(or sbcl ccl clisp ecl (and cmucl executable))
+(defun %dump-executable (cmds out script)
   "more informative error message"
+  (declare (ignorable cmds script))
   (format *error-output*
-          "While dumping ~a to ~a:
-ros dump executable is supported only when the following features are present:
- (or sbcl ccl clisp (and cmucl executable))
+          "While dumping to ~a:
+ros dump executable is supported only when the following features are satisfied:
+ (or sbcl ccl ecl clisp (and cmucl executable))
 
 On CMUCL, :executable is supported on x86, solaris and sparc.
-" cmds out)
+" out)
   (ros:quit 1))
 
 
 (defun dump-executable (params)
   (if params
-      (let ((cmds (let ((*read-eval*))
-                    (read-from-string
-                     (format nil "(~A)"
-                             (ros:opt "restart")))))
-            (out (first params))
-            (actual-out (or (and (equal (second params) "-o") ;; skimped ...
-                                 (third params))
-                            (first params))))
-        (unless cmds
-          (warn "dumping an executable without specifing the initial behaviour."))
-        (when (equalp (pathname-type out) "ros")
-          (let ((*package* (find-package :cl-user))
-                main-list)
-            (ros:script nil out)
-            (setf main-list (let ((*package* (find-package :keyword)))
-                              `((:entry ,(format nil "~S" ros:*main*))))
-                  out (make-pathname :type #-win32 nil #+win32 "exe" :defaults actual-out)
-                  cmds (if (first cmds)
+      (let* ((cmds (let ((*read-eval*))
+                     (read-from-string
+                      (format nil "(~A)"
+                              (ros:opt "restart")))))
+             (script (first params))
+             (output (or (when (equal (second params) "-o")
+                           (or (third params)
+                               (warn "Missing argument to -o OUTPUT, falling back to default behavior")))
+                         (if (string-equal (pathname-type script) "ros")
+                             (make-pathname :type
+                                            #-win32 nil
+                                            #+win32 "exe"
+                                            :defaults script)
+                             script))))
+        (when (string-equal ; odd people may use uppercase extension...
+               (pathname-type script) "ros")
+          ;; Note: Why CMDS needs to be updated?
+          ;; If you use -l,-r or other options, information on the
+          ;; corresponding startup commands are stored in CMDS.
+          ;; we just augment it with MAIN function information, because
+          ;; we can for ros file.
+          ;; Fixme: What is the use case when SCRIPT is not a roswell script?
+          (let ((*package* (find-package :cl-user)))
+            ;; loading script
+            (ros:script nil script)) ; <--- !!!WARNING!!! Side-effect on ros:*main*
+          (let ((main-list (let ((*package* (find-package :keyword)))
+                             `((:entry ,(format nil "~S" ros:*main*))))))
+            (setf cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))
-        (%dump-executable cmds out))
+        (unless cmds
+          ;; Fixme: when STRING-EQUAL is not satisfied, cmds is something like
+          ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
+          ;; it is better to capture this.
+          (warn "dumping an executable without specifing the initial behaviour."))
+        (%dump-executable cmds output script))
       (format *error-output* "Usage: ros dump executable help~%")))
 
 
