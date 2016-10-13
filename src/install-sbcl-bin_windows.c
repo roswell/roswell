@@ -18,10 +18,7 @@ int sbcl_bin_expand(struct install_options* param) {
   char* log_path=cat(home,"impls",SLASH,"log",SLASH,impl,"-",version,"-",arch,SLASH,"install.log",NULL);
   char* dist_path;
   int pos=position_char("-",impl);
-  if(pos!=-1) {
-    impl=subseq(impl,0,pos);
-  }else
-    impl=q(impl);
+  impl=(pos!=-1)?subseq(impl,0,pos):q(impl);
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
   printf("Extracting the msi archive. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
