@@ -59,7 +59,7 @@ int start(struct install_options* param) {
 char* download_archive_name(struct install_options* param) {
   return s_cat(q(param->impl),
                param->version?cat("-",param->version,NULL):q(""),
-               !param->arch_in_archive_name?cat("-",param->arch,"-",param->os,NULL):q(""),
+               param->arch_in_archive_name?cat("-",param->arch,"-",param->os,NULL):q(""),
                q((*(install_impl->extention))(param)),NULL);
 }
 
