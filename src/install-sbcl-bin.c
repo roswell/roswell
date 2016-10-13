@@ -38,8 +38,8 @@ int sbcl_version_bin(struct install_options* param) {
   char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
   cond_printf(1,"sbcl_version_bin\n");
   ensure_directories_exist(platforms_html);
-  param->exact_version=!!param->version;
-  if(!param->version) {
+  param->version_not_specified=param->version?0:1;
+  if(param->version_not_specified) {
     int ret;
     printf("No SBCL version specified. Downloading platform-table.html to see the available versions...\n");
     char* uri=get_opt("sbcl-bin-version-uri",0);
@@ -53,10 +53,10 @@ int sbcl_version_bin(struct install_options* param) {
       return 0;
     }
     sbcl_bin_check_file(platforms_html);
-    param->version=sbcl_bin(platforms_html);
-    printf("Installing sbcl-bin/%s...\n",param->version);
+    param->version=sbcl_bin(platforms_html,param->version_not_specified++);
   }else
     param->version=q(param->version);
+  printf("Installing sbcl-bin/%s...\n",param->version);
   param->arch_in_archive_name=1;
 
   s(platforms_html),s(home);
@@ -75,7 +75,7 @@ int sbcl_bin_download(struct install_options* param) {
     impls_sbcl_bin.uri=cat(uri?uri:SBCL_BIN_URI ,"sbcl-",param->version,
                            "-",arch,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);
-    if(!result && !param->exact_version) {
+    if(!result && param->version_not_specified) {
       int len = strlen(param->version)-1;
       if('1'<= param->version[len] && param->version[len] <= '9') {
         param->version[len]--;

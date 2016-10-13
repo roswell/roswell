@@ -57,10 +57,10 @@ int start(struct install_options* param) {
 }
 
 char* download_archive_name(struct install_options* param) {
-  char* ret=cat(param->impl,param->version?"-":"",param->version?param->version:"",NULL);
-  ret= param->arch_in_archive_name==0?s_cat(ret,q((*(install_impl->extention))(param)),NULL):
-    s_cat(ret,cat("-",param->arch,"-",param->os,q((*(install_impl->extention))(param)),NULL),NULL);
-  return ret;
+  return s_cat(q(param->impl),
+               param->version?cat("-",param->version,NULL):q(""),
+               !param->arch_in_archive_name?cat("-",param->arch,"-",param->os,NULL):q(""),
+               q((*(install_impl->extention))(param)),NULL);
 }
 
 int download(struct install_options* param) {
@@ -96,7 +96,7 @@ DEF_SUBCMD(cmd_install) {
   param.os=uname();
   param.arch=uname_m();
   param.arch_in_archive_name=0;
-  param.exact_version=0;
+  param.version_not_specified=1;
   param.expand_path=NULL;
   if(argc!=1) {
     int ret=1,k;

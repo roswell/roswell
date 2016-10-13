@@ -33,7 +33,7 @@ LVal filter_sbcl_uri(LVal v) {
   return 0;
 }
 
-char* sbcl_bin(char* file) {
+char* sbcl_bin(char* file,int nth) {
   char* str;
   LVal ret3,ret2,ret;
   cond_printf(1,"uname=%s uname-m=%s\n",uname(),uname_m());
@@ -46,7 +46,7 @@ char* sbcl_bin(char* file) {
   if(verbose&2)
     print_list(ret2);
   ret3= split_string(firsts(ret2),"-");
-  str=q(firsts(nthcdr(1,ret3)));
+  str=q(firsts(nthcdr(nth,ret3)));
   sL(ret),sL(ret2),sL(ret3);
   return str;
 }

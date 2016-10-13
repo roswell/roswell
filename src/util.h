@@ -159,6 +159,6 @@ void setup_uid(int euid_or_uid);
 int mklockdir(char* path);
 int lock_apply(char* symbol,int remove);
 
-char* sbcl_bin(char* file);
+char* sbcl_bin(char* file,int nth);
 char* ccl_binname(char* bit);
 #endif
