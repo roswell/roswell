@@ -2,7 +2,7 @@ platform:
   - x64
 environment:
   global:
-    MSYS2_BASEVER: 20160921
+    MSYS2_BASEVER: 20160205
     ROSWELL_PLATFORMHTML_BASE: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
     ROSWELL_SBCL_BIN_URI: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
