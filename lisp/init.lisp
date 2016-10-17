@@ -75,8 +75,17 @@ have the latest asdf, and this file has a workaround for this.
     (or
      sentinel
      (not (setf sentinel t))
+     (when (and (find :asdf *features*)
+                (ros:opt "asdf")
+                (not (equal (ros:opt "asdf")
+                            (funcall (read-from-string "asdf:asdf-version")))))
+       (ignore-errors
+         (locally
+             (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
+           (handler-bind
+               (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
+             (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir")))))))
      (find :asdf *features*)
-     (ignore-errors (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
      (ignore-errors (require :asdf)))))
 
 #+(and unix sbcl) ;; from swank
