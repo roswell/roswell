@@ -77,5 +77,5 @@ int sbcl_bin_install(struct install_options* param) {
   s(str),s(home);
   if(ret) return 0;
   return 1;
-} 
+}
 #endif
