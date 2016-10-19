@@ -74,15 +74,17 @@ ARGV2 contains a (possibly modified) ARGV.")
       result)))
 
 (defun github-version (uri project filter)
-  (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
-    (unless (and (probe-file file)
-                 (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download uri file))
+  (let ((elts
+         (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
+           (unless (and (probe-file file)
+                        (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+             (download uri file))
+           (read-call "plump:parse" file))))
     (nreverse
-     (loop for link in (read-call "plump:get-elements-by-tag-name" (read-call "plump:parse" file) "link")
-           for href = (read-call "plump:get-attribute" link "href")
-           when (eql (aref href 0) #\/)
-             collect (funcall filter href)))))
+     (loop for link in (read-call "plump:get-elements-by-tag-name" elts "link")
+        for href = (read-call "plump:get-attribute" link "href")
+        when (eql (aref href 0) #\/)
+        collect (funcall filter href)))))
 
 #+win32
 (defun mingw-namestring (path)
