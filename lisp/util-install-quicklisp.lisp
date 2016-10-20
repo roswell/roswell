@@ -6,6 +6,7 @@
 (require :sb-posix)
 
 (ros:quicklisp :environment nil)
+(ros:include "system")
 
 (unless (find-package :uiop)
   #+quicklisp(ql:quickload :uiop :silent t))
@@ -215,14 +216,6 @@
                  :minute (parse-integer (fifth str))
                  :second 0))
 ;;(parse-date "22-Aug-2015 18:19  ")
-
-(defmacro system (file &key depends-on)
-  `(asdf:defsystem
-       ,(read-from-string
-         (format nil ":roswell.install.~A~A"
-                 (subseq file 8) (if (find #\+ file) "+""")))
-     :components ((:file ,file))
-     ,@(when depends-on `(:depends-on ,depends-on))))
 
 (system "install-abcl-bin")
 (system "install-allegro")
