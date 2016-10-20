@@ -5,7 +5,7 @@
 (defpackage :ros.util
   (:use :cl)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
-           :parse-version-spec :download :expand :sh :chdir
+           :parse-version-spec :download :expand :sh :chdir :system
            :core-extention :clone-github))
 
 (in-package :ros.util)
