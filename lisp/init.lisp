@@ -260,8 +260,9 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun system (cmd args &rest rest)
   (declare (ignorable cmd rest))
-  #-asdf
-  (error "Can't find asdf to load system")
+  (ensure-asdf)
+  (unless (find :asdf *features*)
+    (error "Can't find asdf to load system"))
   (loop for ar = args then (subseq ar (1+ p))
      for p = (position #\, ar)
      for arg = (if p (subseq ar 0 p) ar)
