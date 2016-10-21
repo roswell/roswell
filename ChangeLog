@@ -1,3 +1,10 @@
+roswell (0.0.6.68-1) unstable; urgency=low
+
+  * New: 'ros dump' support cmucl (by Masataro Asai)
+  * Fix: 'ros -s' occur error (reported by Eitaro Fukamachi)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 21 Oct 2016 18:28:00 +0900
+
 roswell (0.0.6.67-1) unstable; urgency=low
 
   * Fix: 'ros list versions' works fine. (reported by ssaavedra)
