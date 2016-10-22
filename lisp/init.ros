@@ -47,7 +47,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                                 "#| <Put a one-line description here>"
                                 "exec ros -Q -- $0 \"$@\"" "|#"
                                 "(progn ;;init forms"
-                                ;; commented out by default because quickload errors on NIL
+                                "  (ros:ensure-asdf)"
                                 "  ;;#+quicklisp (ql:quickload '() :silent t)"
                                 "  )"
                                 ""
