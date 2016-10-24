@@ -106,6 +106,7 @@ script:
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then run-prove roswell-test.asd 2>&1 ; fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
   - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
+  - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then ros install sbcl --sbcl-bin;ros config; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros install prove;ros ./scripts/debian.ros; fi
   - cat /tmp/proxy-log || true
 
