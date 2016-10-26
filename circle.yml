@@ -30,4 +30,5 @@ test:
     - ros config
     - man -Pcat ros
     - ros install fukamachi/sblint
+    - ros use sbcl
     - sblint roswell.asd
