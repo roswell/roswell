@@ -1,8 +1,7 @@
 (in-package :ros.install)
 #-win32
 (progn
-  (warn "7zip is only required on windows")
-  (ros:quit 0))
+  (warn "7zip is only required on windows"))
 
 (defun 7za ()
   (let* ((uri (7za-uri))

@@ -182,10 +182,11 @@ have the latest asdf, and this file has a workaround for this.
         t))))
 
 (defvar *included-names* '())
+(defvar *include-path* #.*load-pathname*)
 (defun include (name)
   (unless (find name *included-names* :test 'equal)
     (cl:load (make-pathname
-              :defaults #.*load-pathname*
+              :defaults *include-path*
               :name name :type "lisp"))
     (push name *included-names*)))
 
