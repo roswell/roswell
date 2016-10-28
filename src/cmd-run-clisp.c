@@ -72,9 +72,9 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
       ret=conss(q("(ros:quicklisp)"),ret);
 
     if(program || script)
-      ret=conss(cat("(ros:run '(",program?program:"",
-                    script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"",
-                    "))",NULL),ret);
+      ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
+                      script?cat("(:script ",script,")(:quit ())",NULL):q(""),
+                      q("))"),NULL),ret);
   }
   s(impl_path);
 

@@ -75,9 +75,9 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   }
   if(program || script) {
     ret=conss(q("-eval"),ret);
-    ret=conss(cat("(ros:run '(",program?program:"",
-                  script?"(:script ":"",script?script:"",script?")":"",script?"(:quit ())":"",
-                  "))",NULL),ret);
+    ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
+                    script?cat("(:script ",script,")(:quit ())",NULL):q(""),
+                    q("))"),NULL),ret);
   }
 
   for(i=1;i<argc;++i)
