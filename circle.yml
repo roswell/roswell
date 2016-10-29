@@ -21,7 +21,7 @@ test:
     - ros version
     - ros -v setup
     - ros install
-    - ros install prove fukamachi/sblint
+    - ros install prove fukamachi/sblint zip
     - run-prove roswell-test.asd
     - ros install sbcl
     - ros -v run -- --version
