@@ -38,7 +38,8 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
          (version
           (clone-github impl version :path "local-projects" :branch tag)
           (read-call "quicklisp-client:register-local-projects")
-          (or (install-impl-if-probed version nil argv)
+          (or (and (install-impl-if-probed version nil argv)
+                   (or (setf argv nil) t))
               (install-system-if-probed version)))
          (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
