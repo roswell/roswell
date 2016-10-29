@@ -7,7 +7,7 @@
   (:export :*build-hook* :install-impl :probe-impl :read-call :*ros-path*
    :install-system-script :install-impl-if-probed :install-script-if-probed
            :install-system-if-probed :mingw-namestring :install-github
-           :*checkout-default*))
+           :*checkout-default* :install))
 
 (in-package :ros.install)
 
@@ -94,6 +94,36 @@ ARGV2 contains a (possibly modified) ARGV.")
   (or (and (install-impl-if-probed version nil argv)
            (or (setf argv nil) t))
       (install-system-if-probed version)))
+
+(defun install (argv)
+  (read-call "quicklisp-client:register-local-projects")
+  (loop
+    with *ros-path* =(make-pathname :defaults (ros:opt "argv0"))
+    for impl/version/tag = (first argv)
+    for pos = (position #\/ impl/version/tag)
+    for impl = (if pos (subseq impl/version/tag 0 pos) impl/version/tag)
+    for version/tag = (when pos (subseq impl/version/tag (1+ pos)))
+    for pos2 = (position #\/ version/tag)
+    for version = (if pos2 (subseq version/tag 0 pos2) version/tag)
+    for tag = (when pos2 (subseq version/tag (1+ pos2)))
+    do (setf argv (rest argv))
+       (cond
+         ;;registerd implementations like sbcl ccl-bin abcl etc
+         ((install-impl-if-probed impl version/tag argv)
+          (setf argv nil) t)
+         ;;local ros file like tool.ros
+         ((install-script-if-probed impl/version/tag))
+         ;;asd/quicklisp registered systems which contain "roswell" directory
+         ((install-system-if-probed impl/version/tag))
+         ;;github registerd system like "fukamachi/sblint" checkout
+         (version
+          (funcall *checkout-default* impl version tag argv))
+         (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
++ a quicklisp-installable system
++ a common lisp installation ~%" impl)
+            (ros:quit 1)))
+    while argv)
+  (ros:exec `(,(ros:opt "argv0") "setup")))
 
 #+win32
 (defun mingw-namestring (path)
