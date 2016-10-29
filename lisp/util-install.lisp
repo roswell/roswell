@@ -6,7 +6,8 @@
   (:use :cl :ros.util :ros.locations)
   (:export :*build-hook* :install-impl :probe-impl :read-call :*ros-path*
    :install-system-script :install-impl-if-probed :install-script-if-probed
-           :install-system-if-probed :mingw-namestring))
+           :install-system-if-probed :mingw-namestring :install-github
+           :*checkout-default*))
 
 (in-package :ros.install)
 
@@ -19,6 +20,7 @@ The functions take one argument ARGV and returns a cons (SUCCESS . ARGV2) where
 SUCCESS is a boolean indicating the success of the installation step and
 ARGV2 contains a (possibly modified) ARGV.")
 (defvar *list-cmd* nil)
+(defvar *checkout-default* 'checkout-github)
 
 (defun set-opt (item val)
   (let ((found (assoc item (ros::ros-opts) :test 'equal)))
@@ -75,16 +77,23 @@ ARGV2 contains a (possibly modified) ARGV.")
 
 (defun github-version (uri project filter)
   (let ((elts
-         (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
-           (unless (and (probe-file file)
-                        (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-             (download uri file))
-           (read-call "plump:parse" file))))
+          (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
+            (unless (and (probe-file file)
+                         (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
+              (download uri file))
+            (read-call "plump:parse" file))))
     (nreverse
      (loop for link in (read-call "plump:get-elements-by-tag-name" elts "link")
-        for href = (read-call "plump:get-attribute" link "href")
-        when (eql (aref href 0) #\/)
-        collect (funcall filter href)))))
+           for href = (read-call "plump:get-attribute" link "href")
+           when (eql (aref href 0) #\/)
+             collect (funcall filter href)))))
+
+(defun checkout-github (impl version tag argv)
+  (clone-github impl version :path "local-projects" :branch tag)
+  (read-call "quicklisp-client:register-local-projects")
+  (or (and (install-impl-if-probed version nil argv)
+           (or (setf argv nil) t))
+      (install-system-if-probed version)))
 
 #+win32
 (defun mingw-namestring (path)
