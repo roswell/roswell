@@ -75,6 +75,30 @@ ARGV2 contains a (possibly modified) ARGV.")
       (read-call "install-system-script" imp)
       result)))
 
+(defun copy-dir (from to)
+  (when (wild-pathname-p from)
+    (error "wild card not supported"))
+  (loop with path = (truename from)
+        for l in (delete-if (lambda (x) (eql :absolute (first (pathname-directory (make-pathname :defaults x)))))
+                            (mapcar (lambda(x) (enough-namestring (namestring x) path))
+                                    (directory (merge-pathnames "**/*.*" path))))
+        do (if (or (pathname-name l)
+                   (pathname-type l))
+               (ignore-errors
+                (read-call "uiop:copy-file"
+                           (merge-pathnames l path)
+                           (ensure-directories-exist (merge-pathnames l to)))))))
+
+(defun install-localpath-if-probed (namestring)
+  ;; tbd
+  (when (and (eql #\. (aref path 0))
+             (find #\/ path))
+    (let* ((path (truename namestring))
+           (system (or (pathname-name path)
+                       (first (last (pathname-directory path)))))
+           (dir (make-pathname :defaults path :name nil :type nil)))
+      )))
+
 (defun github-version (uri project filter)
   (let ((elts
           (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
@@ -115,6 +139,8 @@ ARGV2 contains a (possibly modified) ARGV.")
          ((install-script-if-probed impl/version/tag))
          ;;asd/quicklisp registered systems which contain "roswell" directory
          ((install-system-if-probed impl/version/tag))
+         ;;local relative pathname
+         ((install-localpath-if-probed impl/version/tag))
          ;;github registerd system like "fukamachi/sblint" checkout
          (version
           (funcall *checkout-default* impl version tag argv))
