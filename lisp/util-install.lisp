@@ -91,12 +91,13 @@ ARGV2 contains a (possibly modified) ARGV.")
 
 (defun install-localpath-if-probed (namestring)
   ;; tbd
-  (when (and (eql #\. (aref path 0))
-             (find #\/ path))
+  (when (and (eql #\. (aref namestring 0))
+             (find #\/ namestring))
     (let* ((path (truename namestring))
            (system (or (pathname-name path)
                        (first (last (pathname-directory path)))))
            (dir (make-pathname :defaults path :name nil :type nil)))
+      (declare (ignore system dir))
       )))
 
 (defun github-version (uri project filter)
