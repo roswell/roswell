@@ -63,7 +63,8 @@ ARGV2 contains a (possibly modified) ARGV.")
 
 (defun install-script-if-probed (impl/version)
   (let* (sub
-         (result (probe-file (setf sub (make-pathname :defaults impl/version :type "ros")))))
+         (result (and (pathname-name impl/version)
+                      (probe-file (setf sub (make-pathname :defaults impl/version :type "ros"))))))
     (when result
       (read-call "install-ros" sub)
       result)))
@@ -90,15 +91,17 @@ ARGV2 contains a (possibly modified) ARGV.")
                            (ensure-directories-exist (merge-pathnames l to)))))))
 
 (defun install-localpath-if-probed (namestring)
-  ;; tbd
   (when (and (eql #\. (aref namestring 0))
              (find #\/ namestring))
     (let* ((path (truename namestring))
            (system (or (pathname-name path)
-                       (first (last (pathname-directory path)))))
-           (dir (make-pathname :defaults path :name nil :type nil)))
-      (declare (ignore system dir))
-      )))
+                       (first (last (pathname-directory path)))
+                       (error "system not specified!")))
+           (dir (make-pathname :defaults path :name nil :type nil))
+           (dest (ensure-directories-exist (merge-pathnames (format nil "local-projects/local/~A/" system) (homedir)))))
+      (format *error-output* "installing ~A~%" (truename namestring))
+      (copy-dir dir dest)
+      (install-system-if-probed system))))
 
 (defun github-version (uri project filter)
   (let ((elts
