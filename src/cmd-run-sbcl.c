@@ -17,6 +17,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
   char* control_stack_size=get_opt("control-stack-size",0);
+  char* enable_debugger=get_opt("enable-debugger",0);
+
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   LVal ret=0;
 
@@ -70,7 +72,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   /* runtime options end here */
   ret=conss(q("--no-sysinit"),ret);
   ret=conss(q("--no-userinit"),ret);
-  if(script)
+  if(script && !enable_debugger)
     ret=conss(q("--disable-debugger"),ret);
 
   ret=conss(q("--eval"),ret);
