@@ -56,10 +56,11 @@ ARGV2 contains a (possibly modified) ARGV.")
             (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
 
 (defun install-impl-if-probed (imp version argv)
-  (let ((result (probe-impl imp)))
-    (when result
-      (install-impl imp version argv)
-      result)))
+  (values (when (probe-impl imp)
+            (install-impl imp version argv)
+            (setf argv nil)
+            t)
+          argv))
 
 (defun install-script-if-probed (impl/version)
   (let* (sub
