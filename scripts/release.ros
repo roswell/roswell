@@ -4,6 +4,7 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 (or
+ (ros:ensure-asdf)
  (ignore-errors
    (load "~/lisp/sn.github/sn.github.asd"))
  (ignore-errors

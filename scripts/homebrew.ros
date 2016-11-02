@@ -4,7 +4,9 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :dexador :ironclad) :silent t)
+(progn
+  (ros:ensure-asdf)
+  (ql:quickload '(:cl-emb :cl-html-parse :dexador :ironclad) :silent t))
 
 (defun get-newest-url (base &key master)
   (block nil
