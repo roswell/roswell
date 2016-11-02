@@ -1,3 +1,14 @@
+roswell (0.0.6.69-1) unstable; urgency=low
+
+  * New: 'ros install sbcl --sbcl-bin' to install sbcl as sbcl-bin
+  * New: 'ros.install:*checkout-default*' is introduced it handles 'ros install' checkout.
+  * New: 'ros install ./' would copy current directory and load asd which have the directory.
+  * New: patch for sbcl/1.3.11 build.
+  * Change: 'ros install' takes multiple target to install.
+  * Change: 'ros init' template now have '(ros:ensure-asdf)'
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 02 Nov 2016 23:27:29 +0900
+
 roswell (0.0.6.68-1) unstable; urgency=low
 
   * New: 'ros dump' support cmucl (by Masataro Asai)
