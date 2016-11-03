@@ -16,7 +16,7 @@ machine:
 test:
   post:
     - if ! [ -f "$HOME/.rosproxy/proxy" ]; then
-        mkdir -p $HOME/.rosproxy/
+        mkdir -p $HOME/.rosproxy/;
         curl -L https://github.com/snmsts/roswell-proxy/releases/download/v0.5/v0.5-linux.tgz |tar xzf -;
         cp proxy $HOME/.rosproxy/proxy;
       fi
