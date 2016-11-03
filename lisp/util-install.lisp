@@ -128,16 +128,17 @@ ARGV2 contains a (possibly modified) ARGV.")
 (defun install (argv)
   (read-call "quicklisp-client:register-local-projects")
   (loop
-     with *ros-path* = (make-pathname :defaults (ros:opt "argv0"))
-     with _
-     for impl/version/tag = (first argv)
-     for pos = (position #\/ impl/version/tag)
-     for impl = (if pos (subseq impl/version/tag 0 pos) impl/version/tag)
-     for version/tag = (when pos (subseq impl/version/tag (1+ pos)))
-     for pos2 = (position #\/ version/tag)
-     for version = (if pos2 (subseq version/tag 0 pos2) version/tag)
-     for tag = (when pos2 (subseq version/tag (1+ pos2)))
-     do (setf argv (rest argv))
+    with *ros-path* = (make-pathname :defaults (ros:opt "argv0"))
+    with _
+    with changed
+    for impl/version/tag = (first argv)
+    for pos = (position #\/ impl/version/tag)
+    for impl = (if pos (subseq impl/version/tag 0 pos) impl/version/tag)
+    for version/tag = (when pos (subseq impl/version/tag (1+ pos)))
+    for pos2 = (position #\/ version/tag)
+    for version = (if pos2 (subseq version/tag 0 pos2) version/tag)
+    for tag = (when pos2 (subseq version/tag (1+ pos2)))
+    do (setf argv (rest argv))
        (cond
          ;;registerd implementations like sbcl ccl-bin abcl etc
          ((setf (values _ argv) (install-impl-if-probed impl version/tag argv)))
@@ -154,8 +155,9 @@ ARGV2 contains a (possibly modified) ARGV.")
 + a quicklisp-installable system
 + a common lisp installation ~%" impl)
             (ros:quit 1)))
-     while argv)
-  (ros:exec `(,(ros:opt "argv0") "setup")))
+       (setf changed t)
+    while argv
+    finally (when changed (ros:exec `(,(ros:opt "argv0") "setup")))))
 
 #+win32
 (defun mingw-namestring (path)
