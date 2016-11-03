@@ -2,9 +2,10 @@ general:
 
 dependencies:
   pre:
-      - sudo apt-get update
-      - sudo apt-get -qq install pandoc ruby-sass
-
+    - sudo apt-get update
+    - sudo apt-get -qq install pandoc ruby-sass
+  cache_directories:
+    - "~/.rosproxy"
 
 machine:
   environment:
@@ -14,6 +15,14 @@ machine:
 
 test:
   post:
+    - if ! [ -f "$HOME/.rosproxy/proxy" ]; then
+        curl -L https://github.com/snmsts/roswell-proxy/releases/download/v0.5/v0.5-linux.tgz |tar xzf -;
+        cp proxy $HOME/.rosproxy/proxy;
+      fi
+    - $HOME/.rosproxy/proxy daemon
+    - mkdir ~/.roswell
+    - echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
+    - echo "proxy.http.only	0	1" >> ~/.roswell/config
     - sh bootstrap
     - ./configure --with-platformhtml-base=$ROSWELL_PLATFORMHTML_BASE --with-sbcl-bin-base=$ROSWELL_SBCL_BIN_URI
     - make -j4
