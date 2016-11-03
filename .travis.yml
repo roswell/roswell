@@ -9,7 +9,7 @@ env:
     - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
     - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=sbcl-bin
+    - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=NO
     - METHOD=ci LISP=cmu-bin/2016-05
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
@@ -19,6 +19,7 @@ env:
     - METHOD=brew
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
+    - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
 
 os:
   - osx
@@ -27,6 +28,7 @@ os:
 matrix:
   allow_failures:
     - env: METHOD=brew
+    - env: METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
   include:
       - sudo: required
         os: linux
@@ -117,13 +119,20 @@ script:
        run-prove roswell-test.asd 2>&1 ;
     fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
-  - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then
-       [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
-  - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then ros install sbcl --sbcl-bin;ros config; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros install prove;ros ./scripts/debian.ros; fi
   - cat /tmp/proxy-log || true
 
 after_success:
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
+  - if [ "$LISP" = "sbcl-bin" ] && [ $ALLOW_FAILURES = NO]; then
+       [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
+       ros install sbcl --sbcl-bin;ros config; fi
+    fi
+  - if [ "$LISP" = "sbcl-bin" ] && [ $ALLOW_FAILURES = YES]; then
+       ros sbcl.patchless=t install sbcl;ros config; fi
+    fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then git config user.email "auto@example.com"; fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then git config user.name "Travis-CI"; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
@@ -135,9 +144,6 @@ after_success:
        git commit -m v`ros roswell-internal-use version`;
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/homebrew-roswell.git" master > /dev/null 2>&1;
     fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
   - if [ "$METHOD" = "valgrind" ]; then ros setup; fi
   - if [ "$METHOD" = "valgrind" ]; then valgrind --leak-check=yes ros config; fi
   - if [ "$METHOD" = "documents" ]; then git branch;git status; fi
