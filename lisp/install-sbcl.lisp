@@ -103,15 +103,16 @@
   (cons (not (get-opt "until-extract")) argv))
 
 (defun sbcl-patch (argv)
-  (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir))))
-    (dolist (uri (list
-                  #+darwin (sbcl-patch1-uri)
-                  #+linux  (sbcl-patch2-uri)))
-      (format t "~&Downloading patch: ~A~%" uri)
-      (download uri file)
-      (ros.util:chdir (get-opt "src"))
-      (format t "~%Applying patch:~%")
-      (uiop/run-program:run-program "patch -p0 -N" :output t :input file :ignore-error-status t)))
+  (unless (get-opt "sbcl.patchless")
+    (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir))))
+      (dolist (uri (list
+                    #+darwin (sbcl-patch1-uri)
+                    #+linux  (sbcl-patch2-uri)))
+        (format t "~&Downloading patch: ~A~%" uri)
+        (download uri file)
+        (ros.util:chdir (get-opt "src"))
+        (format t "~%Applying patch:~%")
+        (uiop/run-program:run-program "patch -p0 -N" :output t :input file :ignore-error-status t))))
   (cons t argv))
 
 (defun sbcl-config (argv)
