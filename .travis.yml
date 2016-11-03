@@ -125,7 +125,9 @@ script:
        if [ $ALLOW_FAILURES = YES ]; then
          ros sbcl.patchless=t install sbcl;ros config;
        elif [ $ALLOW_FAILURES = NO ]; then
-         if [ $TRAVIS_OS_NAME = osx ]; then sudo touch /あ ; fi
+         if [ $TRAVIS_OS_NAME = osx ]; then
+            sudo ros -e '(ignore-errors (with-open-file (o (format nil "/~A" (code-char 12354)) :direction :output)))'
+         fi
          ros install sbcl --sbcl-bin;ros config;
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi
