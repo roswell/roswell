@@ -158,11 +158,11 @@ echo "Installing $LISP..."
 case "$LISP" in
     clisp)
         if [ `uname` = "Darwin" ]; then
-            apt_unless_installed clisp
-            ros use clisp/system
+            apt_unless_installed clisp;
+            ros use clisp/system;
         else
-            ros install $LISP
-            ros use $LISP
+            ros install $LISP;
+            ros use $LISP;
         fi
         ;;
     abcl)
@@ -175,7 +175,7 @@ case "$LISP" in
         ros use $LISP
         ;;
     *)
-        ros install $LISP
+        ros install $LISP;
         ros use $LISP
         ;;
 esac
