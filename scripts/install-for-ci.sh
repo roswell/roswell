@@ -71,8 +71,8 @@ apt_unless_installed () {
         if [ `uname` = "Darwin" ]; then
             brew install "$1"
         else
-            sudo apt-get update
-            sudo apt-get install "$1"
+            sudo -E apt-get -yq update
+            sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install "$1"
         fi
     fi
 }
@@ -85,7 +85,7 @@ install_abcl () {
         elif apt_installed_p "openjdk-6-jre"; then
             java="/usr/lib/jvm/java-6-openjdk/bin/java"
         else
-            sudo apt-get install "openjdk-7-jre"
+            apt_unless_installed openjdk-7-jre
             java="/usr/lib/jvm/java-7-openjdk/bin/java"
         fi
     fi
