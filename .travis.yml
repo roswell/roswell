@@ -8,8 +8,9 @@ env:
     - ROSWELL_PLATFORMHTML_BASE=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
     - ROSWELL_SBCL_BIN_URI=https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
-    - METHOD=ci LISP=alisp
+    - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
     - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=NO
+    - METHOD=ci LISP=alisp
     - METHOD=ci LISP=cmu-bin/2016-05
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
@@ -19,7 +20,7 @@ env:
     - METHOD=brew
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
-    - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
+
 
 os:
   - osx
@@ -124,8 +125,9 @@ script:
        if [ $ALLOW_FAILURES = YES ]; then
          ros sbcl.patchless=t install sbcl;ros config;
        elif [ $ALLOW_FAILURES = NO ]; then
-         [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
+         if [ $TRAVIS_OS_NAME = osx ]; then sudo touch /あ ; fi
          ros install sbcl --sbcl-bin;ros config;
+         [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi
     fi
   - cat /tmp/proxy-log || true
