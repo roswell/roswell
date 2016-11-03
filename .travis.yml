@@ -121,9 +121,9 @@ script:
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros install prove;ros ./scripts/debian.ros; fi
   - if [ "$LISP" = "sbcl-bin" ]; then
-       if [ $ALLOW_FAILURES = YES]; then
+       if [ $ALLOW_FAILURES = YES ]; then
          ros sbcl.patchless=t install sbcl;ros config;
-       elif [ $ALLOW_FAILURES = NO]; then
+       elif [ $ALLOW_FAILURES = NO ]; then
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
          ros install sbcl --sbcl-bin;ros config;
        fi
