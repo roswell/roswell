@@ -126,9 +126,9 @@ script:
           sudo ros -e '(ignore-errors (with-open-file (o (format nil "/~A" (code-char 12354)) :direction :output)))';
        fi;
        if [ $ALLOW_FAILURES = YES ]; then
-         ros sbcl.patchless=t install sbcl
+         ros sbcl.patchless=t install sbcl;
        else
-         ros install sbcl --sbcl-bin
+         ros install sbcl --sbcl-bin;
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi;
     fi
