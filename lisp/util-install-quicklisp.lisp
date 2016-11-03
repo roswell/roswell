@@ -125,7 +125,7 @@
   (let ((target (getf argv :target))
         (version (getf argv :version)))
     (when (and (installedp argv) (not (get-opt "install.force")))
-      (format t "~A/~A is already installed. Try (TBD) for the forced re-installation.~%"
+      (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
               target version)
       (return-from start (cons nil argv)))
     (when (install-running-p argv)
