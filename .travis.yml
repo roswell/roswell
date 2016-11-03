@@ -66,8 +66,9 @@ before_install:
   - if [ $METHOD = cross ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
   - if [ $METHOD = cross ] || [ $METHOD = debian ] || [ $METHOD = documents ] || [ $METHOD = valgrind ]; then
        sudo apt-get -qq update --force-yes > /dev/null; fi
-  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
-  - if [ $TRAVIS_OS_NAME = osx ] || [ $METHOD = brew ]; then brew update;brew --env;brew config; fi
+  - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
+       yes ""| ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/linuxbrew/go/install)"; fi
+  - if [ $METHOD = brew ] || [ $TRAVIS_OS_NAME = osx ]; then brew update;brew --env;brew config; fi
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
@@ -76,15 +77,17 @@ install:
       cp proxy $HOME/.rosproxy/proxy;
     fi
   - $HOME/.rosproxy/proxy daemon
-  - mkdir ~/.roswell;echo "ros.proxy	0	localhost:5000" > ~/.roswell/config;echo "proxy.http.only	0	1" >> ~/.roswell/config
+  - mkdir ~/.roswell
+  - echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
+  - echo "proxy.http.only	0	1" >> ~/.roswell/config
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
-  - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
+  - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
+  - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
+  - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then brew install curl ; fi
   - if [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
-  - if [ $METHOD = valgrind ]; then sudo apt-get install -qq valgrind > /dev/null; fi
-  - if [ $TRAVIS_OS_NAME = linux ] && [ $METHOD = brew ]; then brew install curl ; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github; fi
   - if [ x$APT_UNINSTALL != x ]; then sudo apt-get purge -qq $APT_UNINSTALL; fi
 
 cache:
@@ -92,20 +95,30 @@ cache:
     - $HOME/.rosproxy
 
 script:
-  - if [ "$METHOD" = "documents" ]; then rm documents/man/* documents/html/*; fi
-  - if [ "$METHOD" = "documents" ]; then sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make;sudo make install; fi
+  - if [ "$METHOD" = "documents" ]; then
+      rm documents/man/* documents/html/*;
+      sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make;sudo make install;
+    fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
   - if [ "$METHOD" = "cross" ] || [ "$METHOD" = "valgrind" ] || ([ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]); then
-       sh bootstrap;CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;make;sudo make install;make maintainer-clean; fi
+       sh bootstrap;
+       CFLAGS=$XCFLAGS ./configure --disable-dependency-tracking --disable-maintainer-mode;
+       make;
+       sudo make install;
+       make maintainer-clean;
+    fi
   - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros version=t run; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros config; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then ros install prove; fi
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then run-prove roswell-test.asd 2>&1 ; fi
+  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then
+       ros version;
+       ros version=t run;
+       ros config;
+       ros install prove;
+       run-prove roswell-test.asd 2>&1 ;
+    fi
   - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
-  - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
+  - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then
+       [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""]; fi
   - if [ "$METHOD" = "ci" ] && [ "$LISP" = "sbcl-bin" ]; then ros install sbcl --sbcl-bin;ros config; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros install prove;ros ./scripts/debian.ros; fi
   - cat /tmp/proxy-log || true
@@ -113,14 +126,15 @@ script:
 after_success:
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then git config user.email "auto@example.com"; fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then git config user.name "Travis-CI"; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then git clone https://github.com/roswell/homebrew-roswell/ ~/lisp/homebrew-roswell; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then ros ./scripts/homebrew.ros; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then cp ./scripts/homebrew/roswell.rb ~/lisp/homebrew-roswell/roswell.rb; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then cd ~/lisp/homebrew-roswell/; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then git add roswell.rb; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then git commit -m v`ros roswell-internal-use version`; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
-       git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/homebrew-roswell.git" master > /dev/null 2>&1; fi
+       git clone https://github.com/roswell/homebrew-roswell/ ~/lisp/homebrew-roswell;
+       ros ./scripts/homebrew.ros;
+       cp ./scripts/homebrew/roswell.rb ~/lisp/homebrew-roswell/roswell.rb;
+       cd ~/lisp/homebrew-roswell/;
+       git add roswell.rb;
+       git commit -m v`ros roswell-internal-use version`;
+       git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/homebrew-roswell.git" master > /dev/null 2>&1;
+    fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros ./scripts/release.ros github ros-$XCC.cab; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
