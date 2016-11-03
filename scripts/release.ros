@@ -25,12 +25,12 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
        do (return-from find-version (aref match 0)))))
 
 (defun inc-version (v)
-  (let ((pos (position-if (complement #'digit-char-p) v :from-end t)))
-    (if pos
-        (format nil "~A~A"
-                (subseq v 0 (1+ pos))
-                (1+ (parse-integer (subseq v (1+ pos)))))
-        v)))
+  (let ((version (mapcar #'parse-integer (split-sequence:split-sequence #\. v)))
+        (d (multiple-value-list(decode-universal-time (get-universal-time)))))
+    (setf (first version) (- (nth 5 d) 2000)
+          (second version) (nth 4 d)
+          (fourth version) (1+ (fourth version)))
+    (format nil "~{~A~^.~}" version)))
 
 (defun edit-file (path match replace version &key test)
   (let ((file (with-open-file (in path :direction :input)
