@@ -40,3 +40,4 @@ test:
     - ros config
     - man -Pcat ros
     - sblint roswell.asd
+    - cat /tmp/proxy-log || true
