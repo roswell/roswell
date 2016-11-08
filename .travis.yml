@@ -21,10 +21,13 @@ env:
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
 
-
 os:
   - osx
   - linux
+
+cache:
+  directories:
+    - $HOME/.rosproxy
 
 matrix:
   allow_failures:
@@ -93,14 +96,13 @@ install:
   - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
   - if [ x$APT_UNINSTALL != x ]; then sudo apt-get purge -qq $APT_UNINSTALL; fi
 
-cache:
-  directories:
-    - $HOME/.rosproxy
-
 script:
   - if [ "$METHOD" = "documents" ]; then
       rm documents/man/* documents/html/*;
-      sh bootstrap;./configure --enable-manual-generation --enable-html-generation;make;sudo make install;
+      sh bootstrap;
+      ./configure --enable-manual-generation --enable-html-generation;
+      make;
+      sudo make install;
     fi
   - if [ "$METHOD" = "brew" ]; then brew install roswell --HEAD; fi
   - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
@@ -111,16 +113,23 @@ script:
        sudo make install;
        make maintainer-clean;
     fi
-  - if [ "$METHOD" = "cross" ]; then CC=$XCC ./configure ${PREFIX} ${HOST};make; fi
+  - if [ "$METHOD" = "cross" ]; then
+       CC=$XCC ./configure ${PREFIX} ${HOST};
+       make;
+    fi
   - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then
        ros version;
        ros version=t run;
-       ros config;
        ros install prove;
-       run-prove roswell-test.asd 2>&1 ;
+       run-prove roswell-test.asd 2>&1;
     fi
-  - if [ "$METHOD" = "ci" ]; then ros -q run && [`ros -q run 2>&1` == ""]; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros install prove;ros ./scripts/debian.ros; fi
+  - if [ "$METHOD" = "ci" ]; then
+       ros -q run && [`ros -q run 2>&1` == ""];
+    fi
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then
+       ros install prove;
+       ros ./scripts/debian.ros;
+    fi
   - if [ "$LISP" = "sbcl-bin" ] && [ x$ALLOW_FAILURES != x ]; then
        if [ $TRAVIS_OS_NAME = osx ]; then
           sudo ros -e '(ignore-errors (with-open-file (o (format nil "/~A" (code-char 12354)) :direction :output)))';
@@ -132,7 +141,7 @@ script:
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi;
     fi
-  - if [ "$LISP" = "sbcl-bin" ]; then ros config; fi
+  - ros config
   - cat /tmp/proxy-log || true
 
 after_success:
@@ -140,7 +149,9 @@ after_success:
        ros ./scripts/release.ros github ros-$XCC.cab;
        lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab;
     fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then ros ./scripts/release.ros debian; fi
+  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then
+       ros ./scripts/release.ros debian;
+    fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then
        git config user.email "auto@example.com";
        git config user.name "Travis-CI";
@@ -173,4 +184,4 @@ after_success:
        git checkout -b release origin/release;
        git branch -D master;
        git checkout -b master origin/master;
-       (git log -n 1 --oneline|grep "bump version to") && (git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github;make release-2;) fi
+       (git log -n 1 --oneline|grep "bump version to") && (git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github;make release-2;); fi
