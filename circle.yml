@@ -25,7 +25,7 @@ test:
     - echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
     - echo "proxy.http.only	0	1" >> ~/.roswell/config
     - sh bootstrap
-    - ./configure --with-platformhtml-base=$ROSWELL_PLATFORMHTML_BASE --with-sbcl-bin-base=$ROSWELL_SBCL_BIN_URI
+    - ./configure # --with-platformhtml-base=$ROSWELL_PLATFORMHTML_BASE --with-sbcl-bin-base=$ROSWELL_SBCL_BIN_URI
     - make -j4
     - sudo make install
     - ros version
