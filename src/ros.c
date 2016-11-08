@@ -8,6 +8,7 @@ struct opts* local_opt=NULL;
 
 struct proc_opt top;
 
+#ifndef ROSWELL_HTML_TEST
 int main(int argc,char **argv) {
   int i;
   char* path=s_cat(configdir(),q("config"),NULL);
@@ -30,3 +31,4 @@ int main(int argc,char **argv) {
     dispatch(stringlist("run","-q","--",NULL),&top);
   free_opts(global_opt);
 }
+#endif

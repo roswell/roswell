@@ -2,7 +2,7 @@ roslispdir = $(sysconfdir)/$(PACKAGE)
 ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_windows.c \
 	util-file.c util-file_windows.c util-system.c util-system_windows.c util-cmdline.c proc-opt.c
 check_PROGRAMS = html_sbcl
-html_sbcl_SOURCES =  html.c html-sbcl-bin.c $(ros_utils)
+html_sbcl_SOURCES =  html.c html-sbcl-bin.c ros.c opt.c $(ros_utils)
 html_sbcl_CFLAGS = "-D ROSWELL_HTML_TEST"
 
 gend.h: FORCE
