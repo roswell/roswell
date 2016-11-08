@@ -141,7 +141,7 @@ script:
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi;
     fi
-  - ros config
+  - if [ $METHOD != debian ]; then ros config; fi
   - cat /tmp/proxy-log || true
 
 after_success:
