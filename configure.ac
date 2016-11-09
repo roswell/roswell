@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([roswell],[0.0.6.69],snmsts@gmail.com)
+AC_INIT([roswell],[0.0.7.69],snmsts@gmail.com)
 
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile documents/Makefile lisp/Makefile scripts/Makefile])
@@ -32,7 +32,7 @@ AC_CHECK_HEADERS(windows.h)
 
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
-  [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://prdownloads.sourceforge.net/sbcl/]])],
+  [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://sourceforge.net/projects/sbcl/files/sbcl/]])],
   [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="https://prdownloads.sourceforge.net/sbcl/"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_URI],["${SBCL_BIN_URI}"],[uri for sbcl master])
 
