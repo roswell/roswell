@@ -117,13 +117,8 @@ ARGV2 contains a (possibly modified) ARGV.")
            when (eql (aref href 0) #\/)
              collect (funcall filter href)))))
 
-(defun checkout-github (impl version tag argv)
-  (clone-github impl version :path "local-projects" :branch tag)
-  (read-call "quicklisp-client:register-local-projects")
-  (values (or (and (install-impl-if-probed version nil argv)
-                   (or (setf argv nil) t))
-              (install-system-if-probed version))
-          argv))
+(defun checkout-github (impl version tag)
+  (clone-github impl version :path "local-projects" :branch tag))
 
 (defun install (argv)
   (read-call "quicklisp-client:register-local-projects")
@@ -150,7 +145,11 @@ ARGV2 contains a (possibly modified) ARGV.")
          ((install-localpath-if-probed impl/version/tag))
          ;;github registerd system like "fukamachi/sblint" checkout
          (version
-          (setf (values _ argv) (funcall *checkout-default* impl version tag argv)))
+          (funcall *checkout-default* impl version tag)
+          (read-call "quicklisp-client:register-local-projects")
+          (or (and (install-impl-if-probed version nil argv)
+                   (or (setf argv nil) t))
+              (install-system-if-probed version)))
          (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" impl)
