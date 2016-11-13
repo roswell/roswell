@@ -43,7 +43,7 @@ AC_DEFINE_UNQUOTED([PLATFORM_HTML_URI],["${PLATFORM_HTML_URI}"],[uri for platfor
 
 AC_ARG_WITH([platformhtml_backup_base],
   [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default is gist]])],
-  [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="https://gist.githubusercontent.com/snmsts/12f0cf8567b8e26ae15f/raw/0b9134f9820c195e1ca84d382176777ec989183e/"])
+  [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="https://github.com/roswell/sbcl_bin/releases/download/files/mirror.html"])
 AC_DEFINE_UNQUOTED([PLATFORM_HTML_BACKUP_URI],["${PLATFORM_HTML_BACKUP_URI}"],[backup uri for platform.html])
 
 # man file (ros.1) generation switch
