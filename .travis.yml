@@ -86,6 +86,10 @@ install:
   - mkdir ~/.roswell
   - echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
   - echo "proxy.http.only	0	1" >> ~/.roswell/config
+  - if [ x$METHOD != xci ]; then
+       echo "sbcl-bin-version-uri	0	https://github.com/roswell/sbcl_bin/releases/download/files/build.html" >> ~/.roswell/config;
+       echo "sbcl-bin-uri	0	https://github.com/roswell/sbcl_bin/releases/download/" >> ~/.roswell/config;
+    fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros install snmsts/sn.github; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
