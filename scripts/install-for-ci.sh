@@ -7,7 +7,7 @@ ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local}
 ROSWELL_PLATFORMHTML_BASE=${ROSWELL_PLATFORMHTML_BASE:-http://www.sbcl.org/platform-table.html}
-ROSWELL_SBCL_BIN_URI=${ROSWELL_SBCL_BIN_URI:-http://prdownloads.sourceforge.net/sbcl/}
+ROSWELL_SBCL_BIN_URI=${ROSWELL_SBCL_BIN_URI:-https://sourceforge.net/projects/sbcl/files/sbcl/}
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
 
@@ -110,7 +110,10 @@ if ! which ros ; then
     extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
     cd $ROSWELL_DIR
     sh bootstrap
-    ./configure --prefix=$ROSWELL_INSTALL_DIR --with-platformhtml-base=$ROSWELL_PLATFORMHTML_BASE --with-sbcl-bin-base=$ROSWELL_SBCL_BIN_URI
+    mkdir -p ~/.roswell
+    echo "sbcl-bin-version-uri	0	$ROSWELL_PLATFORMHTML_BASE" >> ~/.roswell/config;
+    echo "sbcl-bin-uri	0	$ROSWELL_SBCL_BIN_URI" >> ~/.roswell/config;
+    ./configure --prefix=$ROSWELL_INSTALL_DIR
     make
     if [ -w "$ROSWELL_INSTALL_DIR" ]; then
         make install
