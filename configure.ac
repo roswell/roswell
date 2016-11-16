@@ -42,7 +42,7 @@ AC_ARG_WITH([platformhtml_base],
 AC_DEFINE_UNQUOTED([PLATFORM_HTML_URI],["${PLATFORM_HTML_URI}"],[uri for platform.html])
 
 AC_ARG_WITH([platformhtml_backup_base],
-  [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default is gist]])],
+  [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default is roswell/sbcl_bin]])],
   [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="https://github.com/roswell/sbcl_bin/releases/download/files/mirror.html"])
 AC_DEFINE_UNQUOTED([PLATFORM_HTML_BACKUP_URI],["${PLATFORM_HTML_BACKUP_URI}"],[backup uri for platform.html])
 
