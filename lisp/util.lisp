@@ -51,9 +51,9 @@
                      (ros:roswell `("list" ,@params) :string nil)))
 
 (defun chdir (dir &optional (verbose t))
-  (funcall (intern (string :chdir) :uiop/os) dir)
   (when verbose
-    (format t "~&chdir ~A~%" dir)))
+    (format t "~&chdir ~A~%" dir))
+  (funcall (intern (string :chdir) :uiop/os) dir))
 
 (defun sh ()
   (or #+win32
