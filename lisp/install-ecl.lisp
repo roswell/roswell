@@ -113,7 +113,8 @@
          (*standard-output* (make-broadcast-stream
                              out #+sbcl(make-instance 'count-line-stream))))
     (uiop/run-program:run-program
-     (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
+     (list (sh) "-lc" (format nil "cd ~S;make clean" (namestring (uiop:getcwd))))
+     :output t))
   (format t "done.~%")
   (cons t argv))
 
