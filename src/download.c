@@ -122,7 +122,7 @@ int download_simple (char* uri,char* path,int opt) {
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
     curl_easy_setopt(curl,CURLOPT_WRITEDATA,bodyfile);
-    res = curl_easy_perform(curl);
+    res=curl_easy_perform(curl);
     if(res != CURLE_OK && verbose) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
               curl_easy_strerror(res));
