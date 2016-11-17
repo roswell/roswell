@@ -20,6 +20,13 @@
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
+(defun ecl-chdir (argv)
+  (let ((version (ecl-version-filename (getf argv :version))))
+    (or (ignore-errors
+         (ros.util:chdir (merge-pathnames (format nil "src/ecl-~A/" version) (homedir))))
+        (ignore-errors
+         (ros.util:chdir (merge-pathnames (format nil "src/mirror-ecl-~A/" version) (homedir)))))))
+
 (defun ecl-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
     (set-opt "as" (or (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
@@ -33,8 +40,6 @@
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
   (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
-  (print (format nil "src/mirror-ecl-~A/" (ecl-version-filename (getf argv :version))))
-  (set-opt "src" (merge-pathnames (format nil "src/mirror-ecl-~A/" (ecl-version-filename (getf argv :version))) (homedir)))
   (labels ((with (opt default)
              (set-opt opt
                       (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
@@ -65,10 +70,9 @@
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((src (get-opt "src"))
-           (cmd (format nil "./configure '--prefix=~A'" (get-opt "prefix")))
+    (let* ((cmd (format nil "./configure '--prefix=~A'" (get-opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-      (ros.util:chdir src)
+      (ecl-chdir argv)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -80,22 +84,20 @@
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((src (namestring (get-opt "src")))
-           (cmd (format nil "make"))
+    (let* ((cmd (format nil "make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-      (ros.util:chdir src)
+      (ecl-chdir argv)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
 (defun ecl-install (argv)
   (let* ((impl-path (get-opt "prefix"))
-         (src (namestring (namestring (get-opt "src"))))
          (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
     (format t "~&Installing ~A/~A..." (getf argv :target) (get-opt "as"))
     (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
-    (ros.util:chdir src)
+    (ecl-chdir argv)
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
@@ -106,14 +108,13 @@
 
 (defun ecl-clean (argv)
   (format t "~&Cleaning~%")
-  (let ((src (get-opt "src")))
-    (ros.util:chdir src nil)
-    (let* ((out (make-broadcast-stream))
-           (*standard-output* (make-broadcast-stream
-                               out #+sbcl(make-instance 'count-line-stream))))
-      (uiop/run-program:run-program
-       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
-    (format t "done.~%"))
+  (ecl-chdir argv)
+  (let* ((out (make-broadcast-stream))
+         (*standard-output* (make-broadcast-stream
+                             out #+sbcl(make-instance 'count-line-stream))))
+    (uiop/run-program:run-program
+     (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
+  (format t "done.~%")
   (cons t argv))
 
 (push `("ecl" . (#+win32

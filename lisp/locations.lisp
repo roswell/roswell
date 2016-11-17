@@ -36,12 +36,12 @@
 (defuri clisp-patch1-uri "https://raw.githubusercontent.com/Homebrew/homebrew/2fb8cb1a2279f80dc89900b3ebaca9e5afc90494/Library/Formula/clisp.rb")
 
 (defuri asdf-git-version-uri "https://github.com/roswell/asdf/releases.atom")
-(defuri ecl-git-version-uri  "https://github.com/roswell/mirror-ecl/releases.atom")
+(defuri ecl-git-version-uri  "https://github.com/roswell/ecl/releases.atom")
 (defuri sbcl-git-version-uri "https://github.com/sbcl/sbcl/releases.atom")
 (defuri swank-git-version-uri"https://github.com/slime/slime/releases.atom")
 
 (defuri asdf-uri "https://github.com/roswell/asdf/archive/")
-(defuri ecl-uri  "https://github.com/roswell/mirror-ecl/archive/")
+(defuri ecl-uri  "https://github.com/roswell/ecl/archive/")
 (defuri sbcl-uri "https://github.com/sbcl/sbcl/archive/")
 (defuri swank-uri "https://github.com/slime/slime/")
 
