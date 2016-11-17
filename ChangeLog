@@ -1,3 +1,13 @@
+roswell (16.11.7.70-1) unstable; urgency=low
+
+  * New: new versioning rule.
+  * Change: implement 'sbcl.patchless=t' to test without patch.
+  * Change: 'ros install' would make dump only if install something.
+  * Change: change sbcl-bin download uri.
+  * Change: download sbcl-bin from github when using install-for-ci.sh.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 18 Nov 2016 01:43:45 +0900
+
 roswell (0.0.6.69-1) unstable; urgency=low
 
   * New: 'ros install sbcl --sbcl-bin' to install sbcl as sbcl-bin
