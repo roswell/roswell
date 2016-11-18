@@ -91,7 +91,6 @@ install:
        echo "sbcl-bin-uri	0	https://github.com/roswell/sbcl_bin/releases/download/" >> ~/.roswell/config;
     fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then ros install snmsts/sn.github; fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
@@ -116,6 +115,10 @@ script:
        make;
        sudo make install;
        make maintainer-clean;
+    fi
+  - if ([ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]) ||
+       ([ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]); then
+       ros install snmsts/sn.github;
     fi
   - if [ "$METHOD" = "cross" ]; then
        CC=$XCC ./configure ${PREFIX} ${HOST};
@@ -188,4 +191,5 @@ after_success:
        git checkout -b release origin/release;
        git branch -D master;
        git checkout -b master origin/master;
-       (git log -n 1 --oneline|grep "bump version to") && (git clone https://github.com/snmsts/sn.github.git ~/lisp/sn.github;make release-2;); fi
+       (git log -n 1 --oneline|grep "bump version to") && (make release-2;);
+    fi
