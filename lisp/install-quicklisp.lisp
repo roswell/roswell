@@ -107,7 +107,10 @@
                                    maximum-redirects))
                (ros:roswell `("roswell-internal-use" "download" ,url ,file) :interactive nil)))
        (let ((*standard-output* (make-broadcast-stream)))
-         (funcall (intern (string :install) (find-package :quicklisp-quickstart)) :path path)))))
+         (funcall (intern (string :install) (find-package :quicklisp-quickstart))
+                  :path path
+                  :client-url (ros:opt "quicklisp.client")
+                  :dist-url (ros:opt "quicklisp.dist"))))))
   (cons t argv))
 
 (push '("quicklisp" quicklisp-help) *help-cmds*)

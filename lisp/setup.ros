@@ -61,7 +61,16 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
    (sb-posix:setuid (parse-integer (sb-posix:getenv "SUDO_UID"))))
   (unless (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
     (format *error-output* "Installing Quicklisp...~%")
-    (ros:roswell '("install" "quicklisp") :interactive nil))
+    (flet ((opt (x)
+             (when (ros:opt x)
+               (list (format nil "~A=~A" x (ros:opt x))))))
+      (let ((params `(,@(opt "quicklisp.client")
+                      ,@(opt "quicklisp.dist")
+                      "install"
+                      "quicklisp")))
+        (when (ros:verbose)
+          (format *error-output* "Parameter for install quicklisp '~{~A ~}'~%" params))
+        (ros:roswell params :interactive nil))))
   ;;  if(argc==1) ??
   (let ((dir (remove-if-not
               (dump-filter dump)
@@ -80,11 +89,11 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                t))
       (format *error-output* "building dump:~A~%" dump)
       (ros:roswell `("+R" "-L " "sbcl-bin " "--eval "
-			   #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " " "--eval "
-			   #-win32 "'" "(ros:ensure-asdf)" #-win32 "'" " "
-			   ,@(loop :for i :in dir
-                                   :collect "--load"
-                                   :collect (format nil "~A" i))
-			   " dump output -f roswell")
+                          #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " " "--eval "
+                          #-win32 "'" "(ros:ensure-asdf)" #-win32 "'" " "
+                          ,@(loop :for i :in dir
+                                  :collect "--load"
+                                  :collect (format nil "~A" i))
+                          " dump output -f roswell")
                    t nil))))
 ;;; vim: set ft=lisp lisp:
