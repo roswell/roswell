@@ -12,20 +12,20 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros.util))
 (in-package :ros.script.template.3670908195)
 
-(defvar *subcommands* '(("rm" . template-rm)
-			("delete" . template-rm)
-			("install" . template-install)
-			("list" . template-list)
-                        ("add" . template-add)
-			("help" . help)))
+(defvar *subcommands*  '(("rm" . template-rm)
+                         ("delete" . template-rm)
+                         ("install" . template-install)
+                         ("list" . template-list)
+                         ("add" . template-add)
+                         ("help" . help)))
 
 (defvar *repositries* '(github)) ;; github should be the choice in 2016...
 
 (defun usage ()
   (format *error-output*
-	  "~&***WIP*** Usage: ~A ~{~A~^/~} ~%"
-	  (ros:opt "wargv0")
-	  (mapcar #'car *subcommands*)))
+          "~&***WIP*** Usage: ~A ~{~A~^/~} ~%"
+          (ros:opt "wargv0")
+          (mapcar #'car *subcommands*)))
 
 (defun help (_)
   (declare (ignore _))
@@ -40,8 +40,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (declare (ignore cmd))
   (let ((func (cdr (assoc sub *subcommands* :test #'equal))))
     (if func
-	(funcall func argv)
-	(usage))))
+        (funcall func argv)
+        (usage))))
 
 (defun template-install (name)
   "Install (clone) a new template from github repository."
@@ -60,7 +60,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   "List the installed templates"
   (declare (ignore _))
   (let* ((wildcard (merge-pathnames "templates/*/*/" (homedir)))
-	 (templates (directory wildcard)))
+         (templates (directory wildcard)))
     (unless templates
       (format *error-output* "~&No template found in ~S." wildcard))
     (loop for x in templates

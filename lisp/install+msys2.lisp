@@ -17,11 +17,11 @@
            (format *error-output* "Download ~a~%" (file-namestring path))
            (force-output *error-output*)
            (when (or (not (probe-file path))
-		     (get-opt "download.force"))
-	     (download
-	      (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
+                     (get-opt "download.force"))
+             (download
+              (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
                       (msys2-uri)
-		      *msys2-arch* *msys2-arch* *msys2-basever*) path))
+                      *msys2-arch* *msys2-arch* *msys2-basever*) path))
            (format t " done.~%")
            (expand path
                    (ensure-directories-exist
@@ -30,16 +30,16 @@
            (format t "extraction done.~%")
            (uiop/run-program:run-program
             `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
-               "-lc" " ")
+              "-lc" " ")
             :output t)
            (uiop/run-program:run-program
             `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
-               "-lc"
-               ,(format nil "~@{~A~}"
-                        "for i in {1..3}; do pacman --noconfirm "
-                        "-Suy autoconf automake pkg-config "
-                        "mingw-w64-" *msys2-arch* "-gcc "
-                        "make zlib-devel && break || sleep 15; done")))
+              "-lc"
+              ,(format nil "~@{~A~}"
+                       "for i in {1..3}; do pacman --noconfirm "
+                       "-Suy autoconf automake pkg-config "
+                       "mingw-w64-" *msys2-arch* "-gcc "
+                       "make zlib-devel && break || sleep 15; done")))
            (uiop/run-program:run-program
             `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys)))))))
   (cons t argv))

@@ -58,9 +58,9 @@
 (defun sh ()
   (or #+win32
       (unless (ros:getenv "MSYSCON")
-	(format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
-				 (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-							  #+x86-64 "64" #-x86-64 "32") (homedir)))))
+        (format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
+                          (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+                                                   #+x86-64 "64" #-x86-64 "32") (homedir)))))
       (which "bash")
       "sh"))
 

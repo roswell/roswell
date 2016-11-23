@@ -46,7 +46,7 @@
   (cons t argv))
 
 (push `("sigsegv+" . ,(list
-		      'sigsegv-setup))
+                       'sigsegv-setup))
       *install-cmds*)
 
 (defun sigsegv-help (argv)

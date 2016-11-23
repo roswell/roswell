@@ -18,8 +18,8 @@ exec ros -L sbcl-bin -- $0 "$@"
        ,@body
      (error (condition)
        (if *verbose-p*
-	   (error condition)
-	   (values nil condition)))))
+           (error condition)
+           (values nil condition)))))
 
 (defun main (cmd &rest argv)
   (declare (ignore cmd))
