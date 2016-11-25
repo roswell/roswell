@@ -8,6 +8,8 @@ ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local}
 ROSWELL_PLATFORMHTML_BASE=${ROSWELL_PLATFORMHTML_BASE:-http://www.sbcl.org/platform-table.html}
 ROSWELL_SBCL_BIN_URI=${ROSWELL_SBCL_BIN_URI:-https://sourceforge.net/projects/sbcl/files/sbcl/}
+ROSWELL_QUICKLISP_DIST_URI=${ROSWELL_QUICKLISP_DIST_URI:-http://beta.quicklisp.org/dist/quicklisp.txt}
+
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
 
@@ -126,7 +128,7 @@ else
 fi
 
 log "ros --version"
-log "ros setup"
+log "ros quicklisp.dist=$ROSWELL_QUICKLISP_DIST_URI setup"
 
 case "$LISP" in
     alisp|allegro)
