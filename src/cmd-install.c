@@ -118,7 +118,7 @@ DEF_SUBCMD(cmd_install) {
           install_impl=j;
         }
       }
-      if(install_impl) { 
+      if(install_impl) {
         for(cmds=install_impl->call;*cmds&&ret;++cmds)
           ret=(*cmds)(&param);
         if(ret) { // after install latest installed impl/version should be default for 'run'

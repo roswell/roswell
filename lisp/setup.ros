@@ -14,7 +14,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defun split-spaces (line)
   (loop with from = 0
         with length = (length line)
-        for to from 0 
+        for to from 0
         when (or (eql length to)
                  (eql (aref line to) #\space))
           collect (prog1

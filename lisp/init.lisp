@@ -269,14 +269,14 @@ have the latest asdf, and this file has a workaround for this.
      for arg = (if p (subseq ar 0 p) ar)
      do (if (find :quicklisp *features*)
             (funcall (read-from-string "ql:quickload") arg :silent t)
-            (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg)) 
+            (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg))
      while p))
 
 (setf (fdefinition 'load-system)
       #'system)
 
 (defvar *version-cache* nil)
-(defun version (&optional opt) 
+(defun version (&optional opt)
   (if opt
       (roswell `("roswell-internal-use" "version" ,(string-downcase (princ-to-string opt))) :string t)
       (or *version-cache*

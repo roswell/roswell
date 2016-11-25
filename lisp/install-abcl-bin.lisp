@@ -29,18 +29,18 @@
                                   (version argv) "/abcl-bin-" (version argv)".tar.gz"))
   (set-opt "download.archive"
            (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-             (when pos 
+             (when pos
                (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   `((,(get-opt "download.archive") ,(get-opt "download.uri"))))
 
 (defun abcl-bin-expand (argv)
   (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
-  (expand 
+  (expand
    (get-opt "download.archive")
    (ensure-directories-exist (abcl-bin-impl)))
   (let ((path (merge-pathnames (format nil "~A/" (get-opt "as")) (abcl-bin-impl))))
     (and (probe-file path)
-         (uiop/filesystem:delete-directory-tree 
+         (uiop/filesystem:delete-directory-tree
           path :validate t)))
   (ql-impl-util:rename-directory
    (merge-pathnames (format nil "abcl-bin-~A/" (version argv)) (abcl-bin-impl))

@@ -15,7 +15,7 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
   LVal ret=0;
-  
+
   ret=conss((strcmp("system",version)==0)?truename(which("ecl")):cat(impl_path,SLASH,"bin",SLASH,"ecl",EXE_EXTENTION,NULL),ret);
   s(arch),s(os),s(impl_path);
   if(get_opt("version",0))

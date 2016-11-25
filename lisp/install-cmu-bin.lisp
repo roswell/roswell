@@ -37,11 +37,11 @@
 (defun cmu-bin-download (argv)
   (set-opt "download.uri" (cmu-bin-archive-uri (getf argv :version) nil))
   (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                (when pos 
+                                (when pos
                                   (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
   (set-opt "download.extra.uri" (cmu-bin-archive-uri (getf argv :version) t))
   (set-opt "download.extra.archive" (let ((pos (position #\/ (get-opt "download.extra.uri") :from-end t)))
-                                      (when pos 
+                                      (when pos
                                         (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.extra.uri") (1+ pos))) (homedir)))))
   `((,(get-opt "download.archive") ,(get-opt "download.uri"))
     (,(get-opt "download.extra.archive") ,(get-opt "download.extra.uri"))))
@@ -53,7 +53,7 @@
                   (path (merge-pathnames (format nil "~A/" (get-opt "as")) impls)))
              (expand archive (ensure-directories-exist impls))
              (and (probe-file path)
-                  (uiop/filesystem:delete-directory-tree 
+                  (uiop/filesystem:delete-directory-tree
                    path :validate t))))
   (cons t argv))
 

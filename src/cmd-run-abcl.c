@@ -17,7 +17,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   char* abcl_version=get_opt("version",0);
   LVal ret=0;
-  
+
   s(arch),s(os);
 
   ret=conss((strcmp("system",version)==0)?truename(which("abcl")):cat(impl_path,SLASH,"abcl",EXE_EXTENTION,NULL),ret);
@@ -45,7 +45,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
 
   for(i=1;i<argc;++i)
     ret=conss(q(argv[i]),ret);
- 
+
   s(impl_path);
   cond_printf(1,"\nhelp=%s script=%s\n",help?"t":"nil",script?script:"nil");
   return stringlist_array(nreverse(ret));

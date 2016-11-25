@@ -23,7 +23,7 @@ int ensure_directories_exist (char* path) {
     path=subseq(path,0,len+1);
   }else
     path=q(path);
-  
+
   if(!directory_exist_p(path)) {
     pid_t  pid=fork();
     if(pid==-1) {

@@ -59,7 +59,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   if(!image) {
     if(!issystem)
       ret=conss(cat(impl_path,SLASH,binname,".image",NULL),ret);
-  }else 
+  }else
     ret=conss(cat(impl_path,SLASH,"dump",SLASH,image,".",binname,NULL),ret);
 
   ret=conss(q("--eval"),ret);

@@ -40,7 +40,7 @@ DEF_SUBCMD(cmd_which) {
 
 DEF_SUBCMD(cmd_impl) {
   int argc=length(arg_);
-  
+
   if(argc==1 && get_opt("default.lisp",0)) {
     char* impl=determin_impl(get_opt("default.lisp",0));
     printf("%s\n",impl);
@@ -158,7 +158,7 @@ char* lispdir(void) {
   w=which(argv_orig[0]);
   ros_bin=pathname_directory(truename(w));
   s(w);
-  
+
   /* $(bindir)/lisp/ */
   LISPDIR_CANDIDATE(cat(ros_bin,"lisp",SLASH,NULL));
 

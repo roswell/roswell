@@ -32,7 +32,7 @@
                                     "-" uname "x-" uname-m (cond ((equal uname "macos") ".dmg")
                                                                  ((equal uname "linu") ".bz2"))))
     (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
-                                  (when pos 
+                                  (when pos
                                     (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
     `((,(get-opt "download.archive") ,(get-opt "download.uri")))))
 
@@ -55,7 +55,7 @@
       (t
        (expand (get-opt "download.archive") (ensure-directories-exist impls))
        (and (probe-file path)
-            (uiop/filesystem:delete-directory-tree 
+            (uiop/filesystem:delete-directory-tree
              path :validate t))
        (ql-impl-util:rename-directory
         (merge-pathnames (format nil "acl~A/" (getf argv :version)) impls)

@@ -22,7 +22,7 @@
                           (merge-pathnames "impls/log/sigsegv/config.log" (homedir)))
                          :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
-      (let* ((cmd (format nil "./configure '--prefix=~A'" 
+      (let* ((cmd (format nil "./configure '--prefix=~A'"
                           (ensure-directories-exist(merge-pathnames (format nil "lib/~A/~A/~A/~A/" (uname-m) (uname) "sigsegv" *sigsegv-version*) (homedir)))))
              (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
         (ros.util:chdir expand-dir)

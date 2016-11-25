@@ -48,7 +48,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
         (extract-path (merge-pathnames "lisp/swank/tmp/" (homedir)))
         dist)
     (unless (ql-impl-util:probe-directory extract-path)
-      (let ((uri (cdr (assoc (substitute #\- #\. name) 
+      (let ((uri (cdr (assoc (substitute #\- #\. name)
                              (ql-dist:available-versions (ql-dist:dist "quicklisp"))
                              :test 'equal))))
         (if uri (download uri dist-file)

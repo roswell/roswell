@@ -7,7 +7,7 @@ DEF_SUBCMD(cmd_script) {
   cond_printf(1,"cmd_script\n");
   int argc=length(arg_);
   char* arg0=firsts(arg_);
-  
+
   char* current=get_opt("program",0);
   cond_printf(1,"script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,arg0);
   cond_printf(1,"current=%s\n",current);

@@ -72,7 +72,7 @@ LVal proc_set(LVal arg,struct proc_opt *popt,int pos) {
 void proc_cmd(LVal arg,struct proc_opt *popt) {
   char* arg0=firsts(arg);
   LVal p,p2=0;
-  
+
   cond_printf(1,"proc_cmd:\n");
   /* search internal commands.*/
   for(p=popt->command;p;p=Next(p)) {
