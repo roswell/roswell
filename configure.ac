@@ -105,9 +105,5 @@ dnl          [with_zsh_completion=no])])
     
 AC_SUBST([ZSH_COMPLETION_DIR])
 AM_CONDITIONAL([ENABLE_ZSH_COMPLETION],[test "x$with_zsh_completion" != "xno"])
-
-
-
-
     
 AC_OUTPUT
