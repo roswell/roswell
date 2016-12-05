@@ -222,13 +222,18 @@ have the latest asdf, and this file has a workaround for this.
 
 (defvar *downloaded-asdf-loaded* nil)
 (defun ensure-using-downloaded-asdf ()
-  (unless *downloaded-asdf-loaded*
-    (roswell '("ros" "asdf" "install"))
-    (cl:load
-     (merge-pathnames
-      (format nil "lisp/~A/asdf.lisp"
-              (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
-    (setf *downloaded-asdf-loaded* t)))
+  (if (ros:opt "asdf.version")
+      (cl:load
+       (merge-pathnames
+        (format nil "lisp/asdf/~A/asdf.lisp"
+                (ros:opt "asdf.version")) (opt "homedir")))
+      (unless *downloaded-asdf-loaded*
+        (roswell '("ros" "asdf" "install"))
+        (cl:load
+         (merge-pathnames
+          (format nil "lisp/asdf/~A/asdf.lisp"
+                  (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
+        (setf *downloaded-asdf-loaded* t))))
 
 (let ((symbol (ignore-errors(read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (second (assoc "impl" (ros-opts) :test 'equal)))))
