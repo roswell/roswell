@@ -112,8 +112,7 @@ void star_rc(void) {
     char* init=s_cat(configdir(),q("init.lisp"),NULL);
     char* etc=ROSRC;
     if(file_exist_p(init)||file_exist_p(etc)) {
-      current=s_cat(q(quicklisp?"(:eval\"(ros:quicklisp)\")":""),
-                    file_exist_p(etc)?cat("(:load \"",etc,"\")",NULL):q(""),
+      current=s_cat(file_exist_p(etc)?cat("(:load \"",etc,"\")",NULL):q(""),
                     file_exist_p(init)?q("(:load \""),init,q("\")"):q(""),
                     current?current:q(""),NULL);
       set_opt(&local_opt,"program",current);

@@ -92,7 +92,6 @@ DEF_SUBCMD(cmd_install) {
   cond_printf(1,"cmd_install:\n");
   install_cmds *cmds=NULL;
   struct install_options param;
-  quicklisp=1;
   param.os=uname();
   param.arch=uname_m();
   param.arch_in_archive_name=0;
