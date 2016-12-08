@@ -34,6 +34,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (("-F" "FORM")   ("--final" "FORM")        "evaluate FORM before dumping IMAGE")
     (("-R")          ("--rc")                  "try read /etc/rosrc, ~/.roswell/init.lisp")
     (("+R")          ("--no-rc")               "skip /etc/rosrc, ~/.roswell/init.lisp")
+    (("-A")          ("--asdf")                "use new asdf")
+    (("+A")          ("--no-asdf")             "do not use new asdf (default)")
     (("-Q")          ("--quicklisp")           "use quicklisp (default)")
     (("+Q")          ("--no-quicklisp")        "do not use quicklisp")
     (("-v")          ("--verbose")             "be quite noisy while building")

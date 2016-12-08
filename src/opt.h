@@ -26,6 +26,7 @@ struct sub_command {
 
 extern struct opts* global_opt;
 extern struct opts* local_opt;
+extern int asdf;
 extern int quicklisp;
 extern int module;
 extern int rc;

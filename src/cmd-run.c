@@ -123,6 +123,11 @@ void star_rc(void) {
                   current?current:q(""),NULL);
     set_opt(&local_opt,"program",current);
   }
+  if(asdf) {
+    current=s_cat(q(quicklisp?"(:eval\"(ros:asdf)\")":""),
+                  current?current:q(""),NULL);
+    set_opt(&local_opt,"program",current);
+  }
 }
 
 char** star_wrap(char** arg) {
