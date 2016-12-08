@@ -107,24 +107,22 @@ void star_set_opt(void) {
 }
 
 void star_rc(void) {
-  char* init=s_cat(configdir(),q("init.lisp"),NULL);
-  char* etc=ROSRC;
   char* current=get_opt("program",0);
-  char *path,*would;
-  if(file_exist_p(init)) {
-    path=cat("(:load \"",init,"\")",NULL);
-    would=cat(path,current?current:"",NULL);
-    s(current);
-    set_opt(&local_opt,"program",would);
-    s(path);
+  if(rc) {
+    char* init=s_cat(configdir(),q("init.lisp"),NULL);
+    char* etc=ROSRC;
+    if(file_exist_p(init)||file_exist_p(etc)) {
+      current=s_cat(q(quicklisp?"(:eval\"(ros:quicklisp)\")":""),
+                    file_exist_p(etc)?cat("(:load \"",etc,"\")",NULL):q(""),
+                    file_exist_p(init)?q("(:load \""),init,q("\")"):q(""),
+                    current?current:q(""),NULL);
+      set_opt(&local_opt,"program",current);
+    }
   }
-  s(init);
-  if(file_exist_p(etc)||quicklisp) {
-    current=get_opt("program",0);
-    would=s_cat(q(quicklisp?"(:eval\"(ros:quicklisp)\")":""),
-                file_exist_p(etc)?cat("(:load \"",etc,"\")",NULL):q(""),
-                current?q(current):q(""),NULL);
-    set_opt(&local_opt,"program",would);
+  if(quicklisp) {
+    current=s_cat(q(quicklisp?"(:eval\"(ros:quicklisp)\")":""),
+                  current?current:q(""),NULL);
+    set_opt(&local_opt,"program",current);
   }
 }
 
@@ -155,8 +153,8 @@ DEF_SUBCMD(cmd_run_star) {
   char** argv=stringlist_array(arg_);
   cond_printf(1,"cmd_run_star:%d:%s\n,argv[0]",argc,argv[0]);
   star_set_opt();
-  if(rc)
-    star_rc();
+  star_rc();
+
   char** arg=determin_args(argc,argv);
   char* opts=s_cat(q("("),sexp_opts(local_opt),sexp_opts(global_opt),q(")"),NULL);
   int exist=0;
