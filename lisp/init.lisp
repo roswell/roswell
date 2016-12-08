@@ -26,7 +26,7 @@ have the latest asdf, and this file has a workaround for this.
   (:use :cl)
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-           :ignore-shebang :ensure-using-downloaded-asdf :include :ensure-asdf
+           :ignore-shebang :asdf :include :ensure-asdf
            :roswell :exec :setenv :unsetenv :version :swank :verbose)
   (:documentation "Roswell backend."))
 
@@ -221,19 +221,16 @@ have the latest asdf, and this file has a workaround for this.
         ret)))
 
 (defvar *downloaded-asdf-loaded* nil)
-(defun ensure-using-downloaded-asdf ()
-  (if (ros:opt "asdf.version")
-      (cl:load
-       (merge-pathnames
-        (format nil "lisp/asdf/~A/asdf.lisp"
-                (ros:opt "asdf.version")) (opt "homedir")))
-      (unless *downloaded-asdf-loaded*
-        (roswell '("ros" "asdf" "install"))
-        (cl:load
-         (merge-pathnames
-          (format nil "lisp/asdf/~A/asdf.lisp"
-                  (roswell '("config" "show" "asdf.version") :string t)) (opt "homedir")))
-        (setf *downloaded-asdf-loaded* t))))
+(defun asdf ()
+  (unless *downloaded-asdf-loaded*
+    (let* ((version-installed (ros:opt "asdf.version"))
+           (version (or version-installed
+                        (progn (roswell '("ros" "asdf" "install"))
+                               (roswell '("config" "show" "asdf.version") :string t)))))
+      (when (equal version "NIL")
+        (error "asdf download error?"))
+      (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir")))))
+  (setf *downloaded-asdf-loaded* t))
 
 (let ((symbol (ignore-errors(read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (second (assoc "impl" (ros-opts) :test 'equal)))))
