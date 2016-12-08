@@ -46,10 +46,6 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   ret=conss(s_cat(q("(progn(setq *load-verbose*()*compile-verbose*())#-ros.init(cl:load \""),
                   s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL),ret);
 
-  if(quicklisp) {
-    ret=conss(q("-e"),ret);
-    ret=conss(q("(ros:quicklisp)"),ret);
-  }
   if(program || script) {
     ret=conss(q("-e"),ret);
     ret=conss(s_cat(q("(ros:run '("),q(program?program:""),

@@ -65,11 +65,6 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   ret=conss(q("--eval"),ret);
   ret=conss(s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL),ret);
 
-  if(quicklisp) {
-    ret=conss(q("--eval"),ret);
-    ret=conss(q("(ros:quicklisp)"),ret);
-  }
-
   if(program || script) {
     ret=conss(q("--eval"),ret);
     ret=conss(s_cat(q("(ros:run '("),q(program?program:""),

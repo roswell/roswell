@@ -119,10 +119,11 @@ void star_rc(void) {
     s(path);
   }
   s(init);
-  current=get_opt("program",0);
-  if(file_exist_p(etc)) {
-    path=cat("(:load \"",etc,"\")",NULL);
-    would=cat(path,current?current:"",NULL);
+  if(file_exist_p(etc)||quicklisp) {
+    current=get_opt("program",0);
+    would=s_cat(q(quicklisp?"(:eval\"(ros:quicklisp)\")":""),
+                file_exist_p(etc)?cat("(:load \"",etc,"\")",NULL):q(""),
+                current?q(current):q(""),NULL);
     set_opt(&local_opt,"program",would);
   }
 }
