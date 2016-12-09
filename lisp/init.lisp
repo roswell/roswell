@@ -66,7 +66,7 @@ have the latest asdf, and this file has a workaround for this.
   (second (assoc param (ros-opts) :test 'equal)))
 
 (defun verbose ()
-  (let ((ret (parse-integer (ros:opt "verbose"))))
+  (let ((ret (parse-integer (opt "verbose"))))
     (if (zerop ret)
         nil ret)))
 
@@ -76,8 +76,8 @@ have the latest asdf, and this file has a workaround for this.
      sentinel
      (not (setf sentinel t))
      (when (and (find :asdf *features*)
-                (ros:opt "asdf")
-                (not (equal (ros:opt "asdf")
+                (opt "asdf")
+                (not (equal (opt "asdf")
                             (funcall (read-from-string "asdf:asdf-version")))))
        (ignore-errors
          (locally
@@ -223,7 +223,7 @@ have the latest asdf, and this file has a workaround for this.
 (defvar *downloaded-asdf-loaded* nil)
 (defun asdf ()
   (unless *downloaded-asdf-loaded*
-    (let* ((version-installed (ros:opt "asdf.version"))
+    (let* ((version-installed (opt "asdf.version"))
            (version (or version-installed
                         (progn (roswell '("ros" "asdf" "install"))
                                (roswell '("config" "show" "asdf.version") :string t)))))
@@ -242,7 +242,7 @@ have the latest asdf, and this file has a workaround for this.
           (t (cl:print "tbd.....")))))
 
 #+sbcl
-(when (ignore-errors (string-equal (ros:opt "impl") "sbcl-bin" :end1 8))
+(when (ignore-errors (string-equal (opt "impl") "sbcl-bin" :end1 8))
   (let ((path (merge-pathnames (format nil "src/sbcl-~A/" (lisp-implementation-version)) (opt "homedir"))))
     (when (probe-file path)
       (sb-ext:set-sbcl-source-location path))))
