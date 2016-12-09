@@ -1,8 +1,18 @@
+(defun roswell-configdir ()
+  (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
+
+(defun roswell-opt (var)
+  (with-temp-buffer
+    (insert-file-contents (concat (roswell-configdir) "config"))
+    (goto-char (point-min))
+    (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
+    (match-string 1)))
+
 (defun roswell-slime-directory ()
   (concat
-   (substring (shell-command-to-string "ros roswell-internal-use version confdir 2>/dev/null") 0 -1)
+   (roswell-configdir)
    "lisp/swank/"
-   (substring (shell-command-to-string "ros config show swank.version 2>/dev/null") 0 -1)
+   (roswell-opt "swank.version")
    "/"))
 
 (defvar roswell-slime-contribs '(slime-fancy))
