@@ -38,7 +38,7 @@
 
 (defun sbcl-msys (argv)
   (unless (or (ros:getenv "MSYSCON")
-              (get-opt "until-extract"))
+              (ros:opt "until-extract"))
     (ros:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
@@ -58,7 +58,7 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "until-extract" t))
-  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir)))
+  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (ros:opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/sbcl-~A/" (getf argv :version)) (homedir)))
   (labels ((with (opt)
              (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) (set-opt opt t))
@@ -72,7 +72,7 @@
 
 (defun sbcl-start (argv)
   (when (and (find (getf argv :target) '("sbcl-bin" "sbcl") :test 'equal)
-             (not (get-opt "sbcl.compiler")))
+             (not (ros:opt "sbcl.compiler")))
     (format t "Using 'sbcl-bin' to compile SBCL. (default)~%")
     (set-opt "sbcl.compiler" "sbcl-bin"))
   (cons t argv))
@@ -80,14 +80,14 @@
 (defun sbcl-download (argv)
   (set-opt "download.uri" (format nil "~@{~A~}" (sbcl-uri) "sbcl-"
                                   (getf argv :version) ".tar.gz"))
-  (set-opt "download.archive" (let ((pos (position #\/ (get-opt "download.uri") :from-end t)))
+  (set-opt "download.archive" (let ((pos (position #\/ (ros:opt "download.uri") :from-end t)))
                                 (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (get-opt "download.uri") (1+ pos))) (homedir)))))
-  `((,(get-opt "download.archive") ,(get-opt "download.uri"))))
+                                  (merge-pathnames (format nil "archives/~A" (subseq (ros:opt "download.uri") (1+ pos))) (homedir)))))
+  `((,(ros:opt "download.archive") ,(ros:opt "download.uri"))))
 
 (defun sbcl-expand (argv)
-  (format t "~%Extracting archive:~A~%" (get-opt "download.archive"))
-  (expand (get-opt "download.archive")
+  (format t "~%Extracting archive:~A~%" (ros:opt "download.archive"))
+  (expand (ros:opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (ignore-errors
     (let ((h (homedir))
@@ -100,17 +100,17 @@
                          :if-does-not-exist :create
                          :if-exists nil)
         (format o "~S~%" v))))
-  (cons (not (get-opt "until-extract")) argv))
+  (cons (not (ros:opt "until-extract")) argv))
 
 (defun sbcl-patch (argv)
-  (unless (get-opt "sbcl.patchless")
+  (unless (ros:opt "sbcl.patchless")
     (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir))))
       (dolist (uri (list
                     #+darwin (sbcl-patch1-uri)
                     #+linux  (sbcl-patch2-uri)))
         (format t "~&Downloading patch: ~A~%" uri)
         (download uri file)
-        (ros.util:chdir (get-opt "src"))
+        (ros.util:chdir (ros:opt "src"))
         (format t "~%Applying patch:~%")
         (uiop/run-program:run-program "patch -p0 -N" :output t :input file :ignore-error-status t))))
   (cons t argv))
@@ -125,9 +125,9 @@
       (format out "~s"
             `(lambda (list)
                (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
-                               when (get-opt name)
+                               when (ros:opt name)
                                collect (list (read-from-string (format nil ":~A~A" (if sb-prefix "sb-" "") name))
-                                             (eql t (get-opt name)))))
+                                             (eql t (ros:opt name)))))
                  (if (second i)
                      (pushnew (first i) list)
                      (setf list (remove (first i) list))))
@@ -137,12 +137,12 @@
 (defun sbcl-make (argv)
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/make.log"
-                                                 (getf argv :target) (get-opt "as"))
+                                                 (getf argv :target) (ros:opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((src (get-opt "src"))
-           (compiler (format nil "~A -L~A --no-rc run -- --disable-debugger" *ros-path* (get-opt "sbcl.compiler")))
+    (let* ((src (ros:opt "src"))
+           (compiler (format nil "~A -L~A --no-rc run -- --disable-debugger" *ros-path* (ros:opt "sbcl.compiler")))
            (cmd (list (sh) "-lc" (format nil "cd ~S;~A ~A ~A ~A"
                                          (#+win32 mingw-namestring #-win32 princ-to-string src)
                                          (or #-win32 (sh) "")
@@ -151,7 +151,7 @@
                                                  (funcall #+win32 (lambda (x)
                                                                     (mingw-namestring (ensure-directories-exist x)))
                                                           #-win32 'identity
-                                                          (get-opt "prefix"))))))
+                                                          (ros:opt "prefix"))))))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (ros.util:chdir src)
       (format t "~&~S~%" cmd)
@@ -159,12 +159,12 @@
   (cons t argv))
 
 (defun sbcl-install (argv)
-  (let* ((impl-path (get-opt "prefix"))
-         (src (get-opt "src"))
+  (let* ((impl-path (ros:opt "prefix"))
+         (src (ros:opt "src"))
          (install-root impl-path)
-         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (get-opt "as")) (homedir))))
-    (unless (get-opt "archive")
-      (format t "~&Installing ~A/~A" (getf argv :target) (get-opt "as"))
+         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (ros:opt "as")) (homedir))))
+    (unless (ros:opt "archive")
+      (format t "~&Installing ~A/~A" (getf argv :target) (ros:opt "as"))
       (format t "~&prefix: ~s~%" impl-path)
       (ensure-directories-exist impl-path)
       (ensure-directories-exist log-path)
@@ -186,14 +186,14 @@
 (defun sbcl-install-win32 (argv)
   (uiop/run-program:run-program
    (list (sh) "-lc" (format nil "cp `which zlib1.dll` ~S"
-                            (#+win32 mingw-namestring #-win32 princ-to-string (merge-pathnames "bin/" (get-opt "prefix")))))
+                            (#+win32 mingw-namestring #-win32 princ-to-string (merge-pathnames "bin/" (ros:opt "prefix")))))
    :output t)
   (cons t argv))
 
 (defun sbcl-backup-features (argv)
-  (let ((src (get-opt "src")) origin opts)
+  (let ((src (ros:opt "src")) origin opts)
     (ignore-errors ;; TBD found error on sbcl/1.1.14. Not so important so far to save features.
-      (with-open-file (out (merge-pathnames "share/features.lisp-expr" (get-opt "prefix"))
+      (with-open-file (out (merge-pathnames "share/features.lisp-expr" (ros:opt "prefix"))
                            :direction :output
                            :if-exists :supersede
                            :if-does-not-exist :create)
@@ -241,8 +241,8 @@
                                                                                 (pathname-directory x)))))))))))
 
 (defun sbcl-make-archive (argv)
-  (when (get-opt "archive")
-    (let ((from (truename (get-opt "src")))
+  (when (ros:opt "archive")
+    (let ((from (truename (ros:opt "src")))
           (to (truename (ensure-directories-exist (merge-pathnames (format nil "tmp/sbcl-~A-~A-~A/" (getf argv :version) (uname-m) (uname)) (homedir))))))
       (flet ((copy (from to)
                (ensure-directories-exist to)
@@ -276,7 +276,7 @@
 
 (defun sbcl-clean (argv)
   (format t "~&Cleaning~%")
-  (let ((src (get-opt "src")))
+  (let ((src (ros:opt "src")))
     (ros.util:chdir src)
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream

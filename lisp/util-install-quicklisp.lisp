@@ -55,13 +55,10 @@
             (nth month '("Jan" "Feb" "Mar" "Apr" "May" "Jun" "Jul" "Aug" "Sep" "Oct" "Nov" "Dec"))
             date hour minute second time-zone (if daylight "S" " ") year)))
 
-(defun get-opt (item)
-  (ros:opt item))
-
 ;;end here from util/opts.c
 
 (defun installedp (argv)
-  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (get-opt "as")) (homedir))) t))
+  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (ros:opt "as")) (homedir))) t))
 
 (defvar *version-func* nil)
 
@@ -87,7 +84,7 @@
           do (handler-case
                  (loop for (archive uri) in list
                        do (if (or (not (probe-file archive))
-                                  (get-opt "download.force"))
+                                  (ros:opt "download.force"))
                               (progn
                                 (format t "~&Downloading archive:~A:" uri)
                                 ;;TBD proxy support... and other params progress bar?
@@ -102,7 +99,7 @@
                      (incf (getf argv :version-not-specified))
                      (> (length (funcall *version-func*))
                         (getf argv :version-not-specified))))
-    (cons (not (get-opt "without-install")) argv)))
+    (cons (not (ros:opt "without-install")) argv)))
 
 (defun install-running-p (argv)
   ;;TBD
@@ -124,7 +121,7 @@
     (ros:setenv "PATH" (format nil "~A;~A"(subseq path 0 (1- (length path))) (ros:getenv "PATH"))))
   (let ((target (getf argv :target))
         (version (getf argv :version)))
-    (when (and (installedp argv) (not (get-opt "install.force")))
+    (when (and (installedp argv) (not (ros:opt "install.force")))
       (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
               target version)
       (return-from start (cons nil argv)))
@@ -140,7 +137,7 @@
 
 (defun setup (argv)
   (setf (config "default.lisp") (getf argv :target)
-        (config (format nil "~A.version" (getf argv :target))) (get-opt "as"))
+        (config (format nil "~A.version" (getf argv :target))) (ros:opt "as"))
   (cons t argv))
 
 (defun install-ros (from)

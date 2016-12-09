@@ -8,7 +8,7 @@
          (path (merge-pathnames (format nil "archives/~A" (subseq uri (1+ pos))) (homedir)))
          (expand-dir (merge-pathnames (format nil "src/libsigsegv-~A/" *sigsegv-version*) (homedir))))
     (if (or (not (probe-file path))
-            (get-opt "download.force"))
+            (ros:opt "download.force"))
         (progn
           (format *error-output* "~&Downloading archive: ~A~%" uri)
           (force-output *error-output*)
