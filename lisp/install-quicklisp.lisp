@@ -7,7 +7,7 @@
 (defun quicklisp-patch (path)
   (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))
                        :direction :output :if-exists :supersede)
-    (let ((*package* (find-package :ros.install)))
+    (let ((*package* (find-package :cl)))
       (format
        out "~@{~s~^~%~}"
        '(let ((*error-output* (make-broadcast-stream)))
@@ -72,14 +72,14 @@
   (cons t argv))
 
 (defun quicklisp-download (argv)
-  (if (or (not (probe-file (ros:opt "download.archive")))
-          (ros:opt "download.force"))
+  (if (or (not (probe-file (opt "download.archive")))
+          (opt "download.force"))
       (progn
-        (format t "~&Downloading archive: ~A~%" (ros:opt "download.uri"))
-        (download (ros:opt "download.uri") (ros:opt "download.archive")))
+        (format t "~&Downloading archive: ~A~%" (opt "download.uri"))
+        (download (opt "download.uri") (opt "download.archive")))
       (format t "~&Skip downloading ~A.~%Specify 'download.force=t' to download again.~%"
-              (ros:opt "download.uri")))
-  (cons (not (ros:opt "without-install")) argv))
+              (opt "download.uri")))
+  (cons (not (opt "without-install")) argv))
 
 (defun quicklisp-install (argv)
   #-win32
@@ -89,8 +89,8 @@
      (sb-posix:setgid (parse-integer gid)))
    (let ((uid (sb-posix:getenv "SUDO_UID")))
      (sb-posix:setuid (parse-integer uid))))
-  (let ((archive (ros:opt "download.archive"))
-        (path (ros:opt "quicklisp")))
+  (let ((archive (opt "download.archive"))
+        (path (opt "quicklisp")))
     (quicklisp-patch path)
     (cond
       ((probe-file (merge-pathnames "setup.lisp" path))
@@ -109,8 +109,8 @@
        (let ((*standard-output* (make-broadcast-stream)))
          (funcall (intern (string :install) (find-package :quicklisp-quickstart))
                   :path path
-                  :client-url (ros:opt "quicklisp.client")
-                  :dist-url (ros:opt "quicklisp.dist"))))))
+                  :client-url (opt "quicklisp.client")
+                  :dist-url (opt "quicklisp.dist"))))))
   (cons t argv))
 
 (push '("quicklisp" quicklisp-help) *help-cmds*)
