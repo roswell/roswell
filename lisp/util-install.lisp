@@ -123,7 +123,7 @@ ARGV2 contains a (possibly modified) ARGV.")
 (defun install (argv)
   (read-call "quicklisp-client:register-local-projects")
   (loop
-    with *ros-path* = (make-pathname :defaults (ros:opt "argv0"))
+    with *ros-path* = (make-pathname :defaults (opt "argv0"))
     with _
     with changed
     for impl/version/tag = (first argv)
@@ -156,7 +156,7 @@ ARGV2 contains a (possibly modified) ARGV.")
             (ros:quit 1)))
        (setf changed t)
     while argv
-    finally (when changed (ros:exec `(,(ros:opt "argv0") "setup")))))
+    finally (when changed (ros:exec `(,(opt "argv0") "setup")))))
 
 #+win32
 (defun mingw-namestring (path)

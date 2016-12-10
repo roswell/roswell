@@ -232,8 +232,8 @@ have the latest asdf, and this file has a workaround for this.
       (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir")))))
   (setf *downloaded-asdf-loaded* t))
 
-(let ((symbol (ignore-errors(read-from-string "asdf::*user-cache*")))
-      (impl (substitute #\- #\/ (second (assoc "impl" (ros-opts) :test 'equal)))))
+(let ((symbol (ignore-errors (read-from-string "asdf::*user-cache*")))
+      (impl (substitute #\- #\/ (opt "impl"))))
   (when (and symbol (boundp symbol))
     (cond ((listp (symbol-value symbol))
            (set symbol (append (symbol-value symbol) (list impl))))

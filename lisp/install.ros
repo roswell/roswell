@@ -8,7 +8,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
   (ros:ensure-asdf)
   (ros:include "util")
   (ros:include "util-install")
-  (when (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
+  (when (probe-file (merge-pathnames "setup.lisp" (opt "quicklisp")))
     (ros:include "util-install-quicklisp")))
 
 (defpackage :ros.script.install.3671936092

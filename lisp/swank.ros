@@ -28,7 +28,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun usage ()
   (let ((s *error-output*))
-    (format s "Usage: ~A swank install/use/list/delete version ~%" (ros:opt "wargv0"))))
+    (format s "Usage: ~A swank install/use/list/delete version ~%" (opt "wargv0"))))
 
 (defun swank-from-git (name)
   (let* ((str (slime-uri))

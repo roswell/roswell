@@ -16,7 +16,7 @@ exec ros -- $0 "$@"
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                           (uname-m) (uname) (ros:opt "impl"))
+                           (uname-m) (uname) (opt "impl"))
                    (homedir)))
 
 (defun dump-output (params &optional force)
@@ -37,7 +37,7 @@ exec ros -- $0 "$@"
                  (ext:saveinitmem path :quiet t)))))
     (cond
       ((null params)
-       (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (ros:opt "argv0")))
+       (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (opt "argv0")))
       ((equal "-f" (first params))
        (dump-output (rest params) t))
       ((equal "-o" (first params))
@@ -268,7 +268,7 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
       (let* ((cmds (let ((*read-eval*))
                      (read-from-string
                       (format nil "(~A)"
-                              (ros:opt "restart")))))
+                              (opt "restart")))))
              (script (first params))
              (output (or (when (equal (second params) "-o")
                            (or (third params)

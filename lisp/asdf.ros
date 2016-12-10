@@ -65,7 +65,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun usage ()
   (let ((s *error-output*))
-    (format s "Usage: ~A asdf install/use/list/delete version ~%" (ros:opt "wargv0"))))
+    (format s "Usage: ~A asdf install/use/list/delete version ~%" (opt "wargv0"))))
 
 (defun main (cmd &optional subcmd &rest argv)
   (declare (ignore cmd))

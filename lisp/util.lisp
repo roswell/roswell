@@ -4,9 +4,10 @@
 
 (defpackage :ros.util
   (:use :cl)
+  (:import-from :ros :opt)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
            :parse-version-spec :download :expand :sh :chdir :system
-           :core-extention :clone-github))
+           :core-extention :clone-github :opt))
 
 (in-package :ros.util)
 
@@ -17,7 +18,7 @@
   (ros:roswell '("roswell-internal-use" "uname" "-m") :string t))
 
 (defun homedir ()
-  (ros:opt "homedir"))
+  (opt "homedir"))
 
 (defun impl (imp)
   (ros:roswell `("roswell-internal-use" "impl" ,(or imp "")) :string t))
@@ -36,7 +37,7 @@
   (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
                (or #-win32 :interactive nil) nil))
 
-(defun core-extention (&optional (impl (ros:opt "impl")))
+(defun core-extention (&optional (impl (opt "impl")))
   (ros:roswell `("roswell-internal-use" "core-extention" ,impl) :string t))
 
 (defun config (c)

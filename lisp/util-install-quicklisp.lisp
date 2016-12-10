@@ -58,7 +58,7 @@
 ;;end here from util/opts.c
 
 (defun installedp (argv)
-  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (ros:opt "as")) (homedir))) t))
+  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir))) t))
 
 (defvar *version-func* nil)
 
@@ -84,7 +84,7 @@
           do (handler-case
                  (loop for (archive uri) in list
                        do (if (or (not (probe-file archive))
-                                  (ros:opt "download.force"))
+                                  (opt "download.force"))
                               (progn
                                 (format t "~&Downloading archive:~A:" uri)
                                 ;;TBD proxy support... and other params progress bar?
@@ -99,7 +99,7 @@
                      (incf (getf argv :version-not-specified))
                      (> (length (funcall *version-func*))
                         (getf argv :version-not-specified))))
-    (cons (not (ros:opt "without-install")) argv)))
+    (cons (not (opt "without-install")) argv)))
 
 (defun install-running-p (argv)
   ;;TBD
@@ -113,15 +113,15 @@
 (defun start (argv)
   (ensure-directories-exist (homedir))
   #+win32
-  (let* ((w (ros:opt "wargv0"))
-         (a (ros:opt "argv0"))
+  (let* ((w (opt "wargv0"))
+         (a (opt "argv0"))
          (path (uiop:native-namestring
                 (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w)))))
     (ros:setenv "MSYSTEM" #+x86-64 "MINGW64" #-x86-64 "MINGW32")
     (ros:setenv "PATH" (format nil "~A;~A"(subseq path 0 (1- (length path))) (ros:getenv "PATH"))))
   (let ((target (getf argv :target))
         (version (getf argv :version)))
-    (when (and (installedp argv) (not (ros:opt "install.force")))
+    (when (and (installedp argv) (not (opt "install.force")))
       (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
               target version)
       (return-from start (cons nil argv)))
@@ -137,7 +137,7 @@
 
 (defun setup (argv)
   (setf (config "default.lisp") (getf argv :target)
-        (config (format nil "~A.version" (getf argv :target))) (ros:opt "as"))
+        (config (format nil "~A.version" (getf argv :target))) (opt "as"))
   (cons t argv))
 
 (defun install-ros (from)

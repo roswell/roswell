@@ -24,7 +24,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (defun usage ()
   (format *error-output*
           "~&***WIP*** Usage: ~A ~{~A~^/~} ~%"
-          (ros:opt "wargv0")
+          (opt "wargv0")
           (mapcar #'car *subcommands*)))
 
 (defun help (_)

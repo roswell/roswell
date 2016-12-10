@@ -69,7 +69,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
              (subseq (read-line in) 2)))))
 
 (defun commands (stream)
-  (let* ((lispdir (ros:opt "lispdir"))
+  (let* ((lispdir (opt "lispdir"))
          (list (nconc (directory (merge-pathnames "*.ros" lispdir))
                       (directory (merge-pathnames "cmds/*.ros" (homedir)))))
          (max (loop for i in list maximize (length (pathname-name i)))))
@@ -87,15 +87,15 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (let ((s *error-output*))
     (cond
       ((not (first argv)) ;; without any options
-       (format s "Usage: ~A [OPTIONS] [Command arguments...]~%" (ros:opt "wargv0"))
-       (format s "Usage: ~A [OPTIONS] [[--] script-path arguments...]~%~%" (ros:opt "wargv0"))
+       (format s "Usage: ~A [OPTIONS] [Command arguments...]~%" (opt "wargv0"))
+       (format s "Usage: ~A [OPTIONS] [[--] script-path arguments...]~%~%" (opt "wargv0"))
        (commands s)
        (option s))
       ((equal (first argv) "run")
-       (format s "Usage: ~A [OPTIONS] run [OPTIONS] [-- implementation-native-options...]~%~%" (ros:opt "wargv0"))
+       (format s "Usage: ~A [OPTIONS] run [OPTIONS] [-- implementation-native-options...]~%~%" (opt "wargv0"))
        (option s (nthcdr 4 *options*))) ;; fix me
       ((equal (first argv) "install")
-       (let ((path (ros:opt "quicklisp")))
+       (let ((path (opt "quicklisp")))
          (unless (probe-file (merge-pathnames "setup.lisp" path))
            (ros:roswell '("install" "quicklisp"))))
        (ros:quicklisp :environment nil)
@@ -103,9 +103,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (ros:include "util-install-quicklisp")
        (if (not (second argv))
            (progn
-             (format s "Usage: ~A install impl [OPTIONS]~2%" (ros:opt "wargv0"))
+             (format s "Usage: ~A install impl [OPTIONS]~2%" (opt "wargv0"))
              (format s "For more details on impl specific options, type:~%")
-             (format s " ~A help install impl~2%" (ros:opt "wargv0"))
+             (format s " ~A help install impl~2%" (opt "wargv0"))
              (format s "Candidates impls for installation are:~%")
              (loop for i in (asdf:registered-systems)
                    with len = #.(length "roswell.install.")
