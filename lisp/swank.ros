@@ -43,15 +43,23 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun swank-from-ql (name)
   (let ((dist-file (merge-pathnames "tmp/swank-distinfo.txt" (homedir)))
+        (versions-uri (ql-util:make-versions-url ql:*initial-dist-url*))
+        (versions-file (merge-pathnames "tmp/swank-versions.txt" (homedir)))
         (release-file (merge-pathnames "tmp/swank-release.txt" (homedir)))
         (archive-file (merge-pathnames "tmp/swank.tgz" (homedir)))
         (extract-path (merge-pathnames "lisp/swank/tmp/" (homedir)))
         dist)
     (unless (ql-impl-util:probe-directory extract-path)
-      (let ((uri (cdr (assoc (substitute #\- #\. name)
-                             (ql-dist:available-versions (ql-dist:dist "quicklisp"))
-                             :test 'equal))))
-        (if uri (download uri dist-file)
+      (download versions-uri versions-file)
+      (let* ((key (substitute #\- #\. name))
+             (uri (with-open-file (in versions-file)
+                    (loop
+                      for e = (ql-util:split-spaces (read-line in nil nil))
+                      while e
+                      when (equal key (first e))
+                        return (second e)))))
+        (if uri
+            (download uri dist-file)
             (progn
               (format *error-output* "invalid version ~A" name)
               (ros:quit 1))))
