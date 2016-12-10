@@ -75,10 +75,12 @@ have the latest asdf, and this file has a workaround for this.
     (or
      sentinel
      (not (setf sentinel t))
-     (when (and (find :asdf *features*)
-                (opt "asdf")
-                (not (equal (opt "asdf")
-                            (funcall (read-from-string "asdf:asdf-version")))))
+     (when (and (opt "asdf")
+                (or (and (find :asdf *features*)
+                         (not (equal (opt "asdf")
+                                     (funcall (read-from-string "asdf:asdf-version")))))
+                    (not (find :asdf *features*)))
+                (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
        (ignore-errors
          (locally
              (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
@@ -86,7 +88,7 @@ have the latest asdf, and this file has a workaround for this.
                (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
              (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir")))))))
      (find :asdf *features*)
-     (ignore-errors (require :asdf)))))
+     (ignore-errors (require "asdf")))))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -154,7 +156,13 @@ have the latest asdf, and this file has a workaround for this.
         #+sbcl(funcall (read-from-string "sb-ext:run-program")
                        (first args) (mapcar #'princ-to-string (rest args))
                        :output out)
-        #+clisp(ext:run-shell-command (format nil "~{~A~^ ~}" args :output output)))))
+        #+clisp(if (eql output :string)
+                   (format nil "~{~A~%~}"
+                           (loop with i = (ext:run-shell-command (format nil "~{~A~^ ~}" args) :output :stream)
+                                 for line = (read-line i nil nil)
+                                 while line
+                                 collect line))
+                   (ext:run-shell-command (format nil "~{~A~^ ~}" args))))))
 
 (defun exec (args)
   #+(and unix sbcl)
@@ -173,8 +181,8 @@ have the latest asdf, and this file has a workaround for this.
                                (and environment (getenv environment))
                                (opt "quicklisp")))))
       (when (probe-file path)
-        (cl:load path)
-        (let ((symbol (read-from-string "ql:*local-project-directories*")))
+	(cl:load path)
+	(let ((symbol (read-from-string "ql:*local-project-directories*")))
           (when (or (ignore-errors (probe-file path))
                     #+clisp(ext:probe-directory path))
             (set symbol (cons (merge-pathnames "local-projects/" (opt "homedir"))
