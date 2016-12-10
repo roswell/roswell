@@ -28,8 +28,8 @@
     (unless (zerop (length result))
       result)))
 
-(defun download (uri file &key proxy (verbose t) (follow-redirects t) quietly (maximum-redirects 10))
-  (declare (ignorable proxy follow-redirects quietly maximum-redirects))
+(defun download (uri file &key proxy (verbose t))
+  (declare (ignorable proxy))
   (ensure-directories-exist file)
   (ros:roswell `("roswell-internal-use" "download" ,uri ,file ,@(unless verbose '("1"))) :interactive nil))
 

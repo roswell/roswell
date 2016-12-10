@@ -11,10 +11,21 @@
       (format
        out "~@{~s~^~%~}"
        '(ros:include "util")
+       '(defun fetch-via-roswell (url file &key (follow-redirects t) quietly
+                                  (maximum-redirects 10))
+         "Request URL and write the body of the response to FILE."
+         (declare (ignorable url follow-redirects quietly maximum-redirects))
+         (ros:roswell `("roswell-internal-use" "download"
+                        ,(funcall (find-symbol (string :urlstring) :ql-http)
+                          (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
+          (if (find :abcl *features*)
+              :interactive *standard-output*))
+         (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
+          (probe-file file)))
        '(mapc
          (lambda (x)
            (setf ql-http:*fetch-scheme-functions* (remove x ql-http:*fetch-scheme-functions* :key 'first :test 'equal))
-           (push (cons x (read-from-string "ros.util:download")) ql-http:*fetch-scheme-functions*))
+           (push (cons x 'fetch-via-roswell) ql-http:*fetch-scheme-functions*))
          '("https" "http"))
        '(pushnew :quicklisp-support-https *features*)
        '(in-package #:ql-dist)
