@@ -7,7 +7,7 @@
 (defun quicklisp-patch (path)
   (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))
                        :direction :output :if-exists :supersede)
-    (let ((*package* (find-package :cl)))
+    (let ((*package* (find-package :ros.install)))
       (format
        out "~@{~s~^~%~}"
        '(let ((*error-output* (make-broadcast-stream)))
@@ -25,6 +25,7 @@
                     (probe-file file)))))
        '(pushnew :quicklisp-support-https *features*)
        '(in-package #:ql-dist)
+       '(import (read-from-string "ros:opt"))
        '(let ((*error-output* (make-broadcast-stream)))
          (when (or (loop for k in '(:win32 :windows :mswindows)
                       never (find k *features*))
