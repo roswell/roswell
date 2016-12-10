@@ -10,28 +10,21 @@
     (let ((*package* (find-package :ros.install)))
       (format
        out "~@{~s~^~%~}"
-       '(let ((*error-output* (make-broadcast-stream)))
-         (setf (fdefinition (find-symbol (string :fetch) :ql-http))
-          (lambda (url file &key (follow-redirects t) quietly
-                              (maximum-redirects 10))
-            "Request URL and write the body of the response to FILE."
-            (declare (ignorable url follow-redirects quietly maximum-redirects))
-            (ros:roswell `("roswell-internal-use" "download"
-                                                  ,(funcall (find-symbol (string :urlstring) :ql-http)
-                                                            (funcall (find-symbol (string :url) :ql-http) url)) ,file "2")
-                         (if (find :abcl *features*)
-                             :interactive *standard-output*))
-            (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
-                    (probe-file file)))))
+       '(ros:include "util")
+       '(mapc
+         (lambda (x)
+           (setf ql-http:*fetch-scheme-functions* (remove x ql-http:*fetch-scheme-functions* :key 'first :test 'equal))
+           (push (cons x (read-from-string "ros.util:download")) ql-http:*fetch-scheme-functions*))
+         '("https" "http"))
        '(pushnew :quicklisp-support-https *features*)
        '(in-package #:ql-dist)
-       '(import (read-from-string "ros:opt"))
+       '(import (read-from-string "ros.util:homedir"))
        '(let ((*error-output* (make-broadcast-stream)))
          (when (or (loop for k in '(:win32 :windows :mswindows)
-                      never (find k *features*))
+                         never (find k *features*))
                    (probe-file (merge-pathnames (format nil "impls/~A/windows/7za/9.20/7za.exe"
                                                         (ros:roswell '("roswell-internal-use""uname""-m") :string t))
-                                                (ros:opt "homedir"))))
+                                                (homedir))))
            (defmethod install ((release release))
              (let ((archive (ensure-local-archive-file release))
                    (output (relative-to (dist release)
