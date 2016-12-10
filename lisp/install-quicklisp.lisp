@@ -22,11 +22,11 @@
               :interactive *standard-output*))
          (values (make-instance (find-symbol (string :header) :ql-http) :status 200)
           (probe-file file)))
-       '(mapc
-         (lambda (x)
-           (setf ql-http:*fetch-scheme-functions* (remove x ql-http:*fetch-scheme-functions* :key 'first :test 'equal))
-           (push (cons x 'fetch-via-roswell) ql-http:*fetch-scheme-functions*))
-         '("https" "http"))
+       '(dolist (x '("https" "http"))
+         (let ((s (find-symbol (string :*fetch-scheme-functions*) :ql-http)))
+           (set s (acons x 'fetch-via-roswell
+                         (remove x (symbol-value s)
+                                 :key 'first :test 'equal)))))
        '(pushnew :quicklisp-support-https *features*)
        '(in-package #:ql-dist)
        '(import (read-from-string "ros.util:homedir"))
