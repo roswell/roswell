@@ -31,35 +31,35 @@
                                     "/acl" (getf argv :version) "/" uname uname-m "/acl" (getf argv :version)
                                     "-" uname "x-" uname-m (cond ((equal uname "macos") ".dmg")
                                                                  ((equal uname "linu") ".bz2"))))
-    (set-opt "download.archive" (let ((pos (position #\/ (ros:opt "download.uri") :from-end t)))
+    (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
                                   (when pos
-                                    (merge-pathnames (format nil "archives/~A" (subseq (ros:opt "download.uri") (1+ pos))) (homedir)))))
-    `((,(ros:opt "download.archive") ,(ros:opt "download.uri")))))
+                                    (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+    `((,(opt "download.archive") ,(opt "download.uri")))))
 
 (defun allegro-expand (argv)
-  (format t "~%Extracting archive:~A~%" (ros:opt "download.archive"))
+  (format t "~%Extracting archive:~A~%" (opt "download.archive"))
   (let* ((impls (merge-pathnames (format nil "impls/~A/~A/allegro/" (uname-m) (uname)) (homedir)))
-         (path (merge-pathnames (format nil "~A/" (ros:opt "as")) impls))
+         (path (merge-pathnames (format nil "~A/" (opt "as")) impls))
          (uname (allegro-uname)))
     (cond
       ((equal uname "macos")
        (let ((mount-dir (string-right-trim
                          (format nil "~%")
                          (uiop:run-program
-                          (format nil "hdiutil attach ~A | awk -F '\t' 'END{print $NF}'" (ros:opt "download.archive"))
+                          (format nil "hdiutil attach ~A | awk -F '\t' 'END{print $NF}'" (opt "download.archive"))
                           :output :string))))
          (uiop:run-program (format nil "cp -r ~A/AllegroCLexpress.app/Contents/Resources/ ~A"
                                    mount-dir
-                                   (ensure-directories-exist (merge-pathnames (format nil "~A/" (ros:opt "as")) impls))))
+                                   (ensure-directories-exist (merge-pathnames (format nil "~A/" (opt "as")) impls))))
          (uiop:run-program (format nil "hdiutil detach \"~A\"" mount-dir))))
       (t
-       (expand (ros:opt "download.archive") (ensure-directories-exist impls))
+       (expand (opt "download.archive") (ensure-directories-exist impls))
        (and (probe-file path)
             (uiop/filesystem:delete-directory-tree
              path :validate t))
        (ql-impl-util:rename-directory
         (merge-pathnames (format nil "acl~A/" (getf argv :version)) impls)
-        (merge-pathnames (format nil "~A/" (ros:opt "as")) impls))))
+        (merge-pathnames (format nil "~A/" (opt "as")) impls))))
     (cons t argv)))
 
 (defun allegro-help (argv)

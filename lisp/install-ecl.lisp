@@ -39,7 +39,7 @@
     (set-opt "archive" "t"))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (ros:opt "as")) (homedir)))
+  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir)))
   (labels ((with (opt default)
              (set-opt opt
                       (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) t)
@@ -51,14 +51,14 @@
 
 (defun ecl-download (argv)
   (set-opt "download.uri" (format nil "~A~A.tar.gz" (ecl-uri) (ecl-version-filename (getf argv :version))))
-  (set-opt "download.archive" (let ((pos (position #\/ (ros:opt "download.uri") :from-end t)))
+  (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
                                 (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (ros:opt "download.uri") (1+ pos))) (homedir)))))
-  `((,(ros:opt "download.archive") ,(ros:opt "download.uri"))))
+                                  (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+  `((,(opt "download.archive") ,(opt "download.uri"))))
 
 (defun ecl-expand (argv)
-  (format t "~%Extracting archive:~A~%" (ros:opt "download.archive"))
-  (expand (ros:opt "download.archive")
+  (format t "~%Extracting archive:~A~%" (opt "download.archive"))
+  (expand (opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
 
@@ -66,11 +66,11 @@
   (format t "~&configure~%")
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/config.log"
-                                                 (getf argv :target) (ros:opt "as"))
+                                                 (getf argv :target) (opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((cmd (format nil "./configure '--prefix=~A'" (ros:opt "prefix")))
+    (let* ((cmd (format nil "./configure '--prefix=~A'" (opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (ecl-chdir argv)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
@@ -80,7 +80,7 @@
   (format t "~&make~%")
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/make.log"
-                                                 (getf argv :target) (ros:opt "as"))
+                                                 (getf argv :target) (opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
@@ -91,9 +91,9 @@
   (cons t argv))
 
 (defun ecl-install (argv)
-  (let* ((impl-path (ros:opt "prefix"))
-         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (ros:opt "as")) (homedir))))
-    (format t "~&Installing ~A/~A..." (getf argv :target) (ros:opt "as"))
+  (let* ((impl-path (opt "prefix"))
+         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (opt "as")) (homedir))))
+    (format t "~&Installing ~A/~A..." (getf argv :target) (opt "as"))
     (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)

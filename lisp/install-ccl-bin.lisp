@@ -34,22 +34,22 @@
     (set-opt "download.uri" (format nil "~@{~A~}" (ccl-bin-uri)
                                     (getf argv :version) "/ccl-" (getf argv :version) "-" uname ccl-uname-m (if (equal uname "windows")
                                                                                                                 ".zip"".tar.gz")))
-    (set-opt "download.archive" (let ((pos (position #\/ (ros:opt "download.uri") :from-end t)))
+    (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
                                   (when pos
-                                    (merge-pathnames (format nil "archives/~A" (subseq (ros:opt "download.uri") (1+ pos))) (homedir)))))
-    `((,(ros:opt "download.archive") ,(ros:opt "download.uri")))))
+                                    (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+    `((,(opt "download.archive") ,(opt "download.uri")))))
 
 (defun ccl-bin-expand (argv)
-  (format t "~%Extracting archive:~A~%" (ros:opt "download.archive"))
+  (format t "~%Extracting archive:~A~%" (opt "download.archive"))
   (let* ((impls (merge-pathnames (format nil "impls/~A/~A/ccl-bin/" (uname-m) (uname)) (homedir)))
-         (path (merge-pathnames (format nil "~A/" (ros:opt "as")) impls)))
-    (#-win32 expand #+win32 zip:unzip (ros:opt "download.archive") (ensure-directories-exist impls))
+         (path (merge-pathnames (format nil "~A/" (opt "as")) impls)))
+    (#-win32 expand #+win32 zip:unzip (opt "download.archive") (ensure-directories-exist impls))
     (and (probe-file path)
          (uiop/filesystem:delete-directory-tree
           path :validate t))
     (ql-impl-util:rename-directory
      (merge-pathnames (format nil "ccl/") impls)
-     (merge-pathnames (format nil "~A/" (ros:opt "as")) impls)))
+     (merge-pathnames (format nil "~A/" (opt "as")) impls)))
   (cons t argv))
 
 (defun ccl-bin-help (argv)

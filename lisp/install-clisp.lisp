@@ -21,17 +21,17 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
-  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (ros:opt "as")) (homedir)))
+  (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir)))
   (set-opt "src" (merge-pathnames (format nil "src/~A-~A/" (getf argv :target) (getf argv :version)) (homedir)))
   (cons t argv))
 
 (defun clisp-download (argv)
   (set-opt "download.uri" (format nil "~@{~A~}" (clisp-uri)
                                   (getf argv :version) "/clisp-"  (getf argv :version) ".tar.bz2"))
-  (set-opt "download.archive" (let ((pos (position #\/ (ros:opt "download.uri") :from-end t)))
+  (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
                                 (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (ros:opt "download.uri") (1+ pos))) (homedir)))))
-  `((,(ros:opt "download.archive") ,(ros:opt "download.uri"))))
+                                  (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+  `((,(opt "download.archive") ,(opt "download.uri"))))
 
 (defun clisp-lib (argv)
   (when (and (find :linux *features*)
@@ -41,8 +41,8 @@
   (cons t argv))
 
 (defun clisp-expand (argv)
-  (format t "~%Extracting archive: ~A~%" (ros:opt "download.archive"))
-  (expand (ros:opt "download.archive")
+  (format t "~%Extracting archive: ~A~%" (opt "download.archive"))
+  (expand (opt "download.archive")
           (merge-pathnames "src/" (homedir)))
   (cons t argv))
 
@@ -52,7 +52,7 @@
         (uri (clisp-patch1-uri)))
     (format t "~&Downloading patch: ~A~%" uri)
     (download uri file)
-    (ros.util:chdir (ros:opt "src"))
+    (ros.util:chdir (opt "src"))
     (format t "~%Applying patch:~%")
     (uiop/run-program:run-program (format nil "git apply ~A" file) :output t))
   (cons t argv))
@@ -61,17 +61,17 @@
   (format t "~&configure~%")
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/config.log"
-                                                 (getf argv :target) (ros:opt "as"))
+                                                 (getf argv :target) (opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((src (ros:opt "src"))
+    (let* ((src (opt "src"))
            (cmd (format nil "./configure --with-libsigsegv-prefix=~A ~A '--prefix=~A'"
                         (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "sigsegv" "2.10") (homedir))
                         (or #+linux(format nil "--with-libffcall-prefix=~A"
                                            (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" "1.10") (homedir)))
                             "")
-                        (ros:opt "prefix")))
+                        (opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (ros.util:chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
@@ -81,11 +81,11 @@
   (format t "~&make~%")
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "impls/log/~A-~A/make.log"
-                                                 (getf argv :target) (ros:opt "as"))
+                                                 (getf argv :target) (opt "as"))
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((src (namestring (namestring (merge-pathnames "src/" (ros:opt "src")))))
+    (let* ((src (namestring (namestring (merge-pathnames "src/" (opt "src")))))
            (cmd (format nil "ulimit -s 16384 && make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (ros.util:chdir src)
@@ -93,10 +93,10 @@
   (cons t argv))
 
 (defun clisp-install (argv)
-  (let* ((impl-path (ros:opt "prefix"))
-         (src (namestring (merge-pathnames "src/" (ros:opt "src"))))
-         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (ros:opt "as")) (homedir))))
-    (format t "~&Installing ~A/~A..." (getf argv :target) (ros:opt "as"))
+  (let* ((impl-path (opt "prefix"))
+         (src (namestring (merge-pathnames "src/" (opt "src"))))
+         (log-path (merge-pathnames (format nil "impls/log/~A-~A/install.log" (getf argv :target) (opt "as")) (homedir))))
+    (format t "~&Installing ~A/~A..." (getf argv :target) (opt "as"))
     (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
@@ -111,7 +111,7 @@
 
 (defun clisp-clean (argv)
   (format t "~&Cleaning~%")
-  (let ((src (namestring (merge-pathnames "src/" (ros:opt "src")))))
+  (let ((src (namestring (merge-pathnames "src/" (opt "src")))))
     (ros.util:chdir src)
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream

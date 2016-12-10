@@ -17,7 +17,7 @@
            (format *error-output* "Download ~a~%" (file-namestring path))
            (force-output *error-output*)
            (when (or (not (probe-file path))
-                     (ros:opt "download.force"))
+                     (opt "download.force"))
              (download
               (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
                       (msys2-uri)

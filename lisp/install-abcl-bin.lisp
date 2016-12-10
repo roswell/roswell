@@ -28,28 +28,28 @@
   (set-opt "download.uri" (format nil "~@{~A~}" (abcl-bin-uri)
                                   (version argv) "/abcl-bin-" (version argv)".tar.gz"))
   (set-opt "download.archive"
-           (let ((pos (position #\/ (ros:opt "download.uri") :from-end t)))
+           (let ((pos (position #\/ (opt "download.uri") :from-end t)))
              (when pos
-               (merge-pathnames (format nil "archives/~A" (subseq (ros:opt "download.uri") (1+ pos))) (homedir)))))
-  `((,(ros:opt "download.archive") ,(ros:opt "download.uri"))))
+               (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+  `((,(opt "download.archive") ,(opt "download.uri"))))
 
 (defun abcl-bin-expand (argv)
-  (format t "~%Extracting archive:~A~%" (ros:opt "download.archive"))
+  (format t "~%Extracting archive:~A~%" (opt "download.archive"))
   (expand
-   (ros:opt "download.archive")
+   (opt "download.archive")
    (ensure-directories-exist (abcl-bin-impl)))
-  (let ((path (merge-pathnames (format nil "~A/" (ros:opt "as")) (abcl-bin-impl))))
+  (let ((path (merge-pathnames (format nil "~A/" (opt "as")) (abcl-bin-impl))))
     (and (probe-file path)
          (uiop/filesystem:delete-directory-tree
           path :validate t)))
   (ql-impl-util:rename-directory
    (merge-pathnames (format nil "abcl-bin-~A/" (version argv)) (abcl-bin-impl))
-   (merge-pathnames (format nil "~A/" (ros:opt "as")) (abcl-bin-impl)))
+   (merge-pathnames (format nil "~A/" (opt "as")) (abcl-bin-impl)))
   (cons t argv))
 
 (defun abcl-bin-script (argv)
   (let ((java (ros.util:which "java"))
-        (dir (merge-pathnames (format nil "~A/" (ros:opt "as")) (abcl-bin-impl))))
+        (dir (merge-pathnames (format nil "~A/" (opt "as")) (abcl-bin-impl))))
     (unless java
       (format *error-output* "Error: JAVA wasn't found in the path. 'ros use abcl' will fail.~%")
       (format *error-output* "Installation incomplete.")
