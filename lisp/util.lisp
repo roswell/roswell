@@ -6,7 +6,7 @@
   (:use :cl)
   (:import-from :ros :opt)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
-           :parse-version-spec :download :expand :sh :chdir :system
+           :parse-version-spec :download :expand :sh :chdir :system :module
            :core-extention :clone-github :opt :read-call :set-opt :copy-dir))
 
 (in-package :ros.util)
@@ -29,6 +29,13 @@
                 (read-call "uiop:copy-file"
                            (merge-pathnames l path)
                            (ensure-directories-exist (merge-pathnames l to)))))))
+
+(defun module (prefix name)
+  (ignore-errors
+   (let ((imp (format nil "roswell.~A.~A" prefix impl)))
+     (and (or (read-call "ql-dist:find-system" imp)
+              (read-call "ql:where-is-system" imp))
+          (read-call "ql:quickload" imp :silent t)))))
 
 (defun set-opt (item val)
   (let ((found (assoc item (ros::ros-opts) :test 'equal)))
