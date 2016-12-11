@@ -1,6 +1,7 @@
 (cl:in-package :cl-user)
 
-(ros:include "locations")
+(ros:include '("locations" "util"))
+(ros:include "util-install" :load nil)
 
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
@@ -21,12 +22,6 @@ SUCCESS is a boolean indicating the success of the installation step and
 ARGV2 contains a (possibly modified) ARGV.")
 (defvar *list-cmd* nil)
 (defvar *checkout-default* 'checkout-github)
-
-(defun set-opt (item val)
-  (let ((found (assoc item (ros::ros-opts) :test 'equal)))
-    (if found
-        (setf (second found) val)
-        (push (list item val) ros::*ros-opts*))))
 
 (defun probe-impl (impl)
   (or (ignore-errors
@@ -73,20 +68,6 @@ ARGV2 contains a (possibly modified) ARGV.")
     (when result
       (read-call "install-system-script" imp)
       result)))
-
-(defun copy-dir (from to)
-  (when (wild-pathname-p from)
-    (error "wild card not supported"))
-  (loop with path = (truename from)
-        for l in (delete-if (lambda (x) (eql :absolute (first (pathname-directory (make-pathname :defaults x)))))
-                            (mapcar (lambda(x) (enough-namestring (namestring x) path))
-                                    (directory (merge-pathnames "**/*.*" path))))
-        do (if (or (pathname-name l)
-                   (pathname-type l))
-               (ignore-errors
-                (read-call "uiop:copy-file"
-                           (merge-pathnames l path)
-                           (ensure-directories-exist (merge-pathnames l to)))))))
 
 (defun install-localpath-if-probed (namestring)
   (when (and (eql #\. (aref namestring 0))

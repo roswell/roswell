@@ -191,12 +191,17 @@ have the latest asdf, and this file has a workaround for this.
 
 (defvar *included-names* '())
 (defvar *include-path* #.*load-pathname*)
-(defun include (name)
-  (unless (find name *included-names* :test 'equal)
-    (cl:load (make-pathname
-              :defaults *include-path*
-              :name name :type "lisp"))
-    (push name *included-names*)))
+
+(defun include (names &key (load t))
+  (dolist (name (if (listp names)
+                    names
+                    (list names)))
+    (unless (find name *included-names* :test 'equal)
+      (when load
+        (cl:load (make-pathname
+                  :defaults *include-path*
+                  :name name :type "lisp")))
+      (push name *included-names*))))
 
 (defun swank (&rest params)
   (unless (cl:find-package :ros.swank.util)

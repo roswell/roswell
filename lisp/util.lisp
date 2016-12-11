@@ -7,9 +7,31 @@
   (:import-from :ros :opt)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
            :parse-version-spec :download :expand :sh :chdir :system
-           :core-extention :clone-github :opt :read-call))
+           :core-extention :clone-github :opt :read-call :set-opt :copy-dir))
 
 (in-package :ros.util)
+
+(ros:include "util" :load nil)
+
+(defun copy-dir (from to)
+  (when (wild-pathname-p from)
+    (error "wild card not supported"))
+  (loop with path = (truename from)
+        for l in (delete-if (lambda (x) (eql :absolute (first (pathname-directory (make-pathname :defaults x)))))
+                            (mapcar (lambda(x) (enough-namestring (namestring x) path))
+                                    (directory (merge-pathnames "**/*.*" path))))
+        do (if (or (pathname-name l)
+                   (pathname-type l))
+               (ignore-errors
+                (read-call "uiop:copy-file"
+                           (merge-pathnames l path)
+                           (ensure-directories-exist (merge-pathnames l to)))))))
+
+(defun set-opt (item val)
+  (let ((found (assoc item (ros::ros-opts) :test 'equal)))
+    (if found
+        (setf (second found) val)
+        (push (list item val) ros::*ros-opts*))))
 
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
