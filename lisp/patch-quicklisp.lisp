@@ -39,7 +39,7 @@
         (ensure-directories-exist output)
         (ensure-directories-exist tracking)
         (ros:roswell
-         `("roswell-internal-use" "tar" "-xf" ,archive "-c" ,output))
+         `("roswell-internal-use" "tar" "-xf" ,archive "-C" ,output))
         (ensure-directories-exist tracking)
         (with-open-file
             (stream tracking :direction :output :if-exists :supersede)
