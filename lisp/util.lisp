@@ -5,7 +5,7 @@
 (defpackage :ros.util
   (:use :cl)
   (:import-from :ros :opt)
-  (:export :uname :uname-m :homedir :config :use :impl :which :list%
+  (:export :uname :uname-m :homedir :config :impl :which :list%
            :parse-version-spec :download :expand :sh :chdir :system :module
            :core-extention :clone-github :opt :read-call :set-opt :copy-dir))
 
@@ -118,23 +118,6 @@ ccl-bin      -> (\"ccl-bin\" nil)
         (if (digit-char-p (aref string 0))
             `(nil ,string)
             `(,string nil)))))
-
-(defun use (arg)
-  "Parse the lisp version string (such as ccl-bin/1.11) and set it to the correct config slot(s)"
-  (when (and arg
-             (ignore-errors
-               (ros:roswell `("-L" ,arg "version=t" "run"))))
-    (destructuring-bind (lisp version) (parse-version-spec arg)
-      (cond ((and lisp version)
-             (setf (config "default.lisp") lisp
-                   (config (format nil "~A.version" lisp)) version))
-            (lisp
-             (setf (config "default.lisp")
-                   lisp))
-            (version
-             (setf (config (format nil "~A.version" (config "default.lisp")))
-                   version))))
-    t))
 
 (defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates") branch)
   (format *error-output* "install from github ~A/~A~%" owner name)
