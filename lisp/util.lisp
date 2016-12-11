@@ -13,6 +13,9 @@
 
 (ros:include "util" :load nil)
 
+(defun read-call (func &rest params)
+  (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
+
 (defun copy-dir (from to)
   (when (wild-pathname-p from)
     (error "wild card not supported"))
@@ -32,9 +35,6 @@
     (if found
         (setf (second found) val)
         (push (list item val) ros::*ros-opts*))))
-
-(defun read-call (func &rest params)
-  (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
 (defun uname ()
   (ros:roswell '("roswell-internal-use" "uname") :string t))
