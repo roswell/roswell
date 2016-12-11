@@ -7,9 +7,12 @@
   (:import-from :ros :opt)
   (:export :uname :uname-m :homedir :config :use :impl :which :list%
            :parse-version-spec :download :expand :sh :chdir :system
-           :core-extention :clone-github :opt))
+           :core-extention :clone-github :opt :read-call))
 
 (in-package :ros.util)
+
+(defun read-call (func &rest params)
+  (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
 (defun uname ()
   (ros:roswell '("roswell-internal-use" "uname") :string t))

@@ -28,9 +28,6 @@ ARGV2 contains a (possibly modified) ARGV.")
         (setf (second found) val)
         (push (list item val) ros::*ros-opts*))))
 
-(defun read-call (func &rest params)
-  (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
-
 (defun probe-impl (impl)
   (or (ignore-errors
        (let ((imp (format nil "roswell.install.~A" impl)))
