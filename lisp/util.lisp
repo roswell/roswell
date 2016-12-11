@@ -32,7 +32,7 @@
 
 (defun module (prefix name)
   (ignore-errors
-   (let ((imp (format nil "roswell.~A.~A" prefix impl)))
+   (let ((imp (format nil "roswell.~A.~A" prefix name)))
      (and (or (read-call "ql-dist:find-system" imp)
               (read-call "ql:where-is-system" imp))
           (read-call "ql:quickload" imp :silent t)))))
