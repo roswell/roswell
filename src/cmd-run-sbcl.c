@@ -11,6 +11,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
   char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char *path=NULL;
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -32,21 +33,19 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   ret=conss(bin,ret);
 
   /* runtime options from here */
-  if(image||!issystem)
-    ret=conss(q("--core"),ret);
-  if(!image) {
-    if(!issystem)
-      ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),ret);
+  if(image)
+    path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+  if(path&&file_exist_p(path)) {
+    /* TBD dump system if script is newer than current image */
+    ret=conss(path,conss(q("--core"),ret));
   }else {
-    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
-    if(file_exist_p(path))
-      ret=conss(path,ret);
-    else {
+    if(image)
       cond_printf(1,"core not found:%s\n",path);
-      ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),ret);
-      s(path);
-    }
+    if(!issystem)
+      ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
+                conss(q("--core"),ret));
   }
+  s(path);
   s(impl_path);
   if(help)
     ret=conss(q("--help"),ret);
