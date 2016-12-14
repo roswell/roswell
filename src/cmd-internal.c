@@ -74,8 +74,9 @@ DEF_SUBCMD(cmd_internal_version) {
       for(;arg;arg=dispatch(arg,&top));
       s(cmd);
     }else if(strncmp(arg1,"date",4)==0) {
+      char* opt=get_opt("sbcl-bin.version",0);
       char* impl_path=s_cat(configdir(),q("impls"SLASH),uname_m(),q(SLASH),uname(),q(SLASH DEFAULT_IMPL SLASH),
-                            q(get_opt("sbcl-bin.version",0)),q(SLASH "dump" SLASH "roswell.core"),NULL);
+                            q(opt?opt:"dummy-version"),q(SLASH "dump" SLASH "roswell.core"),NULL);
       cond_printf(1,"mtime of %s:%lu\n",impl_path,file_mtime(impl_path));
       printf("%lu\n",2208988800+file_mtime(impl_path));
       s(impl_path);
