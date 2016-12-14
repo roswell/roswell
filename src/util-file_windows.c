@@ -28,7 +28,7 @@ int file_mtime(char* path) {
   return 0;
 }
 
-int file_newer_p(char * a,char* b) {
+long file_newer_p(char * a,char* b) {
   return 0;
 }
 #endif
