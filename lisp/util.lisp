@@ -32,6 +32,7 @@
 
 (defun module (prefix name)
   (ignore-errors
+   (read-call "ql:register-local-projects")
    (let ((imp (format nil "roswell.~A.~A" prefix name)))
      (and (or (read-call "ql-dist:find-system" imp)
               (read-call "ql:where-is-system" imp))

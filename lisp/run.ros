@@ -4,11 +4,10 @@
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 (progn
-  (ql:quickload '(:cl-ppcre) :silent t)
-  (ros:include "util-run"))
+  (ql:quickload '(:cl-ppcre) :silent t))
 
 (defpackage :ros.script.run.3668210999
-  (:use :cl :ros.run))
+  (:use :cl))
 (in-package :ros.script.run.3668210999)
 
 (defun main (system program restart script verbose)
@@ -17,7 +16,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
          (system (subseq system 0 pos))
          (verbose (parse-integer verbose :junk-allowed t)))
     (declare (ignorable version verbose))
-    (if (and (probe-run-script system)
+    (if (and (ros.util:module "run" system)
              (functionp ros:*main*))
         (funcall ros:*main* system version program restart script verbose)
         (progn
