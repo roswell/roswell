@@ -29,15 +29,19 @@ void touch(char* path) {
   s(cmd);
 }
 
-int file_exist_p (char* path) {
+int file_exist_p(char* path) {
   struct stat sb;
   return (stat(path, &sb) == 0 && S_ISREG(sb.st_mode))?1:0;
 }
 
-int file_newer_p(char * a,char* b) {
-  struct stat as,bs;
-  if(stat(b, &bs) != 0)
-    return 1;
-  return (stat(a, &as) == 0 && as.st_mtime >= bs.st_mtime);
+long file_mtime(char* path) {
+  struct stat sb;
+  return stat(path, &sb) == 0 ? sb.st_mtime:0;
+}
+
+int file_newer_p(char* a,char* b) {
+  long at=file_mtime(a),bt=file_mtime(b);
+  return bt==0?1:(at!=0&& at>=bt);
 }
 #endif
+

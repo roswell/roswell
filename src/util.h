@@ -140,6 +140,7 @@ int delete_file(char* pathspec);
 int rename_file(char* file,char* new_name);
 void touch(char* path);
 int file_exist_p (char* path);
+long file_mtime(char* path);
 int file_newer_p(char * a,char* b);
 /*util_system.c */
 char* system_(char* cmd);

@@ -24,8 +24,11 @@ int file_exist_p (char* path) {
   return 1;
 }
 
-int file_newer_p(char * a,char* b) {
+int file_mtime(char* path) {
   return 0;
 }
 
+int file_newer_p(char * a,char* b) {
+  return 0;
+}
 #endif

@@ -62,9 +62,7 @@ DEF_SUBCMD(cmd_internal_version) {
   }else if (argc==2) {
     char* ev=NULL;
     char* arg1=firsts(nthcdr(1,arg_));
-    if(strcmp(arg1,"date")==0) {
-      ev= "date";
-    }else if (strcmp(arg1,"lisp")==0) {
+    if (strcmp(arg1,"lisp")==0) {
       ev= "version";
     }else if (strcmp(arg1,"dump")==0) {
       ev= "roswell";
@@ -75,6 +73,12 @@ DEF_SUBCMD(cmd_internal_version) {
       LVal arg=stringlist("--no-rc","-L",DEFAULT_IMPL,"-m","roswell","--eval",cmd,"run",NULL);
       for(;arg;arg=dispatch(arg,&top));
       s(cmd);
+    }else if(strncmp(arg1,"date",4)==0) {
+      char* impl_path=s_cat(configdir(),q("impls"SLASH),uname_m(),q(SLASH),uname(),q(SLASH DEFAULT_IMPL SLASH),
+                            q(get_opt("sbcl-bin.version",0)),q(SLASH "dump" SLASH "roswell.core"),NULL);
+      cond_printf(1,"mtime of %s:%lu\n",impl_path,file_mtime(impl_path));
+      printf("%lu\n",2208988800+file_mtime(impl_path));
+      s(impl_path);
     }else if(strncmp(arg1,"cc",2)==0) {
       printf("%s\n",ROS_COMPILE_ENVIRONMENT);
     }else if(strncmp(arg1,"curl",4)==0) {
