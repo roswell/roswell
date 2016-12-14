@@ -45,7 +45,6 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
       ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
                 conss(q("--core"),ret));
   }
-  s(path);
   s(impl_path);
   if(help)
     ret=conss(q("--help"),ret);
