@@ -168,13 +168,14 @@ char* q_(const char* orig) {
 }
 
 char* q_internal(const char* orig,char* file,int line) {
-  cond_printf(2,"%s %d q(%s) %lu \n",file,line,orig,(intptr_t)orig);
   char* ret= (char*)alloc(strlen(orig)+1);
+  cond_printf(2,"q %lu %lu %s %d \"%s\"\n",(intptr_t)ret,(intptr_t)orig,file,line,orig);
   strcpy(ret,orig);
   return ret;
 }
 
 void s_internal(char* f,char* name,char* file,int line) {
-  cond_printf(2,"%s %d s(%s) %lu \n",file,line,name,(intptr_t)f);
+  cond_printf(2,"s %lu %s %d \"%s\":",(intptr_t)f,file,line,f);
   dealloc(f);
+  cond_printf(2,"done\n");
 }
