@@ -1,5 +1,4 @@
 /* -*- tab-width : 2 -*- */
-#include "opt.h"
 #include "cmd-run.h"
 DEF_SUBCMD(cmd_script_frontend);
 
@@ -37,7 +36,7 @@ DEF_SUBCMD(cmd_run) {
   }
 }
 
-int setup(void) {
+int setup(char* target) {
   if(lock_apply("setup",2))
     return 0; /* lock file exists */
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
@@ -47,7 +46,7 @@ int setup(void) {
     SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
   }else
     fprintf(stderr,"Already have "DEFAULT_IMPL".\n");
-  SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros main setup",NULL),"Making core for Roswell...\n");
+  SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros main ",target,NULL),"Making core for Roswell...\n");
   lock_apply("setup",1);
 
   return 1;
@@ -82,7 +81,7 @@ char* determin_impl(char* impl) {
   if(!(impl && version)) {
     s(impl);
     impl=q(DEFAULT_IMPL);
-    setup();
+    setup(PACKAGE);
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);
     version=get_opt(DEFAULT_IMPL".version",0);

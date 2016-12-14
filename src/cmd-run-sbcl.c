@@ -1,5 +1,5 @@
 /* -*- tab-width : 2 -*- */
-#include "opt.h"
+#include "cmd-run.h"
 
 char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* home=configdir();
@@ -33,18 +33,26 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   ret=conss(bin,ret);
 
   /* runtime options from here */
-  if(image)
+  if(image) {
+    char* ld=lispdir();
+    char* script2=q(script?script+1:"");
+    int pos= position_char("\"",script2);
     path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
-  if(path&&file_exist_p(path)) {
-    /* TBD dump system if script is newer than current image */
-    ret=conss(path,conss(q("--core"),ret));
-  }else {
-    if(image)
+    if(pos!=-1)
+      script2[pos]='\0';
+    if(script &&
+       strncmp(ld,script2,strlen(ld)) ==0 &&
+       (!file_exist_p(path) || file_newer_p(script2,path)) &&
+       (file_exist_p(path) && !file_newer_p(path,script2)))
+      setup(image);
+    s(ld),s(script2);
+    if(file_exist_p(path)) {
+      ret=conss(path,conss(q("--core"),ret));
+    }else
       cond_printf(1,"core not found:%s\n",path);
-    if(!issystem)
-      ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
-                conss(q("--core"),ret));
-  }
+  }else if(!issystem)
+    ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
+              conss(q("--core"),ret));
   s(impl_path);
   if(help)
     ret=conss(q("--help"),ret);

@@ -2,6 +2,8 @@
 #ifndef __CMD_RUN_H__
 #define __CMD_RUN_H__
 
+#include "opt.h"
+
 #define ROS_RUN_REPL "run"
 #define DEFAULT_IMPL "sbcl-bin"
 
@@ -20,7 +22,7 @@ extern char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
 extern LVal register_runtime_options();
-
+int setup(char* target);
 #define SETUP_SYSTEM(sys,msg) {\
     cond_printf(0,"%s",msg);   \
     cond_printf(1,"%s\n",sys); \
