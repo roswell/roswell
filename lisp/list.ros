@@ -5,97 +5,16 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util"))
+  (ros:include "util")
+  (ros:include "system"))
 
 (defpackage :ros.script.list.3672012243
   (:use :cl :ros.util))
 (in-package :ros.script.list.3672012243)
 
-(defun installed (&rest r)
-  (cond
-    ((null r)
-     (format *error-output* "Installed implementations:~%")
-     (finish-output *error-output*)
-     (let ((dir (directory
-                 (make-pathname
-                  :defaults (merge-pathnames
-                             (format nil "impls/~A/~A/" (uname-m) (uname))
-                             (homedir))
-                  :name :wild
-                  :type :wild))))
-       (mapc (lambda (d)
-               (let ((impl (first (last (pathname-directory d)))))
-                 (ros:roswell `("list" "installed" ,impl) *standard-output*)))
-             dir)))
-    (t
-     (dolist (impl/version r)
-       (destructuring-bind (impl version) (parse-version-spec impl/version)
-         (if version
-             (if (probe-file (merge-pathnames
-                              (format nil "impls/~A/~A/~A/~A" (uname-m) (uname) impl version)
-                              (homedir)))
-                 (format t "~a~%" impl/version)
-                 (format *error-output* "~a is not installed~%" impl/version))
-             (progn
-               (format *error-output* "~%Installed versions of ~a:~%" impl)
-               (finish-output *error-output*)
-               (let ((dir (directory
-                           (make-pathname
-                            :defaults (merge-pathnames
-                                       (format nil "impls/~A/~A/~A/" (uname-m) (uname) impl)
-                                       (homedir))
-                            :name :wild
-                            :type :wild))))
-                 (mapc (lambda (d)
-                         (format t "~{~A~^/~}~%" (last (pathname-directory d) 2)))
-                       dir)))))))))
-
-(defun dump (&rest params)
-  (let ((impl (impl (first params))))
-    (format *error-output* "List of dumped images for ~A:~%" impl)
-    (format t "~{~A~%~}"
-            (mapcar #'pathname-name
-                    (directory (make-pathname :name :wild
-                                              :type (ros.util:core-extention impl)
-                                              :defaults
-                                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                                       (uname-m) (uname) impl)
-                                                               (homedir))))))))
-(defun versions (&rest params)
-  ;; Experimental?
-  (if params
-      (destructuring-bind (impl version) (parse-version-spec (impl (first params)))
-        (declare (ignore version))
-        (format *error-output* "Installable versions for ~A:~%" impl)
-        (let ((path (or (probe-file (make-pathname
-                                     :defaults *load-pathname*
-                                     :type "lisp"
-                                     :name (format nil "install-~A" impl)))
-                        (probe-file (make-pathname
-                                     :defaults *load-pathname*
-                                     :type "lisp"
-                                     :name (format nil "install+~A" impl))))))
-          (when path
-            (dolist (x '("util-install" "util-install-quicklisp"))
-              (ros:script nil (make-pathname :defaults *load-pathname* :name x :type "lisp")))
-            (load path)
-            (let ((cmd (read-from-string "ros.install::*list-cmd*")))
-              (and (boundp cmd)
-                   (symbol-value cmd)
-                   (setq cmd (cdr (assoc (first params) (symbol-value cmd) :test 'equal)))
-                   (dolist (v (funcall cmd))
-                     (format t "~A~%" v)))))))
-      (format t "candidates for ros list versions [impl] are:~2%~{~A~%~}"
-              (mapcar (lambda (x)
-                        (subseq x 8))
-                      (remove-if-not
-                       (lambda (x)
-                         (string-equal "install-" x :end2 (min 8 (length x))))
-                       (mapcar #'pathname-name
-                               (directory (make-pathname
-                                           :defaults *load-pathname*
-                                           :type "lisp"
-                                           :name :wild))))))))
+(system "list-versions")
+(system "list-installed")
+(system "list-dump")
 
 (defun main (cmd &rest r)
   (declare (ignore cmd))
@@ -103,13 +22,14 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
       (progn
         (format *error-output* "Possible subcommands:~%")
         (finish-output *error-output*)
-        (format t "installed~%dump~%versions~%"))
-      (let* ((*read-eval*)
-             (symbol (read-from-string (first r)))
-             (f (and (eql (symbol-package symbol) #.*package*)
-                     (not (eql symbol 'main))
-                     (ignore-errors (fdefinition symbol)))))
-        (if f
-            (apply f (rest r))
+        (format t "~{~A~%~}"
+                (sort (loop for x in (asdf:registered-systems)
+                            when (ignore-errors (string-equal "roswell.list." x :end2 13))
+                              collect (subseq x 13))
+                      #'string<)))
+      (let ((func (and (ros.util:module "list" (first r))
+                       (ignore-errors (fdefinition (read-from-string (format nil "ros.list.~A::~A" (first r) (first r))))))))
+        (if func
+            (apply func (rest r))
             (format *error-output* "not suppported type for list~%")))))
 ;;; vim: set ft=lisp lisp:
