@@ -42,8 +42,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
       script2[pos]='\0';
     if(script &&
        strncmp(ld,script2,strlen(ld)) ==0 &&
-       (!file_exist_p(path) || file_newer_p(script2,path)) &&
-       (file_exist_p(path) && !file_newer_p(path,script2)))
+       (!file_exist_p(path) ||
+        (file_newer_p(script2,path) && !file_newer_p(path,script2))))
       setup(image);
     s(ld),s(script2);
     if(file_exist_p(path)) {
