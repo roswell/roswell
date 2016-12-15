@@ -98,14 +98,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
           `("To release"
             "1. Review changes and complete ChangeLog"
             "2. Type"
-            "make release"
-            "3. don't forget to release homeberew-roswell as well followings are snmsts's"
-            "ros scripts/homebrew.ros"
-            "cp scripts/homebrew/roswell.rb ../homebrew-roswell/roswell.rb"
-            "cd ../homebrew-roswell/"
-            "git add roswell.rb"
-            ,(format nil "git commit -m \"v~A\"" *new-version*)
-            "git push")))
+            "make release")))
 
 (defun prepare (argv)
   (declare (ignore argv))

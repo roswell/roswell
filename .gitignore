@@ -21,7 +21,6 @@ stamp-h1
 depcomp
 config.log
 scripts/roswell*
-scripts/homebrew
 *~
 #*
 /documents/.sass-cache/
