@@ -35,17 +35,19 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   /* runtime options from here */
   if(image) {
     char* ld=lispdir();
+    char* bindir=cat(home,"bin"SLASH,NULL);
     char* script2=q(script?script+1:"");
     int pos= position_char("\"",script2);
     path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(pos!=-1)
       script2[pos]='\0';
     if(script &&
-       strncmp(ld,script2,strlen(ld)) ==0 &&
+       (strncmp(ld,script2,strlen(ld)) ==0 ||
+        strncmp(bindir,script2,strlen(bindir)) ==0) &&
        (!file_exist_p(path) ||
         (file_newer_p(script2,path) && !file_newer_p(path,script2))))
       setup(image);
-    s(ld),s(script2);
+    s(ld),s(script2),s(bindir);
     if(file_exist_p(path)) {
       ret=conss(path,conss(q("--core"),ret));
     }else
