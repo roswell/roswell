@@ -1,3 +1,13 @@
+roswell (16.12.7.71-1) unstable; urgency=low
+
+  * New: automatically dump when subcommand or .roswell/bin/*.ros is newer or not exists.
+  * New: introduce '-A' '+A' option to use downloaded ASDF
+  * Change: ros:ensure-using-downloaded-asdf -> ros:asdf
+  * Change: helper.el to refer parse confdir directory to decide which swank to use.
+  * Change: use 'ql-http:*fetch-scheme-functions*' to patch quicklisp download.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 16 Dec 2016 12:37:15 +0900
+
 roswell (16.11.7.70-1) unstable; urgency=low
 
   * New: new versioning rule.
