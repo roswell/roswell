@@ -43,10 +43,10 @@ int setup(char* target) {
   lock_apply("setup",0);
   char* version=get_opt(DEFAULT_IMPL".version",0);
   if(!version)
-    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
+    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n")
   else
     fprintf(stderr,"Already have "DEFAULT_IMPL".\n");
-  SETUP_SYSTEM(cat(argv_orig[0]," ",v,"setup ",target,NULL),"Making core for Roswell...\n");
+  SETUP_SYSTEM(cat(argv_orig[0]," ",v,"setup ",target,NULL),"Making core for Roswell...\n")
   lock_apply("setup",1);
   return 1;
 }
