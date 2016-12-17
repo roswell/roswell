@@ -156,7 +156,6 @@ DEF_SUBCMD(cmd_install) {
         }
         tmp=conss(q("--"),tmp);
         tmp=conss(install_ros,tmp);
-        tmp=conss(q("install"),tmp);
         tmp=conss(q(firsts(nthcdr(1,arg_))),tmp);
         for(j=2;j<argc;tmp=conss(q(firsts(nthcdr(j++,arg_))),tmp));
         tmp=nreverse(tmp);
