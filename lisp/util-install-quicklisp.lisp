@@ -1,5 +1,5 @@
 (cl:in-package :cl-user)
-
+(ros:include "util-install")
 #-asdf
 (require :asdf)
 #+sbcl

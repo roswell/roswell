@@ -7,8 +7,8 @@
   (:use :cl :ros.util :ros.locations)
   (:export :*build-hook* :install-impl :probe-impl :read-call :*ros-path*
    :install-system-script :install-impl-if-probed :install-script-if-probed
-           :install-system-if-probed :mingw-namestring :install-github
-           :*checkout-default* :install))
+   :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
+   :install :decide-version :decide-download :*install-cmds* :*help-cmds* :*list-cmd*))
 
 (in-package :ros.install)
 

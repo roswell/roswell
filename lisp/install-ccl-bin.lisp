@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.ccl-bin
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.ccl-bin)
 
 (defun ccl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/ccl-bin.html" (homedir))))
