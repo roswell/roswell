@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.ffcall
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.ffcall)
 
 (defvar *ffcall-version* "1.10")
 (defun ffcall-setup (argv)

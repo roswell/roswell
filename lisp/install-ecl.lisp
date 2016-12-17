@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.ecl
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.ecl)
 
 (defvar *ecl-options*
   '())

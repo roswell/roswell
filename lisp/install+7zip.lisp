@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.7zip
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.7zip)
 #-win32
 (progn
   (warn "7zip is only required on windows"))

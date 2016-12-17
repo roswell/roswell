@@ -1,7 +1,6 @@
 (cl:in-package :cl-user)
 
-(ros:include '("locations" "util"))
-(ros:include "util-install" :load nil)
+(ros:include '("locations" "util") "util-install")
 
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
@@ -9,7 +8,7 @@
    :install-system-script :install-impl-if-probed :install-script-if-probed
    :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
    :install :decide-version :decide-download :*install-cmds* :*help-cmds* :*list-cmd*
-   :setup))
+   :setup :date :github-version))
 
 (in-package :ros.install)
 
