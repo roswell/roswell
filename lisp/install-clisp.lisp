@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.clisp
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.clisp)
 
 (defun clisp-get-version ()
   (let ((file (merge-pathnames "tmp/clisp.html" (homedir))))

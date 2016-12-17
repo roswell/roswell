@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.sbcl-bin
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.sbcl-bin)
 
 ;; sbcl-bin is specially treated. Installation are mainly done by src/cmd-install-sbcl-bin.c.
 

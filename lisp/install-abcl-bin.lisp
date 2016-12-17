@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.abcl-bin
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.abcl-bin)
 
 (defvar *abcl-bin-get-version-cache* nil)
 

@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.allegro
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.allegro)
 (ros:quicklisp :environment nil)
 
 (defun allegro-get-version ()

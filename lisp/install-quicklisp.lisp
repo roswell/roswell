@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.quicklisp
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.quicklisp)
 
 (defun quicklisp-help (argv)
   (format *error-output* "no options for quicklisp~%")

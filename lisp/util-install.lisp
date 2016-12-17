@@ -8,7 +8,7 @@
    :install-system-script :install-impl-if-probed :install-script-if-probed
    :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
    :install :decide-version :decide-download :*install-cmds* :*help-cmds* :*list-cmd*
-   :setup :date :github-version))
+   :start :setup :date :github-version :version :install-script))
 
 (in-package :ros.install)
 

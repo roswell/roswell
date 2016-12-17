@@ -1,5 +1,7 @@
-(in-package :ros.install)
-(ros:quicklisp :environment nil)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.cmu-bin
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.cmu-bin)
 
 (defun cmu-bin-get-version ()
   (let ((file (merge-pathnames "tmp/cmu-bin.html" (homedir))))

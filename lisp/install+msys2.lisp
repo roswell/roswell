@@ -1,4 +1,7 @@
-(in-package :ros.install)
+(ros:include "util-install-quicklisp")
+(defpackage :ros.install.msys2
+  (:use :cl :ros.install :ros.util :ros.locations))
+(in-package :ros.install.msys2)
 #-win32
 (progn
   (warn "msys2 is only required on windows"))
