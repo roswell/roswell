@@ -7,7 +7,7 @@
 
 (ros:quicklisp :environment nil)
 (ros:include "system")
-(ros:quicklisp :environment nil)
+
 (unless (find-package :uiop)
   (ql:quickload :uiop :silent t))
 

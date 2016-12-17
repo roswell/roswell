@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(ros:include "util-install")
 (defpackage :ros.install.sbcl-bin
   (:use :cl :ros.install :ros.util :ros.locations))
 (in-package :ros.install.sbcl-bin)
