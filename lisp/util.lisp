@@ -11,7 +11,7 @@
 
 (in-package :ros.util)
 
-(ros:include "util" :load nil)
+(ros:include () "util")
 
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
