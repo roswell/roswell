@@ -6,6 +6,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (progn
   (ros:include "util")
+  (ros:quicklisp :environment nil)
   (ql:quickload '(:cl-base64 :chipz) :silent t))
 
 (defpackage :ros.script.template.3670908195
