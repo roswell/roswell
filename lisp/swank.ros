@@ -5,7 +5,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util")
   (ros:include "util-install")
   (ros:include "util-swank")
   (ros:quicklisp :environment nil)
@@ -14,7 +13,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defpackage :ros.script.swank.3671440529
   (:use :cl :ros.locations :ros.util :ros.swank.util))
-
 (in-package :ros.script.swank.3671440529)
 
 (defvar *sub* '(("rm" . swank-rm)

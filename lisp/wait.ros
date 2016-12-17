@@ -3,7 +3,10 @@
 #|Wait forever
 exec ros -Q -- $0 "$@"
 |#
-(progn)
+
+(progn
+  )
+
 (defpackage :ros.script.wait.3672012352
   (:use :cl))
 (in-package :ros.script.wait.3672012352)

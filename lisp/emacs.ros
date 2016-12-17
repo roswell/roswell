@@ -3,6 +3,7 @@
 #|Launch emacs
 exec ros -L sbcl-bin -- $0 "$@"
 |#
+
 (progn
   (ros:include "util"))
 

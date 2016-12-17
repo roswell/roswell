@@ -3,8 +3,9 @@
 #|Run repl
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
+
 (progn
-  (ql:quickload '(:cl-ppcre) :silent t))
+  )
 
 (defpackage :ros.script.run.3668210999
   (:use :cl))
