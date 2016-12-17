@@ -102,8 +102,7 @@
 (defvar *version*
   `(:roswell ,(ros:version)
     :lisp ,(lisp-implementation-type)
-    :version ,(lisp-implementation-version)
-    :date ,(get-universal-time)))
+    :version ,(lisp-implementation-version)))
 
 (defun parse-version-spec (string)
   "Parse the given version specification string and returns a list of strings (LISP VERSION).
