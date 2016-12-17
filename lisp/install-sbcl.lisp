@@ -124,7 +124,7 @@
                          (format nil "src/sbcl-~A/customize-target-features.lisp"
                                  (getf argv :version)) (homedir)))
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
-    (let ((*package* (find-package :ros.install)))
+    (let ((*package* (find-package :ros.install.sbcl)))
       (format out "~s"
             `(lambda (list)
                (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
