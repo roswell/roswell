@@ -73,9 +73,6 @@ DEF_SUBCMD(cmd_script_frontend) {
   for(j=i;i<j+argc;++i)
     argv_gen[i]=firsts(nthcdr(i-j,arg_));
   j=i;
-  {
-    LVal arg=array_stringlist(j,argv_gen);
-    for(;arg;arg=dispatch(arg,&top));
-  }
+  for(LVal arg=array_stringlist(j,argv_gen);arg;arg=dispatch(arg,&top));
   return 0;
 }
