@@ -24,7 +24,9 @@ ARGV2 contains a (possibly modified) ARGV.")
 (defvar *checkout-default* 'checkout-github)
 
 (defun probe-impl (impl)
-  (or (module "install" impl)
+  (or (progn
+        (module "install" impl)
+        (cdr (assoc impl *install-cmds* :test #'equal)))
       (and ;; before setup quicklisp
        (find impl '("sbcl-bin" "quicklisp") :test 'equal)
        (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*)))))
