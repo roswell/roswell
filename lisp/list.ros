@@ -16,8 +16,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (system "list-installed")
 (system "list-dump")
 
-(defun main (cmd &rest r)
-  (declare (ignore cmd))
+(defun main (&rest r)
   (if (null r)
       (progn
         (format *error-output* "Possible subcommands:~%")

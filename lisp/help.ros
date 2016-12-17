@@ -82,8 +82,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
       (command stream i max))
     (format stream "~%")))
 
-(defun main (cmd &rest argv)
-  (declare (ignore cmd))
+(defun main (&rest argv)
   (let ((s *error-output*))
     (cond
       ((not (first argv)) ;; without any options

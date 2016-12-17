@@ -40,8 +40,7 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
         (cons (list var "0" val)
               config))))
 
-(defun main (cmd &rest argv)
-  (declare (ignore cmd))
+(defun main (&rest argv)
   (let* ((path (merge-pathnames "config" (ros:version "confdir")))
          (conf (load-config path))
          (len (length argv)))

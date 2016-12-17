@@ -15,8 +15,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 
 (in-package :ros.script.install.3671936092)
 
-(defun main (cmd &rest argv)
-  (declare (ignore cmd))
+(defun main (&rest argv)
   (install argv))
 
 ;;; vim: set ft=lisp lisp:

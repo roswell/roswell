@@ -101,7 +101,7 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
       char* cmdpath=cat(cmddir,arg0,".ros",NULL);
       if(directory_exist_p(cmddir)) {
         if(file_exist_p(cmdpath))
-          dispatch(conss(q_(cmdpath),arg),popt);
+          dispatch(conss(q_(cmdpath),rest(arg)),popt);
         s(cmdpath);
         if(!module && !rest(v)) {
           cmdpath=cat(cmddir,"+",arg0,".ros",NULL);

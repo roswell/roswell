@@ -12,8 +12,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :ros))
 (in-package :ros.script.init.3672012201)
 
-(defun main (cmd &optional name &rest r)
-  (declare (ignore cmd))
+(defun main (&optional name &rest r)
   (if name
       (let* ((date (get-universal-time))
              (path

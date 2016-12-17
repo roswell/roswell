@@ -313,11 +313,11 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
   '(("output" dump-output)
     ("executable" dump-executable)))
 
-(defun main (cmd &rest r)
+(defun main (&rest r)
   (if r
       (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
         (if func
             (funcall func (rest r))
-            (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) cmd)))
+            (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) (pathname-name *load-pathname*))))
       (format t "~{~a~%~}" (mapcar #'car *subcmds*))))
 ;;; vim: set ft=lisp lisp:

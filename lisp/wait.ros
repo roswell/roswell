@@ -11,7 +11,7 @@ exec ros -Q -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.wait.3672012352)
 
-(defun main (cmd &rest argv)
-  (declare (ignore cmd argv))
+(defun main (&rest argv)
+  (declare (ignore argv))
   (loop (sleep 1)))
 ;;; vim: set ft=lisp lisp:

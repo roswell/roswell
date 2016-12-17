@@ -22,8 +22,7 @@ exec ros -L sbcl-bin -- $0 "$@"
            (error condition)
            (values nil condition)))))
 
-(defun main (cmd &rest argv)
-  (declare (ignore cmd))
+(defun main (&rest argv)
   (let ((path (merge-pathnames "helper.el" (ros:opt "homedir")))
         (*verbose-p* (or (ros:verbose)
                          (ros:opt "emacs.verbose"))))

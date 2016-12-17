@@ -46,7 +46,7 @@ int setup(char* target) {
     SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
   }else
     fprintf(stderr,"Already have "DEFAULT_IMPL".\n");
-  SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros main ",target,NULL),"Making core for Roswell...\n");
+  SETUP_SYSTEM(cat(argv_orig[0]," ",v,lispdir(),"setup.ros ",target,NULL),"Making core for Roswell...\n");
   lock_apply("setup",1);
 
   return 1;

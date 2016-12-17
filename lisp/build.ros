@@ -28,8 +28,7 @@ exec ros -Q +R -- $0 "$@"
   (format *error-output* "~&Usage: ~A build <file>~%"
           (ros:opt "argv0")))
 
-(defun main (cmd &rest argv)
-  (declare (ignore cmd))
+(defun main (&rest argv)
   (let ((file (first argv))
         exec)
     (unless file
