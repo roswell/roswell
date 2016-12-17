@@ -1,5 +1,4 @@
-(ros:include "util")
-(ros:include "util-use" :load nil)
+(ros:include "util" "util-use")
 
 (defpackage :ros.use
   (:use :cl :ros.util)
