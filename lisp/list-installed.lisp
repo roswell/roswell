@@ -1,6 +1,6 @@
-(defpackage :ros.list.installed
+(defpackage :roswell.list.installed
   (:use :cl :ros.util))
-(in-package :ros.list.installed)
+(in-package :roswell.list.installed)
 
 (defun installed (&rest r)
   (cond

@@ -1,15 +1,15 @@
-(defpackage :ros.list.dump
+(defpackage :roswell.list.dump
   (:use :cl :ros.util))
-(in-package :ros.list.dump)
+(in-package :roswell.list.dump)
 
 (defun dump (&rest params)
-  (let ((impl (impl (first params))))
-    (format *error-output* "List of dumped images for ~A:~%" impl)
-    (format t "~{~A~%~}"
-            (mapcar #'pathname-name
-                    (directory (make-pathname :name :wild
-                                              :type (ros.util:core-extention impl)
-                                              :defaults
-                                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                                       (uname-m) (uname) impl)
-                                                               (homedir))))))))
+  (loop
+    with impl = (impl (first params))
+      initially (format *error-output* "List of dumped images for ~A:~%" impl)
+    with path = (merge-pathnames
+                 (format nil "impls/~A/~A/~A/dump/" (uname-m) (uname) impl)
+                 (homedir))
+    for i in (directory (make-pathname :name :wild
+                                       :type (ros.util:core-extention impl)
+                                       :defaults path))
+    do (format t "~A~%" (pathname-name i))))
