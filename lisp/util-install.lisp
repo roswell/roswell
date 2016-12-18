@@ -4,7 +4,7 @@
 
 (defpackage :ros.install
   (:use :cl :ros.util :ros.locations)
-  (:export :*build-hook* :install-impl :probe-impl :read-call :*ros-path*
+  (:export :*build-hook* :install-impl :read-call :*ros-path*
    :install-system-script :install-impl-if-probed :install-script-if-probed
    :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
    :install :decide-version :decide-download :*install-cmds* :*help-cmds* :*list-cmd*
@@ -23,13 +23,6 @@ ARGV2 contains a (possibly modified) ARGV.")
 (defvar *list-cmd* nil)
 (defvar *checkout-default* 'checkout-github)
 
-(defun probe-impl (impl)
-  (or (module "install" impl)
-      (and ;; before setup quicklisp
-       (find impl '("sbcl-bin" "quicklisp") :test 'equal)
-       (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*))
-       (read-from-string (format nil "roswell.~A.~A::~A" "install" impl impl)))))
-
 (defun install-impl (impl version argv cmds)
   (when cmds
     (let ((param `(t :target ,impl :version ,version :version-not-specified nil :argv ,argv)))
@@ -44,7 +37,7 @@ ARGV2 contains a (possibly modified) ARGV.")
           (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
 
 (defun install-impl-if-probed (imp version argv)
-  (values (let ((fun (probe-impl imp)))
+  (values (let ((fun (module "install" imp)))
             (when fun
               (install-impl imp version argv (funcall fun :install))
               (setf argv nil)

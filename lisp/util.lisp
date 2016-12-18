@@ -31,14 +31,17 @@
                            (ensure-directories-exist (merge-pathnames l to)))))))
 
 (defun module (prefix name)
-  (ignore-errors
-   (read-call "ql:register-local-projects")
-   (let ((imp (format nil "roswell.~A.~A" prefix name))
-         (*read-eval*))
+  (read-call "ql:register-local-projects")
+  (let ((imp (format nil "roswell.~A.~A" prefix name)))
+    (or
      (and (or (read-call "ql-dist:find-system" imp)
               (read-call "ql:where-is-system" imp))
           (read-call "ql:quickload" imp :silent t))
-     (read-from-string (format nil "~A::~A" imp name)))))
+     (ignore-errors
+      (load (make-pathname :name (format nil "~A-~A" prefix imp)
+                           :type "lisp" :defaults *load-pathname*))))
+    (ignore-errors
+     (let (*read-eval*) (read-from-string (format nil "~A::~A" imp name))))))
 
 (defun set-opt (item val)
   (let ((found (assoc item (ros::ros-opts) :test 'equal)))
