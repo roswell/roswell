@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.ccl-bin
+(defpackage :roswell.install.ccl-bin
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.ccl-bin)
+(in-package :roswell.install.ccl-bin)
 
 (defun ccl-bin-get-version ()
   (let ((file (merge-pathnames "tmp/ccl-bin.html" (homedir))))
@@ -80,3 +80,13 @@
 
 (push `("ccl-bin" . ,(list 'ccl-bin-help)) *help-cmds*)
 (push `("ccl-bin" . ccl-bin-get-version) *list-cmd*)
+
+(defun ccl-bin (type)
+  (case type
+    (:help '(ccl-bin-help))
+    (:install `(,(decide-version 'ccl-bin-get-version)
+                ccl-bin-argv-parse
+                ,(decide-download 'ccl-bin-download)
+                ccl-bin-expand
+                setup))
+    (:list 'ccl-bin-get-version)))

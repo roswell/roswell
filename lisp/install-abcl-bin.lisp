@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.abcl-bin
+(defpackage :roswell.install.abcl-bin
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.abcl-bin)
+(in-package :roswell.install.abcl-bin)
 
 (defvar *abcl-bin-get-version-cache* nil)
 
@@ -81,3 +81,14 @@
                        abcl-bin-script
                        setup))
       *install-cmds*)
+
+(defun abcl-bin (type)
+  (case type
+    #+nil(:help '(abcl-bin-help))
+    (:install `(,(decide-version 'abcl-bin-get-version)
+                abcl-bin-argv-parse
+                ,(decide-download 'abcl-bin-download)
+                abcl-bin-expand
+                abcl-bin-script
+                setup))
+    #+nil(:list 'abcl-bin-get-version)))

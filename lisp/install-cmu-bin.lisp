@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.cmu-bin
+(defpackage :roswell.install.cmu-bin
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.cmu-bin)
+(in-package :roswell.install.cmu-bin)
 
 (defun cmu-bin-get-version ()
   (let ((file (merge-pathnames "tmp/cmu-bin.html" (homedir))))
@@ -84,3 +84,13 @@
 
 (push `("cmu-bin" . ,(list 'cmu-bin-help)) *help-cmds*)
 (push `("cmu-bin" . cmu-bin-get-version) *list-cmd*)
+
+(defun cmu-bin (type)
+  (case type
+    (:help '(cmu-bin-help))
+    (:install `(,(decide-version 'cmu-bin-get-version)
+                cmu-bin-argv-parse
+                ,(decide-download 'cmu-bin-download)
+                cmu-bin-expand
+                setup))
+    (:list 'cmu-bin-get-version)))

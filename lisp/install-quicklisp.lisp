@@ -1,7 +1,7 @@
 (ros:include "util-install")
-(defpackage :ros.install.quicklisp
+(defpackage :roswell.install.quicklisp
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.quicklisp)
+(in-package :roswell.install.quicklisp)
 
 (defun quicklisp-help (argv)
   (format *error-output* "no options for quicklisp~%")
@@ -65,3 +65,10 @@
 (push `("quicklisp" . (quicklisp-argv-parse
                        quicklisp-download
                        quicklisp-install)) *install-cmds*)
+
+(defun quicklisp (type)
+  (case type
+    (:help '(quicklisp-help))
+    (:install '(quicklisp-argv-parse
+                quicklisp-download
+                quicklisp-install))))

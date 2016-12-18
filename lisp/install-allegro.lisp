@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.allegro
+(defpackage :roswell.install.allegro
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.allegro)
+(in-package :roswell.install.allegro)
 (ros:quicklisp :environment nil)
 
 (defun allegro-get-version ()
@@ -90,3 +90,13 @@
 
 (push `("allegro" . ,(list 'allegro-help)) *help-cmds*)
 (push `("allegro" . allegro-get-version) *list-cmd*)
+
+(defun allegro (type)
+  (case type
+    (:help '(allegro-help))
+    (:install `(,(decide-version 'allegro-get-version)
+                allegro-argv-parse
+                ,(decide-download 'allegro-download)
+                allegro-expand
+                setup))
+    (:list 'allegro-get-version)))

@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.ecl
+(defpackage :roswell.install.ecl
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.ecl)
+(in-package :roswell.install.ecl)
 
 (defvar *ecl-options*
   '())
@@ -134,3 +134,20 @@
                  ecl-clean
                  setup))
       *install-cmds*)
+
+(defun ecl (type)
+  (case type
+    (:help '())
+    (:install `(#+win32
+                 ecl-msys
+                 ,(decide-version 'ecl-get-version)
+                 ecl-argv-parse
+                 start
+                 ,(decide-download 'ecl-download)
+                 ecl-expand
+                 ecl-config
+                 ecl-make
+                 ecl-install
+                 ecl-clean
+                 setup))
+    #+nil(:list 'ecl-get-version)))

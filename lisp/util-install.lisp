@@ -24,12 +24,11 @@ ARGV2 contains a (possibly modified) ARGV.")
 (defvar *checkout-default* 'checkout-github)
 
 (defun probe-impl (impl)
-  (or (progn
-        (module "install" impl)
-        (cdr (assoc impl *install-cmds* :test #'equal)))
+  (or (module "install" impl)
       (and ;; before setup quicklisp
        (find impl '("sbcl-bin" "quicklisp") :test 'equal)
-       (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*)))))
+       (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*))
+       (read-from-string (format nil "ros.~A.~A::~A" "install" impl impl)))))
 
 (defun install-impl (impl version argv)
   (let ((cmds (cdr (assoc impl *install-cmds* :test #'equal))))

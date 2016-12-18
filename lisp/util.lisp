@@ -33,11 +33,12 @@
 (defun module (prefix name)
   (ignore-errors
    (read-call "ql:register-local-projects")
-   (let ((imp (format nil "roswell.~A.~A" prefix name)))
+   (let ((imp (format nil "roswell.~A.~A" prefix name))
+         (*read-eval*))
      (and (or (read-call "ql-dist:find-system" imp)
               (read-call "ql:where-is-system" imp))
           (read-call "ql:quickload" imp :silent t))
-     (fdefinition (read-from-string (format nil "ros.~A.~A::~A" prefix name name))))))
+     (read-from-string (format nil "~A::~A" imp name)))))
 
 (defun set-opt (item val)
   (let ((found (assoc item (ros::ros-opts) :test 'equal)))

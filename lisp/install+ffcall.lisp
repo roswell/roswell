@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.ffcall
+(defpackage :roswell.install.ffcall
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.ffcall)
+(in-package :roswell.install.ffcall)
 
 (defvar *ffcall-version* "1.10")
 (defun ffcall-setup (argv)
@@ -56,3 +56,9 @@
   (cons t argv))
 
 (push `("ffcall+" . ,(list 'ffcall-help)) *help-cmds*)
+
+(defun ffcall+ (type)
+  (case type
+    (:help '(ffcall-help))
+    (:install `(ffcall-setup))
+    #+nil(:list 'ffcall-get-version)))

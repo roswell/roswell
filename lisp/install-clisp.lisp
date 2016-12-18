@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.clisp
+(defpackage :roswell.install.clisp
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.clisp)
+(in-package :roswell.install.clisp)
 
 (defun clisp-get-version ()
   (let ((file (merge-pathnames "tmp/clisp.html" (homedir))))
@@ -144,3 +144,20 @@
 
 (push `("clisp" . ,(list 'clisp-help)) *help-cmds*)
 (push `("clisp" . clisp-get-version) *list-cmd*)
+
+(defun clisp (type)
+  (case type
+    (:help '(clisp-help))
+    (:install `(,(decide-version 'clisp-get-version)
+                clisp-argv-parse
+                start
+                ,(decide-download 'clisp-download)
+                clisp-lib
+                clisp-expand
+                clisp-patch
+                clisp-config
+                clisp-make
+                clisp-install
+                clisp-clean
+                setup))
+    #+nil(:list 'clisp-get-version)))

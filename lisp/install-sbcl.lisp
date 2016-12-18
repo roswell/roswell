@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :ros.install.sbcl
+(defpackage :roswell.install.sbcl
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :ros.install.sbcl)
+(in-package :roswell.install.sbcl)
 
 #|
 :sb-source-locations
@@ -124,7 +124,7 @@
                          (format nil "src/sbcl-~A/customize-target-features.lisp"
                                  (getf argv :version)) (homedir)))
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
-    (let ((*package* (find-package :ros.install.sbcl)))
+    (let ((*package* (find-package :roswell.install.sbcl)))
       (format out "~s"
             `(lambda (list)
                (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
@@ -328,3 +328,24 @@
 
 (push `("sbcl" . ,(list 'sbcl-help)) *help-cmds*)
 (push `("sbcl" . sbcl-get-version) *list-cmd*)
+
+(defun sbcl (type)
+  (case type
+    (:help '(sbcl-help))
+    (:install `(,(decide-version 'sbcl-get-version)
+                   sbcl-argv-parse
+                   #+win32 sbcl-msys
+                   sbcl-start
+                   start
+                   ,(decide-download 'sbcl-download)
+                   sbcl-expand
+                   sbcl-patch
+                   sbcl-config
+                   sbcl-make
+                   sbcl-install
+                   #+win32 sbcl-install-win32
+                   sbcl-backup-features
+                   sbcl-make-archive
+                   sbcl-clean
+                   setup))
+    (:list 'sbcl-get-version)))
