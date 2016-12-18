@@ -62,11 +62,6 @@
                   :dist-url (opt "quicklisp.dist"))))))
   (cons t argv))
 
-(push '("quicklisp" quicklisp-help) *help-cmds*)
-(push `("quicklisp" . (quicklisp-argv-parse
-                       quicklisp-download
-                       quicklisp-install)) *install-cmds*)
-
 (defun quicklisp (type)
   (case type
     (:help '(quicklisp-help))

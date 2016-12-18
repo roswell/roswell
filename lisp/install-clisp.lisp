@@ -124,25 +124,10 @@
     (format t "done.~%"))
   (cons t argv))
 
-(push `("clisp" . (,(decide-version 'clisp-get-version)
-                    clisp-argv-parse
-                    start
-                    ,(decide-download 'clisp-download)
-                    clisp-lib
-                    clisp-expand
-                    clisp-patch
-                    clisp-config
-                    clisp-make
-                    clisp-install
-                    clisp-clean
-                    setup))
-      *install-cmds*)
-
 (defun clisp-help (argv)
   (format t "no options for clisp~%")
   (cons t argv))
 
-(push `("clisp" . ,(list 'clisp-help)) *help-cmds*)
 (push `("clisp" . clisp-get-version) *list-cmd*)
 
 (defun clisp (type)

@@ -47,15 +47,9 @@
             `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys)))))))
   (cons t argv))
 
-(push `("msys2" . ,(list
-                    'msys2-setup))
-      *install-cmds*)
-
 (defun msys2-help (argv)
   (format t "~%")
   (cons t argv))
-
-(push `("msys2" . ,(list 'msys2-help)) *help-cmds*)
 
 (defun msys2 (type)
   (case type

@@ -13,11 +13,6 @@
   (format *error-output* "~&Install Script for sbcl-bin...~%")
   (cons t argv))
 
-(push `("sbcl-bin" . ,(list 'sbcl-bin-help)) *help-cmds*)
-
-(push `("sbcl-bin" . (sbcl-bin-argv-parse))
-      *install-cmds*)
-
 (defun sbcl-bin (type)
   (case type
     (:help '(sbcl-bin-help))

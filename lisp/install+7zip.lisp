@@ -37,13 +37,9 @@
             (unzip archive (ensure-directories-exist prefix)))))
     (cons t argv)))
 
-(push `("7zip" . ,'(setup-7za)) *install-cmds*)
-
 (defun 7z-help (argv)
   (format t "~%")
   (cons t argv))
-
-(push `("7zip" . ,(list '7z-help)) *help-cmds*)
 
 (defun 7zip (type)
   (case type

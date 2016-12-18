@@ -47,15 +47,9 @@
       (format *error-output* "done.~%")))
   (cons t argv))
 
-(push `("ffcall+" . ,(list
-                     'ffcall-setup))
-      *install-cmds*)
-
 (defun ffcall-help (argv)
   (format t "~%")
   (cons t argv))
-
-(push `("ffcall+" . ,(list 'ffcall-help)) *help-cmds*)
 
 (defun ffcall+ (type)
   (case type

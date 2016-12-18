@@ -81,14 +81,6 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("allegro" . (,(decide-version 'allegro-get-version)
-                      allegro-argv-parse
-                      ,(decide-download 'allegro-download)
-                      allegro-expand
-                      setup))
-      *install-cmds*)
-
-(push `("allegro" . ,(list 'allegro-help)) *help-cmds*)
 (push `("allegro" . allegro-get-version) *list-cmd*)
 
 (defun allegro (type)

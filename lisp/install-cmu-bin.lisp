@@ -75,14 +75,6 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("cmu-bin" . (,(decide-version 'cmu-bin-get-version)
-                      cmu-bin-argv-parse
-                      ,(decide-download 'cmu-bin-download)
-                      cmu-bin-expand
-                      setup))
-      *install-cmds*)
-
-(push `("cmu-bin" . ,(list 'cmu-bin-help)) *help-cmds*)
 (push `("cmu-bin" . cmu-bin-get-version) *list-cmd*)
 
 (defun cmu-bin (type)

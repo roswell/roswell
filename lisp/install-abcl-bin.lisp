@@ -74,14 +74,6 @@
       java dir))
     (cons t argv)))
 
-(push `("abcl-bin" . (,(decide-version 'abcl-bin-get-version)
-                       abcl-bin-argv-parse
-                       ,(decide-download 'abcl-bin-download)
-                       abcl-bin-expand
-                       abcl-bin-script
-                       setup))
-      *install-cmds*)
-
 (defun abcl-bin (type)
   (case type
     #+nil(:help '(abcl-bin-help))

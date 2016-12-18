@@ -71,14 +71,6 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("ccl-bin" . (,(decide-version 'ccl-bin-get-version)
-                      ccl-bin-argv-parse
-                      ,(decide-download 'ccl-bin-download)
-                      ccl-bin-expand
-                      setup))
-      *install-cmds*)
-
-(push `("ccl-bin" . ,(list 'ccl-bin-help)) *help-cmds*)
 (push `("ccl-bin" . ccl-bin-get-version) *list-cmd*)
 
 (defun ccl-bin (type)

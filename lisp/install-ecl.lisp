@@ -121,20 +121,6 @@
   (format t "done.~%")
   (cons t argv))
 
-(push `("ecl" . (#+win32
-                 ecl-msys
-                 ,(decide-version 'ecl-get-version)
-                 ecl-argv-parse
-                 start
-                 ,(decide-download 'ecl-download)
-                 ecl-expand
-                 ecl-config
-                 ecl-make
-                 ecl-install
-                 ecl-clean
-                 setup))
-      *install-cmds*)
-
 (defun ecl (type)
   (case type
     (:help '())
