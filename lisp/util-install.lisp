@@ -30,25 +30,25 @@ ARGV2 contains a (possibly modified) ARGV.")
        (load (make-pathname :name (format nil "install-~A" impl) :type "lisp" :defaults *load-pathname*))
        (read-from-string (format nil "roswell.~A.~A::~A" "install" impl impl)))))
 
-(defun install-impl (impl version argv)
-  (let ((cmds (cdr (assoc impl *install-cmds* :test #'equal))))
-    (when cmds
-      (let ((param `(t :target ,impl :version ,version :version-not-specified nil :argv ,argv)))
-        (handler-case
-            (loop for call in cmds
-               do (setq param (funcall call (rest param)))
-               while (first param))
-          #+sbcl
-          (sb-sys:interactive-interrupt (condition)
-            (declare (ignore condition))
-            (format t "SIGINT detected, cleaning up the partially installed files~%")
-            (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t)))))))
+(defun install-impl (impl version argv cmds)
+  (when cmds
+    (let ((param `(t :target ,impl :version ,version :version-not-specified nil :argv ,argv)))
+      (handler-case
+          (loop for call in cmds
+                do (setq param (funcall call (rest param)))
+                while (first param))
+        #+sbcl
+        (sb-sys:interactive-interrupt (condition)
+          (declare (ignore condition))
+          (format t "SIGINT detected, cleaning up the partially installed files~%")
+          (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
 
 (defun install-impl-if-probed (imp version argv)
-  (values (when (probe-impl imp)
-            (install-impl imp version argv)
-            (setf argv nil)
-            t)
+  (values (let ((fun (probe-impl imp)))
+            (when fun
+              (install-impl imp version argv (funcall fun :install))
+              (setf argv nil)
+              t))
           argv))
 
 (defun install-script-if-probed (impl/version)
