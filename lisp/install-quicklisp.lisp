@@ -8,7 +8,8 @@
   (cons t argv))
 
 (defun quicklisp-patch (path)
-  (uiop:copy-file
+  (ros:ensure-asdf)
+  (read-call "uiop:copy-file"
    (make-pathname
     :defaults #.*load-pathname*
     :name "patch-quicklisp" :type "lisp")

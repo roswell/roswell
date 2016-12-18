@@ -37,9 +37,8 @@
      (and (or (read-call "ql-dist:find-system" imp)
               (read-call "ql:where-is-system" imp))
           (read-call "ql:quickload" imp :silent t))
-     (ignore-errors
-      (load (make-pathname :name (format nil "~A-~A" prefix imp)
-                           :type "lisp" :defaults *load-pathname*))))
+     (load (make-pathname :name (format nil "~A-~A" prefix name)
+                           :type "lisp" :defaults (opt"lispdir"))))
     (ignore-errors
      (let (*read-eval*) (read-from-string (format nil "~A::~A" imp name))))))
 
