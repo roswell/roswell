@@ -40,6 +40,7 @@ DEF_SUBCMD(cmd_script_frontend) {
   int argc_;
   char** argv_;
   char** argv_gen;
+  LVal arg;
   struct opts* opt;
   cond_printf(1,"cmd_script_frontend:%d\n",script_frontend_sentinel);
   if(script_frontend_sentinel)
@@ -73,6 +74,6 @@ DEF_SUBCMD(cmd_script_frontend) {
   for(j=i;i<j+argc;++i)
     argv_gen[i]=firsts(nthcdr(i-j,arg_));
   j=i;
-  for(LVal arg=array_stringlist(j,argv_gen);arg;arg=dispatch(arg,&top));
+  for(arg=array_stringlist(j,argv_gen);arg;arg=dispatch(arg,&top));
   return 0;
 }
