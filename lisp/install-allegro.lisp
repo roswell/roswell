@@ -81,8 +81,6 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("allegro" . allegro-get-version) *list-cmd*)
-
 (defun allegro (type)
   (case type
     (:help '(allegro-help))

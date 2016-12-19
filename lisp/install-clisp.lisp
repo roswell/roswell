@@ -128,8 +128,6 @@
   (format t "no options for clisp~%")
   (cons t argv))
 
-(push `("clisp" . clisp-get-version) *list-cmd*)
-
 (defun clisp (type)
   (case type
     (:help '(clisp-help))
@@ -145,4 +143,4 @@
                 clisp-install
                 clisp-clean
                 setup))
-    #+nil(:list 'clisp-get-version)))
+    (:list 'clisp-get-version)))

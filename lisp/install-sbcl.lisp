@@ -308,8 +308,6 @@
        do (fmt name default description)))
   (cons t argv))
 
-(push `("sbcl" . sbcl-get-version) *list-cmd*)
-
 (defun sbcl (type)
   (case type
     (:help '(sbcl-help))

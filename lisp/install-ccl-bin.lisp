@@ -71,8 +71,6 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("ccl-bin" . ccl-bin-get-version) *list-cmd*)
-
 (defun ccl-bin (type)
   (case type
     (:help '(ccl-bin-help))

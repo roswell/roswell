@@ -75,8 +75,6 @@
     (fmt "install" t "Download archive"))
   (cons t argv))
 
-(push `("cmu-bin" . cmu-bin-get-version) *list-cmd*)
-
 (defun cmu-bin (type)
   (case type
     (:help '(cmu-bin-help))
