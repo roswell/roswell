@@ -27,11 +27,11 @@ test:
     - echo "sbcl-bin-version-uri	0	https://github.com/roswell/sbcl_bin/releases/download/files/build.html" >> ~/.roswell/config
     - echo "sbcl-bin-uri	0	https://github.com/roswell/sbcl_bin/releases/download/" >> ~/.roswell/config;
     - sh bootstrap
-    - ./configure # --with-platformhtml-base=$ROSWELL_PLATFORMHTML_BASE --with-sbcl-bin-base=$ROSWELL_SBCL_BIN_URI
+    - ./configure
     - make -j4
     - sudo make install
     - ros version
-    - ros -v setup
+    - ros -v quicklisp.dist=http://beta.quicklisp.org/dist/quicklisp.txt setup
     - ros install
     - ros install prove fukamachi/sblint zip
     - run-prove roswell-test.asd
@@ -41,5 +41,5 @@ test:
     - ros -v run -- --version
     - ros config
     - man -Pcat ros
-    - sblint roswell.asd
+    - #sblint roswell.asd
     - cat /tmp/proxy-log || true
