@@ -7,7 +7,7 @@
   (:export :*build-hook* :install-impl :read-call :*ros-path*
    :install-system-script :install-impl-if-probed :install-script-if-probed
    :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
-   :install :decide-version :decide-download
+   :install :decide-version :decide-download :require-system-package
    :start :setup :date :github-version :version :install-script :count-line-stream))
 
 (in-package :ros.install)
