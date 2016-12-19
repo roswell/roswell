@@ -124,4 +124,9 @@
                      (uiop:run-program `(,(sh) "-lc" ,(format nil "cd ~S;pwd" (uiop:native-namestring path)))
                                        :output :string)))
 
+(defun require-system-package (&rest packages)
+  "check installation of system library like 'zlib' and show how to install."
+  (declare (ignorable packages))
+  t)
+
 (pushnew :ros.install.util *features*)

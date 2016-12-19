@@ -71,7 +71,10 @@
          (when default
            (set-opt name (eql default t)))
          (with name)))
-  (cons t argv))
+  (cons (if (opt "core-compression")
+            (require-system-package "zlib")
+            t)
+        argv))
 
 (defun sbcl-start (argv)
   (when (and (find (getf argv :target) '("sbcl-bin" "sbcl") :test 'equal)
