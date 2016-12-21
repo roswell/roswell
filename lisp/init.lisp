@@ -283,7 +283,7 @@ have the latest asdf, and this file has a workaround for this.
      for p = (position #\, ar)
      for arg = (if p (subseq ar 0 p) ar)
      do (if (find :quicklisp *features*)
-            (funcall (read-from-string "ql:quickload") arg :silent t)
+            (funcall (read-from-string "ql:quickload") arg :silent (verbose))
             (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg))
      while p))
 
