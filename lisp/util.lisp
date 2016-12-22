@@ -70,6 +70,11 @@
   (ros:roswell `("roswell-internal-use" "download" ,uri ,file ,@(unless verbose '("1"))) :interactive nil))
 
 (defun expand (archive dest &key verbose)
+  #+win32
+  (progn
+    (ros:include "install+7zip")
+    (unless (probe-file (read-call "roswell.install.7zip+::7za"))
+      (ros:roswell '("install 7zip+"))))
   (ros:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
                (or #-win32 :interactive nil) nil))
 
