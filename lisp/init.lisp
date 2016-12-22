@@ -79,14 +79,16 @@ have the latest asdf, and this file has a workaround for this.
                 (or (and (find :asdf *features*)
                          (not (equal (opt "asdf")
                                      (funcall (read-from-string "asdf:asdf-version")))))
-                    (not (find :asdf *features*)))
-                (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir"))))
-       (ignore-errors
-         (locally
-             (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
-           (handler-bind
-               (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
-             (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf")) (opt "homedir")))))))
+                    (not (find :asdf *features*))))
+       (let ((path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf"))
+                                    (opt "homedir"))))
+         (when (probe-file path)
+           (ignore-errors
+             (locally
+                 (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
+               (handler-bind
+                   (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
+                 (cl:load path)))))))
      (find :asdf *features*)
      (ignore-errors (require "asdf")))))
 
@@ -199,11 +201,13 @@ have the latest asdf, and this file has a workaround for this.
                         (list names))))
     (unless (or (not name)
                 (member name *included-names* :test 'string=))
-      (push name *included-names*)
-      (unless (equal provide name)
-        (cl:load (make-pathname
-                  :defaults *include-path*
-                  :name name :type "lisp"))))))
+      (let ((path (make-pathname
+                   :defaults *include-path*
+                   :name name :type "lisp")))
+        (unless (equal provide name)
+          (push name *included-names*)
+          (when (probe-file path)
+            (cl:load path)))))))
 
 (defun swank (&rest params)
   (unless (cl:find-package :ros.swank.util)
