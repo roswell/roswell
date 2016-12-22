@@ -193,15 +193,17 @@ have the latest asdf, and this file has a workaround for this.
 (defvar *include-path* #.*load-pathname*)
 
 (defun include (names &optional provide)
-  (dolist (name `(,provide ,@(if (listp names)
-                                 names
-                                 (list names))))
-    (unless (find name *included-names* :test 'equal)
+  (dolist (name `(,provide
+                  ,@(if (listp names)
+                        names
+                        (list names))))
+    (unless (or (not name)
+                (member name *included-names* :test 'string=))
+      (push name *included-names*)
       (unless (equal provide name)
         (cl:load (make-pathname
                   :defaults *include-path*
-                  :name name :type "lisp")))
-      (push name *included-names*))))
+                  :name name :type "lisp"))))))
 
 (defun swank (&rest params)
   (unless (cl:find-package :ros.swank.util)
@@ -217,7 +219,8 @@ have the latest asdf, and this file has a workaround for this.
 (defun shebang-reader (stream sub-character infix-parameter)
   (declare (ignore sub-character infix-parameter))
   (loop for x = (read-char stream nil nil)
-     until (or (not x) (eq x #\newline))))
+        until (or (not x) (eq x #\newline)))
+  (values))
 
 (compile 'shebang-reader)
 (defun ignore-shebang ()
