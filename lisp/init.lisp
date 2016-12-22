@@ -80,15 +80,7 @@ have the latest asdf, and this file has a workaround for this.
                          (not (equal (opt "asdf")
                                      (funcall (read-from-string "asdf:asdf-version")))))
                     (not (find :asdf *features*))))
-       (let ((path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" (opt "asdf"))
-                                    (opt "homedir"))))
-         (when (probe-file path)
-           (ignore-errors
-             (locally
-                 (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
-               (handler-bind
-                   (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
-                 (cl:load path)))))))
+       (funcall 'asdf :no-download t))
      (find :asdf *features*)
      (ignore-errors (require "asdf")))))
 
@@ -184,11 +176,11 @@ have the latest asdf, and this file has a workaround for this.
                                (opt "quicklisp")))))
       (when (probe-file path)
         (cl:load path)
-        (let ((symbol (read-from-string "ql:*local-project-directories*")))
+        (let ((symbol (read-from-string "ql:*local-project-directories*"))
+              (path (merge-pathnames "local-projects/" (opt "homedir"))))
           (when (or (ignore-errors (probe-file path))
                     #+clisp(ext:probe-directory path))
-            (set symbol (cons (merge-pathnames "local-projects/" (opt "homedir"))
-                              (symbol-value symbol)))))
+            (set symbol (cons path (symbol-value symbol)))))
         t))))
 
 (defvar *included-names* '())
@@ -214,12 +206,6 @@ have the latest asdf, and this file has a workaround for this.
     (include "util-swank"))
   (apply (read-from-string "ros.swank.util:swank") params))
 
-#+quicklisp
-(let ((path (merge-pathnames "local-projects/" (opt "homedir"))))
-  (when (or (ignore-errors (probe-file path))
-            #+clisp(ext:probe-directory path))
-    (push path ql:*local-project-directories*)))
-
 (defun shebang-reader (stream sub-character infix-parameter)
   (declare (ignore sub-character infix-parameter))
   (loop for x = (read-char stream nil nil)
@@ -241,16 +227,24 @@ have the latest asdf, and this file has a workaround for this.
         ret)))
 
 (defvar *downloaded-asdf-loaded* nil)
-(defun asdf ()
-  (unless *downloaded-asdf-loaded*
-    (let* ((version-installed (opt "asdf.version"))
-           (version (or version-installed
-                        (progn (roswell '("ros" "asdf" "install"))
-                               (roswell '("config" "show" "asdf.version") :string t)))))
-      (when (equal version "NIL")
-        (error "asdf download error?"))
-      (cl:load (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir")))))
-  (setf *downloaded-asdf-loaded* t))
+(defun asdf (&key no-download)
+  (setf *downloaded-asdf-loaded*
+        (or *downloaded-asdf-loaded*
+            (let* ((version-installed (opt "asdf.version"))
+                   (version (or version-installed
+                                (unless no-download
+                                  (roswell '("ros" "asdf" "install"))
+                                  (roswell '("config" "show" "asdf.version") :string t))))
+                   (path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir"))))
+              (when (equal version "NIL")
+                (error "asdf download error?"))
+              (when (probe-file path)
+                (ignore-errors
+                  (locally
+                      (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
+                    (handler-bind
+                        (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
+                      (cl:load path)))))))))
 
 (let ((symbol (ignore-errors (read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (opt "impl"))))
