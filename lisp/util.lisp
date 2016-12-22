@@ -32,16 +32,12 @@
 
 (defun module (prefix name)
   (read-call "ql:register-local-projects")
-  (let ((imp (format nil "roswell.~A.~A" prefix name))
-        (path (make-pathname :name (format nil "~A-~A" prefix name)
-                             :type "lisp" :defaults (opt"lispdir"))))
+  (let ((imp (format nil "roswell.~A.~A" prefix name)))
     (or
      (and (or (read-call "ql-dist:find-system" imp)
               (read-call "ql:where-is-system" imp))
           (read-call "ql:quickload" imp :silent t))
-     (ignore-errors
-      (when (probe-file path)
-        (load path))))
+     (ros:include (format nil "~A-~A" prefix name)))
     (ignore-errors
      (let (*read-eval*) (read-from-string (format nil "~A::~A" imp name))))))
 
