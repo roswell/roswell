@@ -9,11 +9,17 @@
 (defvar *msys2-basever* "20150916")
 ;;(defvar *msys2-sha1* "88fa66ac2a18715a542e0768b1af9b2f6e3680b2")
 ;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
-(defvar *msys2-arch* #+x86-64 "x86_64" #-x86-64 "i686") ;; TBD ARM windows?
-(defvar *msys2-bits* #+x86-64 "64" #-x86-64 "32")
+(defvar *msys2-arch*)
+(defvar *msys2-bits*)
 (defun msys2-setup (argv)
-  (let ((path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" *msys2-basever*) (homedir)))
-        (msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
+  (let* ((*msys2-bits* (or (and (position "--32" (getf argv :argv) :test 'equal) 32)
+                           (and (position "--64" (getf argv :argv) :test 'equal) 64)
+                           #+x86-64 64
+                           #-x86-64 32))
+         (*msys2-arch* (if (= 32 *msys2-bits*)
+                           "i686" "x86_64"))
+         (path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" *msys2-basever*) (homedir)))
+         (msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
     (if  (probe-file (merge-pathnames (format nil "mingw~A/bin/gcc.exe" *msys2-bits*) msys))
          (format t "msys2 have been setup~%")
          (progn
