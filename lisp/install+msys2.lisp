@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :roswell.install.msys2
+(defpackage :roswell.install.msys2+
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :roswell.install.msys2)
+(in-package :roswell.install.msys2+)
 #-win32
 (progn
   (warn "msys2 is only required on windows"))
@@ -57,7 +57,7 @@
   (format t "~%")
   (cons t argv))
 
-(defun msys2 (type)
+(defun msys2+ (type)
   (case type
     (:help '(msys2-help))
     (:install `(msys2-setup))

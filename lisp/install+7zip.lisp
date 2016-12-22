@@ -1,7 +1,7 @@
 (ros:include "util-install-quicklisp")
-(defpackage :roswell.install.7zip
+(defpackage :roswell.install.7zip+
   (:use :cl :ros.install :ros.util :ros.locations))
-(in-package :roswell.install.7zip)
+(in-package :roswell.install.7zip+)
 #-win32
 (progn
   (warn "7zip is only required on windows"))
@@ -41,7 +41,7 @@
   (format t "~%")
   (cons t argv))
 
-(defun 7zip (type)
+(defun 7zip+ (type)
   (case type
     (:help '(7z-help))
     (:install '(setup-7za))))
