@@ -31,9 +31,9 @@ have the latest asdf, and this file has a workaround for this.
   (:documentation "Roswell backend."))
 
 (in-package :ros)
-(defvar *argv* nil)
-(defvar *ros-opts* nil)
-(defvar *main* nil)
+(defparameter *argv* nil)
+(defparameter *ros-opts* nil)
+(defparameter *main* nil)
 
 ;; small tools
 (defun getenv (x)
@@ -184,7 +184,7 @@ have the latest asdf, and this file has a workaround for this.
         t))))
 
 (defvar *included-names* '())
-(defvar *include-path* #.*load-pathname*)
+(defparameter *include-path* #.*load-pathname*)
 
 (defun include (names &optional provide)
   (dolist (name `(,provide
@@ -291,7 +291,7 @@ have the latest asdf, and this file has a workaround for this.
 (setf (fdefinition 'load-system)
       #'system)
 
-(defvar *version-cache* nil)
+(defparameter *version-cache* nil)
 (defun version (&optional opt)
   (if opt
       (roswell `("roswell-internal-use" "version" ,(string-downcase (princ-to-string opt))) :string t)
