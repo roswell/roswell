@@ -5,7 +5,7 @@
 (defpackage :ros.util
   (:use :cl)
   (:import-from :ros :opt)
-  (:export :uname :uname-m :homedir :config :impl :which :list%
+  (:export :uname :uname-m :homedir :config :impl :which :list% :config-env
            :parse-version-spec :download :expand :sh :chdir :system :module
            :core-extention :clone-github :opt :read-call :set-opt :copy-dir))
 
@@ -151,3 +151,12 @@ ccl-bin      -> (\"ccl-bin\" nil)
         (delete-file path/)
         (funcall (intern (string :delete-directory-tree) :uiop) dir :if-does-not-exist :ignore :validate t)
         t)))
+
+(defun config-env ()
+  #+win32
+  (let* ((w (opt "wargv0"))
+         (a (opt "argv0"))
+         (path (uiop:native-namestring
+                (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w)))))
+    (ros:setenv "MSYSTEM" #+x86-64 "MINGW64" #-x86-64 "MINGW32")
+    (ros:setenv "PATH" (format nil "~A;~A"(subseq path 0 (1- (length path))) (ros:getenv "PATH")))))

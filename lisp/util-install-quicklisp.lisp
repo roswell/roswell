@@ -112,13 +112,7 @@
 
 (defun start (argv)
   (ensure-directories-exist (homedir))
-  #+win32
-  (let* ((w (opt "wargv0"))
-         (a (opt "argv0"))
-         (path (uiop:native-namestring
-                (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w)))))
-    (ros:setenv "MSYSTEM" #+x86-64 "MINGW64" #-x86-64 "MINGW32")
-    (ros:setenv "PATH" (format nil "~A;~A"(subseq path 0 (1- (length path))) (ros:getenv "PATH"))))
+  (config-env)
   (let ((target (getf argv :target))
         (version (getf argv :version)))
     (when (and (installedp argv) (not (opt "install.force")))
