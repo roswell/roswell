@@ -49,6 +49,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (ros:roswell '("list" "installed") *standard-output*))
       ((equal (first r) "dump")
        (delete-dump (rest r)))
+      ((let ((func (ros.util:module "delete" (first r))))
+         (when func
+           (apply func (rest r)))))
       (t
        (let* ((impl-name (first r))
               (path (merge-pathnames (format nil "impls/~A/~A/~A/"
