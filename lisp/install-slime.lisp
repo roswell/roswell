@@ -14,7 +14,7 @@
 
 (defun slime-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (github-version (swank-git-version-uri) "slime" (lambda (href) (subseq href (+ 2 (position #\/ href :from-end t))))))
+  (github-version (slime-git-version-uri) "slime" (lambda (href) (subseq href (+ 2 (position #\/ href :from-end t))))))
 
 (defun name-error (name)
   (format *error-output* "~A is not appropriate format. ~% quicklisp dist for XXXX.XX.XX , slime version for X.XX.~%" name)

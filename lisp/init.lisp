@@ -202,9 +202,8 @@ have the latest asdf, and this file has a workaround for this.
             (cl:load path)))))))
 
 (defun swank (&rest params)
-  (unless (cl:find-package :ros.swank.util)
-    (include "util-swank"))
-  (apply (read-from-string "ros.swank.util:swank") params))
+  (include "util-swank")
+  (apply (read-from-string "roswell.util.swank:swank") params))
 
 (defun shebang-reader (stream sub-character infix-parameter)
   (declare (ignore sub-character infix-parameter))
