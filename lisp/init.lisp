@@ -176,30 +176,35 @@ have the latest asdf, and this file has a workaround for this.
                                (opt "quicklisp")))))
       (when (probe-file path)
         (cl:load path)
-        (let ((symbol (read-from-string "ql:*local-project-directories*"))
-              (path (merge-pathnames "local-projects/" (opt "homedir"))))
-          (when (or (ignore-errors (probe-file path))
-                    #+clisp(ext:probe-directory path))
-            (set symbol (cons path (symbol-value symbol)))))
+        (let ((symbol (read-from-string "ql:*local-project-directories*")))
+          (loop for path in `(,(merge-pathnames "local-projects/" (opt "homedir"))
+                              ,(merge-pathnames ".roswell/local-projects/"
+                                                (make-pathname :defaults *load-pathname*
+                                                               :type nil
+                                                               :name nil)))
+                when (or (ignore-errors (probe-file path))
+                         #+clisp(ext:probe-directory path))
+                  do (set symbol (cons path (symbol-value symbol)))))
         t))))
 
 (defvar *included-names* '())
 (defparameter *include-path* #.*load-pathname*)
 
 (defun include (names &optional provide)
-  (dolist (name `(,provide
+  (loop
+    for name in `(,provide
                   ,@(if (listp names)
                         names
-                        (list names))))
-    (unless (or (not name)
-                (member name *included-names* :test 'string=))
-      (let ((path (make-pathname
-                   :defaults *include-path*
-                   :name name :type "lisp")))
-        (unless (equal provide name)
-          (push name *included-names*)
-          (when (probe-file path)
-            (cl:load path)))))))
+                        (list names)))
+    for path = (make-pathname
+                :defaults *include-path*
+                :name name :type "lisp")
+    unless (or (not name)
+               (member name *included-names* :test 'string=))
+      do (push name *included-names*)
+         (and (probe-file path)
+              (not (equal provide name))
+              (cl:load path))))
 
 (defun swank (&rest params)
   (include "util-swank")
@@ -380,8 +385,8 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun run (list)
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
-  (loop :for elt :in list
-     :do (apply (intern (string (first elt)) (find-package :ros)) elt)))
+  (loop for elt in list
+        do (apply (intern (string (first elt)) (find-package :ros)) elt)))
 
 #+clisp
 (unless (find :ros.init *features*)
