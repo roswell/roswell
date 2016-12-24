@@ -173,13 +173,17 @@
         (funcall *build-hook*))
       (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
                                          roswell/ subdirectory of the system...~%" (incf step))
-      (let ((scripts (directory (merge-pathnames "roswell/*.*" (ql:where-is-system system)))))
-        (if scripts
-            (format t "~&Found ~a scripts:~{ ~a~}~%"
-                    (length scripts) (mapcar #'pathname-name scripts))
-            (format t "~&No roswell scripts found.~%"))
-        (dolist (from scripts)
-          (install-ros from))))))
+      (and (ql:where-is-system system)
+           (let ((a (namestring (truename (merge-pathnames "local-projects/" (homedir)))))
+                 (b (namestring (truename (ql:where-is-system system)))))
+             (string= a b :end2 (min (length a) (length b))))
+           (let ((scripts (directory (merge-pathnames "roswell/*.*" (ql:where-is-system system)))))
+             (if scripts
+                 (format t "~&Found ~a scripts:~{ ~a~}~%"
+                         (length scripts) (mapcar #'pathname-name scripts))
+                 (format t "~&No roswell scripts found.~%"))
+             (dolist (from scripts)
+               (install-ros from)))))))
 
 (defun install-script (path body)
   (declare (ignorable path body))
