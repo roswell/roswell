@@ -174,13 +174,13 @@ have the latest asdf, and this file has a workaround for this.
                  :defaults (or path
                                (and environment (getenv environment))
                                (opt "quicklisp"))))
-          (local ,(ignore-errors
-                   (truename
-                    (merge-pathnames
-                     ".roswell/local-projects/"
-                     (make-pathname :defaults *load-pathname*
-                                    :type nil
-                                    :name nil))))))
+          (local (ignore-errors
+                  (truename
+                   (merge-pathnames
+                    ".roswell/local-projects/"
+                    (make-pathname :defaults *load-pathname*
+                                   :type nil
+                                   :name nil))))))
       (when (probe-file path)
         (cl:load path)
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
