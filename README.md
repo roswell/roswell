@@ -63,7 +63,6 @@ Commands:
    fmt       [WIP] indent lisp source
    help      Show Command help
    setup     Initial setup
-   swank     [WIP] Manage swank version for roswell
    template  [WIP] Manage templates
    version   Show the roswell version information
    wait      Wait forever
