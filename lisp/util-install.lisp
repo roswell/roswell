@@ -41,14 +41,14 @@
          (result (and (pathname-name impl/version)
                       (probe-file (setf sub (make-pathname :defaults impl/version :type "ros"))))))
     (when result
-      (read-call "install-ros" sub)
+      (funcall 'install-ros sub)
       result)))
 
 (defun install-system-if-probed (imp)
   (let ((result (or (read-call "ql-dist:find-system" imp)
                     (read-call "ql:where-is-system" imp))))
     (when result
-      (read-call "install-system-script" imp)
+      (funcall 'install-system-script imp)
       result)))
 
 (defun install-localpath-if-probed (namestring)
