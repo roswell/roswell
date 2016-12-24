@@ -27,7 +27,7 @@ exec ros -L sbcl-bin -- $0 "$@"
         (*verbose-p* (or (ros:verbose)
                          (ros:opt "emacs.verbose"))))
     (unless (probe-file path)
-      (ros:roswell '("swank" "install") :interactive nil))
+      (ros:roswell '("install" "slime") :interactive nil))
     (mute-error-if-not-verbose
      (ros:exec
       `("emacs" "-l" ,(namestring path) "--eval"

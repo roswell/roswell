@@ -11,8 +11,8 @@
 (defun roswell-slime-directory ()
   (concat
    (roswell-configdir)
-   "lisp/swank/"
-   (roswell-opt "swank.version")
+   "lisp/slime/"
+   (roswell-opt "slime.version")
    "/"))
 
 (defvar roswell-slime-contribs '(slime-fancy))
