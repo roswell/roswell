@@ -9,16 +9,16 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ros:include "util"))
 
 (defpackage :ros.script.init.3672012201
-  (:use :cl :ros))
+  (:use :cl :ros :ros.util))
 (in-package :ros.script.init.3672012201)
 
 (defun main (&optional name &rest r)
   (if name
       (let* ((date (get-universal-time))
              (path
-              (or (probe-file (merge-pathnames (format nil "templates/~A/template.asd" name) (ros.util:homedir)))
+              (or (probe-file (merge-pathnames (format nil "templates/~A/template.asd" name) (homedir)))
                   (unless (find #\/ name)
-                    (let ((dir (directory (merge-pathnames (format nil "templates/*/~A/template.asd" name) (ros.util:homedir)))))
+                    (let ((dir (directory (merge-pathnames (format nil "templates/*/~A/template.asd" name) (homedir)))))
                       (cond
                         ((>= (length dir) 2)
                          (format *error-output* "ambiguous ~{~A~%~}" dir)

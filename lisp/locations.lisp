@@ -1,7 +1,3 @@
-(cl:in-package :cl-user)
-(when (cl:find-package :ros.locations)
-  (pushnew :ros.locations *features*))
-
 (defpackage :ros.locations
   (:use :cl))
 (in-package :ros.locations)
@@ -48,5 +44,3 @@
 (defuri sbcl-bin-uri)
 
 (defuri slime-uri "https://github.com/slime/slime.git")
-
-(push :ros.locations *features*)
