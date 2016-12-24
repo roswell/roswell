@@ -28,7 +28,7 @@
          (format nil "impls/~A/windows/7za/9.20/7za.exe"
                  (ros:roswell '("roswell-internal-use" "uname" "-m") :string
                               T))
-         (homedir))))
+         (ros.util:homedir))))
     (defmethod install ((release release))
       (let ((archive (ensure-local-archive-file release))
             (output
