@@ -127,19 +127,27 @@ ccl-bin      -> (\"ccl-bin\" nil)
             `(nil ,string)
             `(,string nil)))))
 
-(defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates") branch (homedir (homedir)))
+(defun checkoutdir ()
+  (or (ignore-errors
+       (let*((* (read-from-string "ql:*local-project-directories*")))
+         (setf * (first (symbol-value *))
+               * (merge-pathnames "../" *)
+               * (truename *))))
+      (homedir)))
+
+(defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates") branch (home (checkoutdir)))
   (format *error-output* "install from github ~A/~A~%" owner name)
   (if (which "git")
-      (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) homedir)))
+      (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
         (setq branch (if branch (format nil "-b ~A" branch) ""))
         (if (funcall (intern (string :probe-file*) :uiop) dir)
             ()
             (funcall (intern (string :run-program) :uiop)
-             (format nil "git clone ~A https://github.com/~A/~A.git ~A"
-                     branch
-                     owner name
-                     (namestring (ensure-directories-exist dir))))))
-      (let* ((path/ (merge-pathnames (format nil "~A/~A.tgz" path alias) homedir))
+                     (format nil "git clone ~A https://github.com/~A/~A.git ~A"
+                             branch
+                             owner name
+                             (namestring (ensure-directories-exist dir))))))
+      (let* ((path/ (merge-pathnames (format nil "~A/~A.tgz" path alias) home))
              (dir (merge-pathnames ".expand/" (make-pathname :defaults path/ :name nil :type nil))))
         (funcall (intern (string :delete-directory-tree) :uiop) dir :if-does-not-exist :ignore :validate t)
         (setq branch (or branch "master"))
@@ -147,7 +155,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
                   path/)
         (expand path/ (ensure-directories-exist dir))
         (rename-file (first (directory (merge-pathnames "*/" dir)))
-                     (merge-pathnames (format nil "~A/~A/" path alias) homedir))
+                     (merge-pathnames (format nil "~A/~A/" path alias) home))
         (delete-file path/)
         (funcall (intern (string :delete-directory-tree) :uiop) dir :if-does-not-exist :ignore :validate t)
         t)))
