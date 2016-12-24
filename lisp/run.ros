@@ -5,10 +5,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  )
+  (ros:include "util"))
 
 (defpackage :ros.script.run.3668210999
-  (:use :cl))
+  (:use :cl :ros.util))
 (in-package :ros.script.run.3668210999)
 
 (defun main (system script verbose &rest rest)
@@ -16,10 +16,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
          (version (subseq system (1+ pos)))
          (system% (subseq system 0 pos))
          (verbose (parse-integer verbose :junk-allowed t))
-         (func (ros.util:module "run" system%)))
+         (func (module "run" system%)))
     (declare (ignorable version verbose))
-    (ros.util:set-opt "impl" system)
-    (ros.util:set-opt "verbose" (format nil "~A" verbose))
+    (set-opt "impl" system)
+    (set-opt "verbose" (format nil "~A" verbose))
     (if func
         (funcall func script rest)
         (format *error-output* "not supported impl:~A~%" system))))

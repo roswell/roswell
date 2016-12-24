@@ -10,6 +10,6 @@
                  (format nil "impls/~A/~A/~A/dump/" (uname-m) (uname) impl)
                  (homedir))
     for i in (directory (make-pathname :name :wild
-                                       :type (ros.util:core-extention impl)
+                                       :type (core-extention impl)
                                        :defaults path))
     do (format t "~A~%" (pathname-name i))))

@@ -51,7 +51,7 @@
   (cons t argv))
 
 (defun abcl-bin-script (argv)
-  (let ((java (ros.util:which "java"))
+  (let ((java (which "java"))
         (dir (merge-pathnames (format nil "~A/" (opt "as")) (abcl-bin-impl))))
     (unless java
       (format *error-output* "Error: JAVA wasn't found in the path. 'ros use abcl' will fail.~%")

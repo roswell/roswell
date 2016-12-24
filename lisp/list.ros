@@ -26,7 +26,7 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
                             when (ignore-errors (string-equal "roswell.list." x :end2 13))
                               collect (subseq x 13))
                       #'string<)))
-      (let ((func (ros.util:module "list" (first r))))
+      (let ((func (module "list" (first r))))
         (if func
             (apply func (rest r))
             (format *error-output* "not suppported type for list~%")))))

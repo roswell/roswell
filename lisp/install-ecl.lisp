@@ -26,9 +26,9 @@
 (defun ecl-chdir (argv)
   (let ((version (ecl-version-filename (getf argv :version))))
     (or (ignore-errors
-         (ros.util:chdir (merge-pathnames (format nil "src/ecl-~A/" version) (homedir))))
+         (chdir (merge-pathnames (format nil "src/ecl-~A/" version) (homedir))))
         (ignore-errors
-         (ros.util:chdir (merge-pathnames (format nil "src/mirror-ecl-~A/" version) (homedir)))))))
+         (chdir (merge-pathnames (format nil "src/mirror-ecl-~A/" version) (homedir)))))))
 
 (defun ecl-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))

@@ -25,7 +25,7 @@
          (end (position #\/ str :from-end t))
          (end2 (position #\. str :from-end t))
          (start (position #\/ str :from-end t :end end)))
-    (ros.util:clone-github
+    (clone-github
      (subseq str (1+ start) end)
      (subseq str (1+ end) end2)
      :path "lisp/slime" :branch (format nil "v~A" name) :alias name))

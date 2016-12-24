@@ -20,5 +20,5 @@
               (setf (config "default.lisp")
                     lisp)))
        t)
-      (t (let ((func (ros.util:module "use" lisp)))
+      (t (let ((func (module "use" lisp)))
            (funcall func version))))))

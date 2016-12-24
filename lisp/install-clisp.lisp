@@ -55,7 +55,7 @@
         (uri (clisp-patch1-uri)))
     (format t "~&Downloading patch: ~A~%" uri)
     (download uri file)
-    (ros.util:chdir (opt "src"))
+    (chdir (opt "src"))
     (format t "~%Applying patch:~%")
     (uiop/run-program:run-program (format nil "git apply ~A" file) :output t))
   (cons t argv))
@@ -76,7 +76,7 @@
                             "")
                         (opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-      (ros.util:chdir src)
+      (chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -91,7 +91,7 @@
     (let* ((src (namestring (namestring (merge-pathnames "src/" (opt "src")))))
            (cmd (format nil "ulimit -s 16384 && make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
-      (ros.util:chdir src)
+      (chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
   (cons t argv))
 
@@ -103,7 +103,7 @@
     (format t "~&prefix: ~s~%" impl-path)
     (ensure-directories-exist impl-path)
     (ensure-directories-exist log-path)
-    (ros.util:chdir src)
+    (chdir src)
     (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
@@ -115,7 +115,7 @@
 (defun clisp-clean (argv)
   (format t "~&Cleaning~%")
   (let ((src (namestring (merge-pathnames "src/" (opt "src")))))
-    (ros.util:chdir src)
+    (chdir src)
     (let* ((out (make-broadcast-stream))
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
