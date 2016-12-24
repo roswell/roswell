@@ -173,18 +173,21 @@ have the latest asdf, and this file has a workaround for this.
                  :type "lisp"
                  :defaults (or path
                                (and environment (getenv environment))
-                               (opt "quicklisp")))))
+                               (opt "quicklisp"))))
+          (local ,(ignore-errors
+                   (truename
+                    (merge-pathnames
+                     ".roswell/local-projects/"
+                     (make-pathname :defaults *load-pathname*
+                                    :type nil
+                                    :name nil))))))
       (when (probe-file path)
         (cl:load path)
-        (let ((symbol (read-from-string "ql:*local-project-directories*")))
-          (loop for path in `(,(merge-pathnames "local-projects/" (opt "homedir"))
-                              ,(merge-pathnames ".roswell/local-projects/"
-                                                (make-pathname :defaults *load-pathname*
-                                                               :type nil
-                                                               :name nil)))
-                when (or (ignore-errors (probe-file path))
-                         #+clisp(ext:probe-directory path))
-                  do (set symbol (cons path (symbol-value symbol)))))
+        (loop with symbol = (read-from-string "ql:*local-project-directories*")
+              for path in `(,(merge-pathnames "local-projects/" (opt "homedir")) ,local)
+              when (and path (or (ignore-errors (probe-file path))
+                                 #+clisp(ext:probe-directory path)))
+                do (set symbol (cons path (symbol-value symbol))))
         t))))
 
 (defvar *included-names* '())
