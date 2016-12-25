@@ -17,12 +17,12 @@ exec ros -Q +R -- $0 "$@"
   (let* ((header "exec ros")
          (hl (length header)))
     (and (equal header (subseq argv 0 (length header)))
-         (loop :for last := nil :then c
-            :for i :from 0
-            :for c :across argv
-            :when (and (equal #\- last)
-                       (equal #\- c))
-            :do (return (subseq argv hl (1- i)))))))
+         (loop for last = nil then c
+               for i from 0
+               for c across argv
+               when (and (equal #\- last)
+                         (equal #\- c))
+                 do (return (subseq argv hl (1- i)))))))
 
 (defun help ()
   (format *error-output* "~&Usage: ~A build <file>~%"
