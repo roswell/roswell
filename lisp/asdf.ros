@@ -5,13 +5,13 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util-install")
+  (ros:include '("locations" "util-install"))
   (ros:quicklisp :environment nil)
   (unless (find-package :plump)
     (ql:quickload '(:plump) :silent t)))
 
 (defpackage :ros.script.asdf.3672011844
-  (:use :cl :ros.util :roswell.locations :roswell.install))
+  (:use :cl :ros.util :ros.locations :roswell.install))
 (in-package :ros.script.asdf.3672011844)
 
 (defun asdf-get-version ()
