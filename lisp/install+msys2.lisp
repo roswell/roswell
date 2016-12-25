@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.msys2+
-  (:use :cl :ros.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :ros.locations))
 (in-package :roswell.install.msys2+)
 #-win32
 (progn

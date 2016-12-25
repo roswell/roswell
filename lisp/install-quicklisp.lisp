@@ -1,6 +1,6 @@
 (ros:include "util-install")
 (defpackage :roswell.install.quicklisp
-  (:use :cl :ros.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :ros.locations))
 (in-package :roswell.install.quicklisp)
 
 (defun quicklisp-help (argv)

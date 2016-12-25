@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.sigsegv+
-  (:use :cl :ros.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :ros.locations))
 (in-package :roswell.install.sigsegv+)
 
 (defvar *sigsegv-version* "2.10")

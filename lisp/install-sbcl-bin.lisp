@@ -1,6 +1,6 @@
 (ros:include "util-install")
 (defpackage :roswell.install.sbcl-bin
-  (:use :cl :ros.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :ros.locations))
 (in-package :roswell.install.sbcl-bin)
 
 ;; sbcl-bin is specially treated. Installation are mainly done by src/cmd-install-sbcl-bin.c.

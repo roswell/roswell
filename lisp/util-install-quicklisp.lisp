@@ -1,19 +1,7 @@
-(cl:in-package :cl-user)
-(ros:include "util-install")
-#-asdf
-(require :asdf)
-#+sbcl
-(require :sb-posix)
-
+(ros:include '("util-install" "system") "util-install-quicklisp")
 (ros:quicklisp :environment nil)
-(ros:include "system")
-
-(unless (find-package :uiop)
-  (ql:quickload :uiop :silent t))
-
-(ql:quickload '(:simple-date-time :split-sequence :plump :cl-ppcre #+win32 :zip) :silent t)
-
-(in-package :ros.install)
+(ql:quickload '(:uiop :simple-date-time :split-sequence :plump :cl-ppcre #+win32 :zip) :silent t)
+(in-package :roswell.install)
 
 (defvar *build-hook* nil)
 

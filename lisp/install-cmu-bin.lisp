@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.cmu-bin
-  (:use :cl :ros.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :ros.locations))
 (in-package :roswell.install.cmu-bin)
 
 (defun cmu-bin-get-version ()
