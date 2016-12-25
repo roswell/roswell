@@ -174,7 +174,7 @@
       (format *error-output* "~&[~a/3] Attempting to install the scripts in ~
                                          roswell/ subdirectory of the system...~%" (incf step))
       (and (ql:where-is-system system)
-           (let ((a (namestring (truename (merge-pathnames "local-projects/" (homedir)))))
+           (let ((a (namestring (truename (homedir))))
                  (b (namestring (truename (ql:where-is-system system)))))
              (string= a b :end2 (min (length a) (length b))))
            (let ((scripts (directory (merge-pathnames "roswell/*.*" (ql:where-is-system system)))))
