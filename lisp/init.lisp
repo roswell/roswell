@@ -22,8 +22,9 @@ have the latest asdf, and this file has a workaround for this.
 (let ((*standard-output* (make-broadcast-stream)))
   #+sbcl (require :sb-posix))
 
-(defpackage :ros
+(defpackage :roswell
   (:use :cl)
+  (:nicknames :ros)
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf
@@ -190,7 +191,7 @@ have the latest asdf, and this file has a workaround for this.
                 do (set symbol (cons path (symbol-value symbol))))
         t))))
 
-(defvar *included-names* '())
+(defvar *included-names* '("ros"))
 (defparameter *include-path* #.*load-pathname*)
 
 (defun include (names &optional provide)
