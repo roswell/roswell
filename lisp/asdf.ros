@@ -16,7 +16,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun asdf-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (ros.install::github-version
+  (github-version
    (asdf-git-version-uri) "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
 
 (defvar *subcommands*
