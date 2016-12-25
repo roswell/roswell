@@ -1,5 +1,5 @@
 (defpackage :roswell.list.dump
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :roswell.list.dump)
 
 (defun dump (&rest params)

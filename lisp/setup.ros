@@ -8,7 +8,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (ros:include "util"))
 
 (defpackage :ros.script.setup.3672012282
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :ros.script.setup.3672012282)
 
 (defun split-spaces (line)

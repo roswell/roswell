@@ -11,7 +11,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (ql:quickload :uiop :silent t)))
 
 (defpackage :ros.script.delete.3672011943
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :ros.script.delete.3672011943)
 
 (defun delete-dump (params)

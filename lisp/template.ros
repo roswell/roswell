@@ -10,7 +10,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ql:quickload '(:cl-base64 :chipz) :silent t))
 
 (defpackage :ros.script.template.3670908195
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :ros.script.template.3670908195)
 
 (defvar *subcommands*  '(("rm" . template-rm)

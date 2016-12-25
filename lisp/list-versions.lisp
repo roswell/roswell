@@ -1,5 +1,5 @@
 (defpackage :roswell.list.versions
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :roswell.list.versions)
 
 (defun versions (&rest params)

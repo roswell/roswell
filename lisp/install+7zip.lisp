@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.7zip+
-  (:use :cl :roswell.install :ros.util :roswell.locations))
+  (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.7zip+)
 #-win32
 (progn

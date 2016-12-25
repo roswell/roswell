@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.run.msys
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :roswell.run.msys)
 
 (defvar *msys2-arch*)

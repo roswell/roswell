@@ -1,5 +1,5 @@
 (ros:include "util")
-(in-package :ros.util)
+(in-package :roswell.util)
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
   "Request URL and write the body of the response to FILE."
   (declare (ignorable follow-redirects quietly maximum-redirects))
@@ -28,7 +28,7 @@
          (format nil "impls/~A/windows/7za/9.20/7za.exe"
                  (ros:roswell '("roswell-internal-use" "uname" "-m") :string
                               T))
-         (ros.util:homedir))))
+         (roswell.util:homedir))))
     (defmethod install ((release release))
       (let ((archive (ensure-local-archive-file release))
             (output

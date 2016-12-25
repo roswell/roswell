@@ -9,7 +9,7 @@ exec ros +R -Q -L sbcl-bin -m roswell -- $0 "$@"
   (ros:include "util-use"))
 
 (defpackage :ros.script.use.3672012320
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :ros.script.use.3672012320)
 
 (defun main (&rest argv)

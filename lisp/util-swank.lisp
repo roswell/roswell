@@ -1,6 +1,6 @@
 (ros:include "util")
 (defpackage :roswell.util.swank
-  (:use :cl :ros.util)
+  (:use :cl :roswell.util)
   (:export :swank))
 (in-package :roswell.util.swank)
 

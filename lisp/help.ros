@@ -8,7 +8,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ros:include "util"))
 
 (defpackage :ros.script.help.3668211011
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :ros.script.help.3668211011)
 
 (defvar *options*

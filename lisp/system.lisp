@@ -1,10 +1,7 @@
-(cl:in-package :cl-user)
+(in-package :roswell.util)
 
-#-asdf
-(require :asdf)
-
-(ros:include "util")
-(in-package :ros.util)
+(ros:ensure-asdf)
+(ros:include "util" "system")
 
 (defmacro system (file &key depends-on (prefix ":roswell"))
   (let ((pos (or (position #\- file)

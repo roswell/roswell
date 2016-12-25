@@ -1,7 +1,7 @@
 (ros:include "util" "util-use")
 
 (defpackage :roswell.util.use
-  (:use :cl :ros.util)
+  (:use :cl :roswell.util)
   (:export :use))
 (in-package :roswell.util.use)
 

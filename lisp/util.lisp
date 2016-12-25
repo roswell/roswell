@@ -1,17 +1,11 @@
-(cl:in-package :cl-user)
-(when (cl:find-package :ros.util)
-  (pushnew :ros.util *features*))
-
-(defpackage :ros.util
+(ros:include () "util")
+(defpackage :roswell.util
   (:use :cl)
   (:import-from :ros :opt)
   (:export :uname :uname-m :homedir :config :impl :which :list% :config-env
            :parse-version-spec :download :expand :sh :chdir :system :module
            :core-extention :clone-github :opt :read-call :set-opt :copy-dir))
-
-(in-package :ros.util)
-
-(ros:include () "util")
+(in-package :roswell.util)
 
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))

@@ -11,7 +11,7 @@ exec ros -- $0 "$@"
     #+quicklisp(ql:quickload :uiop :silent t)))
 
 (defpackage :ros.script.dump.3672012101
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :ros.script.dump.3672012101)
 
 (defun dump-dir ()
@@ -242,8 +242,8 @@ exec ros -- $0 "$@"
                (setf ros:*argv*
                      (eval
                       (read-from-string
-                       "(loop :for i :from 0 :below (ext:argc)
-                             :collect (ext:argv i))")))
+                       "(loop for i from 0 below (ext:argc)
+                             collect (ext:argv i))")))
                (print ros:*argv*)
                (ros:run ',cmds)))))
       ;; (uiop:run-program (format nil "rm -r ~a" tmp))
