@@ -8,7 +8,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (ros:include "util"))
 
 (defpackage :ros.script.help.3668211011
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util)
+  (:export :*options* :option))
 (in-package :ros.script.help.3668211011)
 
 (defvar *options*
@@ -90,31 +91,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (format s "Usage: ~A [OPTIONS] [[--] script-path arguments...]~%~%" (opt "wargv0"))
        (commands s)
        (option s))
-      ((equal (first argv) "run")
-       (format s "Usage: ~A [OPTIONS] run [OPTIONS] [-- implementation-native-options...]~%~%" (opt "wargv0"))
-       (option s (nthcdr 4 *options*))) ;; fix me
-      ((equal (first argv) "install")
-       (let ((path (opt "quicklisp")))
-         (unless (probe-file (merge-pathnames "setup.lisp" path))
-           (ros:roswell '("install" "quicklisp"))))
-       (ros:quicklisp :environment nil)
-       (ros:include "util-install")
-       (ros:include "util-install-quicklisp")
-       (if (not (second argv))
-           (progn
-             (format s "Usage: ~A install impl [OPTIONS]~2%" (opt "wargv0"))
-             (format s "For more details on impl specific options, type:~%")
-             (format s " ~A help install impl~2%" (opt "wargv0"))
-             (format s "Candidates impls for installation are:~%")
-             (loop for i in (asdf:registered-systems)
-                   with len = #.(length "roswell.install.")
-                   when (and (string-equal "roswell.install." i :end2 (min (length i) len))
-                             (not (eql (aref i (1- (length i))) #\+)))
-                     do (format s "~A~%" (subseq i len))))
-           (let* ((impl (second argv))
-                  (fun (module "install" impl)))
-             (read-call "ros.install::install-impl" impl nil nil
-                        (when fun
-                          (funcall fun :help))))))
+      ((let ((func (module "help" (first argv))))
+         (when func
+           (funcall func argv))
+         func))
       (t (ros:exec `("man" ,(format nil "ros-~A" (first argv))))))))
 ;;; vim: set ft=lisp lisp:
