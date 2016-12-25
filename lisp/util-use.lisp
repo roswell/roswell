@@ -1,10 +1,9 @@
 (ros:include "util" "util-use")
 
-(defpackage :ros.use
+(defpackage :roswell.util.use
   (:use :cl :ros.util)
   (:export :use))
-
-(in-package :ros.use)
+(in-package :roswell.util.use)
 
 (defun use (arg)
   "Parse the lisp version string (such as ccl-bin/1.11) and set it to the correct config slot(s)"
