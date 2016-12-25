@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.sbcl
-  (:use :cl :roswell.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :roswell.locations))
 (in-package :roswell.install.sbcl)
 
 #|

@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.clisp
-  (:use :cl :roswell.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :roswell.locations))
 (in-package :roswell.install.clisp)
 
 (defun clisp-get-version ()

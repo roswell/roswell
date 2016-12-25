@@ -4,7 +4,7 @@
   (ql:quickload '(:plump) :silent t))
 
 (defpackage :roswell.install.slime
-  (:use :cl :roswell.install :ros.locations :ros.util))
+  (:use :cl :roswell.install :roswell.locations :ros.util))
 (in-package :roswell.install.slime)
 
 (defun slime-help (argv)

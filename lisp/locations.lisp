@@ -1,6 +1,6 @@
-(defpackage :ros.locations
+(defpackage :roswell.locations
   (:use :cl))
-(in-package :ros.locations)
+(in-package :roswell.locations)
 
 (defvar *locations* '())
 

@@ -11,7 +11,7 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
     (ros:include "util-install-quicklisp")))
 
 (defpackage :ros.script.install.3671936092
-  (:use :cl :roswell.install :ros.util :ros.locations))
+  (:use :cl :roswell.install))
 (in-package :ros.script.install.3671936092)
 
 (defun main (&rest argv)

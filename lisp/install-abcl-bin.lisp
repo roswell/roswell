@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.abcl-bin
-  (:use :cl :roswell.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :roswell.locations))
 (in-package :roswell.install.abcl-bin)
 
 (defvar *abcl-bin-get-version-cache* nil)

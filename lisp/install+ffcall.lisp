@@ -1,6 +1,6 @@
 (ros:include "util-install-quicklisp")
 (defpackage :roswell.install.ffcall+
-  (:use :cl :roswell.install :ros.util :ros.locations))
+  (:use :cl :roswell.install :ros.util :roswell.locations))
 (in-package :roswell.install.ffcall+)
 
 (defvar *ffcall-version* "1.10")
