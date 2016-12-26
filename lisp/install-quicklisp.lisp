@@ -8,12 +8,9 @@
   (cons t argv))
 
 (defun quicklisp-patch (path)
-  (ros:ensure-asdf)
-  (read-call "uiop:copy-file"
-   (make-pathname
-    :defaults #.*load-pathname*
-    :name "patch-quicklisp" :type "lisp")
-   (ensure-directories-exist (merge-pathnames "local-init/ros-download.lisp" path))))
+  (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/roswell.lisp" path))
+                       :direction :output :if-exists :supersede)
+    (format out "(ros:include \"patch-quicklisp\")~%")))
 
 (defun quicklisp-argv-parse (argv)
   (set-opt "download.uri" (format nil "~A~A" (quicklisp-uri) "quicklisp.lisp"))
