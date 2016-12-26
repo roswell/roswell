@@ -191,7 +191,7 @@ have the latest asdf, and this file has a workaround for this.
                 do (set symbol (cons path (symbol-value symbol))))
         t))))
 
-(defvar *included-names* '("ros"))
+(defvar *included-names* '("init"))
 (defparameter *include-path* #.*load-pathname*)
 
 (defun include (names &optional provide)
