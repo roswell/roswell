@@ -102,8 +102,13 @@
     (slime-write-helper))
   (cons t argv))
 
+(defun slime-list (&rest r)
+  (declare (ignorable r))
+  (dolist (i (slime-get-version))
+    (format t "~A~%" i)))
+
 (defun slime (type)
   (case type
     (:help '(slime-help))
     (:install `(slime-install))
-    (:list 'slime-get-version)))
+    (:list 'slime-list)))
