@@ -59,12 +59,12 @@ DEF_SUBCMD(cmd_internal_version) {
 
   if(argc==1) {
     printf("%s\n",PACKAGE_VERSION);
-  }else if (argc==2) {
+  }else if(argc==2) {
     char* ev=NULL;
     char* arg1=firsts(nthcdr(1,arg_));
-    if (strcmp(arg1,"lisp")==0) {
+    if(strcmp(arg1,"lisp")==0) {
       ev= "version";
-    }else if (strcmp(arg1,"dump")==0) {
+    }else if(strcmp(arg1,"dump")==0) {
       ev= "roswell";
     }
     if(ev) {
@@ -119,7 +119,7 @@ DEF_SUBCMD(cmd_internal_core_extention) {
   int argc=length(arg_);
   char* arg1=firsts(nthcdr(1,arg_));
 
-  if (argc==2)
+  if(argc==2)
     printf("%s\n",core_extention(arg1));
   return 0;
 }

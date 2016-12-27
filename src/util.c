@@ -63,7 +63,7 @@ LVal directory(char* path) {
     return 0;
   while((dirent=readdir(dir))!=0) {
     char* str=q(dirent->d_name);
-    if(dirent->d_type&DT_DIR)
+    if(dirent->d_type & DT_DIR)
       str=s_cat2(str,q("/"));
     ret=conss(str,ret);
   }
@@ -153,7 +153,7 @@ void cond_printf(int v,char* format,...) {
 
 void* alloc(size_t bytes) {
   void* p=malloc(bytes);
-  // printf("**%d\n",p);
+  /* printf("**%d\n",p); */
   return p;
 }
 

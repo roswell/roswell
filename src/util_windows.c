@@ -26,7 +26,7 @@ char* uname_m(void) {
   LPFN_ISWOW64PROCESS fnIsWow64Process  = (LPFN_ISWOW64PROCESS)
     GetProcAddress(GetModuleHandle(TEXT("kernel32")),"IsWow64Process");
   if(fnIsWow64Process) {
-    if (!fnIsWow64Process(GetCurrentProcess(), &isWow64))
+    if(!fnIsWow64Process(GetCurrentProcess(), &isWow64))
       return q("x86");
     if(isWow64)
       return q("x86-64");

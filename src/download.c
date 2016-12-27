@@ -32,7 +32,7 @@ size_t write_data(void *ptr, size_t size, size_t nmemb, void *stream) {
       1024*1024*1024>download_count?(current=download_count/(1024*1024),'M'):(current=download_count/(1024*1024*1024),'G');
     w=s_cat2(w,qsprintf(20,"%4d%c downloaded.",current,aux));
   }
-  if(strcmp(w,last_showd)){
+  if(strcmp(w,last_showd)) {
     if(!(download_opt&1))
       fprintf(download_out, "%s", w),fflush(download_out);
     s(last_showd),last_showd=q(w);
@@ -77,7 +77,7 @@ int download_simple (char* uri,char* path,int opt) {
   FILE *bodyfile;
   char* path_partial=cat(path,".partial",NULL);
   bodyfile = fopen(path_partial,"wb");
-  if (bodyfile == NULL) {
+  if(bodyfile == NULL) {
     s(path_partial);
     return 1;
   }

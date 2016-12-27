@@ -27,7 +27,7 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
       if(filename[i]=='b'||filename[i]=='B') {
         type="bzip2";
         break;
-      }else if(filename[i]=='x'||filename[i]=='X'){
+      }else if(filename[i]=='x'||filename[i]=='X') {
         type="xz";
         break;
       }else if(filename[i]=='7') {
@@ -61,14 +61,14 @@ DEF_SUBCMD(cmd_tar) {
     while ((opt = *p++) != '\0') {
       switch (opt) {
       case 'f':
-        if (*p != '\0')
+        if(*p != '\0')
           filename = p;
         else
           filename = *++argv;
         p += strlen(p);
         break;
       case 'C':
-        if (*p != '\0')
+        if(*p != '\0')
           outputpath = p;
         else
           outputpath = *++argv;

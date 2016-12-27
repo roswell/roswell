@@ -16,7 +16,7 @@ int installed_p(struct install_options* param) {
   char *i,*impl;
 
   impl=q(param->impl);
-  //TBD for util.
+  /*TBD for util.*/
   i=s_cat(configdir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
           q(impl),q(param->version?SLASH:""),q(param->version?param->version:""),q(SLASH),NULL);
   ret=directory_exist_p(i);
@@ -120,7 +120,7 @@ DEF_SUBCMD(cmd_install) {
       if(install_impl) {
         for(cmds=install_impl->call;*cmds&&ret;++cmds)
           ret=(*cmds)(&param);
-        if(ret) { // after install latest installed impl/version should be default for 'run'
+        if(ret) { /* after install latest installed impl/version should be default for 'run'*/
           struct opts* opt=global_opt;
           struct opts** opts=&opt;
           char* home=configdir();

@@ -33,47 +33,47 @@ char* system_(char* cmd) {
   sa.nLength= sizeof(SECURITY_ATTRIBUTES);
   sa.lpSecurityDescriptor = NULL;
   sa.bInheritHandle = TRUE;
-  if (!CreatePipe(&hOutputReadTmp,&hOutputWrite,&sa,0))
+  if(!CreatePipe(&hOutputReadTmp,&hOutputWrite,&sa,0))
     DisplayError("CreatePipe");
 
-  if (!DuplicateHandle(GetCurrentProcess(),hOutputWrite,
+  if(!DuplicateHandle(GetCurrentProcess(),hOutputWrite,
                        GetCurrentProcess(),&hErrorWrite,0,
                        TRUE,DUPLICATE_SAME_ACCESS))
     DisplayError("DuplicateHandle");
 
-  if (!CreatePipe(&hInputRead,&hInputWriteTmp,&sa,0))
+  if(!CreatePipe(&hInputRead,&hInputWriteTmp,&sa,0))
     DisplayError("CreatePipe");
 
-  if (!DuplicateHandle(GetCurrentProcess(),hOutputReadTmp,
+  if(!DuplicateHandle(GetCurrentProcess(),hOutputReadTmp,
                        GetCurrentProcess(),
                        &hOutputRead,0,FALSE,
                        DUPLICATE_SAME_ACCESS))
     DisplayError("DupliateHandle");
 
-  if (!DuplicateHandle(GetCurrentProcess(),hInputWriteTmp,
+  if(!DuplicateHandle(GetCurrentProcess(),hInputWriteTmp,
                        GetCurrentProcess(),
                        &hInputWrite,0,FALSE,
                        DUPLICATE_SAME_ACCESS))
     DisplayError("DupliateHandle");
 
-  if (!CloseHandle(hOutputReadTmp)) DisplayError("CloseHandle");
-  if (!CloseHandle(hInputWriteTmp)) DisplayError("CloseHandle");
+  if(!CloseHandle(hOutputReadTmp)) DisplayError("CloseHandle");
+  if(!CloseHandle(hInputWriteTmp)) DisplayError("CloseHandle");
   ZeroMemory(&si,sizeof(STARTUPINFO));
   si.cb = sizeof(STARTUPINFO);
   si.dwFlags = STARTF_USESTDHANDLES;
   si.hStdOutput = hOutputWrite;
   si.hStdInput  = hInputRead;
   si.hStdError  = hErrorWrite;
-  if (!CreateProcess(NULL,cmd,NULL,NULL,TRUE,0,NULL,NULL,&si,&pi))
+  if(!CreateProcess(NULL,cmd,NULL,NULL,TRUE,0,NULL,NULL,&si,&pi))
     DisplayError("CreateProcess");
-  if (!CloseHandle(pi.hThread)) DisplayError("CloseHandle");
-  if (!CloseHandle(hOutputWrite)) DisplayError("CloseHandle");
-  if (!CloseHandle(hInputRead )) DisplayError("CloseHandle");
-  if (!CloseHandle(hErrorWrite)) DisplayError("CloseHandle");
+  if(!CloseHandle(pi.hThread)) DisplayError("CloseHandle");
+  if(!CloseHandle(hOutputWrite)) DisplayError("CloseHandle");
+  if(!CloseHandle(hInputRead )) DisplayError("CloseHandle");
+  if(!CloseHandle(hErrorWrite)) DisplayError("CloseHandle");
   while(1) {
-    if (!ReadFile(hOutputRead,lpBuffer,sizeof(lpBuffer),
+    if(!ReadFile(hOutputRead,lpBuffer,sizeof(lpBuffer),
                   &nBytesRead,NULL) || !nBytesRead) {
-      if (GetLastError() == ERROR_BROKEN_PIPE)
+      if(GetLastError() == ERROR_BROKEN_PIPE)
         break;
       else
         DisplayError("ReadFile");
@@ -81,9 +81,9 @@ char* system_(char* cmd) {
     lpBuffer[nBytesRead]='\0';
     ret=s_cat(ret,q(lpBuffer),NULL);
   }
-  if (!CloseHandle(hOutputRead)) DisplayError("CloseHandle");
-  if (!CloseHandle(hInputWrite)) DisplayError("CloseHandle");
-  if (!GetExitCodeProcess(pi.hProcess,&ExitCode) || ExitCode) {
+  if(!CloseHandle(hOutputRead)) DisplayError("CloseHandle");
+  if(!CloseHandle(hInputWrite)) DisplayError("CloseHandle");
+  if(!GetExitCodeProcess(pi.hProcess,&ExitCode) || ExitCode) {
     s(ret);
     ret=NULL;
   }

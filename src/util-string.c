@@ -108,7 +108,7 @@ int position_char_not(char* items,char* seq) {
   int i,j,stop;
   for(i=0,stop=1;seq[i]!='\0';++i,stop=1) {
     for(j=0;items[j]!='\0';++j) {
-      if(seq[i]==items[j]){
+      if(seq[i]==items[j]) {
         stop=0;
         break;
       }
@@ -151,7 +151,7 @@ char* append_trail_slash(char* str) {
 }
 
 char* escape_string(char* str) {
-  //character code might bi problem.
+  /*character code might be problem.*/
   char* ret;
   int i,j;
   for(i=0,j=0;str[i]!='\0';++i,++j) {

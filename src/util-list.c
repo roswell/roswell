@@ -141,12 +141,12 @@ void sL(LVal v) {
   struct Cons* next;
   struct Cons* l;
   switch(v&3) {
-  case 1: //number
+  case 1: /*number*/
     break;
-  case 2: //string pointer
+  case 2: /*string pointer*/
     s(toString(v));
     break;
-  case 0: //builtin structure
+  case 0: /*builtin structure*/
     for(l=toList(v);l;l=next) {
       next=(struct Cons*)Next((LVal)l);
       sL(l->val);

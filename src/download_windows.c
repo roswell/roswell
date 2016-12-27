@@ -14,7 +14,7 @@ int download_simple (char* uri,char* path,int opt) {
   int retry=0;
  LOOP:
   bodyfile = fopen(path_partial,"wb");
-  if (bodyfile == NULL) {
+  if(bodyfile == NULL) {
     s(path_partial);
     return 1;
   }

@@ -21,7 +21,7 @@ char* system_(char* cmd) {
 int system_redirect(const char* cmd,char* filename) {
   pid_t pid;
   int fd[2];
-  if (pipe(fd)==-1) {
+  if(pipe(fd)==-1) {
     perror("pipe");
     return -1;
   }
@@ -46,7 +46,7 @@ int system_redirect(const char* cmd,char* filename) {
       if((in=fdopen(fd[0], "r"))!=NULL) {
         int c;
         while((c = fgetc(in)) != EOF) {
-          if (fputc(c, out) == EOF) {
+          if(fputc(c, out) == EOF) {
             fclose(in);
             fclose(out);
             return 0;
