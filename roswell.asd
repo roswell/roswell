@@ -15,7 +15,7 @@ roswell does not function without help of C codes.
 (in-package :roswell-asd)
 
 (defsystem roswell
-  :version "16.12.7.71"
+  :version "16.12.8.72"
   :author "SANO Masatoshi"
   :license "MIT"
   :depends-on (:simple-date-time :split-sequence :plump :zip)

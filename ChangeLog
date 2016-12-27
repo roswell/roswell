@@ -1,3 +1,18 @@
+roswell (16.12.8.72-1) unstable; urgency=low
+
+  * New: asdf integration. you can download from github like (ql:quickload "roswell/roswell")
+  * Change: module function are used everywhere.
+  * Change: add CWD/.roswell/local-projects/ to ql:*local-project-directories* when startup
+  * Change: subcommand swank are canceled. now you can install slime via 'ros install slime'
+  * Change: ql:quickload without silent when launched with -v (issued by Anton Vodonosov)
+  * Change: rename packages 'ros.*' -> 'roswell.*'
+  * Change: ros script for subcommand doesn't take subcommand name.
+  * Fix: ros install sbcl breaks when using other lisp impls (reported by Oliver Markovic)
+  * Fix: tested some feature on win32. maybe ccl-bin fixed?
+  * Fix: current package differ when launchd as script or build.(reported by Jacek Złydach)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 28 Dec 2016 02:51:21 +0900
+
 roswell (16.12.7.71-1) unstable; urgency=low
 
   * New: automatically dump when subcommand or .roswell/bin/*.ros is newer or not exists.
