@@ -3,13 +3,8 @@
 #|
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
-(or
- (ros:ensure-asdf)
- (ignore-errors
-   (load "~/lisp/sn.github/sn.github.asd"))
- (ignore-errors
-   (load "../sn.github/sn.github.asd")))
-(ql:quickload '(:cl-ppcre :split-sequence :sn.github))
+(ros:ensure-asdf)
+(ql:quickload '(:cl-ppcre :split-sequence "snmsts/sn.github"))
 (use-package :sn.github.repos.releases)
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)

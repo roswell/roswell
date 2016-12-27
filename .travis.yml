@@ -117,10 +117,6 @@ script:
        sudo make install;
        make maintainer-clean;
     fi
-  - if ([ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]) ||
-       ([ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]); then
-       ros install snmsts/sn.github;
-    fi
   - if [ "$METHOD" = "cross" ]; then
        CC=$XCC ./configure ${PREFIX} ${HOST};
        make;
