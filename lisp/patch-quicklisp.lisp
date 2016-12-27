@@ -17,6 +17,23 @@
         (acons x 'fetch-via-roswell
                (remove x ql-http:*fetch-scheme-functions* :key 'first :test 'equal))))
 (pushnew :quicklisp-support-https *features*)
+
+(defun roswell-installable-searcher (system-name)
+  (let ((name (ignore-errors (subseq system-name (1+ (position #\/ system-name :from-end t))))))
+    (when name
+      (prog1
+          (or (quicklisp-client:local-projects-searcher name)
+              (progn
+                (ros:roswell `("install" ,system-name))
+                (quicklisp-client:register-local-projects)
+                (quicklisp-client:local-projects-searcher name))
+              (return-from roswell-installable-searcher)) ;;can't find.
+        (eval `(asdf:defsystem ,system-name :depends-on (,name)))))))
+
+(unless (find 'roswell-installable-searcher asdf:*system-definition-search-functions*)
+  (setf asdf:*system-definition-search-functions*
+        (append asdf:*system-definition-search-functions* (list 'roswell-installable-searcher))))
+
 (in-package #:ql-dist)
 (let ((*error-output* (make-broadcast-stream)))
   (when

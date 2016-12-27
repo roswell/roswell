@@ -11,10 +11,12 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
     (ros:include "util-install-quicklisp")))
 
 (defpackage :ros.script.install.3671936092
-  (:use :cl :roswell.install))
+  (:use :cl :roswell.install :roswell.util))
 (in-package :ros.script.install.3671936092)
 
 (defun main (&rest argv)
-  (install argv))
+  (let ((asdf:*system-definition-search-functions*
+          (remove 'roswell-installable-searcher asdf:*system-definition-search-functions*)))
+    (install argv)))
 
 ;;; vim: set ft=lisp lisp:

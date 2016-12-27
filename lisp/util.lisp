@@ -2,9 +2,11 @@
 (defpackage :roswell.util
   (:use :cl)
   (:import-from :ros :opt)
-  (:export :uname :uname-m :homedir :config :impl :which :list% :config-env
-           :parse-version-spec :download :expand :sh :chdir :system :module
-           :core-extention :clone-github :opt :read-call :set-opt :copy-dir))
+  (:export
+   :uname :uname-m :homedir :config :impl :which :list% :config-env
+   :parse-version-spec :download :expand :sh :chdir :system :module
+   :core-extention :clone-github :opt :read-call :set-opt :copy-dir
+   :roswell-installable-searcher))
 (in-package :roswell.util)
 
 (defun read-call (func &rest params)
