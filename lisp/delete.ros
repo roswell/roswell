@@ -14,24 +14,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :roswell.util))
 (in-package :ros.script.delete.3672011943)
 
-(defun delete-dump (params)
-  (declare (ignorable params))
-  (let* ((impl (and (second params) (parse-version-spec (second params))))
-         (name (first params))
-         path)
-    (let ((lisp (or (first impl) (config "default.lisp"))))
-      (setf impl (format nil "~A/~A" lisp
-                         (or (second impl) (config (format nil "~A.version" lisp))))))
-    (setf path (make-pathname :name name
-                              :type (core-extention impl)
-                              :defaults
-                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                       (uname-m) (uname) impl)
-                                               (homedir))))
-    (if (probe-file path)
-        (delete-file path)
-        (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
-
 (defun main (&rest r)
   (let* ((default (config "default.lisp"))
          (verstring (format nil "~A.version" default))
@@ -47,8 +29,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
        (finish-output *error-output*)
        (ros:roswell '("list" "installed") *standard-output*))
-      ((equal (first r) "dump")
-       (delete-dump (rest r)))
       ((let ((func (module "delete" (first r))))
          (when func
            (apply func (rest r)))))
