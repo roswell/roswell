@@ -1,0 +1,20 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#| <Put a one-line description here>
+exec ros -Q -- $0 "$@"
+|#
+(progn
+  (ros:ensure-asdf)
+  (ros:include "util-install")
+  (when (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
+    (ros:include "util-install-quicklisp")))
+
+(defpackage :ros.script.get.3691974593
+  (:use :cl))
+(in-package :ros.script.get.3691974593)
+
+(defun main (&rest argv)
+  (let ((asdf:*system-definition-search-functions*
+         (remove 'roswell-installable-searcher asdf:*system-definition-search-functions*)))
+    (install argv)))
+;;; vim: set ft=lisp lisp:
