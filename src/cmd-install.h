@@ -27,11 +27,11 @@ struct install_impls {
   install_cmds *call;
   char* uri;
   install_cmd_string extention;
-  int util;
 };
 
 extern struct install_impls impls_sbcl_bin;
 extern struct install_impls utils_quicklisp;
 
 char* download_archive_name(struct install_options* param);
+int set_defaultlisp(char* impl,char* version);
 #endif

@@ -148,4 +148,4 @@ install_cmds install_sbcl_bin_full[]={
   NULL
 };
 
-struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,NULL,sbcl_bin_extention,0};
+struct install_impls impls_sbcl_bin={ "sbcl-bin", install_sbcl_bin_full,NULL,sbcl_bin_extention};

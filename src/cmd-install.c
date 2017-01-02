@@ -120,26 +120,9 @@ DEF_SUBCMD(cmd_install) {
       if(install_impl) {
         for(cmds=install_impl->call;*cmds&&ret;++cmds)
           ret=(*cmds)(&param);
-        if(ret) { /* after install latest installed impl/version should be default for 'run'*/
-          struct opts* opt=global_opt;
-          struct opts** opts=&opt;
-          char* home=configdir();
-          char* path=cat(home,"config",NULL);
-          char* v=cat(param.impl,".version",NULL);
-          char* version=param.version;
-          cond_printf(1,"impl %s util attr = %d version= %s \n",param.impl,install_impl->util,version);
-          if(!install_impl->util) {
-            int i;
-            for(i=0;version[i]!='\0';++i)
-              if(version[i]=='-')
-                version[i]='\0';
-            set_opt(opts,"default.lisp",param.impl);
-            set_opt(opts,v,version);
-            save_opts(path,opt);
-            global_opt=opt;
-          }
-          s(home),s(path),s(v);
-        }else
+        if(ret)
+          set_defaultlisp(param.impl,param.version);
+        else
           exit(EXIT_FAILURE);
         cond_printf(1,"done with install impl \n");
       }
@@ -183,4 +166,20 @@ DEF_SUBCMD(cmd_install) {
 struct proc_opt* register_cmd_install(struct proc_opt* top) {
   top->command=add_command(top->command,"install"    ,NULL,cmd_install,1,1);
   return top;
+}
+
+int set_defaultlisp (char* impl,char* version) {
+  struct opts* opt=global_opt;
+  struct opts** opts=&opt;
+  char* home=configdir();
+  char* path=cat(home,"config",NULL);
+  char* v=cat(impl,".version",NULL);
+  int i;
+  cond_printf(1,"impl %s version= %s \n",impl,version);
+  set_opt(opts,"default.lisp",impl);
+  set_opt(opts,v,version);
+  save_opts(path,opt);
+  global_opt=opt;
+  s(home),s(path),s(v);
+  return 1;
 }
