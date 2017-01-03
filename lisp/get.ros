@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#| <Put a one-line description here>
+#| get lisp libraries.
 exec ros -Q -- $0 "$@"
 |#
 (progn
