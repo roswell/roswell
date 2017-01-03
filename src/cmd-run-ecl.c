@@ -16,6 +16,13 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   LVal ret=0;
 
+  if(strcmp(os,"darwin")==0 && strcmp("system",version)!=0) {
+    char* path=getenv("DYLD_FALLBACK_LIBRARY_PATH");
+    path=path?q(path):s_cat(q(getenv("HOME")),q("/lib:/usr/local/lib:/lib:/usr/lib"),NULL);
+    path=s_cat(q(impl_path),q("/lib:"),path,NULL);
+    setenv("DYLD_FALLBACK_LIBRARY_PATH",path,1);
+    s(path);
+  }
   ret=conss((strcmp("system",version)==0)?truename(which("ecl")):cat(impl_path,SLASH,"bin",SLASH,"ecl",EXE_EXTENTION,NULL),ret);
   s(arch),s(os),s(impl_path);
   if(get_opt("version",0))
