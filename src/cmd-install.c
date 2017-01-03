@@ -4,30 +4,19 @@
 static int in_resume=0;
 static char *flags =NULL;
 struct install_impls *install_impl;
-
-struct install_impls *impls_to_install[]={
-  &impls_sbcl_bin,
-};
+struct install_impls *impls_to_install[]={&impls_sbcl_bin};
 
 extern int extract(const char *filename, int do_extract, int flags,const char* outputpath,Function2 f,void* p);
 
 int installed_p(struct install_options* param) {
   int ret;
-  char *i,*impl;
-
-  impl=q(param->impl);
-  /*TBD for util.*/
+  char *i,*impl=q(param->impl);
   i=s_cat(configdir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
           q(impl),q(param->version?SLASH:""),q(param->version?param->version:""),q(SLASH),NULL);
   ret=directory_exist_p(i);
   cond_printf(1,"directory_exist_p(%s)=%d\n",i,ret);
   s(i),s(impl);
   return ret;
-}
-
-int install_running_p(struct install_options* param) {
-  /* TBD */
-  return 0;
 }
 
 int start(struct install_options* param) {
@@ -39,10 +28,6 @@ int start(struct install_options* param) {
   if(installed_p(param)) {
     printf("%s/%s is already installed.\n",param->impl,param->version?param->version:"");
     exit(EXIT_SUCCESS);
-  }
-  if(install_running_p(param)) {
-    printf("It seems another installation process for $1/$2 is in progress somewhere in the system.\n");
-    return 0;
   }
   p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",SLASH,NULL);
   ensure_directories_exist(p);
@@ -76,8 +61,7 @@ int download(struct install_options* param) {
       int status = download_simple(url,impl_archive,0);
       if(status) {
         printf("Download Failed with status %d. See download_simple in src/download.c\n", status);
-        return 0;
-        /* fail */
+        return 0; /* fail */
       }
       s(url);
     }
@@ -92,73 +76,72 @@ DEF_SUBCMD(cmd_install) {
   cond_printf(1,"cmd_install:\n");
   install_cmds *cmds=NULL;
   struct install_options param;
+  int ret=1,k;
   param.os=uname();
   param.arch=uname_m();
   param.arch_in_archive_name=0;
   param.version_not_specified=1;
   param.expand_path=NULL;
-  if(argc!=1) {
-    int ret=1,k;
-    for(k=1;k<argc;++k) {
-      int i,pos;
-      param.impl=firsts(nthcdr(k,arg_));
-      pos=position_char("/",param.impl);
-      if(pos!=-1) {
-        param.version=subseq(param.impl,pos+1,0);
-        param.impl=subseq(param.impl,0,pos);
-      }else {
-        param.version=NULL;
-        param.impl=q(param.impl);
-      }
-
-      for(install_impl=NULL,i=0;i<sizeof(impls_to_install)/sizeof(struct install_impls*);++i) {
-        struct install_impls* j=impls_to_install[i];
-        if(strcmp(param.impl,j->name)==0) {
-          install_impl=j;
-        }
-      }
-      if(install_impl) {
-        for(cmds=install_impl->call;*cmds&&ret;++cmds)
-          ret=(*cmds)(&param);
-        if(ret)
-          set_defaultlisp(param.impl,param.version);
-        else
-          exit(EXIT_FAILURE);
-        cond_printf(1,"done with install impl \n");
-      }
-      {
-        int i,j;
-        LVal tmp=0;
-        char* install_ros=s_cat2(lispdir(),q("install.ros"));
-        cond_printf(1,"%s \n",install_ros);
-        if(verbose&1) {
-          cond_printf(1,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
-          for(i=0;i<argc;++i)
-            cond_printf(1,"%s:",firsts(nthcdr(i,arg_)));
-          cond_printf(1,"\n");
-        }
-        tmp=conss(q("--"),tmp);
-        tmp=conss(install_ros,tmp);
-        tmp=conss(q(firsts(nthcdr(1,arg_))),tmp);
-        for(j=2;j<argc;tmp=conss(q(firsts(nthcdr(j++,arg_))),tmp));
-        tmp=nreverse(tmp);
-        if(verbose&1) {
-          int j,argc_=length(tmp);
-          cond_printf(1,"argc_=%d ",argc_);
-          for(j=0;j<argc_;++j)
-            cond_printf(1,"argv[%d]=%s,",j,firsts(nthcdr(j,tmp)));
-        }
-        for(;tmp;tmp=dispatch(tmp,&top));
-        return 0;
-      }
-      if(param.version)
-        s(param.version);
-      s(param.impl),s(param.arch),s(param.os);
-      s(param.expand_path);
-    }
-  }else {
+  if(argc==1) {
     dispatch(stringlist("help","install",NULL),&top);
     exit(EXIT_SUCCESS);
+  }
+  for(k=1;k<argc;++k) {
+    int i,pos;
+    param.impl=firsts(nthcdr(k,arg_));
+    pos=position_char("/",param.impl);
+    if(pos!=-1) {
+      param.version=subseq(param.impl,pos+1,0);
+      param.impl=subseq(param.impl,0,pos);
+    }else {
+      param.version=NULL;
+      param.impl=q(param.impl);
+    }
+
+    for(install_impl=NULL,i=0;i<sizeof(impls_to_install)/sizeof(struct install_impls*);++i) {
+      struct install_impls* j=impls_to_install[i];
+      if(strcmp(param.impl,j->name)==0) {
+        install_impl=j;
+      }
+    }
+    if(install_impl) {
+      for(cmds=install_impl->call;*cmds&&ret;++cmds)
+        ret=(*cmds)(&param);
+      if(ret)
+        set_defaultlisp(param.impl,param.version);
+      else
+        exit(EXIT_FAILURE);
+      cond_printf(1,"done with install impl \n");
+    }
+    {
+      int i,j;
+      LVal tmp=0;
+      char* install_ros=s_cat2(lispdir(),q("install.ros"));
+      cond_printf(1,"%s \n",install_ros);
+      if(verbose&1) {
+        cond_printf(1,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
+        for(i=0;i<argc;++i)
+          cond_printf(1,"%s:",firsts(nthcdr(i,arg_)));
+        cond_printf(1,"\n");
+      }
+      tmp=conss(q("--"),tmp);
+      tmp=conss(install_ros,tmp);
+      tmp=conss(q(firsts(nthcdr(1,arg_))),tmp);
+      for(j=2;j<argc;tmp=conss(q(firsts(nthcdr(j++,arg_))),tmp));
+      tmp=nreverse(tmp);
+      if(verbose&1) {
+        int j,argc_=length(tmp);
+        cond_printf(1,"argc_=%d ",argc_);
+        for(j=0;j<argc_;++j)
+          cond_printf(1,"argv[%d]=%s,",j,firsts(nthcdr(j,tmp)));
+      }
+      for(;tmp;tmp=dispatch(tmp,&top));
+      return 0;
+    }
+    if(param.version)
+      s(param.version);
+    s(param.impl),s(param.arch),s(param.os);
+    s(param.expand_path);
   }
   return 0;
 }

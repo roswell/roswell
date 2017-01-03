@@ -60,14 +60,10 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--help"),ret);
   ret=conss(q("--noinform"),ret);
 
-  if(dynamic_space_size) {
-    ret=conss(q("--dynamic-space-size"),ret);
-    ret=conss(q(dynamic_space_size),ret);
-  }
-  if(control_stack_size) {
-    ret=conss(q("--control-stack-size"),ret);
-    ret=conss(q(control_stack_size),ret);
-  }
+  if(dynamic_space_size)
+    ret=conss(q(dynamic_space_size),conss(q("--dynamic-space-size"),ret));
+  if(control_stack_size)
+    ret=conss(q(control_stack_size),conss(q("--control-stack-size"),ret));
   if(get_opt("version",0))
     ret=conss(q("--version"),ret);
 
