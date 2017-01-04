@@ -29,7 +29,9 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
        (finish-output *error-output*)
        (ros:roswell '("list" "installed") *standard-output*))
-      ((let ((func (module "delete" (first r))))
+      ((let ((func (module "delete" (if (position #\/ (first r))
+                                        (subseq (first r) 0 (position #\/ (first r)))
+                                        (first r)))))
          (when func
            (apply func (rest r)))))
       (t
@@ -44,5 +46,5 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                   (when (equal impl-name config)
                     (format t "~&clear config ~S~%" verstring)
                     (setf (config verstring) "")))
-                 (t (format *error-output* "~&~A is not installed yet.~%" impl-name)))))))))
+                 (t (format *error-output* "~&~A is not installed.~%" impl-name)))))))))
 ;;; vim: set ft=lisp lisp:
