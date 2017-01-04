@@ -89,7 +89,9 @@
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
     (let* ((src (namestring (namestring (merge-pathnames "src/" (opt "src")))))
-           (cmd (format nil "ulimit -s 16384 && make"))
+           ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
+           ;; which causes build failure in clisp Makefile
+           (cmd (format nil "ulimit -s 16384 && MAKEFLAGS=\"\" make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
@@ -108,7 +110,9 @@
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program "make install" :output t)))
+        ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
+        ;; which causes build failure in clisp Makefile
+        (uiop/run-program:run-program "MAKEFLAGS=\"\" make install" :output t)))
     (format *error-output* "done.~%"))
   (cons t argv))
 
@@ -120,7 +124,9 @@
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
       (uiop/run-program:run-program
-       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
+       ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
+       ;; which causes build failure in clisp Makefile
+       (list (sh) "-lc" (format nil "cd ~S;MAKEFLAGS=\"\" make clean" src)) :output t))
     (format t "done.~%"))
   (cons t argv))
 
