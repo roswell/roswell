@@ -4,36 +4,39 @@
 (in-package :roswell.install.allegro)
 (ros:quicklisp :environment nil)
 
+(defvar *allegro-agreement-uri*
+  '(("100express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
+    ("101b"       . "http://franz.com/products/licensing/FSLA10.1.beta.pdf")))
+
 (defun allegro-get-version ()
-  (list "100express"))
+  (mapcar #'car *allegro-agreement-uri*))
 
-(defvar *allegro-uname-m-alist*
-  '(("x86-64" . "x86")))
-
-(defvar *allegro-uname-alist*
-  '(("linux" . "linu")
-    ("darwin" . "macos")))
-
-(defun allegro-uname-m ()
-  (or (cdr (assoc (uname-m) *allegro-uname-m-alist* :test 'equal))
-      (uname-m)))
-
-(defun allegro-uname ()
-  (or (cdr (assoc (uname) *allegro-uname-alist* :test 'equal))
-      (uname)))
+(defun make-allegro-uri (argv &key
+                                (uname (uname))
+                                (uname-m (uname-m))
+                                (version (getf argv :version)))
+  (let ((os (intern uname :keyword))
+        (machine (intern uname-m :keyword)))
+    (cond ((equal "100express" version)
+           (format nil "~@{~A~}"
+                   (allegro-uri) "ftp/pub/acl100express/"
+                   (case os (:|darwin| "macosx") (t os))
+                   (if (eql os :|windows|) ""
+                       (case machine (:|x86| 86) (:|x86-64| 86)))
+                   "/acl100express"
+                   (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
+                   "-" (case machine (:|x86-64| "x86") (t machine))
+                   (case os (:|linux| ".bz2") (:|darwin| ".dmg") (:|windows| ".exe") (t os))))
+          ((equal "101b" version)))))
 
 (defun allegro-argv-parse (argv)
   (format *error-output* "~&Installing allegro/~A...~%" (getf argv :version))
   (cons t argv))
 
 (defun allegro-download (argv)
-  (let ((uname (allegro-uname))
-        (uname-m (allegro-uname-m)))
-    (set-opt "as" (getf argv :version))
-    (set-opt "download.uri" (format nil "~@{~A~}" (allegro-uri)
-                                    "/acl" (getf argv :version) "/" uname uname-m "/acl" (getf argv :version)
-                                    "-" uname "x-" uname-m (cond ((equal uname "macos") ".dmg")
-                                                                 ((equal uname "linu") ".bz2"))))
+  (let* ((version (getf argv :version)))
+    (set-opt "as" version)
+    (set-opt "download.uri" (make-allegro-uri argv))
     (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
                                   (when pos
                                     (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
@@ -41,11 +44,11 @@
 
 (defun allegro-expand (argv)
   (format t "~%Extracting archive:~A~%" (opt "download.archive"))
-  (let* ((impls (merge-pathnames (format nil "impls/~A/~A/allegro/" (uname-m) (uname)) (homedir)))
-         (path (merge-pathnames (format nil "~A/" (opt "as")) impls))
-         (uname (allegro-uname)))
+  (let* ((uname (uname))
+         (impls (merge-pathnames (format nil "impls/~A/~A/allegro/" (uname-m) uname) (homedir)))
+         (path (merge-pathnames (format nil "~A/" (opt "as")) impls)))
     (cond
-      ((equal uname "macos")
+      ((equal uname "darwin")
        (let ((mount-dir (string-right-trim
                          (format nil "~%")
                          (uiop:run-program
