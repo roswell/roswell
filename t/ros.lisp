@@ -92,7 +92,10 @@
   (! "ros install ccl-bin/1.11")
   (! "ros use sbcl-bin")
   (! "ros delete ccl-bin/1.11")
-  (! "MAKEFLAGS=\"-j 2\" ros install clisp"))
+  (progn
+    (setenv "MAKEFLAGS" "-j 2")
+    (prog1 (! "ros install clisp")
+      (unsetenv "MAKEFLAGS"))))
 #+broken (! "ros list versions")
 
 (!-tree
