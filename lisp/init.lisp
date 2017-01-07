@@ -352,7 +352,8 @@ have the latest asdf, and this file has a workaround for this.
   "load and evaluate the script"
   (setf *argv* rest)
   (flet ((body (in)
-           (let ((line(read-line in)))
+           (let ((line(read-line in))
+                 *ros-opts*)
              (push :ros.script *features*)
              (locally
                  (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
