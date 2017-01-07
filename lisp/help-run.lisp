@@ -1,10 +1,11 @@
-(ros:include "util")
+(ros:include "help-options")
 (defpackage :roswell.help.run
-  (:use :cl :roswell.util :ros.script.help.3668211011))
+  (:use :cl :roswell.util :roswell.help.options))
 (in-package :roswell.help.run)
 
 (defun run (argv)
   (declare (ignorable argv))
   (let ((s *error-output*))
     (format s "Usage: ~A [OPTIONS] run [OPTIONS] [-- implementation-native-options...]~%~%" (opt "wargv0"))
-    (option s (nthcdr 4 *options*)))) ;; fix me
+    (let ((*options* (nthcdr 4 *options*))) ;; fix me
+      (options nil))))
