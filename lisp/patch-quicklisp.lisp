@@ -18,17 +18,28 @@
                (remove x ql-http:*fetch-scheme-functions* :key 'first :test 'equal))))
 (pushnew :quicklisp-support-https *features*)
 
+(defun roswell-installed-system-name (system-name)
+  ;;  should return repo part of system-name.
+  ;; "user/repo" "user/repo/branch" "git://bra/bra/bra/repo.git" "github://user/repo"
+  (if (find #\: system-name)
+      (values nil "not implemented yet");; TBD
+      (let ((beg (position #\/ system-name)))
+        (and beg (incf beg) (/= (length system-name) beg)
+             (subseq system-name beg (position #\/ system-name :start beg))))))
+
 (defun roswell-installable-searcher (system-name)
-  (let ((name (ignore-errors (subseq system-name (1+ (position #\/ system-name :from-end t))))))
-    (when name
-      (prog1
-          (or (quicklisp-client:local-projects-searcher name)
-              (progn
-                (ros:roswell `("install" ,system-name))
-                (quicklisp-client:register-local-projects)
-                (quicklisp-client:local-projects-searcher name))
-              (return-from roswell-installable-searcher)) ;;can't find.
-        (eval `(asdf:defsystem ,system-name :depends-on (,name)))))))
+  (let ((name (roswell-installed-system-name system-name)))
+    (and
+     name
+     (not (asdf:find-system (asdf/find-system:primary-system-name system-name) nil))
+     (prog1
+         (or (quicklisp-client:local-projects-searcher name)
+             (progn
+               (ros:roswell `("install" ,system-name))
+               (quicklisp-client:register-local-projects)
+               (quicklisp-client:local-projects-searcher name))
+             (return-from roswell-installable-searcher)) ;;can't find.
+       (eval `(asdf:defsystem ,system-name :depends-on (,name)))))))
 
 (unless (find 'roswell-installable-searcher asdf:*system-definition-search-functions*)
   (setf asdf:*system-definition-search-functions*
