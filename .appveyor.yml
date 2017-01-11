@@ -36,7 +36,7 @@ build_script:
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
   - if "%METHOD%"=="cross" ros version
   - if "%METHOD%"=="cross" ros version=t run
-  - if "%METHOD%"=="cross" ros install msys2+
+  - if "%METHOD%"=="cross" ros install msys2+ --%MSYS2_BITS%
   - if "%METHOD%"=="cross" ros documents\chm.ros
   - if "%METHOD%"=="cross" "C:\Program Files (x86)\HTML Help Workshop\hhc.exe" documents\roswell.hhp || copy nul nul > nul
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%
