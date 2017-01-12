@@ -332,11 +332,8 @@ have the latest asdf, and this file has a workaround for this.
 (defun entry (cmd arg &rest rest)
   (declare (ignorable cmd rest))
   (let* ((sym (read-from-string arg))
-         (*package* (symbol-package sym))
-         (ret (apply sym *argv*)))
-    (quit (cond ((numberp ret) ret)
-                (ret 0)
-                (t 1)))))
+         (*package* (symbol-package sym)))
+    (quit (apply sym *argv*))))
 
 (setf (fdefinition 'init) #'eval)
 
