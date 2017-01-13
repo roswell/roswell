@@ -161,6 +161,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
   (let* ((w (opt "wargv0"))
          (a (opt "argv0"))
          (path (read-call "uiop:native-namestring"
-                (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w)))))
+                          (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w)))))
     (ros:setenv "MSYSTEM" #+x86-64 "MINGW64" #-x86-64 "MINGW32")
+    (ros:setenv "MSYS2_PATH_TYPE" "inherit")
     (ros:setenv "PATH" (format nil "~A;~A"(subseq path 0 (1- (length path))) (ros:getenv "PATH")))))
