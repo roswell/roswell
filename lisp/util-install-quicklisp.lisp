@@ -208,7 +208,7 @@
 (system "install-ecl")
 (system "install-sbcl-bin")
 (system "install-sbcl")
-(system "install+7zip" :depends-on (:zip))
+(system "install+7zip"(:depends-on (:zip)))
 (system "install+ffcall")
 (system "install+msys2")
 (system "install+sigsegv")
