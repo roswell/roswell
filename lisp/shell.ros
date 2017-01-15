@@ -24,7 +24,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                            "i686" "x86_64"))
          #+win32(msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
     (config-env)
-    #+win32(uiop/run-program:run-program
-            `(,(sb-ext:native-namestring (merge-pathnames "msys2_shell.cmd" msys))))
+    #+win32(let ((file (merge-pathnames "msys2_shell.cmd" msys)))
+             (unless (probe-file file)
+               (ros:roswell '("install msys2+")))
+             (uiop/run-program:run-program
+              `(,(sb-ext:native-namestring file))))
     #-win32(format *error-output* "'ros shell' is for windows~%")))
 ;;; vim: set ft=lisp lisp:
