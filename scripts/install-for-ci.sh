@@ -127,9 +127,6 @@ else
     echo "Detected Roswell."
 fi
 
-log "ros --version"
-log "ros quicklisp.dist=$ROSWELL_QUICKLISP_DIST_URI setup"
-
 case "$LISP" in
     alisp|allegro)
 	apt_unless_installed libc6-i386
@@ -153,11 +150,6 @@ case "$LISP" in
         LISP=sbcl-bin
         ;;
 esac
-
-if [ "$ROSWELL_LATEST_ASDF" ]; then
-    echo "Installing the latest ASDF..."
-    ros asdf install
-fi
 
 echo "Installing $LISP..."
 case "$LISP" in
@@ -184,6 +176,14 @@ case "$LISP" in
         ros use $LISP
         ;;
 esac
+
+log "ros version"
+log "ros quicklisp.dist=$ROSWELL_QUICKLISP_DIST_URI setup"
+
+if [ "$ROSWELL_LATEST_ASDF" ]; then
+    echo "Installing the latest ASDF..."
+    ros install asdf
+fi
 
 ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 (lisp-implementation-type)
