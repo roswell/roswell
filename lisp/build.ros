@@ -36,6 +36,8 @@ exec ros -Q +R -- $0 "$@"
       (ros:quit))
     (unless (probe-file file)
       (error "File does not exist: '~A'" file))
+    (unless (equalp (pathname-type file) "ros")
+      (error "Only accept ros script for build: '~A'." file))
     (with-open-file (in file)
       (loop repeat 4
             for line = (read-line in)
