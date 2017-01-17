@@ -30,9 +30,11 @@ DEF_SUBCMD(opt_program0) {
 DEF_SUBCMD(opt_take1) {
   int argc=length(arg_);
   const char* arg=cmd->name;
-  if(arg && argc>1)
+  if(arg && argc>1) {
     set_opt(&local_opt,arg,firsts(nthcdr(1,arg_)));
-  return 2;
+    return 2;
+  }
+  return -1;
 }
 
 #define OPT_APPEND(sym)                                    \
@@ -46,8 +48,9 @@ DEF_SUBCMD(opt_take1) {
                     escape_string(firsts(nthcdr(1,arg_))), \
                     q("\")"),NULL);                        \
       set_opt(&local_opt,#sym,current);                    \
+      return 2;                                            \
     }                                                      \
-    return 2;                                              \
+    return -1;                                             \
   }
 
 OPT_APPEND(program)
