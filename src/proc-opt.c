@@ -25,6 +25,8 @@ LVal proc_options(LVal arg,struct proc_opt *popt) {
       struct sub_command* fp=firstp(p);
       if(strcmp(&arg0[2],fp->name)==0) {
         int result= fp->call(arg,fp);
+        if(result<0)
+          return dispatch(stringlist("help",NULL),&top);
         if(fp->terminating) {
           cond_printf(1,"terminating:%s\n",arg0);
           exit(result);
@@ -40,6 +42,8 @@ LVal proc_options(LVal arg,struct proc_opt *popt) {
         struct sub_command* fp=firstp(p);
         if(fp->short_name&&strcmp(arg0,fp->short_name)==0) {
           int result= fp->call(arg,fp);
+          if(result<0)
+            return dispatch(stringlist("help",NULL),&top);
           if(fp->terminating) {
             cond_printf(1,"terminating:%s\n",arg0);
             exit(result);
