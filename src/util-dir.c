@@ -5,7 +5,7 @@
 char* homedir_helper(void) {
   char* user=getenv("SUDO_USER");
   struct passwd *pwd= getpwuid(getuid());
-  if(user)
+  if(user && getuid()==0)
     pwd=getpwnam(user);
   return pwd?q_(pwd->pw_dir):NULL;
 }
