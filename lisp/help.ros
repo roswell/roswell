@@ -34,6 +34,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
       (command stream i max))
     (format stream "~%")))
 
+(defun options (stream)
+  (format stream "~{   ~A~%~}~%"
+          (sort (mapcar (lambda (x) (subseq (pathname-name x) 5))
+                        (directory (merge-pathnames "help-*.lisp" (opt "lispdir"))))
+                #'string<)))
+
 (defun main (&rest argv)
   (let ((s *error-output*)
         (cmd (pathname-name (opt "wargv0"))))
@@ -45,8 +51,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (commands s)
        (format s "Use \"ros help [command]\" for more information about a command.~%~%")
        (format s "Additional help topics:~%~%") ;; tbd
-       (format s "   options~%")
-       (format s "   commands~%~%")
+       (options s)
        (format s "Use \"ros help [topic]\" for more information about the topic.~%~%"))
       ((let ((func (module "help" (first argv))))
          (when func
