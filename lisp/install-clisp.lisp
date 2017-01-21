@@ -37,6 +37,9 @@
   `((,(opt "download.archive") ,(opt "download.uri"))))
 
 (defun clisp-lib (argv)
+  ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
+  ;; which causes build failure in clisp Makefile
+  (ros:unsetenv "MAKEFLAGS")
   (when (and (find :linux *features*)
              (not (or (find :arm *features*))))
     (ros:roswell '("install ffcall+") :interactive nil))
@@ -89,9 +92,7 @@
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
     (let* ((src (namestring (namestring (merge-pathnames "src/" (opt "src")))))
-           ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
-           ;; which causes build failure in clisp Makefile
-           (cmd (format nil "ulimit -s 16384 && MAKEFLAGS=\"\" make"))
+           (cmd (format nil "ulimit -s 16384 && make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
@@ -110,9 +111,7 @@
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
-        ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
-        ;; which causes build failure in clisp Makefile
-        (uiop/run-program:run-program "MAKEFLAGS=\"\" make install" :output t)))
+        (uiop/run-program:run-program "make install" :output t)))
     (format *error-output* "done.~%"))
   (cons t argv))
 
@@ -124,9 +123,7 @@
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
       (uiop/run-program:run-program
-       ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
-       ;; which causes build failure in clisp Makefile
-       (list (sh) "-lc" (format nil "cd ~S;MAKEFLAGS=\"\" make clean" src)) :output t))
+       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
     (format t "done.~%"))
   (cons t argv))
 
