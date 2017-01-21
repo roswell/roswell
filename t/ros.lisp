@@ -95,7 +95,8 @@
   (progn
     (setenv "MAKEFLAGS" "-j 2")
     (prog1 (! "ros install clisp")
-      (unsetenv "MAKEFLAGS"))))
+      (unsetenv "MAKEFLAGS")))
+  (! "ros use sbcl-bin"))
 #+broken (! "ros list versions")
 
 (!-tree
