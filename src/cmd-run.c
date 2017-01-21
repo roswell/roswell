@@ -118,7 +118,7 @@ void star_rc(void) {
 }
 
 char** star_wrap(char** arg) {
-  //tbd
+  /*tbd*/
   char* wrap=get_opt("wrap",1);
   return arg;
 }
@@ -162,15 +162,17 @@ DEF_SUBCMD(cmd_run_star) {
     testing?exit(EXIT_SUCCESS):exec_arg(arg);
   }else if(!arg) {
     LVal ret=0;
+    int i;
+    setenv("ROS_OPTS",opts,1);
     ret=conss(q(argv_orig[0]),ret);
     ret=conss(q("-L"),ret);
     ret=conss(q(DEFAULT_IMPL),ret);
     ret=conss(s_cat2(q(lispdir()),q("run.ros")),ret);
     ret=conss(q(get_opt("impl",0)),ret);
-    ret=conss(q(get_opt("program",0)?get_opt("program",0):""),ret);
-    ret=conss(q(get_opt("restart",0)?get_opt("restart",0):""),ret);
     ret=conss(q(get_opt("script",0)?get_opt("script",0):""),ret);
     ret=conss(q(get_opt("verbose",0)),ret);
+    for(i=0;i<argc;++i)
+      ret=conss(q(argv[i]),ret);
     exec_arg(stringlist_array(nreverse(ret)));
   }
   s(opts);
