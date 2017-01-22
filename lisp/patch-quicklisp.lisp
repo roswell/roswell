@@ -28,10 +28,12 @@
              (subseq system-name beg (position #\/ system-name :start beg))))))
 
 (defun roswell-installable-searcher (system-name)
-  (let ((name (roswell-installed-system-name system-name)))
+  (let ((name (roswell-installed-system-name system-name))
+        pname)
     (and
      name
-     (not (asdf:find-system (asdf/find-system:primary-system-name system-name) nil))
+     (not (when (setf pname (read-call "asdf/find-system:primary-system-name" system-name))
+            (asdf:find-system pname nil)))
      (prog1
          (or (quicklisp-client:local-projects-searcher name)
              (progn
