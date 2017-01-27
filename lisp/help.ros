@@ -36,8 +36,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun options (stream)
   (format stream "~{   ~A~%~}~%"
-          (sort (mapcar (lambda (x) (subseq (pathname-name x) 5))
-                        (directory (merge-pathnames "help-*.lisp" (opt "lispdir"))))
+          (sort (loop for x in (directory (merge-pathnames "help-*.lisp" (opt "lispdir")))
+                   for name = (subseq (pathname-name x) 5)
+                   unless (find name *important-commands* :test 'equal)
+                     collect name)
                 #'string<)))
 
 (defun main (&rest argv)
