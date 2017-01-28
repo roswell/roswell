@@ -1,3 +1,16 @@
+roswell (17.1.8.73-1) unstable; urgency=low
+
+  * New: introduce 'ros shell' for windows
+  * Change: decline makeflags 'ros install clisp' (by Masataro Asai)
+  * Change: 'ros help' format changed.
+  * Change: stop 'ros build' when file overwrite scripts itself.(reported by Thomas Schaper)
+  * Change: check SUDO_USER only when uid=0
+  * Fix: when loading system provided by quicklisp with "/" (reported by Alessandro Serra)
+  * Fix: Return code of scripts and build executable differs (reported by @peccu)
+  * Fix: Segmentation fault caused by a missing option argument.(by Hiroyuki Tanaka)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 28 Jan 2017 23:31:33 +0900
+
 roswell (16.12.8.72-1) unstable; urgency=low
 
   * New: asdf integration. you can download from github like (ql:quickload "roswell/roswell")
