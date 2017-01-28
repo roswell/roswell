@@ -45,58 +45,33 @@ Roswell has git-like subcommands which resemble that of cl-launch, buildapp and 
 
 ```
 $ ros
-Usage: /usr/local/bin/ros [OPTIONS] [Command arguments...]
-Usage: /usr/local/bin/ros [OPTIONS] [[--] script-path arguments...]
+Common Lisp environment setup Utility.
 
-Commands:
+Usage:
+
+   ros [options] Command [arguments...]
+or
+   ros [options] [[--] script-path arguments...]
+
+commands:
    run       Run repl
    install   Install a given implementation or a system for roswell environment
    build     Make executable from script.
    use       change default implementation
    init      Creates a new ros script, optionally based on a template.
    list      List Information
-   asdf      manage asdf version
-   config    Get and set options
    delete    Delete installed implementations
-   dump      Dump image for faster startup or Make Executable
-   emacs     Launch emacs
-   fmt       [WIP] indent lisp source
-   help      Show Command help
-   setup     Initial setup
-   template  [WIP] Manage templates
+   update    NIL
+   config    Get and set options
    version   Show the roswell version information
-   wait      Wait forever
 
-Options:
-                --version            Print version information and quit
-   -w  CODE     --wrap CODE          Run roswell with a shell wrapper CODE,
-   -m  IMAGE    --image IMAGE        continue from Lisp image IMAGE
-   -M  NAME     --module NAME        Execute ros script found in 'ROSWELLPATH'.(python's -m)
-   -L  NAME     --lisp NAME          Run roswell with a lisp impl NAME[/VERSION].
-   -l  FILE     --load FILE          load lisp FILE while building
-   -S  X        --source-registry X  override source registry of asdf systems
-   -s  SYSTEM   --system SYSTEM      load asdf SYSTEM while building
-                --load-system SYSTEM same as above (buildapp compatibility)
-   -p  PACKAGE  --package PACKAGE    change current package to PACKAGE
-   -sp SP       --system-package SP  combination of -s SP and -p SP
-   -e  FORM     --eval FORM          evaluate FORM while building
-                --require MODULE     require MODULE while building
-   -q           --quit               quit lisp here
-   -r  FUNC     --restart FUNC       restart from build by calling (FUNC)
-   -E  FUNC     --entry FUNC         restart from build by calling (FUNC argv)
-   -i  FORM     --init FORM          evaluate FORM after restart
-   -ip FORM     --print FORM         evaluate and princ FORM after restart
-   -iw FORM     --write FORM         evaluate and write FORM after restart
-   -F  FORM     --final FORM         evaluate FORM before dumping IMAGE
-   -R           --rc                 try read /etc/rosrc, ~/.roswell/init.lisp
-   +R           --no-rc              skip /etc/rosrc, ~/.roswell/init.lisp
-   -A           --asdf               use asdf downloaded
-   +A           --no-asdf            do not use asdf downloaded (default)
-   -Q           --quicklisp          use quicklisp (default)
-   +Q           --no-quicklisp       do not use quicklisp
-   -v           --verbose            be quite noisy while building
-                --quiet              be quite quiet while building (default)
-                --test               for test purpose
+Use "ros help [command]" for more information about a command.
+
+Additional help topics:
+
+   options
+
+Use "ros help [topic]" for more information about the topic.
 ```
 
 ### Managing/Installing Several Lisp Installations
