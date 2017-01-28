@@ -73,17 +73,20 @@ have the latest asdf, and this file has a workaround for this.
 
 (let (sentinel)
   (defun ensure-asdf ()
-    (or
-     sentinel
-     (not (setf sentinel t))
-     (when (and (opt "asdf")
-                (or (and (find :asdf *features*)
-                         (not (equal (opt "asdf")
-                                     (funcall (read-from-string "asdf:asdf-version")))))
-                    (not (find :asdf *features*))))
-       (funcall 'asdf :no-download t))
-     (find :asdf *features*)
-     (ignore-errors (require "asdf")))))
+    (let ((*error-output* (if (verbose)
+                              *error-output*
+                              (make-broadcast-stream))))
+      (or
+       sentinel
+       (not (setf sentinel t))
+       (when (and (opt "asdf")
+                  (or (and (find :asdf *features*)
+                           (not (equal (opt "asdf")
+                                       (funcall (read-from-string "asdf:asdf-version")))))
+                      (not (find :asdf *features*))))
+         (funcall 'asdf :no-download t))
+       (find :asdf *features*)
+       (ignore-errors (require "asdf"))))))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -383,6 +386,9 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun load (x file)
   (declare (ignore x))
+  (when (verbose)
+    (format *error-output* "~A~%" file)
+    (finish-output))
   (cl:load file))
 
 (defun run (list)

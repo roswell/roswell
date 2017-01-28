@@ -91,12 +91,11 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                             maximize (file-write-date i)))
                (format *error-output* "up to date. stop~%")
                t))
-      (ros:roswell `("+R" "-L " "sbcl-bin " "--eval "
-                          #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " " "--eval "
-                          #-win32 "'" "(ros:ensure-asdf)" #-win32 "'" " "
-                          ,@(loop for i in dir
-                                  collect "--load"
-                                  collect (format nil "~A" i))
-                          " dump output -f " ,dump)
+      (ros:roswell `("+R " ,(if (ros:verbose) "-v" "") " -L " "sbcl-bin"
+                           " --eval " #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
+                           ,@(loop for i in dir
+                                   collect "--load "
+                                   collect (format nil "~A " i))
+                           "dump output -f " ,dump)
                    t nil))))
 ;;; vim: set ft=lisp lisp:
