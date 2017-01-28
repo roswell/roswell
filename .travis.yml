@@ -145,10 +145,6 @@ script:
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi;
     fi
-  - if [ $METHOD = "ci" ] && [ $TRAVIS_OS_NAME = osx ] && [ "$LISP" = "clisp" ] ; then
-       ros install $LISP;
-       ros use $LISP;
-    fi
   - if [ $METHOD != debian ]; then ros config; fi
   - cat /tmp/proxy-log || true
 
