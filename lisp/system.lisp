@@ -6,8 +6,8 @@
 (defmacro system (file &body rest)
   (destructuring-bind (&key depends-on (prefix ":roswell")) (first rest)
     (setf rest (rest rest))
-    (let* ((pos (or (position #\- file)
-                    (position #\+ file)))
+    (let* ((pos (or (position #\+ file)
+                    (position #\- file)))
            (symbol-name (read-from-string
                          (format nil ":~A~A"
                                  (subseq file (1+ pos))

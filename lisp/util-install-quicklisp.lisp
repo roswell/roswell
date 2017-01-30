@@ -212,3 +212,4 @@
 (system "install+ffcall")
 (system "install+msys2")
 (system "install+sigsegv")
+(system "install+externals-clasp")
