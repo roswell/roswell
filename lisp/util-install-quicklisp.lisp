@@ -46,6 +46,7 @@
 ;;end here from util/opts.c
 
 (defun installedp (argv)
+  ;; TBD support library like msys2,externals-clasp
   (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir))) t))
 
 (defvar *version-func* nil)

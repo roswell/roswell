@@ -16,6 +16,12 @@
 
 (defun externals-clasp-expand (argv)
   (format t "~%Extracting archive:~A~%" (opt "download.archive"))
+  (when (and (probe-file (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A" (uname-m) (uname) (getf argv :version))
+                                          (homedir)))
+             (not (opt "install.force")))
+    (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
+            (getf argv :target)  (getf argv :version))
+    (return-from externals-clasp-expand (cons nil argv)))
   (expand (opt "download.archive")
           (ensure-directories-exist
            (merge-pathnames (format nil "lib/~A/~A/externals-clasp/" (uname-m) (uname)) (homedir))))
