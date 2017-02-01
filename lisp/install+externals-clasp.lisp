@@ -47,6 +47,7 @@
       (chdir src)
       (format t "~&~S~%" cmd)
       (uiop/run-program:run-program cmd :output t :ignore-error-status nil)))
+  (setf (config "externals.clasp.version") (getf argv :version))
   (cons t argv))
 
 (defun externals-clasp-help (argv)

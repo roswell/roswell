@@ -29,7 +29,9 @@
        :do (if (characterp char)
                (write-char char stream-)
                (funcall char stream))
-       (force-output stream-))))
+           (force-output stream-)
+           (finish-output stream-)
+       )))
 
 #+sbcl
 (defun line-number (stream)
@@ -204,8 +206,9 @@
 (system "install-abcl-bin")
 (system "install-allegro")
 (system "install-ccl-bin")
-(system "install-cmu-bin")
+(system "install-clasp")
 (system "install-clisp")
+(system "install-cmu-bin")
 (system "install-ecl")
 (system "install-sbcl-bin")
 (system "install-sbcl")
