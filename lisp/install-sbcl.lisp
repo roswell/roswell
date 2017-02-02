@@ -89,23 +89,34 @@
   (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
                                 (when pos
                                   (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
-  `((,(opt "download.archive") ,(opt "download.uri"))))
+  (cond
+    ((equal "git" (getf argv :version)) ()) ;; skip downloading if version is 'git'
+    (t `((,(opt "download.archive") ,(opt "download.uri"))))))
 
 (defun sbcl-expand (argv)
-  (format t "~%Extracting archive:~A~%" (opt "download.archive"))
-  (expand (opt "download.archive")
-          (merge-pathnames "src/" (homedir)))
-  (ignore-errors
-    (let ((h (homedir))
-          (v (getf argv :version)))
-      (ql-impl-util:rename-directory
-       (merge-pathnames (format nil "src/sbcl-sbcl-~A" v) h)
-       (merge-pathnames (format nil "src/sbcl-~A" v) h))
-      (with-open-file (o (merge-pathnames (format nil "src/sbcl-~A/version.lisp-expr" v) h)
-                         :direction :output
-                         :if-does-not-exist :create
-                         :if-exists nil)
-        (format o "~S~%" v))))
+  (let ((h (homedir))
+        (v (getf argv :version)))
+    (cond
+      ((equal "git" (getf argv :version))
+       (unless (probe-file (merge-pathnames "src/sbcl-git" h))
+         (clone-github "sbcl" "sbcl" :path (merge-pathnames "src/" h))
+         (ql-impl-util:rename-directory
+          (merge-pathnames "src/sbcl/sbcl" h)
+          (merge-pathnames "src/sbcl-git" h))
+         (uiop/filesystem:delete-directory-tree (merge-pathnames "src/sbcl/" h) :validate t)))
+      (t
+       (format t "~%Extracting archive:~A~%" (opt "download.archive"))
+       (expand (opt "download.archive")
+               (merge-pathnames "src/" h))
+       (ignore-errors
+        (ql-impl-util:rename-directory
+         (merge-pathnames (format nil "src/sbcl-sbcl-~A" v) h)
+         (merge-pathnames (format nil "src/sbcl-~A" v) h))
+        (with-open-file (o (merge-pathnames (format nil "src/sbcl-~A/version.lisp-expr" v) h)
+                           :direction :output
+                           :if-does-not-exist :create
+                           :if-exists nil)
+          (format o "~S~%" v))))))
   (cons (not (opt "until-extract")) argv))
 
 (defun sbcl-patch (argv)
