@@ -40,6 +40,7 @@ have the latest asdf, and this file has a workaround for this.
 (defun getenv (x)
   #+abcl(extensions:getenv x)
   #+ccl(ccl:getenv x)
+  #+clasp(ext:getenv x)
   #+clisp(ext:getenv x)
   #+cmucl
   (let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-getenv")))))
@@ -49,7 +50,7 @@ have the latest asdf, and this file has a workaround for this.
   #+ecl(ext:getenv x)
   #+sbcl(sb-posix:getenv x)
   #+allegro(sys:getenv x)
-  #-(or abcl ecl ccl clisp sbcl cmucl allegro)
+  #-(or abcl ecl ccl clisp sbcl cmucl allegro clasp)
   (when (find :asdf *features*)
     (funcall (read-from-string "asdf::getenv") x)))
 
@@ -117,6 +118,7 @@ have the latest asdf, and this file has a workaround for this.
   (declare (ignorable name value))
   #+sbcl(funcall (read-from-string "sb-posix:setenv") name value 1)
   #+ccl(ccl:setenv name value t)
+  #+clasp(ext:setenv name value t)
   #+clisp(system::setenv name value)
   #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-setenv")))))
            (when f (funcall f name value 1)))
@@ -136,6 +138,7 @@ have the latest asdf, and this file has a workaround for this.
   (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
     #+sbcl (ignore-errors (funcall (read-from-string "cl-user::exit") :code ret))
     #+sbcl (ignore-errors (funcall (read-from-string "cl-user::quit") :unix-status ret))
+    #+clasp (core:quit ret)
     #+clisp (ext:exit ret)
     #+ccl (ccl:quit ret)
     #+cmucl (progn (finish-output) (finish-output *error-output*) (unix:unix-exit ret))

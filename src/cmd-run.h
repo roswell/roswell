@@ -16,6 +16,7 @@ struct run_impl_t {
 
 extern char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd);
+extern char** cmd_run_clasp(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd);
