@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Launch emacs
-exec ros -L sbcl-bin -- $0 "$@"
+exec ros -L sbcl-bin -m roswell -- $0 "$@"
 |#
 
 (progn
@@ -31,5 +31,6 @@ exec ros -L sbcl-bin -- $0 "$@"
     (mute-error-if-not-verbose
      (ros:exec
       `("emacs" "-l" ,(namestring path) "--eval"
-                "(setq inferior-lisp-program \"ros -Q run\")" ,@argv)))))
+                ,(format nil "(setq inferior-lisp-program \"ros -Q ~:[~;~:*-L ~A ~]run\")" (ros:opt "*lisp"))
+                ,@argv)))))
 ;;; vim: set ft=lisp lisp:
