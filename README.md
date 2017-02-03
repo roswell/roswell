@@ -30,7 +30,7 @@ We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Wind
 
 [Feature comparison is available!](https://github.com/roswell/roswell/wiki/0.-What's-the-Difference%3F)
 
-* Implementation Manager (similar to CIM)
+* Implementation Manager
 * Scripting environment (similar to cl-launch)
 * Building utility (similar to buildapp)
 * **Novel** : Easier setup for initializing a script
@@ -41,7 +41,7 @@ We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Wind
 
 ## Usage
 
-Roswell has git-like subcommands which resemble that of cl-launch, buildapp and CIM.
+Roswell has git-like subcommands which resemble that of cl-launch, buildapp.
 
 ```
 $ ros
@@ -61,7 +61,6 @@ commands:
    init      Creates a new ros script, optionally based on a template.
    list      List Information
    delete    Delete installed implementations
-   update    NIL
    config    Get and set options
    version   Show the roswell version information
 
@@ -154,7 +153,6 @@ From &lsquo;[made with secret alien technology](http://www.lisperati.com/logo.ht
 I felt making it easier to use Lisp for people is a kind of making opportunity for humanbeings to mingle with alien technology. I recall &lsquo;roswell incident&rsquo; by the concept. I'm not sure what you feel.
 
 ## See Also
-+ [keens/cim](https://github.com/keens/cim) : similar project that is implemented in shellscript.I motivated to implement roswell by seeing this project.
 + [cl-launch](http://cliki.net/cl-launch) : influenced by the project of command line parameters design.
 
 ## Author
@@ -167,6 +165,7 @@ SANO Masatoshi (snmsts@gmail.com)
 
 ## Special Thanks to
  * Eitaro Fukamachi (e.arrows@gmail.com) for naming this project.
+ * Sunrin SHIMURA for [keens/cim](https://github.com/keens/cim) that motivate me to start this project.
 
 ## Project
  * https://github.com/roswell/roswell
