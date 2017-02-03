@@ -2,7 +2,7 @@
 ros-emacs - launch Emacs with Slime
 # Synopsis
 
-**ros [options] emacs** [ARGS...]
+**ros emacs** [ARGS...]
 
 <!-- # subcommands -->
 
