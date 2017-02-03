@@ -19,7 +19,20 @@ exec ros -- $0 "$@"
                            (uname-m) (uname) (opt "impl"))
                    (homedir)))
 
-(defun dump-output (params &optional force)
+#+nil
+(defun %dump-executable (cmds out script)
+  "more informative error message"
+  (declare (ignorable cmds script))
+  (format *error-output*
+          "While dumping to ~a:
+ros dump executable is supported only when the following features are satisfied:
+ (or sbcl ccl ecl clisp (and cmucl executable))
+
+On CMUCL, :executable is supported on x86, solaris and sparc.
+" out)
+  (ros:quit 1))
+
+(defun dump-output (func params &optional force)
   (flet ((%dump (path &optional mode)
            (if (and (not force)
                     (probe-file path))
@@ -39,7 +52,7 @@ exec ros -- $0 "$@"
       ((null params)
        (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (opt "argv0")))
       ((equal "-f" (first params))
-       (dump-output (rest params) t))
+       (dump-output func (rest params) t))
       ((equal "-o" (first params))
        (if (> (length params) 1)
            (%dump (second params))
@@ -48,222 +61,7 @@ exec ros -- $0 "$@"
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
-#+sbcl
-(defun %dump-executable (cmds out script)
-  (declare (ignore script))
-  (sb-ext:save-lisp-and-die
-   out
-   ;; no need to do GC because of :purify t by default
-   ;; however, this only affects old cheyneyGC
-   ;; http://www.sbcl.org/manual/#Efficiency-Hacks
-   :purify t ; just here to make it explicit
-   :toplevel
-   #'(lambda ()
-       (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
-       (setf ros:*argv* (rest sb-ext:*posix-argv*))
-       (ros:run cmds))
-   :executable t
-   :save-runtime-options t))
-
-
-#+ccl
-(defun %dump-executable (cmds out script)
-  (declare (ignore script))
-  (ccl:save-application
-   out
-   :toplevel-function
-   #'(lambda ()
-       (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
-       (setf ros:*argv* (rest (ccl::command-line-arguments)))
-       (ros:run cmds))
-   :prepend-kernel t))
-
-#+clisp
-(defun %dump-executable (cmds out script)
-  (declare (ignore script))
-  (ext:saveinitmem
-   out
-   :quiet t
-   :executable 0
-   :norc t
-   :script nil
-   :init-function
-   #'(lambda ()
-       (setf *load-pathname* (pathname (first ext:*args*)))
-       (setf ros:*argv* (rest ext:*args*))
-       (ros:run cmds))))
-
-
-;;; cmucl
-
-;; cf. https://common-lisp.net/project/cmucl/doc/cmu-user/extensions.html#toc47
-
-;; "This feature is only available on some platforms, as indicated by having the feature
-;; :executable. Currently only x86 ports and the solaris/sparc port have this feature."
-#+(and cmucl executable)
-(defun %dump-executable (cmds out)
-  (setf ext:*batch-mode* nil)
-  (setf ext::*gc-run-time* 0)
-  (ext:save-lisp
-   out
-   ;; no need to do GC because of :purify t by default
-   :purify t ; just here to make it explicit
-   :executable t
-   :print-herald nil ; suppress verbose startup message
-   :init-function
-   #'(lambda ()
-       (setf *load-pathname* (pathname (first extensions:*command-line-strings*)))
-       (setf ros:*argv* (rest extensions:*command-line-strings*))
-       (ros:run cmds))
-   :process-command-line nil))
-
-
-;;; ecl [WIP]
-
-;; In ecl, we have to explicitly specify ALL object(fasl) files
-;; in order to build a standalone executable.
-;; uiop/image:create-image / dump-image does the similar things.
-
-
-;; cf.https://common-lisp.net/project/ecl/manual/ch34s03.html
-;; c:build-program
-;; {image-name &key lisp-files ld-flags prologue-code epilogue-code}
-
-#+ecl
-(defun print-%-readable-or-lose (sym-name &optional (s *standard-output*))
-  (let ((*print-readably* t))
-    (handler-case
-        (format s
-                "(% ~s '~s)~%"
-                sym-name
-                (ignore-errors
-                  (symbol-value
-                   (read-from-string sym-name))))
-      (print-not-readable ()))))
-
-#+ecl
-(defun %dump-executable (cmds out ros-file)
-  (format *error-output* "~&; ECL is actually not suppported. Gotcha! ~%")
-  (ros:quit 1)
-  #+nil
-  (let* ((tmp (uiop:run-program "mktemp -d" :output '(:string :stripped t)))
-         (ros-opts-file (format nil "~a/ros-opts.lisp" tmp))
-         objfiles
-         (*compile-verbose* t)
-         (*compile-print* t))
-    (format *error-output* "~&; In directory ~a~%" tmp)
-    (unwind-protect
-        (progn
-          (with-open-file (*standard-output*
-                           ros-opts-file
-                           :direction :output
-                           :if-does-not-exist :create)
-            #+nil
-            (prin1
-             `(setf *load-verbose* t
-                    *load-print* t))
-            (terpri)
-            ;; fixme: duplicated, but necessary
-            (prin1
-             `(defpackage :ros
-                 (:use :cl)
-                 (:shadow :load :eval :package :restart :print :write)
-                 (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-                          :ignore-shebang :ensure-using-downloaded-asdf :include :ensure-asdf
-                          :roswell :exec :setenv :unsetenv :version :swank :verbose)
-                 (:documentation "Roswell backend.")))
-            (terpri)
-            (progn
-              (prin1
-               `(cl:load ,(make-pathname
-                           :name "init"
-                           :type "lisp"
-                           :defaults #.*load-pathname*)))
-              (terpri))
-            #+nil
-            (progn
-              (prin1
-               `(in-package :ros))
-              (terpri)
-              (princ
-               "(defmacro eval-with-printing (&body body)
-                (list* 'progn
-                       (loop for form in body
-                             collect (list 'cl:print (list 'quote form))
-                             collect (list 'cl:terpri)
-                             collect (list 'cl:finish-output)
-                             collect form)))")
-              (terpri)
-              (format *standard-output* "~&(eval-with-printing~&")
-              (terpri)
-              (princ `(defun % (string value)
-                        (ignore-errors
-                          (setf (symbol-value
-                                 (read-from-string string))
-                                value))))
-              (terpri)
-              (princ
-               `(trace %))
-              (terpri)
-              (dolist (sym-name '("QUICKLISP-CLIENT::*LOCAL-PROJECT-DIRECTORIES*"
-                                  "ROS::*ROS-OPTS*"))
-                (print-%-readable-or-lose sym-name))
-              (terpri)
-              (prin1
-               `(format t "~&loading init.ros...~&"))
-              (with-open-file (s (make-pathname
-                                  :name "init"
-                                  :type "lisp"
-                                  :defaults #.*load-pathname*))
-                (ignore-errors
-                  ;; copy and paste
-                  (loop (write-char (read-char s) *standard-output*))))
-              (format *standard-output* "~&)~&")))
-          (format *error-output* "~&finished dumping all special variables.")
-          (proclaim '(optimize (debug 3) (speed 0)))
-          (push (compile-file ros-opts-file
-                              :system-p t
-                              :output-file
-                              (format nil "~a/ros-opts.o" tmp)) objfiles)
-          (push (compile-file ros-file
-                              :system-p t
-                              :output-file
-                              (format nil "~a/script.o" tmp)) objfiles)
-          (c:build-program
-           out
-           :lisp-files ;#+nil
-           ;; objfiles
-           ;; #+nil
-           (nreverse objfiles)
-           :epilogue-code
-           (print
-            `(progn
-               (setf *load-pathname* (pathname (ext:argv 0)))
-               (setf ros:*argv*
-                     (eval
-                      (read-from-string
-                       "(loop for i from 0 below (ext:argc)
-                             collect (ext:argv i))")))
-               (print ros:*argv*)
-               (ros:run ',cmds)))))
-      ;; (uiop:run-program (format nil "rm -r ~a" tmp))
-      )))
-
-#-(or sbcl ccl clisp ecl (and cmucl executable))
-(defun %dump-executable (cmds out script)
-  "more informative error message"
-  (declare (ignorable cmds script))
-  (format *error-output*
-          "While dumping to ~a:
-ros dump executable is supported only when the following features are satisfied:
- (or sbcl ccl ecl clisp (and cmucl executable))
-
-On CMUCL, :executable is supported on x86, solaris and sparc.
-" out)
-  (ros:quit 1))
-
-
-(defun dump-executable (params)
+(defun dump-executable (func params)
   (if params
       (let* ((cmds (let ((*read-eval*))
                      (read-from-string
@@ -300,24 +98,22 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
           ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
           ;; it is better to capture this.
           (warn "dumping an executable without specifing the initial behaviour."))
-        (%dump-executable cmds output script))
+        (funcall func :executable cmds output script))
       (format *error-output* "Usage: ros dump executable help~%")))
-
-
-
-
-
-
 
 (defvar *subcmds*
   '(("output" dump-output)
     ("executable" dump-executable)))
 
 (defun main (&rest r)
-  (if r
-      (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
-        (if func
-            (funcall func (rest r))
-            (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) (pathname-name *load-pathname*))))
-      (format t "~{~a~%~}" (mapcar #'car *subcmds*))))
+  (let ((dump (module "dump" (or
+                              #+ccl "ccl"
+                              #+cmucl "cmucl"
+                              (remove #\Space (string-downcase (lisp-implementation-type)))))))
+    (if (and r dump)
+        (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
+          (if func
+              (funcall func dump (rest r))
+              (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) (pathname-name *load-pathname*))))
+        (format t "~{~a~%~}" (mapcar #'car *subcmds*)))))
 ;;; vim: set ft=lisp lisp:
