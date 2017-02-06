@@ -157,6 +157,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
         t)))
 
 (defun config-env (&optional bits)
+  (declare (ignorable bits))
   #+win32
   (let* ((w (opt "wargv0"))
          (a (opt "argv0"))
