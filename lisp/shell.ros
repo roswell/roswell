@@ -15,15 +15,17 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (defvar *msys2-arch*)
 (defvar *msys2-bits*)
 (defun main (&rest argv)
-  (let* ((*msys2-bits* (or
+  (let* ((uname-m (roswell.util:uname-m))
+	 (*msys2-bits* (or
                         (and (position "--32" argv :test 'equal) 32)
                         (and (position "--64" argv :test 'equal) 64)
-                        #+x86-64 64
-                        #-x86-64 32))
+                        (cond
+			  ((equal uname-m "x86-64") 64)
+			  ((equal uname-m "x86") 32))))
          (*msys2-arch* (if (= 32 *msys2-bits*)
                            "i686" "x86_64"))
          #+win32(msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
-    (config-env)
+    (config-env *msys2-bits*)
     #+win32(let ((file (merge-pathnames "msys2_shell.cmd" msys)))
              (unless (probe-file file)
                (ros:roswell '("install msys2+")))
