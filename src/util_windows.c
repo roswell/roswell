@@ -19,6 +19,11 @@ char* uname(void) {
 }
 
 char* uname_m(void) {
+  char* system=getenv("MSYSTEM");
+  if(strcmp(system,"MINGW64")==0)
+    return q("x86-64");
+  if(strcmp(system,"MINGW32")==0)
+    return q("x86");
 #if defined(_WIN64)
   return q("x86-64");
 #elif defined(_WIN32)
