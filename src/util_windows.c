@@ -20,8 +20,6 @@ char* uname(void) {
 
 char* uname_m(void) {
   char* msystem=getenv("MSYSTEM");
-  cond_printf(0,"!!!!!!:%s\n",msystem);
-	
   if(msystem && strcmp(msystem,"MINGW64")==0)
     return q("x86-64");
   if(msystem && strcmp(msystem,"MINGW32")==0)
