@@ -16,16 +16,8 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
   int simple=0;
-  char *asdf3= get_opt("asdf.version",0);
   LVal ret=0;
 
-  if(!asdf3) {
-    char* cmd=cat(which(argv_orig[0])," asdf install",NULL);
-    int ret;
-    cond_printf(1,"cmd:%s\n",cmd);
-    ret=System(cmd);
-    cond_printf(1,"ret:%d\n",ret);
-  }
   s(arch),s(os);
 
   ret=conss((strcmp("system",version)==0)?
