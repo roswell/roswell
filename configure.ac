@@ -30,6 +30,9 @@ fi
 
 AC_CHECK_HEADERS(windows.h)
 
+AC_CHECK_TOOL([WINDRES], [windres], [])
+AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
+
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
   [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://sourceforge.net/projects/sbcl/files/sbcl/]])],
