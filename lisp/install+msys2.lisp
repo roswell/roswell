@@ -6,51 +6,65 @@
 (progn
   (warn "msys2 is only required on windows"))
 
-(defvar *msys2-basever* "20150916")
+(defvar *msys2-basever* '("20150916"))
 ;;(defvar *msys2-sha1* "88fa66ac2a18715a542e0768b1af9b2f6e3680b2")
 ;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 (defvar *msys2-arch*)
 (defvar *msys2-bits*)
+
+(defun msys2-get-version ()
+  *msys2-basever*)
+
 (defun msys2-setup (argv)
-  (let* ((*msys2-bits* (or (and (position "--32" (getf argv :argv) :test 'equal) 32)
+  (let* ((uname-m (roswell.util:uname-m))
+         (*msys2-bits* (or (and (position "--32" (getf argv :argv) :test 'equal) 32)
                            (and (position "--64" (getf argv :argv) :test 'equal) 64)
-                           #+x86-64 64
-                           #-x86-64 32))
+                           (cond
+                            ((equal uname-m "x86-64") 64)
+                            ((equal uname-m "x86") 32))))
          (*msys2-arch* (if (= 32 *msys2-bits*)
                            "i686" "x86_64"))
-         (path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" *msys2-basever*) (homedir)))
-         (msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
-    (if  (probe-file (merge-pathnames (format nil "mingw~A/bin/gcc.exe" *msys2-bits*) msys))
-         (format t "msys2 have been setup~%")
-         (progn
-           (format *error-output* "Download ~a~%" (file-namestring path))
-           (force-output *error-output*)
-           (when (or (not (probe-file path))
-                     (opt "download.force"))
-             (download
-              (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
-                      (msys2-uri)
-                      *msys2-arch* *msys2-arch* *msys2-basever*) path))
-           (format t " done.~%")
-           (expand path
-                   (ensure-directories-exist
-                    (merge-pathnames (format nil "impls/~A/~A/" (uname-m) (uname))
-                                     (homedir))))
-           (format t "extraction done.~%")
-           (uiop/run-program:run-program
-            `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
-              "-lc" " ")
-            :output t)
-           (uiop/run-program:run-program
-            `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
-              "-lc"
-              ,(format nil "~@{~A~}"
-                       "for i in {1..3}; do pacman --noconfirm "
-                       "-Suy autoconf automake pkg-config "
-                       "mingw-w64-" *msys2-arch* "-gcc "
-                       "make zlib-devel && break || sleep 15; done")))
-           (uiop/run-program:run-program
-            `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys)))))))
+         (path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" (getf argv :version)) (homedir)))
+         (msys (merge-pathnames (format nil "impls/~A/~A/msys2/~A/" (uname-m) (uname) (getf argv :version)) (homedir))))
+    (if (probe-file (merge-pathnames (format nil "mingw~A/bin/gcc.exe" *msys2-bits*) msys))
+        (format t "msys2 have been setup~%")
+      (progn
+        (format *error-output* "Download ~a~%" (file-namestring path))
+        (force-output *error-output*)
+        (when (or (not (probe-file path))
+                  (opt "download.force"))
+          (download
+           (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
+                   (msys2-uri)
+                   *msys2-arch* *msys2-arch* (getf argv :version)) path))
+        (format t " done.~%")
+        (expand path
+                (ensure-directories-exist
+                 (merge-pathnames (format nil "impls/~A/~A/msys2/" (uname-m) (uname))
+                                  (homedir))))
+        (format t "extraction done.~%")
+        (ql-impl-util:rename-directory
+         (merge-pathnames (format nil "impls/~A/~A/msys2/msys~A"
+                                  (uname-m) (uname) *msys2-bits*)
+                          (homedir))
+         (merge-pathnames (format nil "impls/~A/~A/msys2/~A"
+                                  (uname-m) (uname) (getf argv :version))
+                          (homedir)))
+        (uiop/run-program:run-program
+         `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
+           "-lc" " ")
+         :output t)
+        (uiop/run-program:run-program
+         `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
+           "-lc"
+           ,(format nil "~@{~A~}"
+                    "for i in {1..3}; do pacman --noconfirm "
+                    "-Suy autoconf automake pkg-config "
+                    "mingw-w64-" *msys2-arch* "-gcc "
+                    "make zlib-devel && break || sleep 15; done")))
+        (uiop/run-program:run-program
+         `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys))))
+	(setf (config "msys2.version") (getf argv :version)))))
   (cons t argv))
 
 (defun msys2-help (argv)
@@ -60,5 +74,6 @@
 (defun msys2+ (type)
   (case type
     (:help '(msys2-help))
-    (:install `(msys2-setup))
-    #+nil(:list 'msys2-get-version)))
+    (:install `(,(decide-version 'msys2-get-version)
+                msys2-setup))
+    (:list 'msys2-get-version)))

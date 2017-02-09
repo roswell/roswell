@@ -14,22 +14,28 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defvar *msys2-arch*)
 (defvar *msys2-bits*)
+
+(defun msys ()
+  (merge-pathnames
+   (format nil "impls/~A/~A/msys2/~A/msys2_shell.cmd"
+           (uname-m) (uname) (config "msys2.version"))
+   (homedir)))
+
 (defun main (&rest argv)
-  (let* ((uname-m (roswell.util:uname-m))
+  (let* ((uname-m (uname-m))
 	 (*msys2-bits* (or
                         (and (position "--32" argv :test 'equal) 32)
                         (and (position "--64" argv :test 'equal) 64)
                         (cond
-			  ((equal uname-m "x86-64") 64)
-			  ((equal uname-m "x86") 32))))
+                         ((equal uname-m "x86-64") 64)
+                         ((equal uname-m "x86") 32))))
          (*msys2-arch* (if (= 32 *msys2-bits*)
-                           "i686" "x86_64"))
-         #+win32(msys (merge-pathnames (format nil "impls/~A/~A/msys~A/" (uname-m) (uname) *msys2-bits*) (homedir))))
+                           "i686" "x86_64")))
     (config-env *msys2-bits*)
-    #+win32(let ((file (merge-pathnames "msys2_shell.cmd" msys)))
-             (unless (probe-file file)
+    #+win32(progn
+             (unless (probe-file (msys))
                (ros:roswell '("install msys2+")))
              (uiop/run-program:run-program
-              `(,(sb-ext:native-namestring file))))
+              `(,(sb-ext:native-namestring (msys)))))
     #-win32(format *error-output* "'ros shell' is for windows~%")))
 ;;; vim: set ft=lisp lisp:
