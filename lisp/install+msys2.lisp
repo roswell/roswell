@@ -6,14 +6,13 @@
 (progn
   (warn "msys2 is only required on windows"))
 
-(defvar *msys2-basever* '("20150916"))
-;;(defvar *msys2-sha1* "88fa66ac2a18715a542e0768b1af9b2f6e3680b2")
-;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 (defvar *msys2-arch*)
 (defvar *msys2-bits*)
 
 (defun msys2-get-version ()
-  *msys2-basever*)
+  '("20150916"))l
+;;sha1 "88fa66ac2a18715a542e0768b1af9b2f6e3680b2"
+;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 
 (defun msys2-setup (argv)
   (let* ((uname-m (roswell.util:uname-m))
