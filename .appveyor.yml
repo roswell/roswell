@@ -31,7 +31,7 @@ install:
         }
 
 build_script:
-  - if "%METHOD%"=="cross" msys%MSYS2_BITS%\usr\bin\bash -lc "mkdir /tmp;cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make winrelease"
+  - if "%METHOD%"=="cross" msys%MSYS2_BITS%\usr\bin\bash -lc "mkdir /tmp;cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install; make winrelease"
   - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
   - if "%METHOD%"=="cross" ros version
   - if "%METHOD%"=="cross" ros version=t run
