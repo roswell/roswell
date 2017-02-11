@@ -9,15 +9,14 @@ release-2:
 	ros scripts/release.ros release-2
 
 winrelease:
-	ros version
-	ros config
+	ros -v -v version
 	mkdir -p roswell/lisp
 	mkdir -p roswell/documents/html
 	cp src/ros.exe roswell
 	cp lisp/*.lisp lisp/*.ros roswell/lisp
 	cp documents/html/*.html roswell/documents/html
 	cp scripts/chm.ros roswell/documents
-	cd roswell;ros -v ./documents/chm.ros
+	cd roswell;ros ./documents/chm.ros
 	/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop/hhc.exe roswell/documents/roswell.hhp || true
 	7z a Roswell-`if [ $$MSYSTEM = 'MINGW64' ];then echo x86_64 ;else echo i686; fi`.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
 test:
