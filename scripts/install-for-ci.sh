@@ -48,12 +48,12 @@ install_script () {
         shift
     done
     chmod 755 "$tmp"
-    mkdir -p "$dir" 2>/dev/null || sudo mkdir -p "$dir"
+    mkdir -p "$dir" 2>/dev/null || $SUDO mkdir -p "$dir"
 
     if [ -w "$dir" ]; then
         mv "$tmp" "$path"
     else
-        sudo mv "$tmp" "$path"
+        $SUDO mv "$tmp" "$path"
     fi
 }
 
@@ -73,8 +73,8 @@ apt_unless_installed () {
         if [ `uname` = "Darwin" ]; then
             brew install "$1"
         else
-            sudo -E apt-get -yq update
-            sudo -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install "$1"
+            $SUDO -E apt-get -yq update
+            $SUDO -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install "$1"
         fi
     fi
 }
@@ -105,7 +105,11 @@ install_ecl () {
     fi
 }
 
-if ! which ros ; then
+if which sudo >/dev/null; then
+    SUDO=sudo
+fi
+
+if ! which ros >/dev/null; then
     echo "Installing Roswell..."
 
     fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
@@ -120,7 +124,7 @@ if ! which ros ; then
     if [ -w "$ROSWELL_INSTALL_DIR" ]; then
         make install
     else
-        sudo make install
+        $SUDO make install
     fi
     echo "Roswell has been installed."
 else
