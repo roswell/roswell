@@ -1,4 +1,5 @@
 /* -*- tab-width : 2 -*- */
+#include "opt.h"
 #include "cmd-run.h"
 DEF_SUBCMD(cmd_script_frontend);
 
