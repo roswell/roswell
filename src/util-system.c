@@ -61,6 +61,7 @@ int system_redirect(const char* cmd,char* filename) {
 }
 
 int System(const char* command) {
+  cond_printf(1,"System:%s\n",command);
   return system(command);
 }
 
