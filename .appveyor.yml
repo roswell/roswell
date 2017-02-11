@@ -3,8 +3,6 @@ platform:
 environment:
   global:
     MSYS2_BASEVER: 20160205
-#    ROSWELL_PLATFORMHTML_BASE: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
-#    ROSWELL_SBCL_BIN_URI: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
   matrix:
     - MSYS2_ARCH: i686
       MSYS2_BITS: 32
@@ -32,18 +30,12 @@ install:
 
 build_script:
   - if "%METHOD%"=="cross" msys%MSYS2_BITS%\usr\bin\bash -lc "mkdir /tmp;cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install; make winrelease"
-  - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
-  - if "%METHOD%"=="cross" ros version
-  - if "%METHOD%"=="cross" ros version=t run
-  - if "%METHOD%"=="cross" ros install msys2+ --%MSYS2_BITS%
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "cd $APPVEYOR_BUILD_FOLDER; exec 0</dev/null; ./bootstrap; ./configure; make; make install"
 
 test_script:
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros version"
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros setup"
   - if "%METHOD%"=="ci" C:\msys64\usr\bin\bash -lc "ros install sbcl"
-  - if "%METHOD%"=="cross" cd %APPVEYOR_BUILD_FOLDER%\roswell
-  - if "%METHOD%"=="cross" ros config
 #  - if "%METHOD%"=="cross" ros install sbcl
 #  - ros install sbcl
 #  - ros config
