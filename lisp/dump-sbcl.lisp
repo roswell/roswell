@@ -11,6 +11,7 @@
    ;; however, this only affects old cheyneyGC
    ;; http://www.sbcl.org/manual/#Efficiency-Hacks
    :purify t ; just here to make it explicit
+   :compression t ; we all want our programs to be small, right?
    :toplevel
    #'(lambda ()
        (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
