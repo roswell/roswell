@@ -9,7 +9,7 @@ release-2:
 	ros scripts/release.ros release-2
 
 winrelease:
-	ros -v -v version
+	ros -v version
 	mkdir -p roswell/lisp
 	mkdir -p roswell/documents/html
 	cp src/ros.exe roswell
