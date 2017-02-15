@@ -130,7 +130,7 @@
              (make-pathname
               :defaults (merge-pathnames "bin/" (homedir))
               :name (pathname-name from)
-              :type (unless (or #+unix (equalp (pathname-type from) "ros"))
+              :type (unless (or (equalp (pathname-type from) "ros"))
                       (pathname-type from))))))
     (format *error-output* "~&~A~%" to)
     (uiop/stream:copy-file from to)
@@ -138,7 +138,11 @@
     #+nil(if (equalp (pathname-type from) "ros")
              (ros:roswell `("build" ,from "-o" ,to) :interactive nil)
              (uiop/stream:copy-file from to))
-    #+sbcl(sb-posix:chmod to #o700)))
+    #+sbcl(sb-posix:chmod to #o700)
+    #-unix
+    (when (equalp (pathname-type from) "ros")
+      (setf (pathname-type to) "ros")
+      (uiop/stream:copy-file from to))))
 
 (defun install-system-script (system)
   (let ((step 0))
