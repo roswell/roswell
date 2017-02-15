@@ -141,8 +141,7 @@
     #+sbcl(sb-posix:chmod to #o700)
     #-unix
     (when (equalp (pathname-type from) "ros")
-      (setf (pathname-type to) "ros")
-      (uiop/stream:copy-file from to))))
+      (uiop/stream:copy-file from (make-pathname :defaults to :type "ros")))))
 
 (defun install-system-script (system)
   (let ((step 0))
