@@ -191,10 +191,12 @@ have the latest asdf, and this file has a workaround for this.
       (when (probe-file path)
         (cl:load path)
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
-              for path in `(,(merge-pathnames "local-projects/" (opt "homedir")) ,local)
-              when (and path (or (ignore-errors (probe-file path))
-                                 #+clisp(ext:probe-directory path)))
-                do (set symbol (cons path (symbol-value symbol))))
+              for path in `(,local ,(merge-pathnames "local-projects/" (opt "homedir")))
+              for probe = (and path (or (ignore-errors (probe-file path))
+                                        #+clisp(ext:probe-directory path)))
+              when probe
+                do (set symbol (cons path (symbol-value symbol)))
+              until probe)
         t))))
 
 (defvar *included-names* '("init"))
