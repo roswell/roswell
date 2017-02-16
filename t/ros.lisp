@@ -1,7 +1,8 @@
 (in-package :cl-user)
 (defpackage roswell-test
   (:use :cl
-        :ros
+        :roswell
+        :roswell.util
         :prove)
   (:shadowing-import-from :ros :run))
 (in-package :roswell-test)
