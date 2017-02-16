@@ -6,8 +6,28 @@
    :uname :uname-m :homedir :config :impl :which :list% :config-env
    :parse-version-spec :download :expand :sh :chdir :system :module
    :core-extention :clone-github :opt :read-call :set-opt :copy-dir
-   :roswell-installable-searcher))
+   :roswell-installable-searcher :setenv :unsetenv))
 (in-package :roswell.util)
+
+(defun setenv (name value)
+  (declare (ignorable name value))
+  #+sbcl(funcall (read-from-string "sb-posix:setenv") name value 1)
+  #+ccl(ccl:setenv name value t)
+  #+clasp(ext:setenv name value t)
+  #+clisp(system::setenv name value)
+  #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-setenv")))))
+           (when f (funcall f name value 1)))
+  #+ecl(ext:setenv name value)
+  value)
+
+(defun unsetenv (name)
+  (declare (ignorable name))
+  #+sbcl(funcall (read-from-string "sb-posix:unsetenv") name)
+  #+ccl(ccl:unsetenv name)
+  #+clisp(system::setenv name nil)
+  #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-unsetenv")))))
+           (when f (funcall f name)))
+  nil)
 
 (defun read-call (func &rest params)
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
@@ -167,9 +187,9 @@ ccl-bin      -> (\"ccl-bin\" nil)
     (setq bits (cond (bits)
                      ((equal uname-m "x86-64") 64)
                      ((equal uname-m "x86") 32)))
-    (ros:setenv "MSYSTEM" (if (= bits 32) "MINGW32" "MINGW64"))
-    (ros:setenv "MSYS2_PATH_TYPE" "inherit")
-    (ros:setenv "PATH" (format nil "~A;~A\\.roswell\\bin;~A"
+    (setenv "MSYSTEM" (if (= bits 32) "MINGW32" "MINGW64"))
+    (setenv "MSYS2_PATH_TYPE" "inherit")
+    (setenv "PATH" (format nil "~A;~A\\.roswell\\bin;~A"
                                (subseq path 0 (1- (length path)))
                                (ros:getenv "USERPROFILE")
                                (ros:getenv "PATH")))))

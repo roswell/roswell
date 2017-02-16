@@ -28,7 +28,7 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf
-           :roswell :exec :setenv :unsetenv :version :swank :verbose)
+           :roswell :exec :version :swank :verbose)
   (:documentation "Roswell backend."))
 
 (in-package :ros)
@@ -113,26 +113,6 @@ have the latest asdf, and this file has a workaround for this.
                    (otherwise
                     (error "execvp(3) failed. (Code=~D)" errno))))))
         (sb-alien:free-alien a-args)))))
-
-(defun setenv (name value)
-  (declare (ignorable name value))
-  #+sbcl(funcall (read-from-string "sb-posix:setenv") name value 1)
-  #+ccl(ccl:setenv name value t)
-  #+clasp(ext:setenv name value t)
-  #+clisp(system::setenv name value)
-  #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-setenv")))))
-           (when f (funcall f name value 1)))
-  #+ecl(ext:setenv name value)
-  value)
-
-(defun unsetenv (name)
-  (declare (ignorable name))
-  #+sbcl(funcall (read-from-string "sb-posix:unsetenv") name)
-  #+ccl(ccl:unsetenv name)
-  #+clisp(system::setenv name nil)
-  #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-unsetenv")))))
-           (when f (funcall f name)))
-  nil)
 
 (defun quit (&optional (return-code 0) &rest rest)
   (let ((ret (or (and (numberp return-code) return-code) (first rest) 0)))
