@@ -186,8 +186,8 @@
       (ensure-directories-exist impl-path)
       (ensure-directories-exist log-path)
       (chdir src)
-      (ros:unsetenv "SBCL_HOME")
-      (ros:setenv "INSTALL_ROOT" (format nil "~A" install-root))
+      (unsetenv "SBCL_HOME")
+      (setenv "INSTALL_ROOT" (format nil "~A" install-root))
       (with-open-file (out log-path :direction :output :if-exists :append :if-does-not-exist :create)
         (format out "~&--~&~A~%" (date))
         (let ((*standard-output* (make-broadcast-stream

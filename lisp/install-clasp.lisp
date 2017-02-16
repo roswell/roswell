@@ -48,7 +48,7 @@
                                                                                       (config "externals.clasp.version"))
                                                                               (homedir))))
       (format out "SBCL                = '~A'~%" (namestring (merge-pathnames "bin/sbcl" sbcl-base))))
-    (ros:setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base))))
+    (setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base))))
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "log/clasp/~A/make.log"
                                                  (getf argv :version))
@@ -68,7 +68,7 @@
   (cons t argv))
 
 (defun clasp-install (argv)
-  (ros:unsetenv "SBCL_HOME")
+  (unsetenv "SBCL_HOME")
   (let ((src (opt "src"))
         (impl-path (merge-pathnames
                     (format nil "impls/~A/~A/~A/" (uname-m) (uname) (getf argv :target)) (homedir))))

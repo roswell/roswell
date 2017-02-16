@@ -39,7 +39,7 @@
 (defun clisp-lib (argv)
   ;; Prevent user-defined multiprocessing etc. via MAKEFLAGS,
   ;; which causes build failure in clisp Makefile
-  (ros:unsetenv "MAKEFLAGS")
+  (unsetenv "MAKEFLAGS")
   (when (and (find :linux *features*)
              (not (or (find :arm *features*))))
     (ros:roswell '("install ffcall+") :interactive nil))
