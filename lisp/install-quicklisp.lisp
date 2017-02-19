@@ -15,6 +15,9 @@
 (defun quicklisp-argv-parse (argv)
   (set-opt "download.uri" (format nil "~A~A" (quicklisp-uri) "quicklisp.lisp"))
   (set-opt "download.archive" (merge-pathnames (format nil "archives/~A" "quicklisp.lisp") (homedir)))
+  (let ((pos (position "--path" (getf argv :argv) :test 'equal)))
+    (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
+         (set-opt "quicklisp" (nth (1+ pos) (getf argv :argv)))))
   (cons t argv))
 
 (defun quicklisp-download (argv)
@@ -42,6 +45,12 @@
       ((probe-file (merge-pathnames "setup.lisp" path))
        (format *error-output* "Quicklisp is already setup.~%"))
       (t
+       (when (find-package :ql)
+         (delete-package :ql)
+         (defpackage #:quicklisp
+           (:export #:setup))
+         (setf (fdefinition (intern (string :setup) (find-package :quicklisp)))
+               (lambda())))
        (let ((*standard-output* (make-broadcast-stream)))
          (load archive))
        ;; use roswell to download everithing.
