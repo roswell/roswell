@@ -31,7 +31,7 @@ have the latest asdf, and this file has a workaround for this.
            :roswell :exec :version :swank :verbose)
   (:documentation "Roswell backend."))
 
-(in-package :ros)
+(in-package :roswell)
 (defparameter *argv* nil)
 (defparameter *ros-opts* nil)
 (defparameter *main* nil)
@@ -78,8 +78,9 @@ have the latest asdf, and this file has a workaround for this.
                               *error-output*
                               (make-broadcast-stream))))
       (or
-       sentinel
-       (not (setf sentinel t))
+       (prog1
+           sentinel
+         (setf sentinel t))
        (when (and (opt "asdf")
                   (or (and (find :asdf *features*)
                            (not (equal (opt "asdf")
@@ -160,14 +161,16 @@ have the latest asdf, and this file has a workaround for this.
                  :type "lisp"
                  :defaults (or path
                                (and environment (getenv environment))
+                               (let ((path (merge-pathnames ".roswell/lisp/quicklisp/"
+                                                            *default-pathname-defaults*)))
+                                 (or (ignore-errors (probe-file path))
+                                     #+clisp(ext:probe-directory path)))
                                (opt "quicklisp"))))
           (local (ignore-errors
                   (truename
                    (merge-pathnames
                     ".roswell/local-projects/"
-                    (make-pathname :defaults *load-pathname*
-                                   :type nil
-                                   :name nil))))))
+                    *default-pathname-defaults*)))))
       (when (probe-file path)
         (cl:load path)
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
