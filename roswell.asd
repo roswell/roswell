@@ -40,7 +40,6 @@ roswell does not function without help of C codes.
                  (:file "locations" :depends-on ("util"))
                  (:file "util-swank" :depends-on ("util"))
                  (:file "util" :depends-on ("init"))
-                 (:file "util-run" :depends-on ("init"))
                  (:file "init"))))
   :description "a command line tool to install and manage Common Lisp implementations damn easily."
   :long-description
