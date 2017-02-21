@@ -1,5 +1,5 @@
 (defpackage :roswell.init.default
-  (:use :cl :ros :roswell.util))
+  (:use :cl :roswell.util))
 (in-package :roswell.init.default)
 
 (defun default (name &rest params)
@@ -36,7 +36,7 @@
                     t))
               #+sbcl (sb-posix:chmod path #o700))
           (format *error-output* "~&File already exists: ~A~%" path)
-          (quit 1))
+          (ros:quit 1))
       (error (e)
         (format *error-output* "~&~A~%" e)
-        (quit 1)))))
+        (ros:quit 1)))))
