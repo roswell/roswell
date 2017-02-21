@@ -28,7 +28,7 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf
-           :roswell :exec :version :swank :verbose)
+           :roswell :exec :setenv :unsetenv :version :swank :verbose )
   (:documentation "Roswell backend."))
 
 (in-package :roswell)
@@ -200,6 +200,18 @@ have the latest asdf, and this file has a workaround for this.
          (and (probe-file path)
               (not (equal provide name))
               (cl:load path))))
+
+(defmacro deplicated-fun (name lambda-list include read date)
+  `(defun ,name ,lambda-list
+     (format *error-output*
+             ,(let ((*package* (find-package :keyword)))
+                (format nil "deplicated function '~S'.~%Use '~A' instead to support Roswell after ~A"
+                        name read date)))
+     (include ,include)
+     (funcall (read-from-string ,read) ,@lambda-list)))
+
+(deplicated-fun setenv (name value) "util" "ROSWELL.UTIL:SETENV" "2017/08")
+(deplicated-fun unsetenv (name) "util" "ROSWELL.UTIL:UNSETENV" "2017/08")
 
 (defun swank (&rest params)
   (include "util-swank")
