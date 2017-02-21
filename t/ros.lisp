@@ -4,7 +4,8 @@
         :roswell
         :roswell.util
         :prove)
-  (:shadowing-import-from :ros :run))
+  (:shadowing-import-from :ros :run)
+  (:shadowing-import-from :roswell.util :setenv :unsetenv))
 (in-package :roswell-test)
 
 (ql:quickload :uiop :silent t)
