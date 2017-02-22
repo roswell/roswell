@@ -1,4 +1,4 @@
-(ros:include "util")
+(roswell:include "util")
 (defpackage :roswell.dump.clisp
   (:use :cl :roswell.util))
 (in-package :roswell.dump.clisp)
@@ -14,8 +14,8 @@
    :init-function
    #'(lambda ()
        (setf *load-pathname* (pathname (first ext:*args*)))
-       (setf ros:*argv* (rest ext:*args*))
-       (ros:run cmds))))
+       (setf roswell:*argv* (rest ext:*args*))
+       (roswell:run cmds))))
 
 (defun clisp (type &rest args)
   (case type

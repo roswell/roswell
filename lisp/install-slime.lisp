@@ -1,5 +1,5 @@
-(ros:include '("util-install-quicklisp"))
-(ros:quicklisp :environment nil)
+(roswell:include '("util-install-quicklisp"))
+(roswell:quicklisp :environment nil)
 (unless (find-package :plump)
   (ql:quickload '(:plump) :silent t))
 
@@ -18,7 +18,7 @@
 
 (defun name-error (name)
   (format *error-output* "~A is not appropriate format. ~% quicklisp dist for XXXX.XX.XX , slime version for X.XX.~%" name)
-  (ros:quit 1))
+  (roswell:quit 1))
 
 (defun slime-from-git (name)
   (let* ((str (slime-uri))
@@ -52,7 +52,7 @@
             (download uri dist-file)
             (progn
               (format *error-output* "invalid version ~A" name)
-              (ros:quit 1))))
+              (roswell:quit 1))))
       (setq dist (ql-dist::make-dist-from-file dist-file))
       (download (ql-dist::release-index-url dist)
                 release-file)

@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.cmu-bin
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.cmu-bin)

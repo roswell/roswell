@@ -1,4 +1,4 @@
-(ros:include "util")
+(roswell:include "util")
 (defpackage :roswell.dump.cmucl
   (:use :cl :roswell.util))
 (in-package :roswell.dump.cmucl)
@@ -21,8 +21,8 @@
    :init-function
    #'(lambda ()
        (setf *load-pathname* (pathname (first extensions:*command-line-strings*)))
-       (setf ros:*argv* (rest extensions:*command-line-strings*))
-       (ros:run cmds))
+       (setf roswell:*argv* (rest extensions:*command-line-strings*))
+       (roswell:run cmds))
    :process-command-line nil))
 
 (defun cmucl (type &rest args)

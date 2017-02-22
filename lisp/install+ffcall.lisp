@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.ffcall+
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.ffcall+)

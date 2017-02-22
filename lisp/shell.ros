@@ -4,8 +4,8 @@
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 (progn ;;init forms
-  (ros:ensure-asdf)
-  (ros:include "util-install-quicklisp")
+  (roswell:ensure-asdf)
+  (roswell:include "util-install-quicklisp")
   )
 
 (defpackage :ros.script.shell.3693403229
@@ -34,7 +34,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (config-env *msys2-bits*)
     #+win32(progn
              (unless (probe-file (msys))
-               (ros:roswell '("install msys2+")))
+               (roswell:roswell '("install msys2+")))
              (uiop/run-program:run-program
               `(,(sb-ext:native-namestring (msys)))))
     #-win32(format *error-output* "'ros shell' is for windows~%")))

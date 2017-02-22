@@ -1,4 +1,4 @@
-(ros:include "util-install")
+(roswell:include "util-install")
 (defpackage :roswell.install.sbcl-bin
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.sbcl-bin)

@@ -1,4 +1,4 @@
-(ros:include "util")
+(roswell:include "util")
 (defpackage :roswell.dump.ccl
   (:use :cl :roswell.util))
 (in-package :roswell.dump.ccl)
@@ -10,8 +10,8 @@
    :toplevel-function
    #'(lambda ()
        (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
-       (setf ros:*argv* (rest (ccl::command-line-arguments)))
-       (ros:run cmds))
+       (setf roswell:*argv* (rest (ccl::command-line-arguments)))
+       (roswell:run cmds))
    :prepend-kernel t))
 
 (defun ccl (type &rest args)

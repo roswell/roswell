@@ -1,5 +1,5 @@
-(ros:include '("util-install" "system") "util-install-quicklisp")
-(ros:quicklisp :environment nil)
+(roswell:include '("util-install" "system") "util-install-quicklisp")
+(roswell:quicklisp :environment nil)
 (ql:quickload '(:uiop :simple-date-time :split-sequence :plump :cl-ppcre #+win32 :zip) :silent t)
 (in-package :roswell.install)
 
@@ -136,7 +136,7 @@
     (uiop/stream:copy-file from to)
     ;; Experimented on 0.0.3.38 but it has some problem. see https://github.com/roswell/roswell/issues/53
     #+nil(if (equalp (pathname-type from) "ros")
-             (ros:roswell `("build" ,from "-o" ,to) :interactive nil)
+             (roswell:roswell `("build" ,from "-o" ,to) :interactive nil)
              (uiop/stream:copy-file from to))
     #+sbcl(sb-posix:chmod to #o700)
     #-unix
@@ -154,7 +154,7 @@
             (*standard-output* *standard-output*)
             (*error-output* *error-output*)
             (*trace-output* *trace-output*))
-        (when (ros:verbose)
+        (when (roswell:verbose)
           (setf *standard-output* (make-broadcast-stream)
                 *error-output* (make-broadcast-stream)
                 *trace-output*(make-broadcast-stream)))

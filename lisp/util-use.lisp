@@ -1,4 +1,4 @@
-(ros:include "util" "util-use")
+(roswell:include "util" "util-use")
 (defpackage :roswell.util.use
   (:use :cl :roswell.util)
   (:export :use))
@@ -10,7 +10,7 @@
     (cond
       ((and arg
             (ignore-errors
-             (ros:roswell `("-L" ,arg "version=t" "run"))))
+             (roswell:roswell `("-L" ,arg "version=t" "run"))))
        (cond ((and lisp version)
               (setf (config "default.lisp") lisp
                     (config (format nil "~A.version" lisp)) version))

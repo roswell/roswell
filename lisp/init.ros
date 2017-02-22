@@ -5,8 +5,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:quicklisp :environment nil)
-  (ros:include "util"))
+  (roswell:quicklisp :environment nil)
+  (roswell:include "util"))
 
 (defpackage :ros.script.init.3672012201
   (:use :cl :roswell.util))

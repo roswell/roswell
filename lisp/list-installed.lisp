@@ -16,7 +16,7 @@
                   :type :wild))))
        (mapc (lambda (d)
                (let ((impl (first (last (pathname-directory d)))))
-                 (ros:roswell `("list" "installed" ,impl) *standard-output*)))
+                 (roswell:roswell `("list" "installed" ,impl) *standard-output*)))
              dir)))
     (t
      (dolist (impl/version r)

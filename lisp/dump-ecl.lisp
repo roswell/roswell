@@ -1,4 +1,4 @@
-(ros:include "util")
+(roswell:include "util")
 (defpackage :roswell.dump.ecl
   (:use :cl :roswell.util))
 (in-package :roswell.dump.ecl)
@@ -28,7 +28,7 @@
 
 (defun dump-executable (cmds out ros-file)
   (format *error-output* "~&; ECL is actually not suppported. Gotcha! ~%")
-  (ros:quit 1)
+  (roswell:quit 1)
   #+nil
   (let* ((tmp (uiop:run-program "mktemp -d" :output '(:string :stripped t)))
          (ros-opts-file (format nil "~a/ros-opts.lisp" tmp))
@@ -123,13 +123,13 @@
            (print
             `(progn
                (setf *load-pathname* (pathname (ext:argv 0)))
-               (setf ros:*argv*
+               (setf roswell:*argv*
                      (eval
                       (read-from-string
                        "(loop for i from 0 below (ext:argc)
                              collect (ext:argv i))")))
-               (print ros:*argv*)
-               (ros:run ',cmds)))))
+               (print roswell:*argv*)
+               (roswell:run ',cmds)))))
       ;; (uiop:run-program (format nil "rm -r ~a" tmp))
       )))
 

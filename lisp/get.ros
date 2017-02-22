@@ -4,10 +4,10 @@
 exec ros -Q -- $0 "$@"
 |#
 (progn
-  (ros:ensure-asdf)
-  (ros:include "util-install")
-  (when (probe-file (merge-pathnames "setup.lisp" (ros:opt "quicklisp")))
-    (ros:include "util-install-quicklisp")))
+  (roswell:ensure-asdf)
+  (roswell:include "util-install")
+  (when (probe-file (merge-pathnames "setup.lisp" (roswell:opt "quicklisp")))
+    (roswell:include "util-install-quicklisp")))
 
 (defpackage :ros.script.get.3691974593
   (:use :cl))

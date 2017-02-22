@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.clasp
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.clasp)
@@ -17,7 +17,7 @@
   (cons t argv))
  
 (defun clasp-lib (argv)
-  (ros:roswell '("install externals-clasp+") :interactive nil)
+  (roswell:roswell '("install externals-clasp+") :interactive nil)
   (cons t argv))
 
 (defun clasp-expand (argv)

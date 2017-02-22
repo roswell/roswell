@@ -1,4 +1,4 @@
-(ros:include "util")
+(roswell:include "util")
 (defpackage :roswell.dump.sbcl
   (:use :cl :roswell.util))
 (in-package :roswell.dump.sbcl)
@@ -17,8 +17,8 @@
    :toplevel
    #'(lambda ()
        (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
-       (setf ros:*argv* (rest sb-ext:*posix-argv*))
-       (ros:run cmds))
+       (setf roswell:*argv* (rest sb-ext:*posix-argv*))
+       (roswell:run cmds))
    :executable t
    :save-runtime-options t))
 

@@ -5,7 +5,7 @@ exec ros -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util")
+  (roswell:include "util")
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
     #+quicklisp(ql:quickload :uiop :silent t)))
@@ -30,7 +30,7 @@ ros dump executable is supported only when the following features are satisfied:
 
 On CMUCL, :executable is supported on x86, solaris and sparc.
 " out)
-  (ros:quit 1))
+  (roswell:quit 1))
 
 (defun dump-output (func params &optional force)
   (flet ((%dump (path &optional mode)
@@ -87,9 +87,9 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
           ;; Fixme: What is the use case when SCRIPT is not a roswell script?
           (let ((*package* (find-package :cl-user)))
             ;; loading script
-            (ros:script nil script)) ; <--- !!!WARNING!!! Side-effect on ros:*main*
+            (roswell:script nil script)) ; <--- !!!WARNING!!! Side-effect on roswell:*main*
           (let ((main-list (let ((*package* (find-package :keyword)))
-                             `((:entry ,(format nil "~S" ros:*main*))))))
+                             `((:entry ,(format nil "~S" roswell:*main*))))))
             (setf cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))

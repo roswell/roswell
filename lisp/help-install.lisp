@@ -1,5 +1,5 @@
-(ros:include "util-install-quicklisp")
-(ros:quicklisp :environment nil)
+(roswell:include "util-install-quicklisp")
+(roswell:quicklisp :environment nil)
 (defpackage :roswell.help.install
   (:use :cl :roswell.util :roswell.install))
 (in-package :roswell.help.install)

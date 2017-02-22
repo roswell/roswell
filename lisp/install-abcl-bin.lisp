@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.abcl-bin
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.abcl-bin)
@@ -56,7 +56,7 @@
     (unless java
       (format *error-output* "Error: JAVA wasn't found in the path. 'ros use abcl' will fail.~%")
       (format *error-output* "Installation incomplete.")
-      (ros:quit 1))
+      (roswell:quit 1))
     (install-script
      (merge-pathnames "abcl" dir)
      (format

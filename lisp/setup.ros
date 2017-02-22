@@ -5,7 +5,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util"))
+  (roswell:include "util"))
 
 (defpackage :ros.script.setup.3672012282
   (:use :cl :roswell.util))
@@ -68,9 +68,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                       ,@(opt "quicklisp.dist")
                       "install"
                       "quicklisp")))
-        (when (ros:verbose)
+        (when (roswell:verbose)
           (format *error-output* "Parameter for install quicklisp '~{~A ~}'~%" params))
-        (ros:roswell params :interactive nil))))
+        (roswell:roswell params :interactive nil))))
   ;;  if(argc==1) ??
   (let ((dir (sort
               (delete-if-not
@@ -79,7 +79,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                        (directory (merge-pathnames "cmds/*.ros" (homedir)))
                        (directory (merge-pathnames "lisp/*.lisp" (homedir)))
                        (directory (merge-pathnames "bin/*" (homedir))))) #'string< :key 'pathname-name)))
-    (when (ros:verbose)
+    (when (roswell:verbose)
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir))
     (format *error-output* "building dump:~A~%" dump)
     (force-output *error-output*)
@@ -91,8 +91,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                             maximize (file-write-date i)))
                (format *error-output* "up to date. stop~%")
                t))
-      (ros:roswell `("+R " ,(if (ros:verbose) "-v" "") " -L " "sbcl-bin"
-                           " --eval " #-win32 "'" "(ros:ignore-shebang)" #-win32 "'" " "
+      (roswell:roswell `("+R " ,(if (roswell:verbose) "-v" "") " -L " "sbcl-bin"
+                           " --eval " #-win32 "'" "(roswell:ignore-shebang)" #-win32 "'" " "
                            ,@(loop for i in dir
                                    collect "--load "
                                    collect (format nil "~A " i))

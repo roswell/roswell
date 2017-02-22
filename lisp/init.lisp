@@ -2,7 +2,7 @@
 #|
 
 The entry of all roswell commands.
-The true internal entry invoked by the C binary is ros:run.
+The true internal entry invoked by the C binary is roswell:run.
  (to see how this function is invoked, consult ros.c, cmd-run-sbcl.c etc.)
 All roswell commands are dispatched from this function via the symbol lookup.
 
@@ -371,8 +371,8 @@ have the latest asdf, and this file has a workaround for this.
                            in
                            (make-string-input-stream
                             (if (eql cmd :script)
-                                "(ros:quit (cl:apply 'main ros:*argv*))"
-                                "(setf ros:*main* 'main)"))))))
+                                "(roswell:quit (cl:apply 'main roswell:*argv*))"
+                                "(setf roswell:*main* 'main)"))))))
              (setf *features* (remove :ros.script *features*)))))
     (if (streamp arg)
         (body arg)

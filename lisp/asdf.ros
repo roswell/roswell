@@ -5,8 +5,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include '("locations" "util-install"))
-  (ros:quicklisp :environment nil)
+  (roswell:include '("locations" "util-install"))
+  (roswell:quicklisp :environment nil)
   (unless (find-package :plump)
     (ql:quickload '(:plump) :silent t)))
 

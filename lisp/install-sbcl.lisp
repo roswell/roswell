@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.sbcl
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.sbcl)
@@ -40,9 +40,9 @@
   (github-version (sbcl-git-version-uri) "sbcl" (lambda (href) (subseq href (1+ (position #\- href :from-end t))))))
 
 (defun sbcl-msys (argv)
-  (unless (or (ros:getenv "MSYSCON")
+  (unless (or (roswell:getenv "MSYSCON")
               (opt "until-extract"))
-    (ros:roswell '("install msys2+") :interactive nil))
+    (roswell:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
 (defun sbcl-argv-parse (argv)

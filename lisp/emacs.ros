@@ -5,7 +5,7 @@ exec ros -L sbcl-bin -m roswell -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util"))
+  (roswell:include "util"))
 
 (defpackage :ros.script.emacs.3672012160
   (:use :cl))
@@ -23,14 +23,14 @@ exec ros -L sbcl-bin -m roswell -- $0 "$@"
            (values nil condition)))))
 
 (defun main (&rest argv)
-  (let ((path (merge-pathnames "helper.el" (ros:opt "homedir")))
-        (*verbose-p* (or (ros:verbose)
-                         (ros:opt "emacs.verbose"))))
+  (let ((path (merge-pathnames "helper.el" (roswell:opt "homedir")))
+        (*verbose-p* (or (roswell:verbose)
+                         (roswell:opt "emacs.verbose"))))
     (unless (probe-file path)
-      (ros:roswell '("install" "slime") :interactive nil))
+      (roswell:roswell '("install" "slime") :interactive nil))
     (mute-error-if-not-verbose
-     (ros:exec
+     (roswell:exec
       `("emacs" "-l" ,(namestring path) "--eval"
-                ,(format nil "(setq inferior-lisp-program \"ros -Q ~:[~;~:*-L ~A ~]run\")" (ros:opt "*lisp"))
+                ,(format nil "(setq inferior-lisp-program \"ros -Q ~:[~;~:*-L ~A ~]run\")" (roswell:opt "*lisp"))
                 ,@argv)))))
 ;;; vim: set ft=lisp lisp:

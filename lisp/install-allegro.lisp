@@ -1,8 +1,8 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.allegro
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.allegro)
-(ros:quicklisp :environment nil)
+(roswell:quicklisp :environment nil)
 
 (defvar *allegro-agreement-uri*
   '(("100express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")

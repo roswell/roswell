@@ -5,8 +5,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util")
-  (ros:quicklisp :environment nil)
+  (roswell:include "util")
+  (roswell:quicklisp :environment nil)
   (unless (find-package :uiop)
     (ql:quickload :uiop :silent t)))
 
@@ -28,7 +28,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
        (finish-output)
        (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
        (finish-output *error-output*)
-       (ros:roswell '("list" "installed") *standard-output*))
+       (roswell:roswell '("list" "installed") *standard-output*))
       ((let ((func (module "delete" (if (position #\/ (first r))
                                         (subseq (first r) 0 (position #\/ (first r)))
                                         (first r)))))

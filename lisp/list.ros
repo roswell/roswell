@@ -5,8 +5,8 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util")
-  (ros:include "system"))
+  (roswell:include "util")
+  (roswell:include "system"))
 
 (defpackage :ros.script.list.3672012243
   (:use :cl :roswell.util))

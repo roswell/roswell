@@ -1,4 +1,4 @@
-(ros:include '("locations" "util") "util-install")
+(roswell:include '("locations" "util") "util-install")
 (defpackage :roswell.install
   (:use :cl :roswell.util :roswell.locations)
   (:export :*build-hook* :install-impl :read-call :*ros-path*
@@ -22,7 +22,7 @@
         (sb-sys:interactive-interrupt (condition)
           (declare (ignore condition))
           (format t "SIGINT detected, cleaning up the partially installed files~%")
-          (ros:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
+          (roswell:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
 
 (defun install-impl-if-probed (imp version argv)
   (values (let ((fun (module "install" imp)))
@@ -109,10 +109,10 @@
          (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" impl)
-            (ros:quit 1)))
+            (roswell:quit 1)))
        (setf changed t)
     while argv
-    finally (when changed (ros:exec `(,(opt "argv0") "setup")))))
+    finally (when changed (roswell:exec `(,(opt "argv0") "setup")))))
 
 #+win32
 (defun mingw-namestring (path)

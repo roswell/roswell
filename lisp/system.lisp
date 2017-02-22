@@ -1,7 +1,7 @@
 (in-package :roswell.util)
 
-(ros:ensure-asdf)
-(ros:include "util" "system")
+(roswell:ensure-asdf)
+(roswell:include "util" "system")
 
 (defmacro system (file &body rest)
   (destructuring-bind (&key depends-on (prefix ":roswell")) (first rest)

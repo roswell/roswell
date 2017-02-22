@@ -1,9 +1,9 @@
-(ros:include "util")
+(roswell:include "util")
 (in-package :roswell.util)
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
   "Request URL and write the body of the response to FILE."
   (declare (ignorable follow-redirects quietly maximum-redirects))
-  (ros:roswell
+  (roswell:roswell
    `("roswell-internal-use" "download"
                             ,(ql-http::urlstring (ql-http:url url))
                             ,file "2")
@@ -37,7 +37,7 @@
      (prog1
          (or (quicklisp-client:local-projects-searcher name)
              (progn
-               (ros:roswell `("install" ,system-name))
+               (roswell:roswell `("install" ,system-name))
                (quicklisp-client:register-local-projects)
                (quicklisp-client:local-projects-searcher name))
              (return-from roswell-installable-searcher)) ;;can't find.
@@ -56,7 +56,7 @@
        (probe-file
         (merge-pathnames
          (format nil "impls/~A/windows/7za/9.20/7za.exe"
-                 (ros:roswell '("roswell-internal-use" "uname" "-m") :string
+                 (roswell:roswell '("roswell-internal-use" "uname" "-m") :string
                               T))
          (roswell.util:homedir))))
     (defmethod install ((release release))
@@ -67,7 +67,7 @@
             (tracking (install-metadata-file release)))
         (ensure-directories-exist output)
         (ensure-directories-exist tracking)
-        (ros:roswell
+        (roswell:roswell
          `("roswell-internal-use" "tar" "-xf" ,archive "-C" ,output))
         (ensure-directories-exist tracking)
         (with-open-file

@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.ecl
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.ecl)
@@ -19,8 +19,8 @@
                            (lambda (href) (subseq href (1+ (position #\/ href :from-end t)))))))
 
 (defun ecl-msys (argv)
-  (unless (ros:getenv "MSYSCON")
-    (ros:roswell '("install msys2+") :interactive nil))
+  (unless (roswell:getenv "MSYSCON")
+    (roswell:roswell '("install msys2+") :interactive nil))
   (cons t argv))
 
 (defun ecl-chdir (argv)

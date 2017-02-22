@@ -1,4 +1,4 @@
-(ros:include "util-install")
+(roswell:include "util-install")
 (defpackage :roswell.install.quicklisp
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.quicklisp)
@@ -10,7 +10,7 @@
 (defun quicklisp-patch (path)
   (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/roswell.lisp" path))
                        :direction :output :if-exists :supersede)
-    (format out "(ros:include \"patch-quicklisp\")~%")))
+    (format out "(roswell:include \"patch-quicklisp\")~%")))
 
 (defun quicklisp-argv-parse (argv)
   (set-opt "download.uri" (format nil "~A~A" (quicklisp-uri) "quicklisp.lisp"))
@@ -60,7 +60,7 @@
                "Request URL and write the body of the response to FILE."
                (declare (ignorable url file follow-redirects quietly
                                    maximum-redirects))
-               (ros:roswell `("roswell-internal-use" "download" ,url ,file) :interactive nil)))
+               (roswell:roswell `("roswell-internal-use" "download" ,url ,file) :interactive nil)))
        (let ((*standard-output* (make-broadcast-stream)))
          (funcall (intern (string :install) (find-package :quicklisp-quickstart))
                   :path path

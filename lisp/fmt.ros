@@ -16,7 +16,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (declare (ignore argv))
   (loop for file in (append (directory "*.lisp")
                             (directory "*.ros"))
-     do (ros:roswell `("emacs" "-Q" "-q" "--batch"
+     do (roswell:roswell `("emacs" "-Q" "-q" "--batch"
                                "--file" ,(namestring file)
                                "--eval \"(setq make-backup-files nil)\""
                                "--eval \"(setq-default indent-tabs-mode nil)\""

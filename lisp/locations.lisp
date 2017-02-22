@@ -9,9 +9,9 @@
     `(progn
        (export
         (defun ,name ()
-          (or (ros:opt ,downcased)
+          (or (roswell:opt ,downcased)
               ,uri
-              (ros:roswell '("roswell-internal-use" "version" ,downcased) :string t))))
+              (roswell:roswell '("roswell-internal-use" "version" ,downcased) :string t))))
        (push ',name *locations*))))
 
 (defuri clisp-version-uri "http://ftp.gnu.org/pub/gnu/clisp/release/")

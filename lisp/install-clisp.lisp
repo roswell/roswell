@@ -1,4 +1,4 @@
-(ros:include "util-install-quicklisp")
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.clisp
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.clisp)
@@ -42,8 +42,8 @@
   (unsetenv "MAKEFLAGS")
   (when (and (find :linux *features*)
              (not (or (find :arm *features*))))
-    (ros:roswell '("install ffcall+") :interactive nil))
-  (ros:roswell '("install sigsegv+") :interactive nil)
+    (roswell:roswell '("install ffcall+") :interactive nil))
+  (roswell:roswell '("install sigsegv+") :interactive nil)
   (cons t argv))
 
 (defun clisp-expand (argv)

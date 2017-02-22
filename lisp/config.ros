@@ -5,7 +5,7 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (ros:include "util"))
+  (roswell:include "util"))
 
 (defpackage :ros.script.config.3668210854
   (:use :cl))
@@ -41,7 +41,7 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
               config))))
 
 (defun main (&rest argv)
-  (let* ((path (merge-pathnames "config" (ros:version "confdir")))
+  (let* ((path (merge-pathnames "config" (roswell:version "confdir")))
          (conf (load-config path))
          (len (length argv)))
     (cond
