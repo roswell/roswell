@@ -30,6 +30,9 @@
     (format t "git checkout ~A" (getf argv :version))
     (chdir (opt "src"))
     (uiop/run-program:run-program
+     (list "git" "fetch" "origin")
+     :output t :ignore-error-status nil)
+    (uiop/run-program:run-program
      (list "git" "checkout" (getf argv :version))
      :output t :ignore-error-status nil))
   (cons (not (opt "until-extract")) argv))
