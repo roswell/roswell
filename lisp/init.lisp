@@ -174,7 +174,8 @@ have the latest asdf, and this file has a workaround for this.
       (when (probe-file path)
         (cl:load path)
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
-              for path in `(,local ,(merge-pathnames "local-projects/" (opt "homedir")))
+              for path in `(,local ,@(and (or path (and environment (getenv environment)))
+                                          `(,(merge-pathnames "local-projects/" (opt "homedir")))))
               for probe = (and path (or (ignore-errors (probe-file path))
                                         #+clisp(ext:probe-directory path)))
               when probe
