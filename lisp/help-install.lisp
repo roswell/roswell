@@ -8,11 +8,32 @@
   (if (not (second argv))
       (let ((s *error-output*)
             (cmd (pathname-name (opt "wargv0"))))
-        (format s "Usage:~%~%   ~A install impl [options]~%or~%" cmd)
-        (format s "   ~A install repository [repository... ] ~%~%" cmd)
-        (format s "For more details on impl specific options, type:~%")
-        (format s "   ~A help install impl~2%" cmd)
-        (format s "Candidates impls for installation are:~%")
+        (flet ((usage (msg)
+                 (if (search "~A" msg)
+                     (format s msg cmd)
+                     (format s msg))
+                 (terpri s)))
+          
+          (mapcar #'usage
+                  '("Usage:"
+                    ""
+                    "To install a new Lisp implementaion:"
+                    "   ~A install impl [options]"
+                    "or a system from the GitHub:"
+                    "   ~A install fukamachi/prove/v2.0.0 [repository... ]"
+                    "or an asdf system from quicklisp:"
+                    "   ~A install quicklisp-system [system... ]"
+                    "or a local script:"
+                    "   ~A install ./some/path/to/script.ros [path... ]"
+                    "or a local system:"
+                    "   ~A install ./some/path/to/system.asd [path... ]"
+                    ""
+                    "For more details on impl specific options, type:"
+                    "   ~A help install impl"
+                    ""
+                    ""
+                    "Candidates impls for installation are:")))
+        
         (loop for i in (asdf:registered-systems)
               with len = #.(length "roswell.install.")
               when (and (string-equal "roswell.install." i :end2 (min (length i) len))
