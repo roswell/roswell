@@ -77,6 +77,38 @@
   (clone-github impl version :path "local-projects" :branch tag))
 
 (defun install (argv)
+  "Install an implementation or a system.
+
+   How this function parses it's arguments.
+
+   It takes each argument and makes following:
+
+   1. Splits the argument by first '/' occurence.
+   2. Everything before / becomes the name of an implementation or a system.
+   3. Everything after / (if any), again splitted by '/'.
+   4. If step 3 was successful, first part of the string becomes a 'version'
+      and second part (if any) becomes a 'tag'.
+
+   After the parsing, roswell sequentially tries:
+
+   1. To install 'implementation' of the given 'version'.
+   2. To install a something.ros script, if argument is a path to a file.
+   3. To install an asdf system with same name as exact argument's value.
+   4. To install a system by local path.
+      Path should start with '.', contain at least one '/' and point
+      to an asd file.
+      System is installed into \"${roswell-homedir}/local-projects/local/${system-name}/\".
+   5. If nothing of above matched, it tries to clone system from the github,
+      like:
+      git clone -b 'tag' 'system'/'version'
+
+      For example, if you did: ros install some/repo/the-feature, it will do
+
+      git clone -b the-feature \\
+          https://github.com/some/repo \\
+          ${roswell-home}/local-projects/some/repo
+      
+ "
   (read-call "quicklisp-client:register-local-projects")
   (loop
     with *ros-path* = (make-pathname :defaults (opt "argv0"))
