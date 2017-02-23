@@ -1,3 +1,13 @@
+roswell (17.2.8.74-1) unstable; urgency=low
+
+  * New: initial support clasp. 'ros install clasp' and 'ros run'. (clasp version are chosen by gos-k)
+  * New: 'ros install sbcl/git' to clone from git repo and install it.
+  * Change: 'ros emacs' take -L option (reported by Alexander Artemenko)
+  * Change: core compression will be used for sbcl.
+  * Change: if `*default-pathname-defaults*`/.roswell/local-projects/ exists ~/.roswell/local-projects/ are not treated.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 23 Feb 2017 13:10:22 +0900
+
 roswell (17.1.8.73-1) unstable; urgency=low
 
   * New: introduce 'ros shell' for windows
