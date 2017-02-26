@@ -27,8 +27,11 @@
       (uiop/run-program:run-program
        (list "git" "clone" "https://github.com/drmeister/clasp.git" output)
        :output t :ignore-error-status nil))
-    (format t "git checkout ~A" (getf argv :version))
     (chdir (opt "src"))
+    (format t "git fetch~%")
+    (uiop/run-program:run-program
+     (list "git" "fetch") :output t :ignore-error-status nil)
+    (format t "git checkout ~A" (getf argv :version))
     (uiop/run-program:run-program
      (list "git" "fetch" "origin")
      :output t :ignore-error-status nil)
