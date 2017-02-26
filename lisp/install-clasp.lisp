@@ -30,11 +30,9 @@
     (chdir (opt "src"))
     (format t "git fetch~%")
     (uiop/run-program:run-program
-     (list "git" "fetch") :output t :ignore-error-status nil)
-    (format t "git checkout ~A" (getf argv :version))
-    (uiop/run-program:run-program
      (list "git" "fetch" "origin")
      :output t :ignore-error-status nil)
+    (format t "git checkout ~A~%" (getf argv :version))
     (uiop/run-program:run-program
      (list "git" "checkout" (getf argv :version))
      :output t :ignore-error-status nil))
@@ -54,7 +52,8 @@
                                                                                       (config "externals.clasp.version"))
                                                                               (homedir))))
       (format out "SBCL                = '~A'~%" (namestring (merge-pathnames "bin/sbcl" sbcl-base))))
-    (setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base))))
+    (setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base)))
+    (format t "with sbcl-bin(~A) build clasp" sbcl-base))
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "log/clasp/~A/make.log"
                                                  (getf argv :version))
