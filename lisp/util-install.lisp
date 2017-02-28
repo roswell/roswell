@@ -152,7 +152,30 @@
                      (uiop:run-program `(,(sh) "-lc" ,(format nil "cd ~S;pwd" (uiop:native-namestring path)))
                                        :output :string)))
 
+(defvar *package-assoc*
+  '(("dpkg" . (("zlib" . "zlib1g-dev")))))
+
 (defun require-system-package (&rest packages)
   "check installation of system library like 'zlib' and show how to install."
   (declare (ignorable packages))
-  t)
+  (loop with result
+        with (mgr . assoc) = (find-if #'roswell.util:which *package-assoc* :key #'first)
+        for package in packages
+        for to-install = (cdr (assoc package assoc :test 'equal))
+        do (cond
+             ((null to-install))
+             ((equal mgr "dpkg")
+              (or (ignore-errors
+                   (uiop:run-program `(,mgr "-l" ,to-install))
+                   t)
+                  (push to-install result))))
+        finally
+           (return
+             (if result
+                 (cond
+                   ((equal mgr "dpkg")
+                    (format *error-output*
+                            "might cause error 'apt-get install ~{~A~^ ~}' would help~%" result)
+                    t)) ;; Don't have confidence.
+                 t))))
+
