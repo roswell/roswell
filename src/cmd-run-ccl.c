@@ -12,6 +12,8 @@ char* ccl_binname(char* bit) {
     ret=s_cat(ret,q("w"),NULL);
   }else if(strcmp(_uname,"darwin")==0) {
     ret=s_cat(ret,q("d"),NULL);
+  }else if(strcmp(_uname,"freebsd")==0) {
+    ret=s_cat(ret,q("f"),NULL);
   }
   if(strcmp(_uname_m,"x86-64")==0 ||
      strcmp(_uname_m,"x86")==0) {
