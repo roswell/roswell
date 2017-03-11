@@ -1,15 +1,18 @@
 
-For better utilizing the limited amount of human resource, please include the following
-information when reporting an issue. Issues which does not follow this
-instruction may be immediately closed without review.
+For better utilizing the limited human resources, please include the following
+information when reporting an issue. Issues which do not follow the
+format may be immediately closed without review.
+
+## Environment
 
 ```
+# result of evaluating
 uname -a
 ros --version    # if roswell runs successfully
 ros config
 ```
 
-## How to reproduce it
+## How to reproduce the issue
 
 ```sh
 
