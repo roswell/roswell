@@ -34,6 +34,8 @@ typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 #define PATHSEP ";"
 #define EXE_EXTENTION ".exe"
 #define ROSRC ""
+int setenv(const char* name,const char* value,int overwrite);
+int unsetenv(const char* name);
 #endif
 #ifdef HAVE_CURL_CURL_H
 #include <curl/curl.h>
