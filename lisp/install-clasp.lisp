@@ -66,8 +66,9 @@
       (chdir src)
       (format t "~&~S~%" cmd)
       (uiop/run-program:run-program
-       (list (sh) "-lc" (format nil "cd ~S;./waf configure update_submodules build_cboehm"
-                                (#+win32 mingw-namestring #-win32 princ-to-string src)))
+       (list (sh) "-lc" (format nil "cd ~S;~A"
+                                (#+win32 mingw-namestring #-win32 princ-to-string src)
+                                cmd))
        :output t :ignore-error-status nil)
       (format *error-output* "done.~%")))
   (cons t argv))
@@ -88,6 +89,16 @@
      (merge-pathnames (opt "as") impl-path)))
   (cons t argv))
 
+(defun clasp-clean (argv)
+  (format t "~&Cleaning~%")
+  (let ((src (opt "src")))
+    (chdir src)
+    (let ((*standard-output* *standard-output*))
+      (uiop/run-program:run-program
+       (list (sh) "-lc" (format nil "cd ~S;rm -rf build" src)) :output t))
+    (format t "done.~%"))
+  (cons t argv))
+
 (defun clasp-help (argv)
   (format t "~%")
   (cons t argv))
@@ -102,4 +113,5 @@
                 clasp-expand
                 clasp-make
                 clasp-install
+                clasp-clean
                 setup))))
