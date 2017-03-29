@@ -88,7 +88,7 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
         p2=p;
     }
   }
-
+  /* search ros script commands in specific path */
   if(popt->top && position_char(".",arg0)==-1) {
     LVal list,v;
     if(module) {
@@ -116,6 +116,14 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
       }
     }
     sL(list);
+  }
+  /* search ros-* command in PATH */
+  {
+    char* roscmd=cat("ros-",arg0,NULL);
+    char* cmd=which(roscmd);
+    if(strlen(cmd)!=0)
+      exec_arg(stringlist_array(conss(cmd,rest(arg))));
+    s(cmd),s(roscmd);
   }
   if(p2) {
     struct sub_command* fp=firstp(p2);
