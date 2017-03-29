@@ -1,3 +1,10 @@
+roswell (17.3.8.75-1) unstable; urgency=low
+
+  * Change: better clasp support. (clasp version are chosen by gos-k)
+  * Change: Enable CCL to run on FreeBSD.(by FungusHumungus)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 29 Mar 2017 07:38:44 +0900
+
 roswell (17.2.8.74-1) unstable; urgency=low
 
   * New: initial support clasp. 'ros install clasp' and 'ros run'. (clasp version are chosen by gos-k)
