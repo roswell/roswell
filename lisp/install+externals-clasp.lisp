@@ -16,7 +16,7 @@
 
 (defun externals-clasp-expand (argv)
   (format t "~%Extracting archive:~A~%" (opt "download.archive"))
-  (when (and (probe-file (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A" (uname-m) (uname) (getf argv :version))
+  (when (and (probe-file (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A/success" (uname-m) (uname) (getf argv :version))
                                           (homedir)))
              (not (opt "install.force")))
     (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
@@ -50,6 +50,13 @@
   (setf (config "externals.clasp.version") (getf argv :version))
   (cons t argv))
 
+(defun externals-clasp-sentinel (argv)
+  (with-open-file (i (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A/success" (uname-m) (uname) (getf argv :version))
+                                      (homedir))
+                     :direction :probe
+                     :if-does-not-exist :create))
+  (cons t argv))
+
 (defun externals-clasp-help (argv)
   (format t "~%")
   (cons t argv))
@@ -62,4 +69,4 @@
                 ,(decide-download 'externals-clasp-download)
                 externals-clasp-expand
                 externals-clasp-make
-                ))))
+                externals-clasp-sentinel))))
