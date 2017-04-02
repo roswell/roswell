@@ -152,7 +152,7 @@ have the latest asdf, and this file has a workaround for this.
   #+(and unix ccl)
   (ignore-errors
     (ccl:with-string-vector (argv args) (ccl::%execvp argv)))
-  (quit (run-program args)))
+  (quit (run-program args :output :interactive)))
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
   (unless (find :quicklisp *features*)
