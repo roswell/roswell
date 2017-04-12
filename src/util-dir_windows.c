@@ -3,7 +3,7 @@
 
 #ifdef HAVE_WINDOWS_H
 
-char* homedir_helper(void) {
+char* homedir(void) {
   TCHAR szAppData[MAX_PATH];
   return (SUCCEEDED(SHGetFolderPath(NULL, CSIDL_PROFILE, NULL, 0, szAppData)))?q_(szAppData):NULL;
 }

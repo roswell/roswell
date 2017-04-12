@@ -6,8 +6,8 @@ char* extract_command_str(int flags,const char *filename,int do_extract,const ch
   char* str;
   char* _uname_m=uname_m();
   char* _uname=uname();
-  char* _homedir=configdir();
-  char* exe=s_escape_string(cat(_homedir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL));
+  char* _confdir=configdir();
+  char* exe=s_escape_string(cat(_confdir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL));
   char *outputpath2=q(outputpath);
   char *filename2=q(filename);
   substitute_char('\\','/',outputpath2);
@@ -20,7 +20,7 @@ char* extract_command_str(int flags,const char *filename,int do_extract,const ch
     ensure_directories_exist(outputpath2);
     str=cat(exe," ",do_extract?"x":"t"," -y -o",outputpath2," ",filename2,NULL);
   }
-  s(outputpath2),s(filename2),s(_homedir),s(_uname),s(_uname_m);
+  s(outputpath2),s(filename2),s(_confdir),s(_uname),s(_uname_m);
   return str;
 }
 #endif

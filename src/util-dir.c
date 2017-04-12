@@ -2,7 +2,7 @@
 #include "util.h"
 
 #ifndef HAVE_WINDOWS_H
-char* homedir_helper(void) {
+char* homedir(void) {
   char* user=getenv("SUDO_USER");
   struct passwd *pwd= getpwuid(getuid());
   if(user && getuid()==0)
@@ -68,16 +68,12 @@ int delete_directory(char* pathspec,int recursive) {
 
 #endif
 
-char* homedir(void) {
+char* configdir(void) {
   char *c=upcase(q_(PACKAGE"_HOME"));
   char *env=getenv(c);
+  char* home=env?append_trail_slash(q(env)):
+    ((c=homedir())?append_trail_slash(c):NULL);
   s(c);
-  return env?append_trail_slash(q(env)):
-    ((c=homedir_helper())?append_trail_slash(c):NULL);
-}
-
-char* configdir(void) {
-  char* home=homedir();
   return home?s_cat2(home,q("."PACKAGE SLASH)):NULL;
 }
 
