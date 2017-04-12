@@ -151,9 +151,13 @@ ccl-bin      -> (\"ccl-bin\" nil)
                * (truename *))))
       (homedir)))
 
-(defun clone-github (owner name &key (alias (format nil "~A/~A" owner name)) (path "templates") branch (home (checkoutdir)))
+(defun clone-github (owner name &key
+                                  (alias (format nil "~A/~A" owner name))
+                                  branch force-git
+                                  (path "templates")
+                                  (home (checkoutdir)))
   (format *error-output* "install from github ~A/~A~%" owner name)
-  (if (which "git")
+  (if (or force-git (which "git"))
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
         (setq branch (if branch (format nil "-b ~A" branch) ""))
         (if (funcall (intern (string :probe-file*) :uiop) dir)

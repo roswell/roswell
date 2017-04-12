@@ -31,9 +31,23 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (let ((url (format nil "~A~A.tar.gz" (asdf-uri) version))
         (file (merge-pathnames (format nil "archives/asdf-~A.tar.gz" version) (homedir)))
         (src (merge-pathnames "src/" (homedir))))
-    (unless (probe-file file)
-      (download url file))
-    (expand file src)
+    (if (= (length version) 40)
+        (let ((alias (format nil "asdf-~A" version)))
+          (unless (probe-file (merge-pathnames alias src))
+            (clone-github "roswell" "asdf"
+                          :alias alias
+                          :path src :force-git t))
+          (format t "git checkout ~A~%" version)
+          (uiop/run-program:run-program
+           (list (sh) "-lc" (format nil "cd ~S;git checkout ~A"
+                                    (#+win32 mingw-namestring #-win32 princ-to-string
+                                             (merge-pathnames (format nil "asdf-~A/" version) src))
+                                    version))
+           :output t :ignore-error-status nil))
+        (progn
+          (unless (probe-file file)
+            (download url file))
+          (expand file src)))
     (let* ((src (merge-pathnames (format nil "asdf-~A/" version) src))
            (cmd (list (sh) "-lc" (format nil "cd ~S;~A"
                                          (#+win32 mingw-namestring #-win32 princ-to-string src)
