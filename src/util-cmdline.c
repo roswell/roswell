@@ -18,6 +18,10 @@ char* s_decode(char* str) {
               break;
             case 'r':
               ret[count]='\r';
+            case '\\':
+              ret[count]='\\';
+            case '_':
+              ret[count]=' ';
             }
           }
         }

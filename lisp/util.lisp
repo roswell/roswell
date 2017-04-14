@@ -80,6 +80,21 @@
     (unless (zerop (length result))
       result)))
 
+(defvar *backslash-encode-assoc*
+  '((#\Space . #\_)
+    (#\\ . #\\)
+    (#\Newline . #\n)
+    (#\Return . #\r)))
+
+(defun backslash-encode (string)
+  (loop
+     for i across string
+     for c = (cdr (assoc i *backslash-encode-assoc*))
+     when c collect #\\ into r
+     when c collect it into r
+     unless c collect i into r
+     finally (return (coerce r 'string))))
+
 (defun download (uri file &key proxy (verbose t))
   (declare (ignorable proxy))
   (ensure-directories-exist file)
