@@ -1,7 +1,7 @@
 /* -*- tab-width : 2 -*- */
 #include "util.h"
 
-char* s_decode(char* str) {
+char* backslash_decode(char* str) {
   int count,i,write,escape=0;
   char* ret;
   for(write=0;write<2;++write) {
@@ -18,10 +18,13 @@ char* s_decode(char* str) {
               break;
             case 'r':
               ret[count]='\r';
+              break;
             case '\\':
               ret[count]='\\';
+              break;
             case '_':
               ret[count]=' ';
+              break;
             }
           }
         }
@@ -49,7 +52,7 @@ char** parse_cmdline(char* cmdline,int *argc) {
           if(write) {
             ret[count]=subseq(cmdline,last,i-mode);
             if(mode) {
-              ret[count]=s_decode(ret[count]);
+              ret[count]=backslash_decode(ret[count]);
               mode=0;
             }
           }
@@ -69,7 +72,7 @@ char** parse_cmdline(char* cmdline,int *argc) {
       if(write) {
         ret[count]=subseq(cmdline,last,i-mode);
         if(mode) {
-          ret[count]=s_decode(ret[count]);
+          ret[count]=backslash_decode(ret[count]);
           mode=0;
         }
       }
