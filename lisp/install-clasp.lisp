@@ -4,7 +4,7 @@
 (in-package :roswell.install.clasp)
 
 (defun clasp-get-version ()
-  '("fa20fc6c7ef9b9b615cbb07070ec2de7130a1e03"))
+  '("c4ca73300a421ccef78cad4dd4f1b237d7b46982"))
 
 (defun clasp-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
