@@ -95,10 +95,11 @@
      unless c collect i into r
      finally (return (coerce r 'string))))
 
-(defun download (uri file &key proxy (verbose t))
+(defun download (uri file &key proxy (verbose nil) (output :interactive))
   (declare (ignorable proxy))
   (ensure-directories-exist file)
-  (roswell:roswell `("roswell-internal-use" "download" ,uri ,file ,@(unless verbose '("1"))) :interactive nil))
+  (roswell:roswell `("roswell-internal-use" "download" ,uri ,file ,@(when verbose (list verbose)))
+                   output nil))
 
 (defun expand (archive dest &key verbose)
   #+win32
@@ -186,8 +187,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
              (dir (merge-pathnames ".expand/" (make-pathname :defaults path/ :name nil :type nil))))
         (funcall (intern (string :delete-directory-tree) :uiop) dir :if-does-not-exist :ignore :validate t)
         (setq branch (or branch "master"))
-        (download (format nil "https://github.com/~A/archive/~A.tar.gz" alias branch)
-                  path/)
+        (download (format nil "https://github.com/~A/archive/~A.tar.gz" alias branch) path/)
         (expand path/ (ensure-directories-exist dir))
         (rename-file (first (directory (merge-pathnames "*/" dir)))
                      (merge-pathnames (format nil "~A/~A/" path alias) home))

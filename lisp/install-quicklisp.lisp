@@ -60,7 +60,7 @@
                "Request URL and write the body of the response to FILE."
                (declare (ignorable url file follow-redirects quietly
                                    maximum-redirects))
-               (roswell:roswell `("roswell-internal-use" "download" ,url ,file) :interactive nil)))
+               (download url file)))
        (let ((*standard-output* (make-broadcast-stream)))
          (funcall (intern (string :install) (find-package :quicklisp-quickstart))
                   :path path

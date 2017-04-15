@@ -3,13 +3,11 @@
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
   "Request URL and write the body of the response to FILE."
   (declare (ignorable follow-redirects quietly maximum-redirects))
-  (roswell:roswell
-   `("roswell-internal-use" "download"
-                            ,(ql-http::urlstring (ql-http:url url))
-                            ,file "2")
-   (if (find :abcl *features*)
-       :interactive
-       *standard-output*))
+  (download (ql-http::urlstring (ql-http:url url)) file
+            :verbose "2"
+            :output (if (find :abcl *features*)
+                        :interactive
+                        *standard-output*))
   (values (make-instance 'ql-http::header :status 200)
           (probe-file file)))
 (dolist (x '("https" "http"))
