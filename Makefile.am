@@ -15,7 +15,7 @@ winrelease:
 	cp lisp/*.lisp lisp/*.ros roswell/lisp
 	cp documents/html/*.html roswell/documents/html
 	cp scripts/chm.ros roswell/documents
-	cd roswell;MSYSTEM=MINGW64 ros ./documents/chm.ros
+	cd roswell;MSYSTEM=MINGW64 ros install sbcl-bin/1.3.15;MSYSTEM=MINGW64 ros ./documents/chm.ros
 	/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop/hhc.exe roswell/documents/roswell.hhp || true
 	7z a Roswell-`if [ $$MSYSTEM = 'MINGW64' ];then echo x86_64 ;else echo i686; fi`.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
 test:
