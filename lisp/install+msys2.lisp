@@ -35,7 +35,8 @@
           (download
            (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
                    (msys2-uri)
-                   *msys2-arch* *msys2-arch* (getf argv :version)) path))
+                   *msys2-arch* *msys2-arch* (getf argv :version))
+           path))
         (format t " done.~%")
         (expand path
                 (ensure-directories-exist

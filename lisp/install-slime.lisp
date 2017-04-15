@@ -54,8 +54,7 @@
               (format *error-output* "invalid version ~A" name)
               (roswell:quit 1))))
       (setq dist (ql-dist::make-dist-from-file dist-file))
-      (download (ql-dist::release-index-url dist)
-                release-file)
+      (download (ql-dist::release-index-url dist) release-file)
       (with-open-file (in release-file)
         (loop for line = (read-line in nil nil)
               while line

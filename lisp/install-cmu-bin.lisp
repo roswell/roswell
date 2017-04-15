@@ -8,7 +8,7 @@
     (format *error-output* "Checking version to install...~%")
     (unless (and (probe-file file)
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-      (download (format nil "~Arelease/" (cmu-bin-uri))  file))
+      (download (format nil "~Arelease/" (cmu-bin-uri)) file))
     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
        for href = (plump:get-attribute link "href")
        for len = (length href)
