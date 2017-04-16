@@ -98,7 +98,8 @@
 (defun download (uri file &key proxy (verbose nil) (output :interactive))
   (declare (ignorable proxy))
   (ensure-directories-exist file)
-  (roswell:roswell `("roswell-internal-use" "download" ,uri ,file ,@(when verbose (list verbose)))
+  (roswell:roswell `("roswell-internal-use" "download" ,(backslash-encode uri)
+                                            ,file ,@(when verbose (list verbose)))
                    output nil))
 
 (defun expand (archive dest &key verbose)

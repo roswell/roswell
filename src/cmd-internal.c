@@ -12,7 +12,9 @@ DEF_SUBCMD(cmd_download) {
     (1&opt?
      0:
      fprintf(opt?stdout:stderr,"Downloading %s\n",firsts(nthcdr(1,arg_)))),
-    download_simple(firsts(nthcdr(1,arg_)),firsts(nthcdr(2,arg_)),opt>2?0:opt):0;
+    download_simple(firsts(nthcdr(1,arg_)),
+                    backslash_decode(q_(firsts(nthcdr(2,arg_)))),
+                    opt>2?0:opt):0;
 }
 
 DEF_SUBCMD(cmd_uname) {

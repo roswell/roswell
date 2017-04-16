@@ -149,6 +149,7 @@ int system_redirect(const char* cmd,char* filename);
 int System(const char* command);
 void exec_arg(char** arg);
 
+char* backslash_decode(char* str);
 char** parse_cmdline(char* cmdline,int *argc);
 int free_cmdline(char** argv);
 char* determin_impl(char* impl);
