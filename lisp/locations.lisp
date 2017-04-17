@@ -23,7 +23,8 @@
 (defuri cmu-bin-uri   "https://common-lisp.net/project/cmucl/downloads/")
 (defuri quicklisp-uri "http://beta.quicklisp.org/")
 
-(defuri ffcall-uri    "http://www.haible.de/bruno/gnu/")
+(defuri ffcall-uri    "https://github.com/roswell/ffcall/releases/download/ffcall-1-10/")
+                     
 (defuri sigsegv-uri   "http://ftpmirror.gnu.org/libsigsegv/")
 (defuri msys2-uri     "http://kent.dl.sourceforge.net/project/")
 
