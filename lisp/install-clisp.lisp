@@ -76,8 +76,9 @@
     (let* ((src (opt "src"))
            (cmd (format nil "./configure --with-libsigsegv-prefix=~A ~A '--prefix=~A'"
                         (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "sigsegv" "2.10") (homedir))
-                        (or #+linux(format nil "--with-libffcall-prefix=~A"
-                                           (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" *ffcall-version*) (homedir)))
+                        (or #+linux (format nil "--with-libffcall-prefix=~A"
+                                            (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" (or (config "ffcall.version") *ffcall-version*))
+                                                             (homedir)))
                             "")
                         (opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
