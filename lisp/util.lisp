@@ -115,7 +115,8 @@
   (roswell:roswell `("roswell-internal-use" "core-extention" ,impl) :string t))
 
 (defun config (c)
-  (roswell:roswell `("config" "show" ,c) :string t))
+  (let ((result (roswell:roswell `("config" "show" ,c) :string t)))
+    (unless (zerop (length result)) result)))
 
 (defun (setf config) (val item)
   (roswell:roswell `("config" "set" ,item ,val) :string t)

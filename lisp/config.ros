@@ -56,7 +56,7 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
        (setf conf (config conf (second argv) (third argv)))
        (save-config path conf) 0)
       ((and (equal (first argv) "show") (= 2 len))
-       (format t "~A~%" (third (find (second argv) conf :test 'equal :key #'first))) 0)
+       (format t "~A~%" (or (third (find (second argv) conf :test 'equal :key #'first)) "")) 0)
       ((= 2 len)
        (setf conf (config conf (first argv) (second argv)))
        (save-config path conf) 0)
