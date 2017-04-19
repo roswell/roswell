@@ -44,6 +44,7 @@
                                 out #+sbcl(make-instance 'count-line-stream))))
         (uiop/run-program:run-program "make install" :output t))
       (format *error-output* "done.~%")))
+  (setf (config "ffcall.version") *ffcall-version*)
   (cons t argv))
 
 (defun ffcall-help (argv)
