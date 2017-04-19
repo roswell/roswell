@@ -1,6 +1,8 @@
-(roswell:include "util-install-quicklisp")
+(roswell:include '("util-install-quicklisp"
+                   "install+ffcall"))
 (defpackage :roswell.install.clisp
-  (:use :cl :roswell.install :roswell.util :roswell.locations))
+  (:use :cl :roswell.install :roswell.util :roswell.locations
+        :roswell.install.ffcall+))
 (in-package :roswell.install.clisp)
 
 (defun clisp-get-version ()
@@ -75,7 +77,7 @@
            (cmd (format nil "./configure --with-libsigsegv-prefix=~A ~A '--prefix=~A'"
                         (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "sigsegv" "2.10") (homedir))
                         (or #+linux(format nil "--with-libffcall-prefix=~A"
-                                           (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" "1.10") (homedir)))
+                                           (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" *ffcall-version*) (homedir)))
                             "")
                         (opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
