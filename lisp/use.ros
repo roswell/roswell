@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|change default implementation
+#|Change default implementation.
 exec ros +R -Q -L sbcl-bin -m roswell -- $0 "$@"
 |#
 

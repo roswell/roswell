@@ -11,7 +11,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (:use :cl :roswell.util))
 (in-package :ros.script.help.3668211011)
 
-(defparameter *important-commands* '("run" "install" "build" "use" "init" "list" "delete" "config" "version"))
+(defparameter *important-commands* '("run" "install" "update" "build" "use" "init" "list" "delete" "config" "version"))
 
 (defun command (stream path max)
   (format stream "   ~vA~A~%" (+ 2 max) (pathname-name path)

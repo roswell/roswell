@@ -1,0 +1,49 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|Update installed systems.
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
+|#
+(progn ;;init forms
+  (roswell:ensure-asdf)
+  (roswell:include "update"))
+
+(defpackage :ros.script.update.3692404755
+  (:use :cl :roswell.util))
+(in-package :ros.script.update.3692404755)
+
+(defvar *update-functions*
+  (list (module "update" "git")))
+
+(defun main (&rest argv)
+  (if argv
+      (or
+       ;; security? update for specific version of impl. (future work.Should have it for alisp)
+       (let ((func (module "update" (first argv))))
+         (when func (apply func (rest argv)))
+         func)
+       ;; update systems
+       (dolist (alias argv)
+         (loop
+            with path = (ignore-errors
+                          (make-pathname
+                           :type nil :name nil
+                           :defaults (asdf:system-source-file (asdf:find-system alias))))
+            for f in *update-functions*
+            for r = (and path (funcall f path))
+            when r do (roswell:roswell `("install" ,alias))
+            until r
+            finally (unless r (format *error-output* "no update function for ~A~%" alias)))))
+      (format *error-output* "~&Usage: ~A update [Method [params ...]]/systems ~%~%Methods:~%~{~A~%~}"
+              (roswell:opt "argv0")
+              (let*
+                  ((* (directory (make-pathname :defaults *load-pathname*
+                                                :name :wild
+                                                :type "lisp")))
+                   (* (mapcar #'pathname-name *))
+                   (* (remove-if-not #'(lambda (x)
+                                         (ignore-errors (string= x "update-" :end1 7)))
+                                     *))
+                   (* (mapcar #'(lambda (x) (subseq x 7)) *)))
+                *))))
+
+;;; vim: set ft=lisp lisp:
