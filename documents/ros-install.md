@@ -2,18 +2,20 @@ ros-install - Install lisp implementations or quicklisp system
 
 # Synopsis
 
-**ros install** system [system ...]
-**ros install** impl[/version] [param ...]
+* **ros install** system [system ...]
+* **ros install** impl[/version] [param ...]
 
-<!-- # subcommands -->
-
-impl
-
-  : a name specifying a lisp implementation/version
+# Description
 
 system
 
-  : a system.
+  : a name specifying a system.
+
+impl
+
+  : a name specifying a lisp implementation.
+
+<!-- # subcommands -->
 
 # Installing a Lisp Implementation
 
