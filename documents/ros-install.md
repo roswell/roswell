@@ -2,19 +2,24 @@ ros-install - Install lisp implementations or quicklisp system
 
 # Synopsis
 
-**ros install** [name]
+**ros install** system [system ...]
+**ros install** impl[/version] [param ...]
 
 <!-- # subcommands -->
 
-name
+impl
 
-  : a name specifying a lisp implementation/version, or a quicklisp system.
+  : a name specifying a lisp implementation/version
+
+system
+
+  : a system.
 
 # Installing a Lisp Implementation
 
-When the `name` matches to one of the supported implementations, it fetches, downloads and installs it to one of the internal directory managed by roswell (~/.roswell, or `ROSWELL_INSTALL_DIR`). In order to use the installed implementation, you have to run _ros-use(1)_.
+When the `impl` or `system`  matches to one of the supported implementations, it fetches, downloads and installs it to one of the internal directory managed by roswell (~/.roswell, or `ROSWELL_INSTALL_DIR`). In order to use the installed implementation, you have to run _ros-use(1)_.
 
-For example, the following command downloads the latest sbcl binary from sbcl.com. Note that this may be different from the default binary installed by roswell, called `sbcl-bin`. `sbcl-bin` is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.
+For example, the following command downloads the latest sbcl binary from sbcl.org. Note that this may be different from the default binary installed by roswell, called `sbcl-bin`. `sbcl-bin` is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.
 
     $ ros install sbcl
 
