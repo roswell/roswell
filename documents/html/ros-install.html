@@ -20,17 +20,21 @@
 </header>
 <p>ros-install - Install lisp implementations or quicklisp system</p>
 <h1 id="synopsis">Synopsis</h1>
-<p><strong>ros install</strong> system [system ...] <strong>ros install</strong> impl[/version] [param ...]</p>
-<!-- # subcommands -->
-
+<ul>
+<li><strong>ros install</strong> system [system ...]</li>
+<li><strong>ros install</strong> impl[/version] [param ...]</li>
+</ul>
+<h1 id="description">Description</h1>
 <dl>
-<dt>impl</dt>
-<dd><p>a name specifying a lisp implementation/version</p>
-</dd>
 <dt>system</dt>
-<dd><p>a system.</p>
+<dd><p>a name specifying a system.</p>
+</dd>
+<dt>impl</dt>
+<dd><p>a name specifying a lisp implementation.</p>
 </dd>
 </dl>
+<!-- # subcommands -->
+
 <h1 id="installing-a-lisp-implementation">Installing a Lisp Implementation</h1>
 <p>When the <code>impl</code> or <code>system</code> matches to one of the supported implementations, it fetches, downloads and installs it to one of the internal directory managed by roswell (~/.roswell, or <code>ROSWELL_INSTALL_DIR</code>). In order to use the installed implementation, you have to run <em>ros-use(1)</em>.</p>
 <p>For example, the following command downloads the latest sbcl binary from sbcl.org. Note that this may be different from the default binary installed by roswell, called <code>sbcl-bin</code>. <code>sbcl-bin</code> is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.</p>
