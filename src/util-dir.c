@@ -72,9 +72,8 @@ char* configdir(void) {
   char *c=upcase(q_(PACKAGE"_HOME"));
   char *env=getenv(c);
   s(c);
-  char* home=env?append_trail_slash(q(env)):
-    ((c=homedir())?append_trail_slash(c):NULL);
-  return home?s_cat2(home,q("."PACKAGE SLASH)):NULL;
+  return env?append_trail_slash(q(env)):
+    ((c=homedir())?s_cat2(append_trail_slash(c),q("."PACKAGE SLASH)):NULL);
 }
 
 char* subcmddir(void) {
