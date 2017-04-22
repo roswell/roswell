@@ -36,7 +36,7 @@ test:
     - ros install prove fukamachi/sblint zip
     - run-prove roswell-test.asd
     - ros install sbcl
-    - grep -3 fail ~/.roswell/impls/log/sbcl-*/* ||true
+    - grep -v "No tests failed" ~/.roswell/impls/log/sbcl-*/*|grep -5 fail||true
     - ros -v run -- --version
     - ros install ccl-bin
     - ros -v run -- --version
