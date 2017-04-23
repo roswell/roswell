@@ -56,8 +56,9 @@ or
 commands:
    run       Run repl
    install   Install a given implementation or a system for roswell environment
+   update    Update installed systems.
    build     Make executable from script.
-   use       change default implementation
+   use       Change default implementation.
    init      Creates a new ros script, optionally based on a template.
    list      List Information
    delete    Delete installed implementations
