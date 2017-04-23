@@ -1,0 +1,30 @@
+.TH "ros-update" "1" "" "" ""
+.nh \" Turn off hyphenation by default.
+.PP
+ros-update - Update system installed from vcs
+.SH Synopsis
+.IP \[bu] 2
+\f[B]ros update\f[] system [system ...]
+.IP \[bu] 2
+\f[B]ros update\f[] method [params ...]
+.SH Description
+.TP
+.B system
+a name specifying a system.
+.RS
+.RE
+.TP
+.B method
+currently supported method is \f[C]git\f[].
+.RS
+.RE
+.SH Update system
+.PP
+When system are already installed and the system has \f[C].git\f[] in
+the system directory it invoke \f[C]git\ pull\f[] and
+\f[C]ros\ install\f[] the system.
+.SH SEE ALSO
+.PP
+\f[I]ros\f[](1), \f[I]ros-install\f[](1)
+.SH AUTHORS
+Roswell Project Team.
