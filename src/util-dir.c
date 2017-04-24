@@ -65,7 +65,8 @@ int delete_directory(char* pathspec,int recursive) {
   s(cmd);
   return ret==0;
 }
-
+#else
+char* homedir(void);
 #endif
 
 char* configdir(void) {

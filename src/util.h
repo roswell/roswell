@@ -29,6 +29,7 @@
 #include <shellapi.h>
 #include <shlobj.h>
 #include <wininet.h>
+#include <direct.h>
 typedef BOOL (WINAPI *LPFN_ISWOW64PROCESS) (HANDLE, PBOOL);
 #define SLASH "\\"
 #define PATHSEP ";"
