@@ -1,8 +1,10 @@
 (roswell:include '("util-install-quicklisp"
-                   "install+ffcall"))
+                   "install+ffcall"
+                   "install+sigsegv"))
 (defpackage :roswell.install.clisp
   (:use :cl :roswell.install :roswell.util :roswell.locations
-        :roswell.install.ffcall+))
+        :roswell.install.ffcall+
+        :roswell.install.sigsegv+))
 (in-package :roswell.install.clisp)
 
 (defun clisp-get-version ()
@@ -62,7 +64,7 @@
     (download uri file)
     (chdir (opt "src"))
     (format t "~%Applying patch:~%")
-    (uiop/run-program:run-program (format nil "git apply ~A" file) :output t))
+    (uiop/run-program:run-program (format nil "git apply ~A" file) :output t :error-output t))
   (cons t argv))
 
 (defun clisp-config (argv)
@@ -75,7 +77,7 @@
     (format out "~&--~&~A~%" (date))
     (let* ((src (opt "src"))
            (cmd (format nil "./configure --with-libsigsegv-prefix=~A ~A '--prefix=~A'"
-                        (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "sigsegv" "2.10") (homedir))
+                        (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "sigsegv" (or (config "sigsegv.version") *sigsegv-version*)) (homedir))
                         (or #+linux (format nil "--with-libffcall-prefix=~A"
                                             (merge-pathnames (format nil "lib/~A/~A/~A/~A" (uname-m) (uname) "ffcall" (or (config "ffcall.version") *ffcall-version*))
                                                              (homedir)))
@@ -83,7 +85,7 @@
                         (opt "prefix")))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
-      (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
+      (uiop/run-program:run-program cmd :output t :error-output t :ignore-error-status t)))
   (cons t argv))
 
 (defun clisp-make (argv)
@@ -98,7 +100,7 @@
            (cmd (format nil "ulimit -s 16384 && make"))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
-      (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
+      (uiop/run-program:run-program cmd :output t :error-output t :ignore-error-status t)))
   (cons t argv))
 
 (defun clisp-install (argv)
@@ -114,7 +116,7 @@
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program "make install" :output t)))
+        (uiop/run-program:run-program "make install" :output t :error-output t)))
     (format *error-output* "done.~%"))
   (cons t argv))
 
@@ -126,7 +128,7 @@
            (*standard-output* (make-broadcast-stream
                                out #+sbcl(make-instance 'count-line-stream))))
       (uiop/run-program:run-program
-       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t))
+       (list (sh) "-lc" (format nil "cd ~S;make clean" src)) :output t :error-output t))
     (format t "done.~%"))
   (cons t argv))
 
