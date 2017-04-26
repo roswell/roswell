@@ -1,3 +1,17 @@
+roswell (17.4.8.76-1) unstable; urgency=low
+
+  * New: 'ros update system [systems...]' to pull upstream and install it.
+  * New: 'ros subcommand' invokes ros-subcommand if possible.
+  * New: new option for 'ros install sbcl' 'linkable-runtime' and 'dynamic-core'.
+  * Change: 'ros asdf install version' can specify version by SHA.
+  * Change: Updated Clasp 2017-04-15.(by gos-k)
+  * Fix: change ffcall uri.(was blocked)
+  * Change: change the directory from ~/.roswell via $ROSWELL_HOME.
+  * Change: change sigsegv version for clisp from 2.10 to 2.11.
+  * Change: 'ros install allegro' will install 10.1express.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 26 Apr 2017 20:32:44 +0900
+
 roswell (17.3.8.75-1) unstable; urgency=low
 
   * Change: better clasp support. (clasp version are chosen by gos-k)
