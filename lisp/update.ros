@@ -12,7 +12,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.update.3692404755)
 
 (defvar *update-functions*
-  (list (module "update" "git")))
+  (list (module "update" "git")
+        (module "update" "hg")))
 
 (defun main (&rest argv)
   (if argv
