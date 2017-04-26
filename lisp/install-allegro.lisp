@@ -31,7 +31,7 @@
           ((equal "10.1express" version)
            (format nil "~@{~A~}"
                    (allegro-uri) "ftp/pub/acl10.1express/"
-                   (case os (:|darwin| "macos") (t os))
+                   (case os (:|darwin| "macosx") (t os))
                    (if (eql os :|windows|) ""
                        (case machine (:|x86| 86) (:|x86-64| 86)))
                    "/acl10.1express"
