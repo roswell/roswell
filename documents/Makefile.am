@@ -14,15 +14,15 @@ if MANUAL_INSTALL
 man1_MANS = $(MDS:%.md=man/%.1)
 endif
 
+CLEANFILES=roswell.chm
+
 if MANUAL_GENERATE
 man/%.1: %.md
 	which pandoc
 	pandoc -f markdown -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
 	-V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
 
-CLEANFILES = $(man1_MANS) $(HTMLS)
-else
-CLEANFILES = $(HTMLS)
+CLEANFILES+=$(man1_MANS)
 endif
 
 if HTML_GENERATE
@@ -38,6 +38,7 @@ html/%.html: %.md
 # html/%.css: %.scss
 # 	which scss
 # 	scss $< $@
+CLEANFILES+=$(HTMLS)
 endif
 
 all: $(man1_MANS) $(HTMLS)
@@ -46,5 +47,3 @@ roswell.chm: $(HTMLS)
 	ros ../scripts/chm.ros
 	/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop/hhc.exe ./roswell.hhp ||true
 	$(RM) roswell.hhp roswell.hhk roswell.hhc
-
-CLEANFILES = roswell.chm
