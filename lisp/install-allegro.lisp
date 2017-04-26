@@ -5,9 +5,9 @@
 (roswell:quicklisp :environment nil)
 
 (defvar *allegro-agreement-uri*
-  '(("10.1express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
-    ("100express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
-    ("101b"       . "http://franz.com/products/licensing/FSLA10.1.beta.pdf")))
+  '(("10.1express" . #1="http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
+    ("100express"  . #1#)
+    ("101b"        . "http://franz.com/products/licensing/FSLA10.1.beta.pdf")))
 
 (defun allegro-get-version ()
   (mapcar #'car *allegro-agreement-uri*))
@@ -18,26 +18,20 @@
                                 (version (getf argv :version)))
   (let ((os (intern uname :keyword))
         (machine (intern uname-m :keyword)))
-    (cond ((equal "100express" version)
+    (cond ((find version '("10.1express" "100express") :test 'equal)
            (format nil "~@{~A~}"
-                   (allegro-uri) "ftp/pub/acl100express/"
+                   (allegro-uri) "ftp/pub/acl" version "/"
                    (case os (:|darwin| "macosx") (t os))
                    (if (eql os :|windows|) ""
                        (case machine (:|x86| 86) (:|x86-64| 86)))
-                   "/acl100express"
+                   "/acl" version
                    (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
                    "-" (case machine (:|x86-64| "x86") (t machine))
-                   (case os (:|linux| ".bz2") (:|darwin| ".dmg") (:|windows| ".exe") (t os))))
-          ((equal "10.1express" version)
-           (format nil "~@{~A~}"
-                   (allegro-uri) "ftp/pub/acl10.1express/"
-                   (case os (:|darwin| "macosx") (t os))
-                   (if (eql os :|windows|) ""
-                       (case machine (:|x86| 86) (:|x86-64| 86)))
-                   "/acl10.1express"
-                   (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
-                   "-" (case machine (:|x86-64| "x86") (t machine))
-                   (case os (:|linux| ".tbz2") (:|darwin| ".dmg") (:|windows| ".exe") (t os))))
+                   (case os
+                     (:|linux| (cond ((equal "10.1express" version) ".tbz2")
+                                     ((equal "100express" version ".bz2"))))
+                     (:|darwin|  ".dmg")
+                     (:|windows| ".exe"))))
           ((equal "101b" version)))))
 
 (defun allegro-argv-parse (argv)
