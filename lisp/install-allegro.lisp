@@ -5,7 +5,8 @@
 (roswell:quicklisp :environment nil)
 
 (defvar *allegro-agreement-uri*
-  '(("100express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
+  '(("10.1express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
+    ("100express" . "http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
     ("101b"       . "http://franz.com/products/licensing/FSLA10.1.beta.pdf")))
 
 (defun allegro-get-version ()
@@ -27,6 +28,16 @@
                    (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
                    "-" (case machine (:|x86-64| "x86") (t machine))
                    (case os (:|linux| ".bz2") (:|darwin| ".dmg") (:|windows| ".exe") (t os))))
+          ((equal "10.1express" version)
+           (format nil "~@{~A~}"
+                   (allegro-uri) "ftp/pub/acl10.1express/"
+                   (case os (:|darwin| "macos") (t os))
+                   (if (eql os :|windows|) ""
+                       (case machine (:|x86| 86) (:|x86-64| 86)))
+                   "/acl10.1express"
+                   (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
+                   "-" (case machine (:|x86-64| "x86") (t machine))
+                   (case os (:|linux| ".tbz2") (:|darwin| ".dmg") (:|windows| ".exe") (t os))))
           ((equal "101b" version)))))
 
 (defun allegro-argv-parse (argv)
