@@ -5,7 +5,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 (progn ;;init forms
   (roswell:ensure-asdf)
-  (roswell:include "update"))
+  (roswell:include '("update-git" "update-hg")))
 
 (defpackage :ros.script.update.3692404755
   (:use :cl :roswell.util))
