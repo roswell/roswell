@@ -1,7 +1,7 @@
 .TH "ros-install" "1" "" "" ""
 .nh \" Turn off hyphenation by default.
 .PP
-ros-install - Install lisp implementations or quicklisp system
+ros\-install \- Install lisp implementations or quicklisp system
 .SH Synopsis
 .IP \[bu] 2
 \f[B]ros install\f[] system [system ...]
@@ -25,14 +25,14 @@ supported implementations, it fetches, downloads and installs it to one
 of the internal directory managed by roswell (~/.roswell, or
 \f[C]ROSWELL_INSTALL_DIR\f[]).
 In order to use the installed implementation, you have to run
-\f[I]ros-use(1)\f[].
+\f[I]ros\-use(1)\f[].
 .PP
 For example, the following command downloads the latest sbcl binary from
 sbcl.org.
 Note that this may be different from the default binary installed by
-roswell, called \f[C]sbcl-bin\f[].
-\f[C]sbcl-bin\f[] is a stable and well-tested version of the sbcl binary
-which is supposed to be a little older than the latest sbcl.
+roswell, called \f[C]sbcl\-bin\f[].
+\f[C]sbcl\-bin\f[] is a stable and well\-tested version of the sbcl
+binary which is supposed to be a little older than the latest sbcl.
 .IP
 .nf
 \f[C]
@@ -56,8 +56,8 @@ Candidates\ impls\ for\ installation\ are:
 ecl
 sbcl
 clisp
-ccl-bin
-sbcl-bin
+ccl\-bin
+sbcl\-bin
 \f[]
 .fi
 .PP
@@ -71,7 +71,7 @@ $\ ros\ install\ sbcl/1.2.14
 .fi
 .PP
 There might be some \f[I]hidden\f[] implementation that are not listed
-here --- they are in the alpha quality, but try the one you like or
+here \-\-\- they are in the alpha quality, but try the one you like or
 watch the website (https://github.com/roswell/roswell).
 .IP
 .nf
@@ -93,11 +93,11 @@ $\ ros\ install\ alexandria
 .fi
 .PP
 After compiling and loading the system, it funcalls
-\f[C]ros:*build-hook*\f[] special variable with no argument, if some
+\f[C]ros:*build\-hook*\f[] special variable with no argument, if some
 function is set during the compilation/load.
 .PP
 When the system comes with a \f[B]roswell script\f[] created by
-\f[I]ros-init\f[](1) in the subdirectory \f[C]roswell\f[], they are
+\f[I]ros\-init\f[](1) in the subdirectory \f[C]roswell\f[], they are
 installed into \f[B]ROSWELL_INSTALL_DIR/bin\f[].
 Setting the path to this directory makes those scripts available from
 the shell command line.
@@ -106,18 +106,18 @@ the shell command line.
 \f[C]
 $\ ros\ install\ qlot
 System\ \[aq]qlot\[aq]\ found.\ Loading\ the\ system..
-Processing\ build-hook..
+Processing\ build\-hook..
 Found\ 1\ scripts:\ qlot
 Attempting\ to\ install\ the\ scripts\ in\ roswell/\ subdirectory\ of\ the\ system...
 /home/user/.roswell/bin/qlot
 
 $\ qlot
-Usage:\ qlot\ [install\ |\ update\ |\ bundle\ |\ exec\ shell-args..]
+Usage:\ qlot\ [install\ |\ update\ |\ bundle\ |\ exec\ shell\-args..]
 \f[]
 .fi
 .SH SEE ALSO
 .PP
-\f[I]sbcl\f[](1), \f[I]ros\f[](1), \f[I]ros-list\f[](1),
-\f[I]ros-init\f[](1)
+\f[I]sbcl\f[](1), \f[I]ros\f[](1), \f[I]ros\-list\f[](1),
+\f[I]ros\-init\f[](1)
 .SH AUTHORS
 Roswell Project Team.
