@@ -1,5 +1,6 @@
 language: c
 sudo: false
+dist: trusty
 env:
   global:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
@@ -154,8 +155,8 @@ script:
 
 after_success:
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then
+       lcab -q  src/ros.exe lisp/* ros-$XCC.cab;
        ros ./scripts/release.ros github ros-$XCC.cab;
-       lcab -q  src/ros.exe src/lisp/* ros-$XCC.cab;
     fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then
        ros ./scripts/release.ros debian;
@@ -163,15 +164,6 @@ after_success:
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then
        git config user.email "auto@example.com";
        git config user.name "Travis-CI";
-    fi
-  - if [ x$TRAVIS_TAG != x ] && [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
-       git clone https://github.com/roswell/homebrew-roswell/ ~/lisp/homebrew-roswell;
-       ros ./scripts/homebrew.ros;
-       cp ./scripts/homebrew/roswell.rb ~/lisp/homebrew-roswell/roswell.rb;
-       cd ~/lisp/homebrew-roswell/;
-       git add roswell.rb;
-       git commit -m v`ros roswell-internal-use version`;
-       git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/homebrew-roswell.git" master > /dev/null 2>&1;
     fi
   - if [ "$METHOD" = "valgrind" ]; then
        ros setup;
