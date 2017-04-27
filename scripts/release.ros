@@ -126,8 +126,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
      `("git checkout release"
        "git merge master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
-       "git push --tags"
        "git push"
+       "git push --tags"
        "git checkout master"))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
