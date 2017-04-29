@@ -6,8 +6,8 @@ ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local}
-ROSWELL_PLATFORMHTML_BASE=${ROSWELL_PLATFORMHTML_BASE:-http://www.sbcl.org/platform-table.html}
-ROSWELL_SBCL_BIN_URI=${ROSWELL_SBCL_BIN_URI:-https://sourceforge.net/projects/sbcl/files/sbcl/}
+ROSWELL_PLATFORMHTML_BASE=${ROSWELL_PLATFORMHTML_BASE:-https://github.com/roswell/sbcl_bin/releases/download/files/build.html}
+ROSWELL_SBCL_BIN_URI=${ROSWELL_SBCL_BIN_URI:-https://github.com/roswell/sbcl_bin/releases/download/}
 ROSWELL_QUICKLISP_DIST_URI=${ROSWELL_QUICKLISP_DIST_URI:-http://beta.quicklisp.org/dist/quicklisp.txt}
 
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
