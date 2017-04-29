@@ -6,8 +6,6 @@ env:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=$TRAVIS_BRANCH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
-    - ROSWELL_PLATFORMHTML_BASE=https://github.com/roswell/sbcl_bin/releases/download/files/build.html
-    - ROSWELL_SBCL_BIN_URI=https://github.com/roswell/sbcl_bin/releases/download/
     - ROSWELL_QUICKLISP_DIST_URI=https://github.com/roswell/quicklisp/releases/download/dist/quicklisp.txt
   matrix:
     - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES

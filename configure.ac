@@ -35,18 +35,18 @@ AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
 
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
-  [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://sourceforge.net/projects/sbcl/files/sbcl/]])],
-  [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="https://prdownloads.sourceforge.net/sbcl/"])
+  [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://github.com/roswell/sbcl_bin/releases/download/]])],
+  [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="https://github.com/roswell/sbcl_bin/releases/download/"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_URI],["${SBCL_BIN_URI}"],[uri for sbcl master])
 
 AC_ARG_WITH([platformhtml_base],
-  [AC_HELP_STRING([--with-platformhtml-base=URI],[set URI for platform.html [default=http://www.sbcl.org/]])],
-  [PLATFORM_HTML_URI=$withval],[PLATFORM_HTML_URI="http://www.sbcl.org/platform-table.html"])
+  [AC_HELP_STRING([--with-platformhtml-base=URI],[set URI for platform.html [default=https://github.com/roswell/sbcl_bin/releases/download/files/build.html]])],
+  [PLATFORM_HTML_URI=$withval],[PLATFORM_HTML_URI=https://github.com/roswell/sbcl_bin/releases/download/files/build.html])
 AC_DEFINE_UNQUOTED([PLATFORM_HTML_URI],["${PLATFORM_HTML_URI}"],[uri for platform.html])
 
 AC_ARG_WITH([platformhtml_backup_base],
-  [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default is roswell/sbcl_bin]])],
-  [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="https://github.com/roswell/sbcl_bin/releases/download/files/mirror.html"])
+  [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default=http://www.sbcl.org/]])],
+  [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="http://www.sbcl.org/platform-table.html"])
 AC_DEFINE_UNQUOTED([PLATFORM_HTML_BACKUP_URI],["${PLATFORM_HTML_BACKUP_URI}"],[backup uri for platform.html])
 
 # man file (ros.1) generation switch
