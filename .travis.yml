@@ -35,8 +35,6 @@ matrix:
     - env: METHOD=brew
     - env: METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
     - env: METHOD=ci LISP=sbcl/git
-    - env: METHOD=ci LISP=sbcl
-      os: osx
   include:
       - sudo: required
         os: linux
