@@ -1,0 +1,49 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|git wrapper
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  (roswell:include "util"))
+
+(defpackage :ros.script.git.3702458293
+  (:use :cl :roswell.util))
+(in-package :ros.script.git.3702458293)
+
+(defun main (&rest argv)
+  (let* ((name (pathname-name *load-pathname*))
+         (wild (format nil "**/.~A/" name)))
+    (roswell:exec
+     (cond
+       ((equal (first argv) "delete")
+        (if (rest argv)
+            (dolist (x (rest argv) (roswell:quit 0))
+              (let* ((* (directory (merge-pathnames wild (first ql:*local-project-directories*))))
+                     (* (mapcar (lambda (x) (directory (merge-pathnames "../*.asd" x))) *))
+                     (* (apply #'append *))
+                     (* (remove x * :test (complement #'equal) :key #'pathname-name))
+                     (* (mapcar (lambda (x) (truename (make-pathname :defaults x :type nil :name nil))) *)))
+                (loop for x in *
+                      with a = (namestring (truename (homedir)))
+                      for b = (namestring x)
+                      do (and (string= a b :end2 (min (length a) (length b)))
+                              (probe-file b)
+                              (progn
+                                (format t "delete ~S~%" x)
+                                (uiop/filesystem:delete-directory-tree x :validate t))))))
+            `(,(roswell:opt "wargv0") "help" ,(format nil "~A-delete" name))))
+       ((equal (first argv) "clone")
+        (uiop:chdir (first ql:*local-project-directories*))
+        `(,name ,@argv))
+       ((ql:where-is-system (first argv))
+        (let* ((path (make-pathname
+                      :type nil :name nil
+                      :defaults (ql:where-is-system (first argv)))))
+          (if (ignore-errors (uiop:chdir path))
+              `(,name ,@(rest argv))
+              (progn
+                (format t "~A not found.~%" (first argv))
+                (roswell:quit 1)))))
+       (t `(,(roswell:opt "wargv0") "help" ,name))))))
+;;; vim: set ft=lisp lisp:
