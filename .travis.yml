@@ -14,7 +14,6 @@ env:
     - METHOD=ci LISP=cmu-bin/2016-05
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
-    - METHOD=ci LISP=clisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl-bin
     - METHOD=brew
@@ -35,6 +34,7 @@ matrix:
     - env: METHOD=brew
     - env: METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
     - env: METHOD=ci LISP=sbcl/git
+    - env: METHOD=ci LISP=clisp
   include:
       - sudo: required
         os: linux
