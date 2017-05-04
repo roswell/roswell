@@ -24,8 +24,6 @@ test:
     - mkdir ~/.roswell
     - echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
     - echo "proxy.http.only	0	1" >> ~/.roswell/config
-    - echo "sbcl-bin-version-uri	0	https://github.com/roswell/sbcl_bin/releases/download/files/build.html" >> ~/.roswell/config
-    - echo "sbcl-bin-uri	0	https://github.com/roswell/sbcl_bin/releases/download/" >> ~/.roswell/config;
     - sh bootstrap
     - ./configure
     - make -j4
