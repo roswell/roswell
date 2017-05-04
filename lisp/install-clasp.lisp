@@ -13,7 +13,7 @@
                                    (getf argv :version)
                                    (nth (1+ pos) (getf argv :argv))))
                       (getf argv :version))))
-  (set-opt "src" (merge-pathnames "src/clasp/" (homedir)))
+  (set-opt "src" (merge-pathnames (format nil "src/clasp/~A/" (getf argv :version)) (homedir)))
   (cons t argv))
  
 (defun clasp-lib (argv)
