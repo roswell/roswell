@@ -3,7 +3,7 @@ general:
 dependencies:
   pre:
     - sudo apt-get update
-    - sudo apt-get -qq install pandoc ruby-sass
+    - sudo apt-get -qq install pandoc ruby-sass debhelper dh-autoreconf
   cache_directories:
     - "~/.rosproxy"
 
@@ -38,4 +38,5 @@ test:
     - ros -v run -- --version
     - ros config
     - man -Pcat ros
+    - ros ./scripts/debian.ros
     - cat /tmp/proxy-log || true
