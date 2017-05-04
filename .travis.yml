@@ -14,6 +14,7 @@ env:
     - METHOD=ci LISP=cmu-bin/2016-05
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
+    - METHOD=ci LISP=clisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl-bin
     - METHOD=brew
