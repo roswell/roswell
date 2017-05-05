@@ -4,7 +4,7 @@
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 
-(ql:quickload '(:cl-emb :cl-html-parse :dexador :ironclad :uiop) :silent t)
+(ql:quickload '(:cl-html-parse :dexador :uiop) :silent t)
 
 (defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
 (defvar *package-name* "roswell")
@@ -12,18 +12,20 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defun get-newest-url (base)
   (block nil
     (multiple-value-bind (body res)
-	(dex:get (format nil "https://github.com/~A/releases/" base))
+       (dex:get (format nil "https://github.com/~A/releases/" base))
       (when (= res 200)
-	(net.html.parser:parse-html
-	 body
-	 :callbacks
-	 (list (cons :a (lambda (arg)
-			  (let ((href (getf (cdr (car arg)) :href)))
-			    (when (and (> (length href) 6)
-				       (equal (subseq href (-(length href) 6))
-					      "tar.gz"))
-			      (return-from nil (format nil "https://github.com~A" href)))))))
-	 :callback-only t)))))
+        (net.html.parser:parse-html
+         body
+         :callbacks
+         (list (cons :a (lambda (arg)
+                          (let ((href (getf (cdr (car arg)) :href)))
+                            (when (and (> (length href) 6)
+                                       (equal (subseq href (-(length href) 6))
+                                              "tar.gz")
+                                       ;; href which include "archive" not "release"
+                                       (eql (aref href (1+ (position #\a href))) #\r))
+                              (return-from nil (format nil "https://github.com~A" href)))))))
+         :callback-only t)))))
 
 (defun download (uri path)
   (if (probe-file path)
