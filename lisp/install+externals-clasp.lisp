@@ -16,23 +16,36 @@
 
 (defun externals-clasp-expand (argv)
   (format t "~%Extracting archive:~A~%" (opt "download.archive"))
-  (when (and (probe-file (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A/success" (uname-m) (uname) (getf argv :version))
-                                          (homedir)))
-             (not (opt "install.force")))
-    (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
-            (getf argv :target)  (getf argv :version))
-    (return-from externals-clasp-expand (cons nil argv)))
-  (expand (opt "download.archive")
-          (ensure-directories-exist
-           (merge-pathnames (format nil "lib/~A/~A/externals-clasp/" (uname-m) (uname)) (homedir))))
-  (ignore-errors
-   (let ((h (homedir))
-         (v (getf argv :version)))
-     (set-opt "src" (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A/" (uname-m) (uname) v) h))
+  (let* ((h (homedir))
+         (v (getf argv :version))
+         (clasp (merge-pathnames (format nil "lib/~A/~A/externals-clasp/" (uname-m) (uname) v) h)))
+    (set-opt "src" (merge-pathnames (format nil "~A/" v) clasp))
+    (when (and (probe-file (merge-pathnames "success" (opt "src")))
+               (not (opt "install.force")))
+      (format t "~A/~A is already installed. add 'install.force=t' option for the forced re-installation.~%"
+              (getf argv :target) v)
+      (return-from externals-clasp-expand (cons nil argv)))
+    (expand (opt "download.archive") (ensure-directories-exist clasp))
+    (ignore-errors
      (ql-impl-util:rename-directory
-      (merge-pathnames (format nil "lib/~A/~A/externals-clasp/externals-clasp-~A" (uname-m) (uname) v) h)
-      (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A" (uname-m) (uname) v) h))))
+      (merge-pathnames (format nil "externals-clasp-~A" v) clasp)
+      (merge-pathnames (format nil "~A" v) clasp))))
   (cons (not (opt "until-extract")) argv))
+
+(defun count-cpu ()
+  #+linux
+  (handler-case
+      (with-open-file (stream #p"/proc/cpuinfo" :if-does-not-exist :error)
+        (loop
+          for line = (read-line stream nil nil)
+          while line
+          count (and (< 9 (length line))
+                     (string= "processor" (subseq line 0 9)))))
+    (file-error () nil))
+  #+darwin
+  (ignore-errors
+   (let ((res (uiop:run-program "sysctl hw.logicalcpu" :output :string)))
+     (parse-integer (subseq str(1+ (position #\: res))) :junk-allowed t))))
 
 (defun externals-clasp-make (argv)
   (with-open-file (out (ensure-directories-exist
@@ -41,32 +54,20 @@
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let ((pjobs
-	   (handler-case
-	       (with-open-file (stream #p"/proc/cpuinfo" :if-does-not-exist :error)
-		 (loop
-		    :for line := (read-line stream nil nil)
-		    :while line :if (< 9 (length line))
-		    :count (string= "processor" (subseq line 0 9))))
-	     (file-error () 1)))
-	  (template-file (merge-pathnames
-			  (format nil "lib/~A/~A/externals-clasp/~A/local.config"
-				  (uname-m) (uname) (getf argv :version))
-			  (homedir))))
-      (with-open-file (stream template-file :direction :output :if-exists :supersede)
-	(format stream "export PJOBS=~A~%" pjobs)))
-    (let* ((src (opt "src"))
+    (let* ((pjobs (or (count-cpu) 1))
+           (src (opt "src"))
            (cmd "make")
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
       (format t "~&~S~%" cmd)
+      (with-open-file (stream (merge-pathnames "local.config" (opt "src")) :direction :output :if-exists :supersede)
+	(format stream "export PJOBS=~A~%" pjobs))
       (uiop/run-program:run-program cmd :output t :ignore-error-status nil)))
   (setf (config "externals.clasp.version") (getf argv :version))
   (cons t argv))
 
 (defun externals-clasp-sentinel (argv)
-  (with-open-file (i (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A/success" (uname-m) (uname) (getf argv :version))
-                                      (homedir))
+  (with-open-file (i (merge-pathnames "success" (opt "src"))
                      :direction :probe
                      :if-does-not-exist :create))
   (cons t argv))
