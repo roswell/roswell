@@ -10,8 +10,6 @@ dependencies:
 machine:
   environment:
     PATH: ~/.roswell/bin:~/.linuxbrew/bin:$PATH
-#    ROSWELL_PLATFORMHTML_BASE: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/sbcl-bin.html
-#    ROSWELL_SBCL_BIN_URI: https://github.com/somewrite-adtech/sbcl-bin/releases/download/archives/
 
 test:
   post:
@@ -28,15 +26,13 @@ test:
     - ./configure
     - make -j4
     - sudo make install
-    - ros version
     - ros -v quicklisp.dist=http://beta.quicklisp.org/dist/quicklisp.txt setup
+    - ros version
     - ros install
     - ros install prove fukamachi/sblint zip
-    - run-prove roswell-test.asd
-    - ros -v run -- --version
-    - ros install ccl-bin
     - ros -v run -- --version
     - ros config
     - man -Pcat ros
     - ros ./scripts/debian.ros
+    - find scripts/debian/ -maxdepth 1 -type f| xargs -i% mv % $CIRCLE_ARTIFACTS
     - cat /tmp/proxy-log || true
