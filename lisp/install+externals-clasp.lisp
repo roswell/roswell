@@ -41,6 +41,20 @@
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
+    (let ((pjobs
+	   (handler-case
+	       (with-open-file (stream #p"/proc/cpuinfo" :if-does-not-exist :error)
+		 (loop
+		    :for line := (read-line stream nil nil)
+		    :while line :if (< 9 (length line))
+		    :count (string= "processor" (subseq line 0 9))))
+	     (file-error () 1)))
+	  (template-file (merge-pathnames
+			  (format nil "lib/~A/~A/externals-clasp/~A/local.config"
+				  (uname-m) (uname) (getf argv :version))
+			  (homedir))))
+      (with-open-file (stream template-file :direction :output :if-exists :supersede)
+	(format stream "export PJOBS=~A~%" pjobs)))
     (let* ((src (opt "src"))
            (cmd "make")
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
