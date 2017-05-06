@@ -20,4 +20,6 @@
 (defun clisp (type &rest args)
   (case type
     (:executable
-     (apply 'dump-executable args))))
+     (apply 'dump-executable args))
+    (:file
+     (ext:saveinitmem (first args) :quiet t))))
