@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Make executable from script.
-exec ros -Q +R -- $0 "$@"
+exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
@@ -40,9 +40,11 @@ exec ros -Q +R -- $0 "$@"
       (error "Only accept ros script for build: '~A'." file))
     (with-open-file (in file)
       (loop repeat 4
-            for line = (read-line in)
-            when (ignore-errors (string= line "exec" :end1 4))
-              do (setf opts (parse-argv line))))
-    (roswell:roswell `(,opts "dump" "executable" ,@argv)
-                 :interactive nil)))
+         for line = (read-line in)
+         when (ignore-errors (string= line "exec" :end1 4))
+         do (setf opts (parse-argv line))))
+    (roswell:roswell `(,opts "-L" ,(or (ros:opt "*lisp")
+                                       (ros:opt "lisp"))
+                             "dump" "executable" ,@argv)
+                     :interactive nil)))
 ;;; vim: set ft=lisp lisp:
