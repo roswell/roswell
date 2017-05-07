@@ -91,14 +91,18 @@ exec ros -- $0 "$@"
                                 #+ccl "ccl"
                                 #+cmucl "cmucl"
                                 (remove #\Space (string-downcase (lisp-implementation-type)))))))
-    (if (and r module)
-        (let ((func (find (first r) (funcall module :query *subcmds*)
-                          :test 'equal
-                          :key 'string-downcase)))
-          (if func
-              (funcall func module (rest r))
-              (format *error-output* "'~A' is not a valid command for '~A' subcommand for ~A ~%"
-                      (first r) (pathname-name *load-pathname*) (lisp-implementation-type))))
-        (format *error-output* "'~A' is not supported for ~A ~%"
-                (pathname-name *load-pathname*) (lisp-implementation-type)))))
+    (cond
+      ((and module r)
+       (let ((func (find (first r) (funcall module :query *subcmds*)
+                         :test 'equal
+                         :key 'string-downcase)))
+         (if func
+             (funcall func module (rest r))
+             (format *error-output* "'~A' is not a valid command for '~A' subcommand for ~A ~%"
+                     (first r) (pathname-name *load-pathname*) (lisp-implementation-type)))))
+      (module
+       (format *error-output* "Possible subcmd~%~%~{~(~A~)~%~}" (funcall module :query *subcmds*)))
+      (t
+       (format *error-output* "'~A' is not supported for ~A ~%"
+               (pathname-name *load-pathname*) (lisp-implementation-type))))))
 ;;; vim: set ft=lisp lisp:
