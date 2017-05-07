@@ -24,7 +24,8 @@
 
 (defun sbcl (type &rest args)
   (case type
+    (:query (first args))
     (:executable
      (apply 'dump-executable args))
-    (:file
+    (:output
      (sb-ext:save-lisp-and-die (first args)))))

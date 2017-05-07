@@ -27,5 +27,6 @@
 
 (defun cmucl (type &rest args)
   (case type
+    (:query (first args))
     (:executable
      (apply 'dump-executable args))))

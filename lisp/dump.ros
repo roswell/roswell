@@ -19,20 +19,7 @@ exec ros -- $0 "$@"
                            (uname-m) (uname) (opt "impl"))
                    (homedir)))
 
-#+nil
-(defun %dump-executable (cmds out script)
-  "more informative error message"
-  (declare (ignorable cmds script))
-  (format *error-output*
-          "While dumping to ~a:
-ros dump executable is supported only when the following features are satisfied:
- (or sbcl ccl ecl clisp (and cmucl executable))
-
-On CMUCL, :executable is supported on x86, solaris and sparc.
-" out)
-  (roswell:quit 1))
-
-(defun dump-output (func params &optional force)
+(defun output (func params &optional force)
   (flet ((%dump (path &optional mode)
            (if (and (not force)
                     (probe-file path))
@@ -41,18 +28,12 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
                (if (eql mode :normal)
                    (format *error-output* "dump ~s already exists~%" (pathname-name path))
                    (format *error-output* "file ~s already exists~%" path))
-               (progn
-                 #+sbcl
-                 (sb-ext:save-lisp-and-die path)
-                 #+ccl
-                 (ccl:save-application path)
-                 #+clisp
-                 (ext:saveinitmem path :quiet t)))))
+               (funcall func :output path))))
     (cond
       ((null params)
        (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (opt "argv0")))
       ((equal "-f" (first params))
-       (dump-output func (rest params) t))
+       (output func (rest params) t))
       ((equal "-o" (first params))
        (if (> (length params) 1)
            (%dump (second params))
@@ -61,7 +42,7 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
-(defun dump-executable (func params)
+(defun executable (func params)
   (if params
       (let* ((cmds (let ((*read-eval*))
                      (read-from-string
@@ -102,18 +83,22 @@ On CMUCL, :executable is supported on x86, solaris and sparc.
       (format *error-output* "Usage: ros dump executable help~%")))
 
 (defvar *subcmds*
-  '(("output" dump-output)
-    ("executable" dump-executable)))
+  '(output
+    executable))
 
 (defun main (&rest r)
-  (let ((dump (module "dump" (or
-                              #+ccl "ccl"
-                              #+cmucl "cmucl"
-                              (remove #\Space (string-downcase (lisp-implementation-type)))))))
-    (if (and r dump)
-        (let ((func (second (assoc (first r) *subcmds* :test 'equal))))
+  (let ((module (module "dump" (or
+                                #+ccl "ccl"
+                                #+cmucl "cmucl"
+                                (remove #\Space (string-downcase (lisp-implementation-type)))))))
+    (if (and r module)
+        (let ((func (find (first r) (funcall module :query *subcmds*)
+                          :test 'equal
+                          :key 'string-downcase)))
           (if func
-              (funcall func dump (rest r))
-              (format *error-output* "'~A' is not a valid command for '~A' subcommand~%" (first r) (pathname-name *load-pathname*))))
-        (format t "~{~a~%~}" (mapcar #'car *subcmds*)))))
+              (funcall func module (rest r))
+              (format *error-output* "'~A' is not a valid command for '~A' subcommand for ~A ~%"
+                      (first r) (pathname-name *load-pathname*) (lisp-implementation-type))))
+        (format *error-output* "'~A' is not supported for ~A ~%"
+                (pathname-name *load-pathname*) (lisp-implementation-type)))))
 ;;; vim: set ft=lisp lisp:

@@ -19,7 +19,8 @@
 
 (defun clisp (type &rest args)
   (case type
+    (:query (first args))
     (:executable
      (apply 'dump-executable args))
-    (:file
+    (:output
      (ext:saveinitmem (first args) :quiet t))))

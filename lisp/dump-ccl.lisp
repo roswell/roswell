@@ -16,7 +16,8 @@
 
 (defun ccl (type &rest args)
   (case type
+    (:query (first args))
     (:executable
      (apply 'dump-executable args))
-    (:file
+    (:output
      (ccl:save-application (first args)))))
