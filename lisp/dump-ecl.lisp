@@ -135,6 +135,6 @@
 
 (defun ecl (type &rest args)
   (case type
-    (:query (:query (first args)))
+    (:query (first args))
     (:executable
      (apply 'dump-executable args))))
