@@ -361,7 +361,10 @@ have the latest asdf, and this file has a workaround for this.
                (handler-bind
                    (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
                  (funcall #+(or sbcl clisp) 'cl:load
-                          #-(or sbcl clisp) (read-from-string "asdf::eval-input")
+                          #-(or sbcl clisp)
+                          (progn
+                            (ensure-asdf)
+                            (read-from-string "asdf::eval-input"))
                           (make-concatenated-stream
                            (make-string-input-stream
                             (format nil "(cl:setf cl:*load-pathname* ~S cl:*load-truename* (ignore-errors (truename cl:*load-pathname*)))~A"
