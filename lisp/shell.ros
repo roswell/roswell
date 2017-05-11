@@ -22,13 +22,14 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
    (homedir)))
 
 (defun main (&rest argv)
+  (declare (ignorable argv))
   (let* ((uname-m (uname-m))
 	 (*msys2-bits* (or
-                        (and (position "--32" argv :test 'equal) 32)
-                        (and (position "--64" argv :test 'equal) 64)
+                        (and (ros:opt "32") 32)
+                        (and (ros:opt "64") 64)
                         (cond
-                         ((equal uname-m "x86-64") 64)
-                         ((equal uname-m "x86") 32))))
+                          ((equal uname-m "x86-64") 64)
+                          ((equal uname-m "x86") 32))))
          (*msys2-arch* (if (= 32 *msys2-bits*)
                            "i686" "x86_64")))
     (config-env *msys2-bits*)
@@ -36,6 +37,6 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
              (unless (probe-file (msys))
                (roswell:roswell '("install msys2+")))
              (uiop/run-program:run-program
-              `(,(sb-ext:native-namestring (msys)))))
+              `(,(sb-ext:native-namestring (msys)) ,@argv)))
     #-win32(format *error-output* "'ros shell' is for windows~%")))
 ;;; vim: set ft=lisp lisp:
