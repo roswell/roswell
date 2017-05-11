@@ -197,17 +197,31 @@ ccl-bin      -> (\"ccl-bin\" nil)
         (funcall (intern (string :delete-directory-tree) :uiop) dir :if-does-not-exist :ignore :validate t)
         t)))
 
-(defun config-env (&optional bits)
-  (declare (ignorable bits))
+(defun config-env ()
   #+win32
   (let* ((w (opt "wargv0"))
          (a (opt "argv0"))
          (path (read-call "uiop:native-namestring"
                           (make-pathname :type nil :name nil :defaults (if (zerop (length w)) a w))))
-         (uname-m (uname-m)))
-    (setq bits (cond (bits)
-                     ((equal uname-m "x86-64") 64)
-                     ((equal uname-m "x86") 32)))
+         (uname-m (uname-m))
+         (bits (or
+                (and (roswell:opt "32") 32)
+                (and (roswell:opt "64") 64)
+                (cond
+                  ((equal uname-m "x86-64") 64)
+                  ((equal uname-m "x86") 32)))))
+    (unless (roswell:getenv "MSYSTEM")
+      (setenv "PATH" (format nil "~{~A;~}~A"
+                             (mapcar (lambda (x)
+                                       (read-call "uiop:native-namestring"
+                                                  (merge-pathnames
+                                                   (format nil "impls/~A/~A/msys2/~A/~A"
+                                                           (uname-m) (uname) (config "msys2.version") x)
+                                                   (homedir))))
+                                     `(,(format nil "mingw~A/bin" bits)
+                                       "usr/local/bin"
+                                       "usr/bin"))
+                             (roswell:getenv "PATH"))))
     (setenv "MSYSTEM" (if (= bits 32) "MINGW32" "MINGW64"))
     (setenv "MSYS2_PATH_TYPE" "inherit")
     (setenv "PATH" (format nil "~A;~A\\.roswell\\bin;~A"
