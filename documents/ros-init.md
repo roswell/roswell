@@ -35,9 +35,15 @@ The default template is something like:
 #| <Put a one-line description here>
 exec ros -Q -- $0 "$@"
 |#
-(defpackage :ros.script.test.3666781082
+(progn ;;init forms
+  (ros:ensure-asdf)
+  ;;#+quicklisp (ql:quickload '() :silent t)
+  )
+
+(defpackage :ros.script.test.3703600390
   (:use :cl))
-(in-package :ros.script.test.3666781082)
+(in-package :ros.script.test.3703600390)
+
 (defun main (&rest argv)
   (declare (ignorable argv)))
 ;;; vim: set ft=lisp lisp:
