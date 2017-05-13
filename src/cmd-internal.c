@@ -130,6 +130,7 @@ struct proc_opt* register_cmd_internal(struct proc_opt* top_) {
   LVal cmds=0;
   top_->command=add_command(top_->command,"roswell-internal-use",NULL,cmd_internal,0,1);
   dispatch_init(&internal,"internal");
+  cmds=add_command(cmds,"man"     ,NULL,cmd_man,0,1);
   cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
   cmds=add_command(cmds,"download",NULL,cmd_download,0,1);
   cmds=add_command(cmds,"uname",NULL,cmd_uname,0,1);

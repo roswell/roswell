@@ -43,6 +43,7 @@ char* _get_opt(struct opts* opt,const char* name);
 char* sexp_opts(struct opts* opt);
 void free_opts(struct opts* opt);
 DEF_SUBCMD (cmd_tar);
+DEF_SUBCMD (cmd_man);
 
 struct proc_opt {
   char* name;
