@@ -40,9 +40,15 @@
 #| &lt;Put a one-line description here&gt;
 exec ros -Q -- $0 &quot;$@&quot;
 |#
-(defpackage :ros.script.test.3666781082
+(progn ;;init forms
+  (ros:ensure-asdf)
+  ;;#+quicklisp (ql:quickload &#39;() :silent t)
+  )
+
+(defpackage :ros.script.test.3703600390
   (:use :cl))
-(in-package :ros.script.test.3666781082)
+(in-package :ros.script.test.3703600390)
+
 (defun main (&amp;rest argv)
   (declare (ignorable argv)))
 ;;; vim: set ft=lisp lisp:</code></pre>
