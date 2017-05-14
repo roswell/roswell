@@ -60,33 +60,34 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
    (with-output-to-string (o)
      (uiop/run-program:run-program cmd :output o))))
 
-(defun edit-change-log ()
-  (with-open-file (out (merge-pathnames "ChangeLog--" *project-path*)
-                       :direction :output :if-exists :supersede)
-    (format out "~{~A~%~}"
-            (list (format nil "roswell (~A-1) unstable; urgency=low" *new-version*)
-                  "" "  *" ""
-                  (format nil " -- ~A <~A>  ~A"
-                          (x "git config --get user.name")
-                          (x "git config --get user.email")
-                          (local-time:format-rfc1123-timestring
-                           nil
-                           (local-time:universal-to-timestamp (get-universal-time)))) "")))
-  (with-open-file (out (merge-pathnames "ChangeLog---" *project-path*)
-                       :direction :output :if-exists :supersede)
+(defun edit-changelog ()
+  (error "not implement yet"))
+
+(defun prepare-changelog ()
+  (declare (ignore argv))
+  (uiop:run-program "git checkout master" :output :interactive :error-output :interactive)
+  (let ((*new-version* "master-changelog-which-not-yet-released")
+        (newpart (merge-pathnames "ChangeLog--" *project-path*))
+        (newfile (merge-pathnames "ChangeLog---" *project-path*))
+        (file    (merge-pathnames "ChangeLog" *project-path*)))
+    (with-open-file (out newpart :direction :output :if-exists :supersede)
+      (format out "~{~A~%~}"
+              (list (format nil "roswell (~A-1) unstable; urgency=low" *new-version*)
+                    "" "  *" ""
+                    (format nil " -- ~A <~A>  ~A"
+                            (x "git config --get user.name")
+                            (x "git config --get user.email")
+                            (local-time:format-rfc1123-timestring
+                             nil
+                             (local-time:universal-to-timestamp (get-universal-time)))) "")))
+    (with-open-file (out newfile :direction :output :if-exists :supersede)
+      (uiop/run-program:run-program
+       (format nil "cat ~A ~A" newpart file)
+       :output out))
     (uiop/run-program:run-program
-     (format nil "cat ~A ~A"
-             (merge-pathnames "ChangeLog--" *project-path*)
-             (merge-pathnames "ChangeLog" *project-path*))
-     :output out))
-  (uiop/run-program:run-program
-   (format nil "mv ~A ~A"
-           (merge-pathnames "ChangeLog---" *project-path*)
-           (merge-pathnames "ChangeLog" *project-path*)))
-  (uiop/run-program:run-program
-   (format nil "rm -f ~A ~A"
-           (merge-pathnames "ChangeLog--" *project-path*)
-           (merge-pathnames "ChangeLog---" *project-path*))))
+     (format nil "mv ~A ~A" newfile file))
+    (uiop/run-program:run-program
+     (format nil "rm -f ~A ~A" newpart newfile))))
 
 (defun show-how-to-release ()
   (format t "~{~A~%~}~%"
@@ -105,7 +106,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (setf *new-version* (inc-version (find-version))))
   (format t "~&new version name is ~S~%" *new-version*)
   (force-output)
-  (edit-change-log)
+  (edit-changelog)
   (edit-configure-ac)
   (edit-roswell-asd)
   (show-how-to-release))
@@ -127,8 +128,13 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
        "git merge master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push"
-       "git push --tags"
-       "git checkout master"))))
+       "git push --tags"))
+    (prepare-changelog)
+    (mapc
+     (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
+     `("git add ChangeLog"
+       ,(format nil "git commit -m\"prepare ChangeLog entry next to v~A\"" version)
+       "git push"))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
   (ignore-errors
