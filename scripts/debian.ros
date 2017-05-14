@@ -3,8 +3,13 @@
 #|
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp (ql:quickload '(:cl-html-parse :dexador :uiop) :silent t))
 
-(ql:quickload '(:cl-html-parse :dexador :uiop) :silent t)
+(defpackage :ros.script.debian.3703769507
+  (:use :cl))
+(in-package :ros.script.debian.3703769507)
 
 (defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
 (defvar *package-name* "roswell")

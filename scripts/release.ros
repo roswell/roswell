@@ -3,9 +3,14 @@
 #|
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
-(ros:ensure-asdf)
-(ql:quickload '(:cl-ppcre :split-sequence "snmsts/sn.github"))
-(use-package :sn.github.repos.releases)
+(progn
+  (ros:ensure-asdf)
+  (ql:quickload '(:cl-ppcre :split-sequence "snmsts/sn.github")))
+
+(defpackage :ros.script.release.3703769340
+  (:use :cl :sn.github.repos.releases))
+(in-package :ros.script.release.3703769340)
+
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
 (defvar *new-version* nil)
 (defvar *owner* "roswell")
