@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 14 May 2017 16:15:17 +0900
+
 roswell (17.4.8.76-1) unstable; urgency=low
 
   * New: 'ros update system [systems...]' to pull upstream and install it.
