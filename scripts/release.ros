@@ -133,7 +133,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (mapc
      (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
      `("git add ChangeLog"
-       ,(format nil "git commit -m\"prepare ChangeLog entry next to v~A\"" version)
+       ,(format nil "git commit -m\"[ci skip] prepare ChangeLog entry next to v~A\"" version)
        "git push"))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
