@@ -5,7 +5,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp (ql:quickload '(:cl-html-parse :dexador :uiop) :silent t))
+  #+quicklisp (ql:quickload '(:cl-html-parse :uiop :dexador) :silent t))
 
 (defpackage :ros.script.debian.3703769507
   (:use :cl))
@@ -13,56 +13,43 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defvar *pwd* (make-pathname :defaults cl:*load-pathname* :name nil :type nil))
 (defvar *package-name* "roswell")
-
+(defvar *stab-version* "99.99.99.99")
 (defun get-newest-url (base)
-  (block nil
-    (multiple-value-bind (body res)
-       (dex:get (format nil "https://github.com/~A/releases/" base))
-      (when (= res 200)
-        (net.html.parser:parse-html
-         body
-         :callbacks
-         (list (cons :a (lambda (arg)
-                          (let ((href (getf (cdr (car arg)) :href)))
-                            (when (and (> (length href) 6)
-                                       (equal (subseq href (-(length href) 6))
-                                              "tar.gz")
-                                       ;; href which include "archive" not "release"
-                                       (eql (aref href (1+ (position #\a href))) #\r))
-                              (return-from nil (format nil "https://github.com~A" href)))))))
-         :callback-only t)))))
-
-(defun download (uri path)
-  (if (probe-file path)
-      (format t "skip downloading ~a~%" uri)
-      (with-open-file (out path :direction :output
-                           :if-does-not-exist :create
-                           :if-exists :supersede
-                           :element-type '(unsigned-byte 8))
-        (format t "downloading ~a" uri)
-        (force-output)
-        (multiple-value-bind (in status)
-            (dex:get uri :want-stream t :force-binary t)
-          (unwind-protect
-               (when (= status 200)
-                 (loop :with seq := (make-array 4096 :element-type '(unsigned-byte 8))
-                    :for read := (read-sequence seq in)
-                    :until (= read 0)
-                    :do (write-sequence seq out :end read)))
-            (when in
-              (close in))))
-        (format t "done ~%"))))
+  (let ((branch (or (ros:getenv "CIRCLE_BRANCH")
+                    (ros:getenv "TRAVIS_BRANCH"))))
+    (if branch
+        (format nil "https://github.com/~A/archive/~A.tar.gz" base branch)
+        (multiple-value-bind (body res)
+            (dex:get (format nil "https://github.com/~A/releases/" base))
+          (when (= res 200)
+            (net.html.parser:parse-html
+             body
+             :callbacks
+             (list (cons :a (lambda (arg)
+                              (let ((href (getf (cdr (car arg)) :href)))
+                                (when (and (> (length href) 6)
+                                           (equal (subseq href (-(length href) 6))
+                                                  "tar.gz")
+                                           ;; href which include "archive" not "release"
+                                           (eql (aref href (1+ (position #\a href))) #\r))
+                                  (return-from get-newest-url (format nil "https://github.com~A" href)))))))
+             :callback-only t))))))
 
 (defun fetch-upstream (&optional (output *pwd*))
   (let* ((url (get-newest-url "roswell/roswell"))
          (path (merge-pathnames (subseq url (1+ (position #\/ url :from-end t))) output)))
-    (download url path)
+    (roswell.util:download url path)
     path))
 
 (defun rename-upstream (path &optional (package-name *package-name*) (output *pwd*))
   (let* ((name (pathname-name path))
-         (version (subseq name (position-if #'digit-char-p name)
-                          (1+ (position-if #'digit-char-p name :from-end t))))
+         (version% (aref (nth-value 1 (cl-ppcre:scan-to-strings
+                                       "\\((.*)-[0-9]*\\)"
+                                       (uiop/run-program:run-program
+                                        (format nil "cat ~A../ChangeLog|grep ^roswell| head -n 1" *pwd*) :output :string))) 0))
+         (version (if (equal version% "master-changelog-which-not-yet-released")
+                      *stab-version*
+                      version%))
          (new (make-pathname :name (format nil "~A_~A.orig.tar" package-name
                                            (subseq version 0
                                                    (position #\- version)))
@@ -86,7 +73,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                                                      (pathname-directory x))))))))
                  (directory (merge-pathnames "*.*" output)))))))
     (uiop/run-program:run-program
-     (format nil "cat ~A../ChangeLog|sed -e s/master-changelog-which-not-yet-released/99.99.99.99/>~Adebian/changelog" *pwd* path))
+     (format nil "cat ~A../ChangeLog|sed -e s/master-changelog-which-not-yet-released/~A/>~Adebian/changelog" *pwd* *stab-version* path))
     (uiop/run-program:run-program
      (format nil "cp -r ~Acompletion-bash/ros ~Adebian/roswell.bash-completion" *pwd* path))
     path))
@@ -96,7 +83,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (uiop/run-program:run-program "dpkg-buildpackage -us -uc" :output :interactive))
 
 (defun main (&optional (arg0 "all") &rest argv)
-  (declare (ignore argv))
+  (declare (ignorable argv arg0))
   (let ((output (ensure-directories-exist (merge-pathnames "debian/" *pwd*))))
     (cond ((equal arg0 "all")
            (let* ((upstream (fetch-upstream output)))
@@ -104,8 +91,3 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
            (dpkg-buildpackage (cp-debian output)))
           ((equal arg0 "clean")
            (format *error-output* "hoge~%")))))
-
-;;(sb-posix:setenv "DEBFULLNAME" "Masatoshi SANO" 1)
-;;(sb-posix:setenv "DEBEMAIL" "snmsts@gmail.com" 1)
-;;"dh_make --yes -c mit -C=m --f ../roswell-0.0.2.22.tar.gz"
-;;"dpkg-buildpackage -us -uc"
