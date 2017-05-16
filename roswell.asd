@@ -25,7 +25,7 @@ roswell does not function without help of C codes.
                  (:file "install-abcl-bin" :depends-on ("util-install-quicklisp"))
                  (:file "install-cmu-bin" :depends-on ("util-install-quicklisp"))
                  (:file "install-ccl-bin" :depends-on ("util-install-quicklisp"))
-                 (:file "install-clisp" :depends-on ("util-install-quicklisp"))
+                 (:file "install-clisp" :depends-on ("install+ffcall" "install+sigsegv"))
                  (:file "install-ecl" :depends-on ("util-install-quicklisp"))
                  (:file "install-sbcl" :depends-on ("util-install-quicklisp"))
                  (:file "install-sbcl-bin" :depends-on ("util-install-quicklisp"))

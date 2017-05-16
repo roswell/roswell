@@ -32,6 +32,7 @@
 
 (defun quicklisp-install (argv)
   #-win32
+  #+sbcl
   (ignore-errors
    (require :sb-posix)
    (let ((gid (sb-posix:getenv "SUDO_GID")))

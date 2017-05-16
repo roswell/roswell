@@ -45,3 +45,9 @@
 (defuri sbcl-bin-uri)
 
 (defuri slime-uri "https://github.com/slime/slime.git")
+
+(export
+ (defvar *allegro-agreement-uri*
+   '(("10.1express" . #1="http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
+     ("100express"  . #1#)
+     ("101b"        . "http://franz.com/products/licensing/FSLA10.1.beta.pdf"))))

@@ -16,11 +16,11 @@
 
 (defun msys2-setup (argv)
   (let* ((uname-m (roswell.util:uname-m))
-         (*msys2-bits* (or (and (position "--32" (getf argv :argv) :test 'equal) 32)
-                           (and (position "--64" (getf argv :argv) :test 'equal) 64)
+         (*msys2-bits* (or (and (ros:opt "32") 32)
+                           (and (ros:opt "64") 64)
                            (cond
-                            ((equal uname-m "x86-64") 64)
-                            ((equal uname-m "x86") 32))))
+                             ((equal uname-m "x86-64") 64)
+                             ((equal uname-m "x86") 32))))
          (*msys2-arch* (if (= 32 *msys2-bits*)
                            "i686" "x86_64"))
          (path (merge-pathnames (format nil "archives/msys2-~A.tar.xz" (getf argv :version)) (homedir)))
@@ -51,11 +51,11 @@
                                   (uname-m) (uname) (getf argv :version))
                           (homedir)))
         (uiop/run-program:run-program
-         `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
+         `(,(uiop:native-namestring (merge-pathnames "usr/bin/bash" msys))
            "-lc" " ")
          :output t)
         (uiop/run-program:run-program
-         `(,(sb-ext:native-namestring (merge-pathnames "usr/bin/bash" msys))
+         `(,(uiop:native-namestring (merge-pathnames "usr/bin/bash" msys))
            "-lc"
            ,(format nil "~@{~A~}"
                     "for i in {1..3}; do pacman --noconfirm "
@@ -63,7 +63,7 @@
                     "mingw-w64-" *msys2-arch* "-gcc "
                     "make zlib-devel && break || sleep 15; done")))
         (uiop/run-program:run-program
-         `(,(sb-ext:native-namestring (merge-pathnames "autorebase.bat" msys))))
+         `(,(uiop:native-namestring (merge-pathnames "autorebase.bat" msys))))
 	(setf (config "msys2.version") (getf argv :version)))))
   (cons t argv))
 

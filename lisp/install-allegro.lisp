@@ -4,11 +4,6 @@
 (in-package :roswell.install.allegro)
 (roswell:quicklisp :environment nil)
 
-(defvar *allegro-agreement-uri*
-  '(("10.1express" . #1="http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
-    ("100express"  . #1#)
-    ("101b"        . "http://franz.com/products/licensing/FSLA10.1.beta.pdf")))
-
 (defun allegro-get-version ()
   (mapcar #'car *allegro-agreement-uri*))
 
@@ -29,7 +24,7 @@
                    "-" (case machine (:|x86-64| "x86") (t machine))
                    (case os
                      (:|linux| (cond ((equal "10.1express" version) ".tbz2")
-                                     ((equal "100express" version ".bz2"))))
+                                     ((equal "100express" version) ".bz2")))
                      (:|darwin|  ".dmg")
                      (:|windows| ".exe"))))
           ((equal "101b" version)))))

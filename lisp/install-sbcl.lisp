@@ -285,7 +285,7 @@
                                       (progn
                                         (copy (merge-pathnames (first elt) from)
                                               (merge-pathnames (first elt) to))
-                                        (sb-posix:chmod (merge-pathnames (first elt) to) (second elt)))
+                                        #+sbcl(sb-posix:chmod (merge-pathnames (first elt) to) (second elt)))
                                       (copy (merge-pathnames elt from)
                                             (merge-pathnames elt to))))))
                  (:touch (loop for elt in elts
