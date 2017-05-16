@@ -14,124 +14,32 @@
 ;; c:build-program
 ;; {image-name &key lisp-files ld-flags prologue-code epilogue-code}
 
-(defun print-%-readable-or-lose (sym-name &optional (s *standard-output*))
-  (let ((*print-readably* t))
-    (handler-case
-        (format s
-                "(% ~s '~s)~%"
-                sym-name
-                (ignore-errors
-                  (symbol-value
-                   (read-from-string sym-name))))
-      (print-not-readable ()))))
-
+(defun parse-options (file)
+  (with-open-file (i file)
+    (read-line i)
+    (list
+     (loop for i on (read i)
+           when (keywordp (first i))
+             append (prog1
+                        (list (first i) (second i))
+                      (setf i (cdr i))))
+     (second (read i)))))
 
 (defun dump-executable (cmds out ros-file)
-  (format *error-output* "~&; ECL is actually not suppported. Gotcha! ~%")
-  (roswell:quit 1)
-  #+nil
-  (let* ((tmp (uiop:run-program "mktemp -d" :output '(:string :stripped t)))
-         (ros-opts-file (format nil "~a/ros-opts.lisp" tmp))
-         objfiles
-         (*compile-verbose* t)
-         (*compile-print* t))
-    (format *error-output* "~&; In directory ~a~%" tmp)
-    (unwind-protect
-        (progn
-          (with-open-file (*standard-output*
-                           ros-opts-file
-                           :direction :output
-                           :if-does-not-exist :create)
-            #+nil
-            (prin1
-             `(setf *load-verbose* t
-                    *load-print* t))
-            (terpri)
-            ;; fixme: duplicated, but necessary
-            (prin1
-             `(defpackage :ros
-                 (:use :cl)
-                 (:shadow :load :eval :package :restart :print :write)
-                 (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
-                          :ignore-shebang :ensure-using-downloaded-asdf :include :ensure-asdf
-                          :roswell :exec :setenv :unsetenv :version :swank :verbose)
-                 (:documentation "Roswell backend.")))
-            (terpri)
-            (progn
-              (prin1
-               `(cl:load ,(make-pathname
-                           :name "init"
-                           :type "lisp"
-                           :defaults #.*load-pathname*)))
-              (terpri))
-            #+nil
-            (progn
-              (prin1
-               `(in-package :ros))
-              (terpri)
-              (princ
-               "(defmacro eval-with-printing (&body body)
-                (list* 'progn
-                       (loop for form in body
-                             collect (list 'cl:print (list 'quote form))
-                             collect (list 'cl:terpri)
-                             collect (list 'cl:finish-output)
-                             collect form)))")
-              (terpri)
-              (format *standard-output* "~&(eval-with-printing~&")
-              (terpri)
-              (princ `(defun % (string value)
-                        (ignore-errors
-                          (setf (symbol-value
-                                 (read-from-string string))
-                                value))))
-              (terpri)
-              (princ
-               `(trace %))
-              (terpri)
-              (dolist (sym-name '("QUICKLISP-CLIENT::*LOCAL-PROJECT-DIRECTORIES*"
-                                  "ROS::*ROS-OPTS*"))
-                (print-%-readable-or-lose sym-name))
-              (terpri)
-              (prin1
-               `(format t "~&loading init.ros...~&"))
-              (with-open-file (s (make-pathname
-                                  :name "init"
-                                  :type "lisp"
-                                  :defaults #.*load-pathname*))
-                (ignore-errors
-                  ;; copy and paste
-                  (loop (write-char (read-char s) *standard-output*))))
-              (format *standard-output* "~&)~&")))
-          (format *error-output* "~&finished dumping all special variables.")
-          (proclaim '(optimize (debug 3) (speed 0)))
-          (push (compile-file ros-opts-file
-                              :system-p t
-                              :output-file
-                              (format nil "~a/ros-opts.o" tmp)) objfiles)
-          (push (compile-file ros-file
-                              :system-p t
-                              :output-file
-                              (format nil "~a/script.o" tmp)) objfiles)
-          (c:build-program
-           out
-           :lisp-files ;#+nil
-           ;; objfiles
-           ;; #+nil
-           (nreverse objfiles)
-           :epilogue-code
-           (print
-            `(progn
-               (setf *load-pathname* (pathname (ext:argv 0)))
-               (setf roswell:*argv*
-                     (eval
-                      (read-from-string
-                       "(loop for i from 0 below (ext:argc)
-                             collect (ext:argv i))")))
-               (print roswell:*argv*)
-               (roswell:run ',cmds)))))
-      ;; (uiop:run-program (format nil "rm -r ~a" tmp))
-      )))
+  (declare (ignore out))
+  (let ((options (parse-options ros-file))
+        (path (make-pathname :defaults (truename ros-file))))
+    (eval `(asdf:defsystem ,(pathname-name path)
+               :build-operation asdf:program-op
+             :depends-on (:uiop ,@(getf (first options) :system))
+             ;; need to apply uiop:*command-line-arguments* for the function.
+             :entry-point ,(format nil "~A::~A" (second options) :main)
+             :components ((:file ,(pathname-name path)
+                           :type ,(pathname-type path)))
+             :class asdf:program-system))
+    (asdf:operate
+     'asdf:program-op
+     (pathname-name path)))) 
 
 (defun ecl (type &rest args)
   (case type
