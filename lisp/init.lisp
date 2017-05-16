@@ -184,7 +184,7 @@ have the latest asdf, and this file has a workaround for this.
         t))))
 
 (defvar *included-names* '("init"))
-(defparameter *include-path* #.*load-pathname*)
+(defparameter *include-path* *load-pathname*)
 
 (defun include (names &optional provide)
   (loop
