@@ -11,7 +11,7 @@ env:
     - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
     - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=NO
     - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=cmu-bin/2016-05
+    - METHOD=ci LISP=cmu-bin/2017-04
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=clisp
@@ -156,7 +156,7 @@ after_success:
        ros ./scripts/release.ros github ros-$XCC.cab;
     fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then
-       ros ./scripts/release.ros debian;
+       make debian;
     fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then
        git config user.email "auto@example.com";
