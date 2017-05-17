@@ -1,6 +1,16 @@
 roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
 
-  *
+  * New: `ros update project` support projects using hg by (implemented by gos-k)
+  * New: `ros list git` to show which project are installed via git
+  * New: `ros git` command.
+  * New: `ros update quicklisp` supported
+  * Change: download sbcl-bin from github/roswell/sbcl_bin don't access sourceforge anymore.
+  * Change: Updated Clasp 2017-05-04.(by gos-k)
+  * Change: external-clasp installation are parallelized (by TANIGUCHI Masaya)
+  * Change: speedup by using dump when ``ros build``.
+  * Change: `ros 32=t shell` will launch 32bit will launch 32bit shell
+  * Fix: `roswell:script` errored without `(roswell:ensure-asdf)` (reported by Alexander Artemenko)
+  * Fix: when `system_` return NULL cause segfault on windows (reported by fukamachi)
 
  -- SANO Masatoshi <snmsts@gmail.com>  Sun, 14 May 2017 16:15:17 +0900
 
