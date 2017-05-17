@@ -18,7 +18,6 @@ gend.h: FORCE
 	printf '\n#endif\n'  >> $@.tmp
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	rm -f $@.tmp
-	cat $@
 cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c \
