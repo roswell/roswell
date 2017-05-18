@@ -4,7 +4,9 @@
 
 (defun dump (&rest params)
   (loop
-    with impl = (impl (first params))
+    with impl = (impl (or (first params)
+                          (ros:opt "*lisp")
+                          (ros:opt "default.lisp")))
       initially (format *error-output* "List of dumped images for ~A:~%" impl)
     with path = (merge-pathnames
                  (format nil "impls/~A/~A/~A/dump/" (uname-m) (uname) impl)
