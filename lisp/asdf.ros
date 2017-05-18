@@ -80,8 +80,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (format t "~A~%" i)))
 
 (defun usage ()
-  (let ((s *error-output*))
-    (format s "Usage: ~A asdf install/use/list/delete version ~%" (opt "wargv0"))))
+  (let ((s *error-output*)
+        (asdf (config "asdf.version")))
+    (format s "Usage: ~A asdf install/use/list/delete version ~%" (pathname-name (opt "wargv0")))
+    (format s (if (zerop (length asdf))
+                  "ASDF is not specified.~%"
+                  "choosen version is ~S~%") asdf)))
 
 (defun main (&optional subcmd &rest argv)
   (if subcmd
