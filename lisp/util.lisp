@@ -119,7 +119,9 @@
     (unless (zerop (length result)) result)))
 
 (defun (setf config) (val item)
-  (roswell:roswell `("config" "set" ,item ,val) :string t)
+  (roswell:roswell (if val
+                       `("config" "set" ,item ,val)  ;; set
+                       `("config" ,item)) :string t) ;; unset
   val)
 
 (defun list% (&rest params)
