@@ -9,6 +9,7 @@ roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
   * Change: external-clasp installation are parallelized (by TANIGUCHI Masaya)
   * Change: speedup by using dump when ``ros build``.
   * Change: `ros 32=t shell` will launch 32bit will launch 32bit shell
+  * Change: `ros asdf use no` to cancel choice of asdf version.
   * Fix: `roswell:script` errored without `(roswell:ensure-asdf)` (reported by Alexander Artemenko)
   * Fix: when `system_` return NULL cause segfault on windows (reported by fukamachi)
 

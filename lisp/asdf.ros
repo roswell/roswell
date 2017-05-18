@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|manage asdf version
+#|Manage asdf version
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
@@ -67,9 +67,12 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun asdf-use (version &rest r)
   (declare (ignorable r))
-  (if (probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (homedir)))
-      (setf (config "asdf.version") version)
-      (error "~A not installed" version)))
+  (cond
+    ((member version '("no" "-") :test 'equal)
+     (setf (config "asdf.version") nil))
+    ((probe-file (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (homedir)))
+     (setf (config "asdf.version") version))
+    (t (error "~A not installed" version))))
 
 (defun asdf-list (&rest r)
   (declare (ignorable r))
