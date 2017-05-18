@@ -6,7 +6,8 @@
 # https://github.com/jgm/pandoc-templates/blob/master/default.man
 
 MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md \
-	ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md ros-build.md ros-update.md
+	ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md ros-build.md ros-update.md \
+	ros-help.md
 # separated by semicolons
 PANDOC_AUTHORS="Roswell Project Team"
 
