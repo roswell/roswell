@@ -22,5 +22,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (set-opt "verbose" (format nil "~A" verbose))
     (if func
         (funcall func script rest)
-        (format *error-output* "not supported impl:~A~%" system))))
+        (progn
+          (format *error-output* "not supported impl:~A~%" system)
+          (roswell:quit 1)))))
 ;;; vim: set ft=lisp lisp:

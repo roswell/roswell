@@ -19,4 +19,4 @@
                     lisp)))
        t)
       (t (let ((func (module "use" lisp)))
-           (funcall func version))))))
+           (funcall (or func 'identity) version))))))
