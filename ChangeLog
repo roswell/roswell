@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 20 May 2017 23:25:33 +0900
+
 roswell (17.5.8.77-1) unstable; urgency=low
 
   * New: `ros update project` support projects using hg by (implemented by gos-k)
