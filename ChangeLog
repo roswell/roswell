@@ -1,4 +1,4 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (17.5.8.77-1) unstable; urgency=low
 
   * New: `ros update project` support projects using hg by (implemented by gos-k)
   * New: `ros list git` to show which project are installed via git
@@ -13,7 +13,7 @@ roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
   * Fix: `roswell:script` errored without `(roswell:ensure-asdf)` (reported by Alexander Artemenko)
   * Fix: when `system_` return NULL cause segfault on windows (reported by fukamachi)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Sun, 14 May 2017 16:15:17 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 20 May 2017 22:02:57 +0900
 
 roswell (17.4.8.76-1) unstable; urgency=low
 
