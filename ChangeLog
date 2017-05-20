@@ -5,7 +5,7 @@ roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
   * New: `ros git` command.
   * New: `ros update quicklisp` supported
   * Change: download sbcl-bin from github/roswell/sbcl_bin don't access sourceforge anymore.
-  * Change: Updated Clasp 2017-05-04.(by gos-k)
+  * Change: Updated Clasp 2017-05-20.(by gos-k)
   * Change: external-clasp installation are parallelized (by TANIGUCHI Masaya)
   * Change: speedup by using dump when ``ros build``.
   * Change: `ros 32=t shell` will launch 32bit will launch 32bit shell
