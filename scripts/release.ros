@@ -66,7 +66,29 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
      (uiop/run-program:run-program cmd :output o))))
 
 (defun edit-changelog ()
-  (error "not implement yet"))
+  (let ((lines (with-open-file (in (merge-pathnames "ChangeLog" *project-path*))
+                 (loop for l = (read-line in nil nil)
+                       while l
+                       collect l))))
+    (with-open-file (out (merge-pathnames "ChangeLog" *project-path*)
+                         :direction :output :if-exists :supersede)
+      (loop for l in lines
+            with version = t
+            with date = t
+            when (and version (cl-ppcre:scan "master-changelog-which-not-yet-released" l))
+              do (setf version nil
+                       l (cl-ppcre:regex-replace
+                          "master-changelog-which-not-yet-released"
+                          l *new-version*))
+            when (and date (cl-ppcre:scan "^ --" l))
+              do (setf date nil
+                       l (format nil " -- ~A <~A>  ~A"
+                                 (x "git config --get user.name")
+                                 (x "git config --get user.email")
+                                 (local-time:format-rfc1123-timestring
+                                  nil
+                                  (local-time:universal-to-timestamp (get-universal-time)))))
+            do (format out "~A~%" l)))))
 
 (defun prepare-changelog ()
   (declare (ignore argv))
