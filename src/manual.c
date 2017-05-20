@@ -1,6 +1,8 @@
 /* -*- tab-width : 2 -*- */
 #include "opt.h"
 
+#ifndef HAVE_WINDOWS_H
+
 DEF_SUBCMD(cmd_man) {
   cond_printf(1,"cmd_man:%d\n",length(arg_));
   char* man= which("man");
@@ -9,3 +11,4 @@ DEF_SUBCMD(cmd_man) {
   return 1;
 }
 
+#endif

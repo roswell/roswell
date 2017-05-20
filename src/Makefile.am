@@ -1,7 +1,7 @@
 roslispdir = $(sysconfdir)/$(PACKAGE)
 ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_windows.c \
 	util-file.c util-file_windows.c util-system.c util-system_windows.c util-cmdline.c proc-opt.c \
-	manual.c
+	manual.c manual_windows.c
 
 check_PROGRAMS = html_sbcl
 html_sbcl_SOURCES =  html.c html-sbcl-bin.c ros.c opt.c $(ros_utils)
