@@ -12,6 +12,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.release.3703769340)
 
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
+(defvar *dummy-version* "master-changelog-which-not-yet-released")
 (defvar *new-version* nil)
 (defvar *owner* "roswell")
 (defvar *repo* "roswell")
@@ -59,11 +60,18 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
              "^([ ]*:version[ ]*\")([^\"]*)(\".*)$"
              version :test test))
 
-(defun x (cmd)
-  (string-right-trim
-   (format nil "~A" #\newline)
-   (with-output-to-string (o)
-     (uiop/run-program:run-program cmd :output o))))
+(defun signature ()
+  (flet ((f (cmd)
+           (string-right-trim
+            (format nil "~A" #\newline)
+            (with-output-to-string (o)
+              (uiop/run-program:run-program cmd :output o)))))
+    (format nil " -- ~A <~A>  ~A"
+            (f "git config --get user.name")
+            (f "git config --get user.email")
+            (local-time:format-rfc1123-timestring
+             nil
+             (local-time:universal-to-timestamp (get-universal-time))))))
 
 (defun edit-changelog ()
   (let ((lines (with-open-file (in (merge-pathnames "ChangeLog" *project-path*))
@@ -74,47 +82,32 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                          :direction :output :if-exists :supersede)
       (loop for l in lines
             with version = t
-            with date = t
-            when (and version (cl-ppcre:scan "master-changelog-which-not-yet-released" l))
+            with date
+            with done
+            when (and version (cl-ppcre:scan *dummy-version* l))
               do (setf version nil
                        l (cl-ppcre:regex-replace
-                          "master-changelog-which-not-yet-released"
-                          l *new-version*))
+                          *dummy-version* l *new-version*)
+                       date t)
             when (and date (cl-ppcre:scan "^ --" l))
               do (setf date nil
-                       l (format nil " -- ~A <~A>  ~A"
-                                 (x "git config --get user.name")
-                                 (x "git config --get user.email")
-                                 (local-time:format-rfc1123-timestring
-                                  nil
-                                  (local-time:universal-to-timestamp (get-universal-time)))))
+                       l (signature)
+                       done t)
             do (format out "~A~%" l)))))
 
 (defun prepare-changelog ()
-  (declare (ignore argv))
   (uiop:run-program "git checkout master" :output :interactive :error-output :interactive)
-  (let ((*new-version* "master-changelog-which-not-yet-released")
-        (newpart (merge-pathnames "ChangeLog--" *project-path*))
-        (newfile (merge-pathnames "ChangeLog---" *project-path*))
-        (file    (merge-pathnames "ChangeLog" *project-path*)))
-    (with-open-file (out newpart :direction :output :if-exists :supersede)
-      (format out "~{~A~%~}"
+  (let ((lines (with-open-file (in (merge-pathnames "ChangeLog" *project-path*))
+                 (loop for l = (read-line in nil nil)
+                       while l
+                       collect l)))
+        (*new-version* *dummy-version*))
+    (with-open-file (out (merge-pathnames "ChangeLog" *project-path*)
+                         :direction :output :if-exists :supersede)
+      (format out "~{~A~%~}~{~A~%~}"
               (list (format nil "roswell (~A-1) unstable; urgency=low" *new-version*)
-                    "" "  *" ""
-                    (format nil " -- ~A <~A>  ~A"
-                            (x "git config --get user.name")
-                            (x "git config --get user.email")
-                            (local-time:format-rfc1123-timestring
-                             nil
-                             (local-time:universal-to-timestamp (get-universal-time)))) "")))
-    (with-open-file (out newfile :direction :output :if-exists :supersede)
-      (uiop/run-program:run-program
-       (format nil "cat ~A ~A" newpart file)
-       :output out))
-    (uiop/run-program:run-program
-     (format nil "mv ~A ~A" newfile file))
-    (uiop/run-program:run-program
-     (format nil "rm -f ~A ~A" newpart newfile))))
+                    "" "  *" "" (signature) "")
+              lines))))
 
 (defun show-how-to-release ()
   (format t "~{~A~%~}~%"
@@ -126,7 +119,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defun prepare (argv)
   (declare (ignore argv))
   (uiop/run-program:run-program "git checkout master" :output t)
-  (format t "~&current version is ~s.How about new one's:~%" (find-version))
+  (format t "~&current version is ~s.How about new one(default ~S)?:~%"
+          (find-version) (inc-version (find-version)))
   (force-output)
   (setq *new-version* (read-line))
   (when (zerop (length *new-version*))
@@ -152,7 +146,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (mapc
      (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
      `("git checkout release"
-       "git merge master"
+       "git merge --allow-unrelated-histories master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push"
        "git push --tags"))
@@ -160,7 +154,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (mapc
      (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
      `("git add ChangeLog"
-       ,(format nil "git commit -m\"[ci skip] prepare ChangeLog entry next to v~A\"" version)
+       ,(format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" version)
        "git push"))))
 
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))

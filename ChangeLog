@@ -1,6 +1,6 @@
 roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
 
-  *
+  * Bugfix: release script is not working sufficiently.
 
  -- SANO Masatoshi <snmsts@gmail.com>  Sat, 20 May 2017 23:25:33 +0900
 
