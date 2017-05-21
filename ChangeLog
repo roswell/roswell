@@ -1,8 +1,8 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (17.5.8.78-1) unstable; urgency=low
 
   * Bugfix: release script is not working sufficiently.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Sat, 20 May 2017 23:25:33 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 21 May 2017 14:18:12 +0900
 
 roswell (17.5.8.77-1) unstable; urgency=low
 
