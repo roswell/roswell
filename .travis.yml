@@ -134,7 +134,7 @@ script:
     fi
   - if [ $METHOD = debian ]; then
        ros install prove;
-       make debian;
+       ros ./debian/debian.ros
     fi
   - if [ "$LISP" = "sbcl-bin" ] && [ x$ALLOW_FAILURES != x ]; then
        if [ $TRAVIS_OS_NAME = osx ]; then
@@ -156,7 +156,7 @@ after_success:
        ros ./scripts/release.ros github ros-$XCC.cab;
     fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = debian ]; then
-       ros ./scripts/release.ros deiban;
+       ros ./scripts/release.ros debian;
     fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then
        git config user.email "auto@example.com";

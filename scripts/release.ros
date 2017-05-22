@@ -188,7 +188,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
   (loop for i in (directory (make-pathname
                              :type :wild :name :wild
-                             :defaults (merge-pathnames "scripts/debian/" *project-path*)))
+                             :defaults (merge-pathnames "debian/debian/" *project-path*)))
      when (pathname-name i)
      do (asset-upload (pathname i) (uiop:getenv "TRAVIS_TAG"))))
 

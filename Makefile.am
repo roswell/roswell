@@ -1,6 +1,4 @@
 SUBDIRS = lisp src documents scripts
-debian:
-	ros scripts/debian.ros
 prepare:
 	ros scripts/release.ros prepare
 release:
@@ -18,4 +16,4 @@ winrelease:
 	7z a Roswell-`if [ $$MSYSTEM = 'MINGW64' ];then echo x86_64 ;else echo i686; fi`.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
 test:
 	run-prove roswell-test.asd
-.PHONY: debian prepare release release-2 test winrelease
+.PHONY: prepare release release-2 test winrelease

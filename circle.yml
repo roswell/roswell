@@ -33,6 +33,6 @@ test:
     - ros -v run -- --version
     - ros config
     - man -Pcat ros
-    - ros ./scripts/debian.ros
-    - find scripts/debian/ -maxdepth 1 -type f| xargs -i% mv % $CIRCLE_ARTIFACTS
+    - ros ./debian/debian.ros
+    - find debian/debian/ -maxdepth 1 -type f| xargs -i% mv % $CIRCLE_ARTIFACTS
     - cat /tmp/proxy-log || true
