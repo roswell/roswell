@@ -5,7 +5,7 @@ AC_PREREQ([2.59])
 AC_INIT([roswell],[17.5.8.78],snmsts@gmail.com)
 
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_FILES([Makefile src/Makefile documents/Makefile lisp/Makefile scripts/Makefile])
+AC_CONFIG_FILES([Makefile src/Makefile lisp/Makefile scripts/Makefile])
 AC_CONFIG_SRCDIR([src/Makefile.am])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE([enable])
@@ -76,6 +76,9 @@ AC_ARG_ENABLE([html_generation],
     *) AC_MSG_ERROR([bad value ${enableval} for --enable-html-generate]) ;;
    esac],[])
 AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
+
+AM_COND_IF([MANUAL_INSTALL],
+           [AC_CONFIG_FILES([documents/Makefile])])
 
 dnl FIX ME. PKG_CHECK_MODULES fails with pkg-config.
 with_bash_completion=no

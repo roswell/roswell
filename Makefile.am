@@ -1,4 +1,9 @@
-SUBDIRS = lisp src documents scripts
+SUBDIRS = lisp src scripts
+
+if MANUAL_INSTALL
+SUBDIRS += documents
+endif
+
 prepare:
 	ros scripts/release.ros prepare
 release:
@@ -11,7 +16,7 @@ winrelease:
 	mkdir -p roswell/documents
 	cp src/ros.exe roswell
 	cp lisp/*.lisp lisp/*.ros lisp/*.el roswell/lisp
-	cd documents;MSYSTEM=MINGW64 make roswell.chm
+	cd documents;make roswell.chm
 	cp documents/roswell.chm roswell/documents
 	7z a Roswell-`if [ $$MSYSTEM = 'MINGW64' ];then echo x86_64 ;else echo i686; fi`.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
 test:
