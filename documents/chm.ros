@@ -8,7 +8,7 @@ exec ros -Q -- $0 "$@"
 
 (defun hhp ()
   (with-open-file (o (ensure-directories-exist
-                      (merge-pathnames "../documents/roswell.hhp" *current-path*))
+                      (merge-pathnames "roswell.hhp" *current-path*))
                      :direction :output
                      :if-exists :supersede
                      :if-does-not-exist :create)
@@ -25,7 +25,7 @@ exec ros -Q -- $0 "$@"
               ""
               "[FILES]"))
     (loop for f in (directory
-                    (merge-pathnames "../documents/html/*.html"
+                    (merge-pathnames "html/*.html"
                                      *current-path*))
        do (format o "html\\~A~A~A"
                   (file-namestring f)
@@ -37,7 +37,7 @@ exec ros -Q -- $0 "$@"
 
 (defun hhk ()
   (with-open-file (o (ensure-directories-exist
-                      (merge-pathnames "../documents/roswell.hhk" *current-path*))
+                      (merge-pathnames "roswell.hhk" *current-path*))
                      :direction :output
                      :if-exists :supersede
                      :if-does-not-exist :create)
@@ -50,7 +50,7 @@ exec ros -Q -- $0 "$@"
               "</HEAD><BODY>"
               "<UL>"))
     (loop for f in (directory
-                    (merge-pathnames "../documents/html/*.html"
+                    (merge-pathnames "html/*.html"
                                      *current-path*))
        do (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
                   `("<LI> <OBJECT type=\"text/sitemap\">"
@@ -65,7 +65,7 @@ exec ros -Q -- $0 "$@"
 
 (defun hhc ()
   (with-open-file (o (ensure-directories-exist
-                      (merge-pathnames "../documents/roswell.hhc" *current-path*))
+                      (merge-pathnames "roswell.hhc" *current-path*))
                      :direction :output
                      :if-exists :supersede
                      :if-does-not-exist :create)
@@ -85,7 +85,7 @@ exec ros -Q -- $0 "$@"
               "</OBJECT>"
               "<UL>"))
     (loop for f in (directory
-                    (merge-pathnames "../documents/html/*.html"
+                    (merge-pathnames "html/*.html"
                                      *current-path*))
        do (format o (format nil "~~{~~A~A~A~~}" #\Return #\Newline)
                   `("<LI> <OBJECT type=\"text/sitemap\">"
