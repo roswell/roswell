@@ -45,6 +45,6 @@ endif
 all: $(man1_MANS) $(HTMLS)
 
 roswell.chm: $(HTMLS)
-	ros ../scripts/chm.ros
+	ros ./chm.ros
 	/c/Program\ Files\ \(x86\)/HTML\ Help\ Workshop/hhc.exe ./roswell.hhp ||true
 	$(RM) roswell.hhp roswell.hhk roswell.hhc
