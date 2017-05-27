@@ -74,8 +74,6 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                  (directory (merge-pathnames "*.*" output)))))))
     (uiop/run-program:run-program
      (format nil "cat ~A../ChangeLog|sed -e s/master-changelog-which-not-yet-released/~A/>~Adebian/changelog" *pwd* *stab-version* path))
-    (uiop/run-program:run-program
-     (format nil "cp -r ~A../scripts/completion-bash/ros ~Adebian/roswell.bash-completion" *pwd* path))
     path))
 
 (defun dpkg-buildpackage (path)
