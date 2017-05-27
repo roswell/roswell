@@ -1,4 +1,4 @@
-SUBDIRS = lisp src scripts
+SUBDIRS = lisp src
 
 if MANUAL_INSTALL
 SUBDIRS += documents
