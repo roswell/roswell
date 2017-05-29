@@ -26,15 +26,16 @@ have the latest asdf, and this file has a workaround for this.
   (:use :cl)
   (:nicknames :ros)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :*main* :quit :script :quicklisp :getenv :opt
+  (:export :run :*argv* :*main* :*load* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf
-           :roswell :exec :setenv :unsetenv :version :swank :verbose )
+           :roswell :exec :setenv :unsetenv :version :swank :verbose)
   (:documentation "Roswell backend."))
 
 (in-package :roswell)
 (defparameter *argv* nil)
 (defparameter *ros-opts* nil)
 (defparameter *main* nil)
+(defparameter *load* 'cl:load)
 
 ;; small tools
 (defun getenv (x)
@@ -391,9 +392,9 @@ have the latest asdf, and this file has a workaround for this.
 (defun load (x file)
   (declare (ignore x))
   (when (verbose)
-    (format *error-output* "~A~%" file)
+    (format *error-output* "~A ~A~%" *load* file)
     (finish-output))
-  (cl:load file))
+  (funcall *load* file))
 
 (defun run (list)
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
