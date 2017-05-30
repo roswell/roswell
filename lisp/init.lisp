@@ -35,7 +35,7 @@ have the latest asdf, and this file has a workaround for this.
 (defparameter *argv* nil)
 (defparameter *ros-opts* nil)
 (defparameter *main* nil)
-(defparameter *load* 'cl:load)
+(defparameter *load* `((identity . cl:load)))
 
 ;; small tools
 (defun getenv (x)
@@ -391,10 +391,11 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun load (x file)
   (declare (ignore x))
-  (when (verbose)
-    (format *error-output* "~A ~A~%" *load* file)
-    (finish-output))
-  (funcall *load* file))
+  (let ((function (rest (find-if (lambda (x) (funcall (first x) file)) *load*))))
+    (when (verbose)
+      (format *error-output* "~A ~A~%" function file)
+      (finish-output))
+    (funcall function file)))
 
 (defun run (list)
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
