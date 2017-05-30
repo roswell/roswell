@@ -78,18 +78,17 @@ have the latest asdf, and this file has a workaround for this.
     (let ((*error-output* (if (verbose)
                               *error-output*
                               (make-broadcast-stream))))
-      (or
-       (prog1
-           sentinel
-         (setf sentinel t))
-       (when (and (opt "asdf")
-                  (or (and (find :asdf *features*)
-                           (not (equal (opt "asdf")
-                                       (funcall (read-from-string "asdf:asdf-version")))))
-                      (not (find :asdf *features*))))
-         (funcall 'asdf :no-download t))
-       (find :asdf *features*)
-       (ignore-errors (require "asdf"))))))
+      (setf sentinel
+            (or sentinel
+                (when (and (opt "asdf")
+                           (or (and (find :asdf *features*)
+                                    (not (equal (opt "asdf")
+                                                (funcall (read-from-string "asdf:asdf-version")))))
+                               (not (find :asdf *features*))))
+                  (funcall 'asdf :no-download t))
+                (find :asdf *features*)
+                (ignore-errors (require "asdf")))
+            sentinel (not (not sentinel))))))
 
 #+(and unix sbcl) ;; from swank
 (progn
@@ -268,6 +267,13 @@ have the latest asdf, and this file has a workaround for this.
            (set symbol (merge-pathnames (format nil "~A/" impl) (symbol-value symbol))))
           (t (cl:print "tbd.....")))))
 
+(defparameter *version-cache* nil)
+(defun version (&optional opt)
+  (if opt
+      (roswell `("roswell-internal-use" "version" ,(string-downcase (princ-to-string opt))) :string t)
+      (or *version-cache*
+          (setf *version-cache* (roswell '("roswell-internal-use" "version") :string t)))))
+
 #+sbcl
 (when (ignore-errors (string-equal (opt "impl") "sbcl-bin" :end1 8))
   (let ((path (merge-pathnames (format nil "src/sbcl-~A/" (lisp-implementation-version)) (opt "homedir"))))
@@ -303,13 +309,6 @@ have the latest asdf, and this file has a workaround for this.
 
 (setf (fdefinition 'load-system)
       #'system)
-
-(defparameter *version-cache* nil)
-(defun version (&optional opt)
-  (if opt
-      (roswell `("roswell-internal-use" "version" ,(string-downcase (princ-to-string opt))) :string t)
-      (or *version-cache*
-          (setf *version-cache* (roswell '("roswell-internal-use" "version") :string t)))))
 
 (defun package (cmd arg &rest rest)
   (declare (ignorable cmd rest))
