@@ -5,7 +5,7 @@
    (ignore-errors (read-from-string "asdf:load-asd"))
    (equal (pathname-type file) "asd")))
 (defun load-asd (file)
-  (roswell.util:read-call "asdf:load-asd2" file))
+  (roswell.util:read-call "asdf:load-asd" file))
 (setf *load* (acons 'asd-p 'load-asd (remove 'asd-p *load* :key 'first)))
 (in-package :roswell.util)
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
