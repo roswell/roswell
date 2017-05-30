@@ -1,10 +1,5 @@
-#-asdf
-(require :asdf)
-
-(in-package :cl-user)
-(defpackage roswell-test-asd
-  (:use :cl :asdf))
-(in-package :roswell-test-asd)
+#+(and ros.init clisp)
+(ros:asdf)
 
 (defsystem roswell-test
   :author "SANO Masatoshi"

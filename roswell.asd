@@ -1,18 +1,9 @@
-#-asdf
-(require :asdf)
-
 #|
 
 This file is a stub.
 roswell does not function without help of C codes.
 
 |#
-
-(in-package :cl-user)
-
-(defpackage roswell-asd
-  (:use :cl :asdf))
-(in-package :roswell-asd)
 
 (defsystem roswell
   :version "17.5.8.78"

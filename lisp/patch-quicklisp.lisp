@@ -1,4 +1,8 @@
 (roswell:include "util")
+(in-package :roswell)
+(defun asd-p (file)
+  (equal (pathname-type file) "asd"))
+(setf *load* (acons 'asd-p 'asdf:load-asd (remove 'asd-p *load* :key 'first)))
 (in-package :roswell.util)
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
   "Request URL and write the body of the response to FILE."
