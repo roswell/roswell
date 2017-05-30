@@ -35,6 +35,7 @@ have the latest asdf, and this file has a workaround for this.
 (defparameter *argv* nil)
 (defparameter *ros-opts* nil)
 (defparameter *main* nil)
+(defvar *cmd* nil)
 (defparameter *load* `((identity . cl:load)))
 
 ;; small tools
@@ -280,8 +281,8 @@ have the latest asdf, and this file has a workaround for this.
     (when (probe-file path)
       (sb-ext:set-sbcl-source-location path))))
 
-(defun source-registry (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun source-registry (arg &rest rest)
+  (declare (ignorable rest))
   (let ((dir (format nil "~{~A~^:~}"
                      (loop for i = arg then (subseq i (1+ pos))
                         for pos = (position #\: i)
@@ -294,8 +295,8 @@ have the latest asdf, and this file has a workaround for this.
         (warn "Source-registry ~S is invalid. Ignored." arg)
         (funcall (read-from-string "asdf:initialize-source-registry") dir))))
 
-(defun system (cmd args &rest rest)
-  (declare (ignorable cmd rest))
+(defun system (args &rest rest)
+  (declare (ignorable rest))
   (ensure-asdf)
   (unless (find :asdf *features*)
     (error "Can't find asdf to load system"))
@@ -310,17 +311,17 @@ have the latest asdf, and this file has a workaround for this.
 (setf (fdefinition 'load-system)
       #'system)
 
-(defun package (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun package (arg &rest rest)
+  (declare (ignorable rest))
   (setq *package* (find-package (read-from-string (format nil "#:~A" arg)))))
 
-(defun system-package (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
-  (apply #'system cmd arg rest)
-  (apply #'package cmd arg rest))
+(defun system-package (arg &rest rest)
+  (declare (ignorable rest))
+  (apply #'system arg rest)
+  (apply #'package arg rest))
 
-(defun eval (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun eval (arg &rest rest)
+  (declare (ignorable rest))
   (loop with start = 0
         with end = (gensym)
         with exp
@@ -329,27 +330,27 @@ have the latest asdf, and this file has a workaround for this.
         until (eql exp end)
         do (cl:eval exp)))
 
-(defun restart (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun restart (arg &rest rest)
+  (declare (ignorable rest))
   (funcall (read-from-string arg)))
 
-(defun entry (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun entry (arg &rest rest)
+  (declare (ignorable rest))
   (let* ((sym (read-from-string arg))
          (*package* (symbol-package sym)))
     (quit (apply sym *argv*))))
 
 (setf (fdefinition 'init) #'eval)
 
-(defun print (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun print (arg &rest rest)
+  (declare (ignorable rest))
   (cl:print (cl:eval (read-from-string arg))))
 
-(defun write (cmd arg &rest rest)
-  (declare (ignorable cmd rest))
+(defun write (arg &rest rest)
+  (declare (ignorable rest))
   (cl:write (cl:eval (read-from-string arg))))
 
-(defun script (cmd arg &rest rest)
+(defun script (arg &rest rest)
   "load and evaluate the script"
   (setf *argv* rest)
   (flet ((body (in)
@@ -373,7 +374,7 @@ have the latest asdf, and this file has a workaround for this.
                                         "" line)))
                            in
                            (make-string-input-stream
-                            (if (eql cmd :script)
+                            (if (eql *cmd* :script)
                                 "(roswell:quit (cl:apply 'main roswell:*argv*))"
                                 "(setf roswell:*main* 'main)"))))))
              (setf *features* (remove :ros.script *features*)))))
@@ -384,22 +385,22 @@ have the latest asdf, and this file has a workaround for this.
               (body in))
             (format t "script ~S does not exist~%" arg)))))
 
-(defun stdin (cmd arg &rest rest)
-  (declare (ignorable arg cmd rest))
+(defun stdin (arg &rest rest)
+  (declare (ignorable arg rest))
   (apply #'script :script *standard-input* rest))
 
-(defun load (x file)
-  (declare (ignore x))
+(defun load (file &rest rest)
   (let ((function (rest (find-if (lambda (x) (funcall (first x) file)) *load*))))
     (when (verbose)
       (format *error-output* "~A ~A~%" function file)
       (finish-output))
-    (funcall function file)))
+    (apply function file rest)))
 
 (defun run (list)
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
   (loop for elt in list
-        do (apply (intern (string (first elt)) (find-package :ros)) elt)))
+        for *cmd* = (first elt)
+        do (apply (intern (string (first elt)) (find-package :ros)) (rest elt))))
 
 #+clisp
 (unless (find :ros.init *features*)
