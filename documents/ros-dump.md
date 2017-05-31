@@ -30,13 +30,17 @@ specific function, leaving some flexibility.
 
   : Force output when the output already exists.
 
-## executable
+## executable NAME [-o OUTPUT]
 
-In contrast, when a script is dumped with `executable`, the dumped image
+When a script is dumped with `executable`, the dumped image
 becomes an self-contained executable binary which implies `--restart main`.
-The output file is deduced from `NAME` and is written in the current directory.
 
-This feature is SBCL and CCL only.
+If `OUTPUT` is given, the resulting binary is written to this file.
+Otherwise, the output filename is deduced from `NAME` and is written in the current directory.
+On windows and if SCRIPT has `.ros` extension, the result will be `SCRIPT.exe`.
+On other systems, the result will be `SCRIPT` (without extension).
+
+This feature is supported on SBCL, CCL, CMUCL, CLISP, ECL.
 
 # Description
 
