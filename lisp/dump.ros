@@ -66,9 +66,10 @@ exec ros -- $0 "$@"
           ;; we just augment it with MAIN function information, because
           ;; we can for ros file.
           ;; Fixme: What is the use case when SCRIPT is not a roswell script?
-          (let ((*package* (find-package :cl-user)))
+          (let ((*package* (find-package :cl-user))
+                roswell:*cmd*)
             ;; loading script
-            (roswell:script nil script)) ; <--- !!!WARNING!!! Side-effect on roswell:*main*
+            (roswell:script script)) ; <--- !!!WARNING!!! Side-effect on roswell:*main*
           (let ((main-list (let ((*package* (find-package :keyword)))
                              `((:entry ,(format nil "~S" roswell:*main*))))))
             (setf cmds (if (first cmds)

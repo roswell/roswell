@@ -26,7 +26,7 @@ have the latest asdf, and this file has a workaround for this.
   (:use :cl)
   (:nicknames :ros)
   (:shadow :load :eval :package :restart :print :write)
-  (:export :run :*argv* :*main* :*load* :quit :script :quicklisp :getenv :opt
+  (:export :run :*argv* :*main* :*load* :*cmd* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf
            :roswell :exec :setenv :unsetenv :version :swank :verbose)
   (:documentation "Roswell backend."))
