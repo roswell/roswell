@@ -8,11 +8,14 @@ exec ros -- $0 "$@"
   (roswell:include "util")
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
-    #+quicklisp(ql:quickload :uiop :silent t)))
+    #+quicklisp(ql:quickload :uiop :silent t))
+  #+quicklisp(ql:quickload :trivia :silent t))
 
 (defpackage :ros.script.dump.3672012101
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :trivia))
 (in-package :ros.script.dump.3672012101)
+
+(setf trivia:*arity-check-by-test-call* nil)
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
