@@ -46,22 +46,30 @@ exec ros -- $0 "$@"
            (%dump (ensure-directories-exist path) :normal))))))
 
 (defun executable (func params)
-  (if params
-      (let* ((cmds (let ((*read-eval*))
-                     (read-from-string
-                      (format nil "(~A)"
-                              (opt "restart")))))
-             (script (first params))
-             (output (or (when (equal (second params) "-o")
-                           (or (third params)
-                               (warn "Missing argument to -o OUTPUT, falling back to default behavior")))
-                         (if (string-equal (pathname-type script) "ros")
-                             (make-pathname :type
-                                            #-win32 nil
-                                            #+win32 "exe"
-                                            :defaults script)
-                             script))))
-        (when (string-equal ; odd people may use uppercase extension...
+  (ematch params
+    (nil
+     (format *error-output* "Usage: ros dump executable help~%"))
+
+    ((list* script rest)
+     (setf script (pathname script))
+     (let* ((cmds (let ((*read-eval*))
+                    (read-from-string
+                     (format nil "(~A)"
+                             (opt "restart")))))
+            (output (match* (rest script)
+                      (((list* "-o" output _) _)
+                       output)
+                      (((list  "-o") _)
+                       (warn "Missing argument to -o OUTPUT, falling back to the default behavior")
+                       (trivia.skip:skip))
+                      ((_ (pathname :type (equalp "ros")))
+                       (make-pathname :type
+                                      #-win32 nil
+                                      #+win32 "exe"
+                                      :defaults script))
+                      ((_ _)
+                       script))))
+       (when (string-equal ; odd people may use uppercase extension...
                (pathname-type script) "ros")
           ;; Note: Why CMDS needs to be updated?
           ;; If you use -l,-r or other options, information on the
@@ -78,13 +86,12 @@ exec ros -- $0 "$@"
             (setf cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))
-        (unless cmds
-          ;; Fixme: when STRING-EQUAL is not satisfied, cmds is something like
-          ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
-          ;; it is better to capture this.
-          (warn "dumping an executable without specifing the initial behaviour."))
-        (funcall func :executable cmds output script))
-      (format *error-output* "Usage: ros dump executable help~%")))
+       (unless cmds
+         ;; Fixme: when STRING-EQUAL is not satisfied, cmds is something like
+         ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
+         ;; it is better to capture this.
+         (warn "dumping an executable without specifing the initial behaviour."))
+       (funcall func :executable cmds output script)))))
 
 (defvar *subcmds*
   '(output
