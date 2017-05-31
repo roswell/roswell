@@ -75,6 +75,12 @@ exec ros -- $0 "$@"
             (setf cmds (if (first cmds)
                            (append cmds main-list)
                            main-list))))
+        (when (probe-file output)
+          #+unix
+          (uiop:run-program (format nil "cp ~A ~A~~" output output))
+          #+windows
+          (uiop:run-program (format nil "copy ~A ~A~~" output output))
+          (warn "output file already exists. Original file renamed to ~a~~" old))
         (unless cmds
           ;; Fixme: when STRING-EQUAL is not satisfied, cmds is something like
           ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
