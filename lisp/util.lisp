@@ -64,18 +64,26 @@
         (push (list item val) roswell::*ros-opts*))))
 
 (defun uname ()
+  "Returns uname. Example: linux , darwin"
   (roswell:roswell '("roswell-internal-use" "uname") :string t))
 
 (defun uname-m ()
+  "Returns the machine type as a string. Example: x86-64"
   (roswell:roswell '("roswell-internal-use" "uname" "-m") :string t))
 
 (defun homedir ()
+  "Returns the user-level installation directory of roswell. Example: /home/user/.roswell"
   (opt "homedir"))
 
 (defun impl (imp)
+  "Returns a full name/version of an implementation. Default: current system.
+Example:
+  (impl) -> sbcl/1.3.2 (current system)
+  (impl \"ccl\") -> ccl/system (currently installed system) "
   (roswell:roswell `("roswell-internal-use" "impl" ,(or imp "")) :string t))
 
 (defun which (cmd)
+  "equivalent to \"which\" command on shell"
   (let ((result (roswell:roswell `("roswell-internal-use" "which" ,cmd) :string t)))
     (unless (zerop (length result))
       result)))
@@ -96,6 +104,7 @@
      finally (return (coerce r 'string))))
 
 (defun download (uri file &key proxy (verbose nil) (output :interactive))
+  "Interface to curl4 in the roswell C binary"
   (declare (ignorable proxy))
   (ensure-directories-exist file)
   (roswell:roswell `("roswell-internal-use" "download" ,(backslash-encode uri)
@@ -103,6 +112,7 @@
                    output nil))
 
 (defun expand (archive dest &key verbose)
+  "Interface to the roswell C binary"
   #+win32
   (progn
     (roswell:include "install+7zip")
@@ -112,13 +122,16 @@
                (or #-win32 :interactive nil) nil))
 
 (defun core-extention (&optional (impl (opt "impl")))
+  "Interface to the roswell C binary. Returns \"core\" on sbcl."
   (roswell:roswell `("roswell-internal-use" "core-extention" ,impl) :string t))
 
 (defun config (c)
+   "Interface to roswell C binary."
   (let ((result (roswell:roswell `("config" "show" ,c) :string t)))
     (unless (zerop (length result)) result)))
 
 (defun (setf config) (val item)
+   "Interface to roswell C binary."
   (roswell:roswell (if val
                        `("config" "set" ,item ,val)  ;; set
                        `("config" ,item)) :string t) ;; unset
@@ -145,7 +158,8 @@
 (defvar *version*
   `(:roswell ,(roswell:version)
     :lisp ,(lisp-implementation-type)
-    :version ,(lisp-implementation-version)))
+    :version ,(lisp-implementation-version))
+  "Stores the version information for roswell binary and the current implementation.")
 
 (defun parse-version-spec (string)
   "Parse the given version specification string and returns a list of strings (LISP VERSION).
