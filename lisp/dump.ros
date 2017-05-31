@@ -32,16 +32,16 @@ exec ros -- $0 "$@"
                    (format *error-output* "dump ~s already exists~%" (pathname-name path))
                    (format *error-output* "file ~s already exists~%" path))
                (funcall func :output path))))
-    (cond
-      ((null params)
+    (ematch params
+      (nil
        (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (opt "argv0")))
-      ((equal "-f" (first params))
-       (output func (rest params) t))
-      ((equal "-o" (first params))
-       (if (> (length params) 1)
-           (%dump (second params))
-           (format *error-output* "Missing the pathname for an image.~%")))
-      (t (let ((path (merge-pathnames (format nil "~A.~A" (first params) (core-extention))
+      ((list* "-f" rest)
+       (output func rest t))
+      ((list "-o" output)
+       (%dump output))
+      ((list "-o")
+       (format *error-output* "Missing the pathname for an image.~%"))
+      (_ (let ((path (merge-pathnames (format nil "~A.~A" (first params) (core-extention))
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
