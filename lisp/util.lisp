@@ -30,6 +30,8 @@
   nil)
 
 (defun read-call (func &rest params)
+  "FUNC is a string containing a symbol name of a function.
+Returns NIL when the package in the symbol prefix is not available."
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
 (defun copy-dir (from to)
@@ -47,6 +49,8 @@
                            (ensure-directories-exist (merge-pathnames l to)))))))
 
 (defun module (prefix name)
+  "Convenient wrapper around quickload and roswell:include.
+(module \"dump\" \"sbcl\") will call (include \"dump-sbcl\") and loads dump-sbcl.lisp ."
   (read-call "ql:register-local-projects")
   (let ((imp (format nil "roswell.~A.~A" prefix name)))
     (or
@@ -64,18 +68,26 @@
         (push (list item val) roswell::*ros-opts*))))
 
 (defun uname ()
+  "Returns uname. Example: linux , darwin"
   (roswell:roswell '("roswell-internal-use" "uname") :string t))
 
 (defun uname-m ()
+  "Returns the machine type as a string. Example: x86-64"
   (roswell:roswell '("roswell-internal-use" "uname" "-m") :string t))
 
 (defun homedir ()
+  "Returns the user-level installation directory of roswell. Example: /home/user/.roswell"
   (opt "homedir"))
 
 (defun impl (imp)
+  "Returns a full name/version of an implementation. Default: current system.
+Example:
+  (impl) -> sbcl/1.3.2 (current system)
+  (impl \"ccl\") -> ccl/system (currently installed system) "
   (roswell:roswell `("roswell-internal-use" "impl" ,(or imp "")) :string t))
 
 (defun which (cmd)
+  "equivalent to \"which\" command on shell"
   (let ((result (roswell:roswell `("roswell-internal-use" "which" ,cmd) :string t)))
     (unless (zerop (length result))
       result)))
@@ -96,6 +108,7 @@
      finally (return (coerce r 'string))))
 
 (defun download (uri file &key proxy (verbose nil) (output :interactive))
+  "Interface to curl4 in the roswell C binary"
   (declare (ignorable proxy))
   (ensure-directories-exist file)
   (roswell:roswell `("roswell-internal-use" "download" ,(backslash-encode uri)
@@ -103,6 +116,7 @@
                    output nil))
 
 (defun expand (archive dest &key verbose)
+  "Interface to the roswell C binary"
   #+win32
   (progn
     (roswell:include "install+7zip")
@@ -112,13 +126,16 @@
                (or #-win32 :interactive nil) nil))
 
 (defun core-extention (&optional (impl (opt "impl")))
+  "Interface to the roswell C binary. Returns \"core\" on sbcl."
   (roswell:roswell `("roswell-internal-use" "core-extention" ,impl) :string t))
 
 (defun config (c)
+   "Interface to roswell C binary."
   (let ((result (roswell:roswell `("config" "show" ,c) :string t)))
     (unless (zerop (length result)) result)))
 
 (defun (setf config) (val item)
+   "Interface to roswell C binary."
   (roswell:roswell (if val
                        `("config" "set" ,item ,val)  ;; set
                        `("config" ,item)) :string t) ;; unset
@@ -145,7 +162,8 @@
 (defvar *version*
   `(:roswell ,(roswell:version)
     :lisp ,(lisp-implementation-type)
-    :version ,(lisp-implementation-version)))
+    :version ,(lisp-implementation-version))
+  "Stores the version information for roswell binary and the current implementation.")
 
 (defun parse-version-spec (string)
   "Parse the given version specification string and returns a list of strings (LISP VERSION).
@@ -164,6 +182,12 @@ ccl-bin      -> (\"ccl-bin\" nil)
             `(,string nil)))))
 
 (defun checkoutdir ()
+  "
+Returns the parent directory of the first local project directory in ql:*local-project-directories*,
+or (if failed) the user-level installation directory of roswell.
+
+(this function does not make sense.)
+"
   (or (ignore-errors
        (let*((* (read-from-string "ql:*local-project-directories*")))
          (setf * (first (symbol-value *))
@@ -200,6 +224,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
         t)))
 
 (defun config-env ()
+  "Set up several environment variables for Windows. No effect on linux and osx."
   #+win32
   (let* ((w (opt "wargv0"))
          (a (opt "argv0"))
