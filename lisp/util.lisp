@@ -218,6 +218,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
         t)))
 
 (defun config-env ()
+  "Set up several environment variables for Windows. No effect on linux and osx."
   #+win32
   (let* ((w (opt "wargv0"))
          (a (opt "argv0"))
