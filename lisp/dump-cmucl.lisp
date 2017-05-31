@@ -12,6 +12,7 @@
 (defun dump-executable (cmds out)
   (setf ext:*batch-mode* nil)
   (setf ext::*gc-run-time* 0)
+  (map nil #'funcall (nreverse ros.script.dump:*queue*))
   (ext:save-lisp
    out
    ;; no need to do GC because of :purify t by default

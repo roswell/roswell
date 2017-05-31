@@ -13,7 +13,7 @@ exec ros -- $0 "$@"
 
 (defpackage :ros.script.dump
   (:use :cl :roswell.util :trivia)
-  (:export :*compression*))
+  (:export :*compression* :*queue*))
 (in-package :ros.script.dump)
 
 (setf trivia:*arity-check-by-test-call* nil)
@@ -116,6 +116,8 @@ With this feature, applications that use docstrings may not work properly."
       (when (documentation s doc-type)
         (setf (documentation s doc-type) nil)))))
 
+(defvar *queue* nil "list of functions to be performed before dumping")
+
 (defun parse-options (args fn)
   (match args
     ((list* (or "--enable-compression" "-c") rest)
@@ -125,7 +127,7 @@ With this feature, applications that use docstrings may not work properly."
      (setf *compression* nil)
      (parse-options rest fn))
     ((list* "--remove-docstrings" rest)
-     (remove-docstrings)
+     (push #'remove-docstrings *queue*)
      (parse-options rest fn))
     (_
      (funcall fn args))))

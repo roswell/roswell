@@ -5,6 +5,7 @@
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
+  (map nil #'funcall (nreverse ros.script.dump:*queue*))
   (ext:saveinitmem
    out
    :quiet t

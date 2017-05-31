@@ -5,6 +5,7 @@
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
+  (map nil #'funcall (nreverse ros.script.dump:*queue*))
   (ccl:save-application
    out
    :toplevel-function

@@ -5,6 +5,7 @@
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
+  (map nil #'funcall (nreverse ros.script.dump:*queue*))
   (sb-ext:save-lisp-and-die
    out
    ;; no need to do GC because of :purify t by default
