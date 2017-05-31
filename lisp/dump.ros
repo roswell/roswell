@@ -9,7 +9,7 @@ exec ros -- $0 "$@"
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
     #+quicklisp(ql:quickload :uiop :silent t))
-  #+quicklisp(ql:quickload :trivia :silent t))
+  #+quicklisp(ql:quickload '(:trivia) :silent t))
 
 (defpackage :ros.script.dump
   (:use :cl :roswell.util :trivia)
@@ -106,6 +106,16 @@ exec ros -- $0 "$@"
   sbcl only, and only effective when sbcl is compiled with
   sb-core-compression.")
 
+(defun remove-docstrings ()
+  "Docstrings are unnecessary when the resulting binary is expected to be a batch program.
+With this feature, applications that use docstrings may not work properly."
+  (do-all-symbols (s)
+    (dolist (doc-type '(function compiler-macro setf
+                        method-combination type structure
+                        variable))
+      (when (documentation s doc-type)
+        (setf (documentation s doc-type) nil)))))
+
 (defun parse-options (args fn)
   (match args
     ((list* (or "--enable-compression" "-c") rest)
@@ -113,6 +123,9 @@ exec ros -- $0 "$@"
      (parse-options rest fn))
     ((list* "--disable-compression" rest)
      (setf *compression* nil)
+     (parse-options rest fn))
+    ((list* "--remove-docstrings" rest)
+     (remove-docstrings)
      (parse-options rest fn))
     (_
      (funcall fn args))))
