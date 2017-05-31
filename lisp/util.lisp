@@ -30,6 +30,8 @@
   nil)
 
 (defun read-call (func &rest params)
+  "FUNC is a string containing a symbol name of a function.
+Returns NIL when the package in the symbol prefix is not available."
   (ignore-errors (apply (let (*read-eval*) (read-from-string func)) params)))
 
 (defun copy-dir (from to)
@@ -47,6 +49,8 @@
                            (ensure-directories-exist (merge-pathnames l to)))))))
 
 (defun module (prefix name)
+  "Convenient wrapper around quickload and roswell:include.
+(module \"dump\" \"sbcl\") will call (include \"dump-sbcl\") and loads dump-sbcl.lisp ."
   (read-call "ql:register-local-projects")
   (let ((imp (format nil "roswell.~A.~A" prefix name)))
     (or
