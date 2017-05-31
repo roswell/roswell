@@ -13,7 +13,7 @@
    :purify t ; just here to make it explicit
    ; we all want our programs to be small, right?
    #+sb-core-compression :compression
-   #+sb-core-compression t
+   #+sb-core-compression ros.script.dump:*compression*
    :toplevel
    #'(lambda ()
        (setf *load-pathname* (pathname (first sb-ext:*posix-argv*)))
