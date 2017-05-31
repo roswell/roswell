@@ -52,6 +52,9 @@ exec ros -- $0 "$@"
 
     ((list* script rest)
      (setf script (pathname script))
+     (unless (probe-file script)
+       (warn "The script ~a does not exist, aborting." script)
+       (ros:quit 1))
      (let* ((cmds (let ((*read-eval*))
                     (read-from-string
                      (format nil "(~A)"
