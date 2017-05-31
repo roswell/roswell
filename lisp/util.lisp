@@ -182,6 +182,12 @@ ccl-bin      -> (\"ccl-bin\" nil)
             `(,string nil)))))
 
 (defun checkoutdir ()
+  "
+Returns the parent directory of the first local project directory in ql:*local-project-directories*,
+or (if failed) the user-level installation directory of roswell.
+
+(this function does not make sense.)
+"
   (or (ignore-errors
        (let*((* (read-from-string "ql:*local-project-directories*")))
          (setf * (first (symbol-value *))
