@@ -92,8 +92,9 @@ Reduction options are processed in the left-to-right manner.
       of the main function symbol).
 
 --delete-packages-except
-    : This option is identical to --delete-all-packages except that it adds
-      additional packages to the blacklist.
+    : This option can be specified multiple times. It is identical to
+      --delete-all-packages except that it adds additional packages to
+      the blacklist.
 
 --destroy-packages-sbcl
     : This is an sbcl-specific option which is even more aggressive than the
