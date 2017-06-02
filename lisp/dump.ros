@@ -100,6 +100,13 @@ exec ros -- $0 "$@"
   '(output
     executable))
 
+(defun parse-options (args fn)
+  (match args
+    ;; ((list* _ rest)
+    ;;  (parse-options rest fn))
+    (_
+     (funcall fn args))))
+
 (defun main (&rest r)
   (let ((module (module "dump" (or
                                 #+ccl "ccl"
@@ -107,13 +114,16 @@ exec ros -- $0 "$@"
                                 (remove #\Space (string-downcase (lisp-implementation-type)))))))
     (cond
       ((and module r)
-       (let ((func (find (first r) (funcall module :query *subcmds*)
-                         :test 'equal
-                         :key 'string-downcase)))
-         (if func
-             (funcall func module (rest r))
-             (format *error-output* "'~A' is not a valid command for '~A' subcommand for ~A ~%"
-                     (first r) (pathname-name *load-pathname*) (lisp-implementation-type)))))
+       (parse-options
+        r (lambda-ematch
+            ((list* mode args)
+             (let ((func (find mode (funcall module :query *subcmds*)
+                               :test 'equal
+                               :key 'string-downcase)))
+               (if func
+                   (funcall func module args)
+                   (format *error-output* "'~A' is not a valid command for '~A' subcommand for ~A ~%"
+                           mode (pathname-name *load-pathname*) (lisp-implementation-type))))))))
       (module
        (format *error-output* "Possible subcmd~%~%~{~(~A~)~%~}" (funcall module :query *subcmds*)))
       (t
