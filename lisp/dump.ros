@@ -116,12 +116,19 @@ With this feature, applications that use docstrings may not work properly."
       (when (documentation s doc-type)
         (setf (documentation s doc-type) nil)))))
 
+(defvar *package-blacklist* '("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP")
+  "A list of package-designators which is not deleted by delete-all-packages.
+The default value contains the minimal blacklist.")
+
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ignore-errors
     (when (find-symbol "MAKE-PACKAGE-HASHTABLE" :sb-impl)
       (push :roswell-dump-newer-sbcl *features*))))
 
 (defun destroy-packages-sbcl ()
+  (ematch roswell:*main*
+    ((symbol :package (package :name name))
+     (pushnew name *package-blacklist* :test #'string=)))
   #+(and sbcl (not roswell-dump-newer-sbcl))
   (warn "destroying packages is not supported on older versions of sbcl")
   #+(not sbcl)
@@ -130,26 +137,26 @@ With this feature, applications that use docstrings may not work properly."
   (let (packages)
     (setf *features* (delete :roswell-dump-newer-sbcl *features*))
     (maphash (lambda (package-name package)
-               (setf (sb-impl::package-%use-list package) nil)
-               (setf (sb-impl::package-%used-by-list package) nil)
-               (setf (sb-impl::package-%shadowing-symbols package) nil)
-               (setf (sb-impl::package-internal-symbols package)
-                     (sb-impl::make-package-hashtable 0))
-               (setf (sb-impl::package-external-symbols package)
-                     (sb-impl::make-package-hashtable 0))
-               (setf (sb-impl::package-tables package) #())
-               (setf (sb-impl::package-%implementation-packages package) nil)
-               (setf (sb-impl::package-%local-nicknames package) nil)
-               (setf (sb-impl::package-%locally-nicknamed-by package) nil)
-               (push package-name packages)
-               (do-symbols (symbol package-name)
-                 (unless (keywordp symbol)
+               (unless (member package-name *package-blacklist* :test #'string=)
+                 (format t "Deleting ~s~%" package-name)
+                 (setf (sb-impl::package-%use-list package) nil)
+                 (setf (sb-impl::package-%used-by-list package) nil)
+                 (setf (sb-impl::package-%shadowing-symbols package) nil)
+                 (setf (sb-impl::package-internal-symbols package)
+                       (sb-impl::make-package-hashtable 0))
+                 (setf (sb-impl::package-external-symbols package)
+                       (sb-impl::make-package-hashtable 0))
+                 (setf (sb-impl::package-tables package) #())
+                 (setf (sb-impl::package-%implementation-packages package) nil)
+                 (setf (sb-impl::package-%local-nicknames package) nil)
+                 (setf (sb-impl::package-%locally-nicknamed-by package) nil)
+                 (push package-name packages)
+                 (do-symbols (symbol package-name)
                    (sb-impl::%set-symbol-package symbol nil)
                    (unintern symbol))))
              sb-impl::*package-names*)
     (dolist (package packages)
-      (unless (string= "KEYWORD" package)
-        (remhash package sb-impl::*package-names*)))))
+      (remhash package sb-impl::*package-names*))))
 
 (defvar *queue* nil "list of functions to be performed before dumping")
 
@@ -171,9 +178,6 @@ With this feature, applications that use docstrings may not work properly."
   (handler-bind ((package-error #'continue))
     (delete-package pkg-designator)))
 
-(defvar *package-blacklist* '("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP")
-  "A list of package-designators which is not deleted by delete-all-packages.
-The default value contains the minimal blacklist.")
 (defun delete-all-packages ()
   ;; push the package name of the main function (== package of the given script)
   (ematch roswell:*main*
