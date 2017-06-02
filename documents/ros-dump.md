@@ -76,7 +76,7 @@ Reduction options are processed in the left-to-right manner.
 
 --disable-compression, --enable-compression, -c
     : These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful
-    only on SBCL.
+    only on SBCL. Compression is enabled by default.
     
 --remove-docstrings
     : This option removes all docstrings from all symbols in the entire lisp image.
