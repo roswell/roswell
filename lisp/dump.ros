@@ -153,6 +153,25 @@ With this feature, applications that use docstrings may not work properly."
 
 (defvar *queue* nil "list of functions to be performed before dumping")
 
+(defun makunbound-symbols-and-delete-package (pkg-designator)
+  (format t "Deleting ~a~%" pkg-designator)
+  (handler-case
+      (do-symbols (symbol pkg-designator)
+        (ignore-errors (unintern symbol pkg-designator))
+        (ignore-errors (makunbound symbol)) ; due to constants
+        (ignore-errors (fmakunbound symbol)))
+    (package-error ()))
+  (handler-case
+    (delete-package pkg-designator)
+    (package-error ()))
+  ;; 
+  ;; alternative: more restrictive error handling, handle the name conflict caused during deleting a package
+  ;; cf. http://clhs.lisp.se/Body/f_del_pk.htm
+  #+(or)
+  (handler-bind ((package-error #'continue))
+    (delete-package pkg-designator)))
+
+
 (defun parse-options (args fn)
   (match args
     ((list* (or "--enable-compression" "-c") rest)
@@ -163,6 +182,13 @@ With this feature, applications that use docstrings may not work properly."
      (parse-options rest fn))
     ((list* "--remove-docstrings" rest)
      (push #'remove-docstrings *queue*)
+     (parse-options rest fn))
+    ((list* "--delete-package" name rest)
+     (push (lambda () (makunbound-symbols-and-delete-package (string-upcase name))) *queue*)
+     (parse-options rest fn))
+    ((list* "--delete-all-packages" rest)
+     (push (lambda () (map nil #'makunbound-symbols-and-delete-package
+                           (list-all-packages))) *queue*)
      (parse-options rest fn))
     ((list* "--destroy-packages-sbcl" rest)
      (push #'destroy-packages-sbcl *queue*)
