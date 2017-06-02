@@ -91,10 +91,10 @@ Reduction options are processed in the left-to-right manner.
       blacklisted packages (keyword, roswell, ROS.SCRIPT.DUMP, and the package
       of the main function symbol).
 
---delete-packages-except
+--delete-packages-except PACKAGE
     : This option can be specified multiple times. It is identical to
-      --delete-all-packages except that it adds additional packages to
-      the blacklist.
+      --delete-all-packages except that it adds PACKAGE to
+      the blacklist. Package names are automatically string-upcase'd.
 
 --destroy-packages-sbcl
     : This is an sbcl-specific option which is even more aggressive than the
