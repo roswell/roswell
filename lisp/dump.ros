@@ -125,10 +125,20 @@ The default value contains the minimal blacklist.")
     (when (find-symbol "MAKE-PACKAGE-HASHTABLE" :sb-impl)
       (push :roswell-dump-newer-sbcl *features*))))
 
+(defvar *additional-blacklist-for-destroy-packages*
+  '("ROS")
+  "An additional list of package-designators that needs to be protected from destroy-packages-sbcl.
+These are appended to the blacklist before destroying the package system.
+Notably, it must include all nicknames.")
+
 (defun destroy-packages-sbcl ()
   (ematch roswell:*main*
     ((symbol :package (package :name name))
      (pushnew name *package-blacklist* :test #'string=)))
+  (setf *package-blacklist*
+        (union *package-blacklist*
+               *additional-blacklist-for-destroy-packages*
+               :test #'string=))
   #+(and sbcl (not roswell-dump-newer-sbcl))
   (warn "destroying packages is not supported on older versions of sbcl")
   #+(not sbcl)
