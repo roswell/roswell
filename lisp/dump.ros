@@ -171,6 +171,17 @@ With this feature, applications that use docstrings may not work properly."
   (handler-bind ((package-error #'continue))
     (delete-package pkg-designator)))
 
+(defvar *package-blacklist* '("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP")
+  "A list of package-designators which is not deleted by delete-all-packages.
+The default value contains the minimal blacklist.")
+(defun delete-all-packages ()
+  ;; push the package name of the main function (== package of the given script)
+  (ematch roswell:*main*
+    ((symbol :package (package :name name))
+     (pushnew name *package-blacklist* :test #'string=)))
+  (map nil #'makunbound-symbols-and-delete-package
+       (set-difference (list-all-packages)
+                       (mapcar #'find-package *package-blacklist*))))
 
 (defun parse-options (args fn)
   (match args
@@ -187,8 +198,11 @@ With this feature, applications that use docstrings may not work properly."
      (push (lambda () (makunbound-symbols-and-delete-package (string-upcase name))) *queue*)
      (parse-options rest fn))
     ((list* "--delete-all-packages" rest)
-     (push (lambda () (map nil #'makunbound-symbols-and-delete-package
-                           (list-all-packages))) *queue*)
+     (push #'delete-all-packages *queue*)
+     (parse-options rest fn))
+    ((list* "--delete-packages-except" name rest)
+     (pushnew #'delete-all-packages *queue*)
+     (pushnew (string-upcase name) *package-blacklist* :test #'string=)
      (parse-options rest fn))
     ((list* "--destroy-packages-sbcl" rest)
      (push #'destroy-packages-sbcl *queue*)
