@@ -5,22 +5,19 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (roswell:include "util")
-  (roswell:quicklisp :environment nil)
-  (ql:quickload '(:cl-base64 :chipz) :silent t))
+  (roswell:include "util-template"))
 
 (defpackage :ros.script.template.3670908195
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :roswell.util.template))
 (in-package :ros.script.template.3670908195)
 
 (defvar *subcommands*  '(("rm" . template-rm)
-                         ("delete" . template-rm)
-                         ("install" . template-install)
+                         ("init"  . template-init)
                          ("list" . template-list)
+                         ("set-default" . template-set-default)
+                         ("delete" . template-rm)
                          ("add" . template-add)
                          ("help" . help)))
-
-(defvar *repositries* '(github)) ;; github should be the choice in 2016...
 
 (defun usage ()
   (format *error-output*
@@ -42,72 +39,4 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
     (if func
         (funcall func argv)
         (usage))))
-
-(defun template-install (name)
-  "Install (clone) a new template from github repository."
-  (loop
-     for i in *repositries*
-     until (apply i name)))
-
-(defun template-rm (names)
-  "Remove (delete) a template."
-  (dolist (name names)
-    (unless (find #\. name)
-      (uiop/filesystem:delete-directory-tree
-       (merge-pathnames (format nil "~A/~A/" "templates" name) (homedir))))))
-
-(defun template-list (_)
-  "List the installed templates"
-  (declare (ignore _))
-  (let* ((wildcard (merge-pathnames "templates/*/*/" (homedir)))
-         (templates (directory wildcard)))
-    (unless templates
-      (format *error-output* "~&No template found in ~S." wildcard))
-    (loop for x in templates
-          do (format t "~{~A~^/~}~%" (last (pathname-directory x) 2)))))
-
-(defun convert (x)
-  (let ((base64 (base64:base64-string-to-usb8-array (second x))))
-    `(,(first x)
-      ,(with-output-to-string (o)
-         (loop for i across (chipz:decompress nil 'chipz:gzip base64)
-               do (princ (code-char i) o))))))
-
-(defparameter *archive* (mapcar #'convert '(
-;;;;archive.lisp
-("init.lisp" "
-H4sIAGcLk1cCA5VVwW7bMAy95yuIFGglty62HV0M2P5hxx2m2HSiVZZUSW6WS799lGzZTpp0mYEA
-tkg9ko+PDGuwtaJ+FluEyhm/R6UeA3ZWiYArAFb1niy14nzFpC4v+vLViiUsJzoM6IAcqqrohNRF
-xFGi2zQCWPaHW4c+gONkJPN+hxpceqcvh7qJEHy0RqyXXgb4xPkYqCd3FE3ZSoXArAi76Mv2MuxK
-Y1GPBg/RBJVsy8agL7UJJf6RFLlC50wOr4yx0BoHBr7G8KIBD1oquLtH097zMbH49DrQOcMX8n1v
-rY1SWAcwU6IzI0WuvWykK4BRuJvHojadpVRTvmVMVpN7AYUyVN30fVR2IocJt32FW2ODNFqoBbPr
-/LZO/DGFARgTGw+sE89zEKgIUPQq+NPUqmSeAKtwsASrpLdrnnvSCVsLNzc21bmkInnthG4UurIW
-Hk9sA/EYipic26aCKDdHemNbDC0kRKjouO9QB8+PzyNhHCILnJ+BzhFS/5nH2ugmevML3mekw1D7
-3iVOqKfGSRLQIJ6st6uearhPbYLK9MH24eqbJNsU0EPle4vETYOX4rLI8TFFpLudaThcjMeqrvdB
-1Du6mN+qLLAlkje9q4lu1kpH9UcewX/AOyPJ0Tx1ItAgrd++r8/CpQeenuA3xabZsYd3gCzNRZpV
-YOfi5TAB1j+yYFMD3wTEkQcaeUgkro8m4yR5Nm8TmhS+3DNR9+2hpJpJEvQRhqnKK0OCTD5zV/MS
-YLKl31YbN1bgz/PFaEjiRlFxBrAlxE8cbn6WHynsyP3z4H5J2VLT+tGk6OCk3pa9HZTi+42nNSbh
-CzWhesbD3jgSizyqPU13GcvL9/NOobktEmn4KlQxRx5Og9goWmMsNrWcDuJOnTbIwLgzXTkAw4i/
-CL9YCaPP0CFqxWK1HSW5/MiAq5np3MSpowkrp5TX1UbqZr5EsQ8kwr1wOqZwc9f1bTsfTPhMWKsO
-1BoiBH7lzfiwyOjS6H5g+9gID99OlfjPaPOT/nUH9flDtzHKUvevXU4xtThbCyXmJkk+KPiW82vg
-pnlJTbujTe1PRRshlxKFK2uLiFcWdU0W4/qTy4H5D76mlTaCXGbn4f10pP+7d1dG+fLVXyOoEZzK
-CQAA
-")
-("template.asd" "
-H4sIAGcLk1cCAxXKMQ6AIAwF0N1TNE4wEHduQ6BEklIIv8Z4e3V+zyWUGgtXPDDuFKEdhqOsVC2s
-gZtFwidTkvFG9N3JWhCGkotZQr9gKZ/sf8yjz6GsBnIu1iZMe9Nmu/d+ewGLS/qFbAAAAA==
-")
-;;;;archive.lisp-
-)))
-
-(defun template-add (args)
-  (declare (ignorable args))
-  )
-
-(defun github (name &rest argv)
-  (declare (ignorable argv))
-  (let* ((pos (position #\/ name))
-         (owner (subseq name 0 pos))
-         (name (subseq name (1+ pos))))
-    (clone-github owner name)))
 ;;; vim: set ft=lisp lisp:
