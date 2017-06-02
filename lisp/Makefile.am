@@ -17,7 +17,6 @@ roslisp_DATA = helper.el \
 	run.ros \
 	setup.ros \
 	shell.ros \
-	template.ros \
 	version.ros \
 	wait.ros \
 	\
@@ -48,6 +47,9 @@ roslisp_DATA = helper.el \
 	\
 	list.ros \
 	list-dump.lisp list-git.lisp list-installed.lisp list-versions.lisp \
+	\
+	template.ros \
+	util-template.lisp \
 	\
 	use.ros \
 	util-use.lisp
