@@ -83,8 +83,8 @@ Reduction options are processed in the left-to-right manner.
     
 --delete-package PKG
     : This option can be specified multiple times. It uninterns the symbols in
-      the given package, calls `makeunbound` and `fmakeunbound` on each symbol
-      and deletes the package.
+      PACKAGE, calls `makeunbound` and `fmakeunbound` on each symbol
+      and deletes the package. Package names are automatically string-upcase'd.
       
 --delete-all-packages
     : This option applies --delete-package PKG on all packages, except some
