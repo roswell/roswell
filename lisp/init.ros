@@ -16,7 +16,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
   (when name
     (unless r
       (setq r (list name)
-            name "default"))
+            name (or (roswell:opt "init.default") "default")))
     (let ((func (module "init" name)))
       (if func
           (apply func name r)
