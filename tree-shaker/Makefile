@@ -12,7 +12,7 @@ pop = $(filter-out $(firstword $(1)), $(1))
 c_dump = ros dump                       $(call pop,$(1)) executable aaa.ros -o c-$(firstword $(1)).bin
 u_dump = ros dump --disable-compression $(call pop,$(1)) executable aaa.ros -o u-$(firstword $(1)).bin
 
-targets = baseline docstring destroy package packages except combined
+targets = baseline docstring destroy package packages except debug combined
 
 .PHONY: $(targets) all clean
 
@@ -28,6 +28,7 @@ destroy:	 u-destroy.bin   c-destroy.bin
 package:	 u-package.bin   c-package.bin
 packages:	 u-packages.bin  c-packages.bin
 except:          u-except.bin    c-except.bin
+debug:	         u-debug.bin     c-debug.bin
 combined:        u-combined.bin  c-combined.bin
 
 
@@ -49,8 +50,11 @@ combined:        u-combined.bin  c-combined.bin
 %-except.bin    : aaa.ros
 	$(call $(firstword $(subst -, ,$@))_dump, except --delete-packages-except trivia)
 	./$@
+%-debug.bin    : aaa.ros
+	$(call $(firstword $(subst -, ,$@))_dump, debug --delete-debug-info)
+	./$@
 %-combined.bin    : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, combined --remove-docstrings --delete-all-packages --destroy-packages-sbcl)
+	$(call $(firstword $(subst -, ,$@))_dump, combined --remove-docstrings --delete-debug-info --delete-all-packages --destroy-packages-sbcl)
 	./$@
 
 

@@ -210,6 +210,33 @@ Notably, it must include all nicknames.")
 (defvar *purify* t "Whether running a purifying GC (moves objects to non-GC'd static space) before dump")
 (defvar *impurify* t "CCL only. Impurify all static space objects to dynamic space. Precedes the purifying GC.")
 
+#+sbcl
+(defun delete-fun-debug-info (fun)
+  ;; cf. src/code/describe.lisp
+  ;; function-lambda-expression
+  (etypecase fun
+    #+sb-eval
+    (sb-eval:interpreted-function
+     )
+    #+sb-fasteval
+    (sb-interpreter:interpreted-function
+     ;; src/interpreter/function.lisp
+     ;; fun-lambda-expression
+     )
+    (function
+     (let* ((fun (sb-impl::%fun-fun fun)) ; obtain the true function from a funcallable-instance
+            (code (sb-di::fun-code-header fun)))
+       (setf (sb-kernel:%code-debug-info code) nil)))))
+
+(defun delete-debug-info ()
+  #-sbcl
+  (warn "delete-debug-info is available only in SBCL")
+  #+sbcl
+  (do-all-symbols (s)
+    (when (fboundp s)
+      (delete-fun-debug-info (symbol-function s)))))
+
+
 (defun parse-options (args fn)
   (match args
     ((list* (or "--enable-compression" "-c") rest)
@@ -245,6 +272,9 @@ Notably, it must include all nicknames.")
      (parse-options rest fn))
     ((list* "--no-impurify" rest)
      (setf *impurify* nil)
+     (parse-options rest fn))
+    ((list* "--delete-debug-info" rest)
+     (push #'delete-debug-info *queue*)
      (parse-options rest fn))
     (_
      (funcall fn args))))
