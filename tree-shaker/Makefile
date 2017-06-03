@@ -12,7 +12,7 @@ pop = $(filter-out $(firstword $(1)), $(1))
 c_dump = ros dump                       $(call pop,$(1)) executable aaa.ros -o $(firstword $(1))
 u_dump = ros dump --disable-compression $(call pop,$(1)) executable aaa.ros -o $(firstword $(1))
 
-targets = baseline docstring destroy package packages except debug combined
+targets = baseline docstring destroy package packages except debug compiler macro cmacro combined
 
 .PHONY: $(targets) all clean test
 
@@ -29,6 +29,9 @@ package:	 u-package.bin   c-package.bin
 packages:	 u-packages.bin  c-packages.bin
 except:          u-except.bin    c-except.bin
 debug:	         u-debug.bin     c-debug.bin
+compiler:	         u-compiler.bin     c-compiler.bin
+macro:	         u-macro.bin     c-macro.bin
+cmacro:	         u-cmacro.bin     c-cmacro.bin
 combined:        u-combined.bin  c-combined.bin
 
 
@@ -55,8 +58,20 @@ dump = $(call $(firstword $(subst -, ,$@))_dump, $@ $(1))
 %-debug.bin    : aaa.ros
 	$(call dump, --delete-debug-info)
 	./$@
+%-compiler.bin    : aaa.ros
+	$(call dump, --delete-compiler-information-sbcl)
+	./$@
+%-macro.bin    : aaa.ros
+	$(call dump, --delete-macro-definitions)
+	./$@
+%-cmacro.bin    : aaa.ros
+	$(call dump, --delete-compiler-macro-definitions)
+	./$@
 %-combined.bin    : aaa.ros
-	$(call dump, --remove-docstrings --delete-debug-info --delete-all-packages --destroy-packages-sbcl)
+	$(call dump, --remove-docstrings --delete-debug-info \
+                     --delete-macro-definitions --delete-compiler-macro-definitions \
+                     --delete-compiler-information-sbcl \
+                     --delete-all-packages --destroy-packages-sbcl)
 	./$@
 
 test:
