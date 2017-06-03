@@ -255,6 +255,39 @@ This is a portable implementation."
      (when (compiler-macro-function s)
        (setf (compiler-macro-function s) nil)))))
 
+
+(defun delete-compiler-information-sbcl ()
+  "This removes the entire compiler information about the functions.
+This includes macro/compiler-macro definitions, inline expansions, 
+IR1 (deftransform), IR2 (VOP) information in the infodb."
+  ;; see src/compiler/globaldb.lisp
+  #-sbcl
+  (warn "delete-compiler is available only in SBCL")
+  #+sbcl
+  (do-all-symbols (s)
+    (when (fboundp s)
+      (setf (sb-int:info :function :inlinep s) :notinline)
+      (sb-int:clear-info :function :inline-expansion-designator s)
+      ;; Does this have the same effect as proclaiming notinline?
+      ;; --- seems like so. src/compiler/proclaim.lisp
+      ;; --- SB-C::PROCESS-INLINE-DECLARATION
+      (sb-int:clear-info :function :source-transform s)
+      (sb-int:clear-info :function :info s)
+      (sb-int:clear-info :function :ir1-convert s)
+      (sb-int:clear-info :function :predicate-truth-constraint s)
+      (sb-int:clear-info :function :macro-function s)
+      (sb-int:clear-info :function :compiler-macro-function s))
+    (let ((s `(setf ,s)))
+      (when (fboundp s)
+        (setf (sb-int:info :function :inlinep s) :notinline)
+        (sb-int:clear-info :function :inline-expansion-designator s)
+        (sb-int:clear-info :function :source-transform s)
+        (sb-int:clear-info :function :info s)
+        (sb-int:clear-info :function :ir1-convert s)
+        (sb-int:clear-info :function :predicate-truth-constraint s)
+        (sb-int:clear-info :function :macro-function s)
+        (sb-int:clear-info :function :compiler-macro-function s)))))
+
 (defun parse-options (args fn)
   (match args
     ((list* (or "--enable-compression" "-c") rest)
@@ -299,6 +332,9 @@ This is a portable implementation."
      (parse-options rest fn))
     ((list* "--delete-compiler-macro-definitions" rest)
      (push #'delete-compiler-macro-definitions *queue*)
+     (parse-options rest fn))
+    ((list* "--delete-compiler-information-sbcl" rest)
+     (push #'delete-compiler-information-sbcl *queue*)
      (parse-options rest fn))
     (_
      (funcall fn args))))
