@@ -237,6 +237,24 @@ Notably, it must include all nicknames.")
       (delete-fun-debug-info (symbol-function s)))))
 
 
+(defun delete-macro-definitions ()
+  "Delete the macro functions assuming no run-time compilation would occur.
+This is a portable implementation."
+  (#+sbcl sb-ext:without-package-locks
+   #-sbcl progn
+   (do-all-symbols (s)
+     (when (macro-function s)
+       (fmakunbound s)))))
+
+(defun delete-compiler-macro-definitions ()
+  "Delete the compiler-macros assuming no run-time compilation would occur.
+This is a portable implementation."
+  (#+sbcl sb-ext:without-package-locks
+   #-sbcl progn
+   (do-all-symbols (s)
+     (when (compiler-macro-function s)
+       (setf (compiler-macro-function s) nil)))))
+
 (defun parse-options (args fn)
   (match args
     ((list* (or "--enable-compression" "-c") rest)
@@ -275,6 +293,12 @@ Notably, it must include all nicknames.")
      (parse-options rest fn))
     ((list* "--delete-debug-info" rest)
      (push #'delete-debug-info *queue*)
+     (parse-options rest fn))
+    ((list* "--delete-macro-definitions" rest)
+     (push #'delete-macro-definitions *queue*)
+     (parse-options rest fn))
+    ((list* "--delete-compiler-macro-definitions" rest)
+     (push #'delete-compiler-macro-definitions *queue*)
      (parse-options rest fn))
     (_
      (funcall fn args))))
