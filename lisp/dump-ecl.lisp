@@ -37,6 +37,7 @@
              :components ((:file ,(pathname-name path)
                            :type ,(pathname-type path)))
              :class asdf:program-system))
+    (map nil #'funcall (nreverse ros.script.dump:*queue*))
     (asdf:operate
      'asdf:program-op
      (pathname-name path)))) 

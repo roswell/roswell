@@ -12,10 +12,11 @@
 (defun dump-executable (cmds out)
   (setf ext:*batch-mode* nil)
   (setf ext::*gc-run-time* 0)
+  (map nil #'funcall (nreverse ros.script.dump:*queue*))
+  (ext:gc :full t)
   (ext:save-lisp
    out
-   ;; no need to do GC because of :purify t by default
-   :purify t ; just here to make it explicit
+   :purify   ros.script.dump:*purify*
    :executable t
    :print-herald nil ; suppress verbose startup message
    :init-function
