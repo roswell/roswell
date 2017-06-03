@@ -9,12 +9,12 @@ pop = $(filter-out $(firstword $(1)), $(1))
 # $(info $(call pop,$(strip a b c)))
 # $(info a b c)
 
-c_dump = ros dump                       $(call pop,$(1)) executable aaa.ros -o c-$(firstword $(1)).bin
-u_dump = ros dump --disable-compression $(call pop,$(1)) executable aaa.ros -o u-$(firstword $(1)).bin
+c_dump = ros dump                       $(call pop,$(1)) executable aaa.ros -o $(firstword $(1))
+u_dump = ros dump --disable-compression $(call pop,$(1)) executable aaa.ros -o $(firstword $(1))
 
 targets = baseline docstring destroy package packages except debug combined
 
-.PHONY: $(targets) all clean
+.PHONY: $(targets) all clean test
 
 all: $(targets)
 	ls -lh *.bin
@@ -32,31 +32,35 @@ debug:	         u-debug.bin     c-debug.bin
 combined:        u-combined.bin  c-combined.bin
 
 
+dump = $(call $(firstword $(subst -, ,$@))_dump, $@ $(1))
+
 %-baseline.bin  : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, baseline)
+	$(call dump)
 	./$@
 %-docstring.bin : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, docstring --remove-docstrings)
+	$(call dump, --remove-docstrings)
 	./$@
 %-destroy.bin   : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, destroy   --destroy-packages-sbcl)
+	$(call dump, --destroy-packages-sbcl)
 	./$@
 %-package.bin  : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, package  --delete-package trivia)
+	$(call dump, --delete-package trivia)
 	./$@
 %-packages.bin  : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, packages  --delete-all-packages)
+	$(call dump, --delete-all-packages)
 	./$@
 %-except.bin    : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, except --delete-packages-except trivia)
+	$(call dump, --delete-packages-except trivia)
 	./$@
 %-debug.bin    : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, debug --delete-debug-info)
+	$(call dump, --delete-debug-info)
 	./$@
 %-combined.bin    : aaa.ros
-	$(call $(firstword $(subst -, ,$@))_dump, combined --remove-docstrings --delete-debug-info --delete-all-packages --destroy-packages-sbcl)
+	$(call dump, --remove-docstrings --delete-debug-info --delete-all-packages --destroy-packages-sbcl)
 	./$@
 
+test:
+	for bin in *.bin ; do echo "$$bin        $$(./$$bin)" ; done
 
 clean:
 	rm -f *.bin
