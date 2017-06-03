@@ -106,6 +106,17 @@ Reduction options are processed in the left-to-right manner.
       aggressive image size reduction.  Due to the nature of this option, it is
       desirable to specify it as the last method (i.e. rightmost).
 
+--purify, --no-purify
+    : This is common to CCL, SBCL, CMUCL. Moves all objects to static space where
+    GC does not scan, for the later performance of GC.
+    Purification is enabled by default.
+
+--impurify, --no-impurify
+    : This is an CCL-specific option (enabled by default).
+    It moves all objects to the dynamic space before saving images.
+    This allows the static-space objects to be GC'ed.
+    When purification is enabled, it impurifies before purifying the objects.
+
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->
