@@ -20,11 +20,20 @@
 </header>
 <p>ros-dump - make a dumped image of a roswell script</p>
 <h1 id="synopsis">Synopsis</h1>
-<p><strong>ros [options] dump</strong> <code>TYPE</code> args...</p>
-<p>Where <code>TYPE</code> is one of:</p>
-<h2 id="output--f--o-output-options...-name">output [-f] [-o OUTPUT] [OPTIONS...] NAME</h2>
-<p>Specifing <code>output</code> saves the current lisp state to an image. It loads the roswell script <code>NAME</code> and also processes other options <code>options...</code> available to roswell.</p>
-<p>The output file is by default written to an internal directory of roswell, i.e., somewhere under <code>$ROSWELL_INSTALL_DIR</code> deduced by the current implementation, its version and the given NAME.</p>
+<p><strong>ros [OPTIONS1...] [OPTIONS2...] MODE</strong> args...</p>
+<p><code>OPTIONS1</code> specify the standard roswell options such as <code>-L</code> or <code>-m LISP</code>. <code>OPTIONS2</code> specify the image reduction options we describe later. <code>MODE</code> is either <code>output</code> or <code>executable</code>.</p>
+<h1 id="description">Description</h1>
+<p><code>ros-dump</code> creates a dumped lisp image of the state after processing all options <code>OPTIONS1</code>.</p>
+<p>It has two modes <code>output</code> and <code>executable</code>. In both modes, the global environment (e.g. global binding to special variables such as <code>*package*</code>) of the state just after the restart is the environment which was effective when the script was dumped.</p>
+<!-- Fixme: what kind of? this is unnecessarily retracting the users from using this feature -->
+<!-- There might be a limitation regarding this feature depending on the lisp -->
+<!-- implementation used by roswell at the time of building.   -->
+
+<p>The dumped image is generally not compatible between the different implementations, and also between the versions.</p>
+<h1 id="dump-modes">Dump modes</h1>
+<h2 id="output--f--o-output-name">output [-f] [-o OUTPUT] NAME</h2>
+<p>It loads the roswell script <code>NAME</code> and saves the current lisp state to an image.</p>
+<p>The image file is by default written to an internal directory of roswell in an organized manner, i.e., somewhere under <code>$ROSWELL_INSTALL_DIR</code> deduced by the current implementation, its version and the given NAME.</p>
 <p>When the output file already exists, the command fails with an error code.</p>
 <p>The image can be loaded by <code>ros -m IMAGE</code>. When restarting from the image, standard roswell subcommands and additional arguments to the script are also available, for example <code>ros run</code> to resume with a repl, or <code>--restart FUNC</code> to call a specific function, leaving some flexibility.</p>
 <dl>
@@ -35,17 +44,22 @@
 <dd><p>Force output when the output already exists.</p>
 </dd>
 </dl>
-<h2 id="executable">executable</h2>
-<p>In contrast, when a script is dumped with <code>executable</code>, the dumped image becomes an self-contained executable binary which implies <code>--restart main</code>. The output file is deduced from <code>NAME</code> and is written in the current directory.</p>
-<p>This feature is SBCL and CCL only.</p>
-<h1 id="description">Description</h1>
-<p><code>ros-dump</code> creates a dumped lisp image of the state after processing all arguments passed.</p>
-<p>In both types, the global environment (e.g. global binding to a special variable such as <code>*package*</code>) is the environment which was effective when the script was dumped.</p>
-<!-- Fixme: what kind of? this is unnecessarily retracting the users from using this feature -->
-<!-- There might be a limitation regarding this feature depending on the lisp -->
-<!-- implementation used by roswell at the time of building.   -->
-
-<p>The dumped image is not compatible between the different implementations and even between the same implementations with different versions.</p>
+<h2 id="executable-name--o-output">executable NAME [-o OUTPUT]</h2>
+<p>When a script is dumped with <code>executable</code>, the dumped image becomes an self-contained executable binary which implies <code>--restart main</code>.</p>
+<p>If <code>OUTPUT</code> is given, the resulting binary is written to this file. Otherwise, the output filename is deduced from <code>NAME</code> and is written in the same directory. On Windows and if <code>SCRIPT</code> has <code>.ros</code> extension, the filename will be <code>SCRIPT.exe</code>. On the other systems, the result will be <code>SCRIPT</code> (without extension).</p>
+<p>This feature is supported on SBCL, CCL, CMUCL, CLISP, ECL.</p>
+<h1 id="image-reduction-options">Image Reduction Options</h1>
+<p>These options unlink some references to the runtime objects and allow gcs to reclaim some memory, which eventually reduces the size of the dumped image.</p>
+<p>Care should be taken to ensure the resulting program works as expected, as some of these operation may destroy the common assumptions of the conforming programs. For example, package-related reduction options may inhibit the runtime calls to <code>read</code> after the restart.</p>
+<p>Reduction options are processed in the left-to-right manner.</p>
+<p>--disable-compression, --enable-compression, -c : These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful only on SBCL. Compression is enabled by default.</p>
+<p>--remove-docstrings : This option removes all docstrings from all symbols in the entire lisp image.</p>
+<p>--delete-package PKG : This option can be specified multiple times. It uninterns the symbols in PACKAGE, calls <code>makeunbound</code> and <code>fmakeunbound</code> on each symbol and deletes the package. Package names are automatically string-upcase'd.</p>
+<p>--delete-all-packages : This option applies --delete-package PKG on all packages, except some blacklisted packages (keyword, roswell, ROS.SCRIPT.DUMP, and the package of the main function symbol).</p>
+<p>--delete-packages-except PACKAGE : This option can be specified multiple times. It is identical to --delete-all-packages except that it adds PACKAGE to the blacklist. Package names are automatically string-upcase'd.</p>
+<p>--destroy-packages-sbcl : This is an sbcl-specific option which is even more aggressive than the above methods. It destroys the packaging system by modifying the internal tables for packages, cleaning up the caches for package-use-list etc. The blacklist is shared among --delete-all-packages and --destroy-packages-sbcl. However, this method does not call fmakunbound/makunbound, so combining the two methods can result in a more aggressive image size reduction. Due to the nature of this option, it is desirable to specify it as the last method (i.e. rightmost).</p>
+<p>--purify, --no-purify : This is common to CCL, SBCL, CMUCL. Moves all objects to static space where GC does not scan, for the later performance of GC. Purification is enabled by default.</p>
+<p>--impurify, --no-impurify : This is an CCL-specific option (enabled by default). It moves all objects to the dynamic space before saving images. This allows the static-space objects to be GC'ed. When purification is enabled, it impurifies before purifying the objects.</p>
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->

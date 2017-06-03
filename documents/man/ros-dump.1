@@ -4,18 +4,35 @@
 ros\-dump \- make a dumped image of a roswell script
 .SH Synopsis
 .PP
-\f[B]ros [options] dump\f[] \f[C]TYPE\f[] args...
+\f[B]ros [OPTIONS1...] [OPTIONS2...] MODE\f[] args...
 .PP
-Where \f[C]TYPE\f[] is one of:
-.SS output [\-f] [\-o OUTPUT] [OPTIONS...] NAME
+\f[C]OPTIONS1\f[] specify the standard roswell options such as
+\f[C]\-L\f[] or \f[C]\-m\ LISP\f[].
+\f[C]OPTIONS2\f[] specify the image reduction options we describe later.
+\f[C]MODE\f[] is either \f[C]output\f[] or \f[C]executable\f[].
+.SH Description
 .PP
-Specifing \f[C]output\f[] saves the current lisp state to an image.
-It loads the roswell script \f[C]NAME\f[] and also processes other
-options \f[C]options...\f[] available to roswell.
+\f[C]ros\-dump\f[] creates a dumped lisp image of the state after
+processing all options \f[C]OPTIONS1\f[].
 .PP
-The output file is by default written to an internal directory of
-roswell, i.e., somewhere under \f[C]$ROSWELL_INSTALL_DIR\f[] deduced by
-the current implementation, its version and the given NAME.
+It has two modes \f[C]output\f[] and \f[C]executable\f[].
+In both modes, the global environment (e.g.
+global binding to special variables such as \f[C]*package*\f[]) of the
+state just after the restart is the environment which was effective when
+the script was dumped.
+.PP
+The dumped image is generally not compatible between the different
+implementations, and also between the versions.
+.SH Dump modes
+.SS output [\-f] [\-o OUTPUT] NAME
+.PP
+It loads the roswell script \f[C]NAME\f[] and saves the current lisp
+state to an image.
+.PP
+The image file is by default written to an internal directory of roswell
+in an organized manner, i.e., somewhere under
+\f[C]$ROSWELL_INSTALL_DIR\f[] deduced by the current implementation, its
+version and the given NAME.
 .PP
 When the output file already exists, the command fails with an error
 code.
@@ -35,26 +52,82 @@ The image is written to \f[C]OUTPUT\f[] instead of the default location.
 Force output when the output already exists.
 .RS
 .RE
-.SS executable
+.SS executable NAME [\-o OUTPUT]
 .PP
-In contrast, when a script is dumped with \f[C]executable\f[], the
-dumped image becomes an self\-contained executable binary which implies
+When a script is dumped with \f[C]executable\f[], the dumped image
+becomes an self\-contained executable binary which implies
 \f[C]\-\-restart\ main\f[].
-The output file is deduced from \f[C]NAME\f[] and is written in the
-current directory.
 .PP
-This feature is SBCL and CCL only.
-.SH Description
+If \f[C]OUTPUT\f[] is given, the resulting binary is written to this
+file.
+Otherwise, the output filename is deduced from \f[C]NAME\f[] and is
+written in the same directory.
+On Windows and if \f[C]SCRIPT\f[] has \f[C]\&.ros\f[] extension, the
+filename will be \f[C]SCRIPT.exe\f[].
+On the other systems, the result will be \f[C]SCRIPT\f[] (without
+extension).
 .PP
-\f[C]ros\-dump\f[] creates a dumped lisp image of the state after
-processing all arguments passed.
+This feature is supported on SBCL, CCL, CMUCL, CLISP, ECL.
+.SH Image Reduction Options
 .PP
-In both types, the global environment (e.g.
-global binding to a special variable such as \f[C]*package*\f[]) is the
-environment which was effective when the script was dumped.
+These options unlink some references to the runtime objects and allow
+gcs to reclaim some memory, which eventually reduces the size of the
+dumped image.
 .PP
-The dumped image is not compatible between the different implementations
-and even between the same implementations with different versions.
+Care should be taken to ensure the resulting program works as expected,
+as some of these operation may destroy the common assumptions of the
+conforming programs.
+For example, package\-related reduction options may inhibit the runtime
+calls to \f[C]read\f[] after the restart.
+.PP
+Reduction options are processed in the left\-to\-right manner.
+.PP
+\-\-disable\-compression, \-\-enable\-compression, \-c : These options
+disable/enable/enable the core compression feature in SBCL.
+Thus this option is meaningful only on SBCL.
+Compression is enabled by default.
+.PP
+\-\-remove\-docstrings : This option removes all docstrings from all
+symbols in the entire lisp image.
+.PP
+\-\-delete\-package PKG : This option can be specified multiple times.
+It uninterns the symbols in PACKAGE, calls \f[C]makeunbound\f[] and
+\f[C]fmakeunbound\f[] on each symbol and deletes the package.
+Package names are automatically string\-upcase\[aq]d.
+.PP
+\-\-delete\-all\-packages : This option applies \-\-delete\-package PKG
+on all packages, except some blacklisted packages (keyword, roswell,
+ROS.SCRIPT.DUMP, and the package of the main function symbol).
+.PP
+\-\-delete\-packages\-except PACKAGE : This option can be specified
+multiple times.
+It is identical to \-\-delete\-all\-packages except that it adds PACKAGE
+to the blacklist.
+Package names are automatically string\-upcase\[aq]d.
+.PP
+\-\-destroy\-packages\-sbcl : This is an sbcl\-specific option which is
+even more aggressive than the above methods.
+It destroys the packaging system by modifying the internal tables for
+packages, cleaning up the caches for package\-use\-list etc.
+The blacklist is shared among \-\-delete\-all\-packages and
+\-\-destroy\-packages\-sbcl.
+However, this method does not call fmakunbound/makunbound, so combining
+the two methods can result in a more aggressive image size reduction.
+Due to the nature of this option, it is desirable to specify it as the
+last method (i.e.
+rightmost).
+.PP
+\-\-purify, \-\-no\-purify : This is common to CCL, SBCL, CMUCL.
+Moves all objects to static space where GC does not scan, for the later
+performance of GC.
+Purification is enabled by default.
+.PP
+\-\-impurify, \-\-no\-impurify : This is an CCL\-specific option
+(enabled by default).
+It moves all objects to the dynamic space before saving images.
+This allows the static\-space objects to be GC\[aq]ed.
+When purification is enabled, it impurifies before purifying the
+objects.
 .SH SEE ALSO
 .PP
 \f[I]sbcl\f[](1) \f[I]ros\f[](1) \f[I]ros\-init\f[](1)
