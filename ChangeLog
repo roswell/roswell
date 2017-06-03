@@ -1,6 +1,6 @@
 roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
 
-  *
+  * New: Introduced some image reduction options for `ros dump`.
 
  -- Travis-CI <auto@example.com>  Sun, 21 May 2017 05:51:40 +0000
 
