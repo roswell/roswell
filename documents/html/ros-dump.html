@@ -50,16 +50,52 @@
 <p>This feature is supported on SBCL, CCL, CMUCL, CLISP, ECL.</p>
 <h1 id="image-reduction-options">Image Reduction Options</h1>
 <p>These options unlink some references to the runtime objects and allow gcs to reclaim some memory, which eventually reduces the size of the dumped image.</p>
-<p>Care should be taken to ensure the resulting program works as expected, as some of these operation may destroy the common assumptions of the conforming programs. For example, package-related reduction options may inhibit the runtime calls to <code>read</code> after the restart.</p>
+<p>Care should be taken to ensure the resulting program works as expected, as some of these operation may destroy the common assumptions of the conforming programs. For example, package-related reduction options may inhibit the runtime calls to <code>READ</code> after the restart.</p>
 <p>Reduction options are processed in the left-to-right manner.</p>
-<p>--disable-compression, --enable-compression, -c : These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful only on SBCL. Compression is enabled by default.</p>
-<p>--remove-docstrings : This option removes all docstrings from all symbols in the entire lisp image.</p>
-<p>--delete-package PKG : This option can be specified multiple times. It uninterns the symbols in PACKAGE, calls <code>makeunbound</code> and <code>fmakeunbound</code> on each symbol and deletes the package. Package names are automatically string-upcase'd.</p>
-<p>--delete-all-packages : This option applies --delete-package PKG on all packages, except some blacklisted packages (keyword, roswell, ROS.SCRIPT.DUMP, and the package of the main function symbol).</p>
-<p>--delete-packages-except PACKAGE : This option can be specified multiple times. It is identical to --delete-all-packages except that it adds PACKAGE to the blacklist. Package names are automatically string-upcase'd.</p>
-<p>--destroy-packages-sbcl : This is an sbcl-specific option which is even more aggressive than the above methods. It destroys the packaging system by modifying the internal tables for packages, cleaning up the caches for package-use-list etc. The blacklist is shared among --delete-all-packages and --destroy-packages-sbcl. However, this method does not call fmakunbound/makunbound, so combining the two methods can result in a more aggressive image size reduction. Due to the nature of this option, it is desirable to specify it as the last method (i.e. rightmost).</p>
-<p>--purify, --no-purify : This is common to CCL, SBCL, CMUCL. Moves all objects to static space where GC does not scan, for the later performance of GC. Purification is enabled by default.</p>
-<p>--impurify, --no-impurify : This is an CCL-specific option (enabled by default). It moves all objects to the dynamic space before saving images. This allows the static-space objects to be GC'ed. When purification is enabled, it impurifies before purifying the objects.</p>
+<dl>
+<dt>--disable-compression, --enable-compression, -c</dt>
+<dd>These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful
+</dd>
+</dl>
+<p>only on SBCL. Compression is enabled by default.</p>
+<dl>
+<dt>--remove-docstrings</dt>
+<dd><p>This option removes all docstrings from all symbols in the entire lisp image.</p>
+</dd>
+<dt>--delete-package PKG</dt>
+<dd><p>This option can be specified multiple times. It uninterns the symbols in PACKAGE, calls <code>makeunbound</code> and <code>fmakeunbound</code> on each symbol and deletes the package. Package names are automatically string-upcase'd.</p>
+</dd>
+<dt>--delete-all-packages</dt>
+<dd><p>This option applies --delete-package PKG on all packages, except some blacklisted packages (keyword, roswell, ROS.SCRIPT.DUMP, and the package of the main function symbol).</p>
+</dd>
+<dt>--delete-packages-except PACKAGE</dt>
+<dd><p>This option can be specified multiple times. It is identical to --delete-all-packages except that it adds PACKAGE to the blacklist. Package names are automatically string-upcase'd.</p>
+</dd>
+<dt>--destroy-packages-sbcl</dt>
+<dd><p>This is an sbcl-specific option which is even more aggressive than the above methods (&gt;10MB reduction). It destroys the package system by modifying the internal tables for packages, cleaning up the caches for package-use-list etc. The blacklist is shared among --delete-all-packages and --destroy-packages-sbcl. However, this method does not call fmakunbound/makunbound, so combining the two methods can result in a more aggressive image size reduction. Due to the nature of this option, it is desirable to specify it as the last method (i.e. rightmost).</p>
+</dd>
+<dt>--purify, --no-purify</dt>
+<dd>This is common to CCL, SBCL, CMUCL. Moves all objects to the static space
+</dd>
+</dl>
+<p>where GC does not scan, for the later performance of GC. Purification is enabled by default.</p>
+<dl>
+<dt>--impurify, --no-impurify</dt>
+<dd>This is an CCL-specific option (enabled by default).
+</dd>
+</dl>
+<p>It moves all objects to the dynamic space before saving the image. This allows the static-space objects to be GC'ed. When purification is enabled, it impurifies all objects before running the purifying GC.</p>
+<dl>
+<dt>--delete-debug-info</dt>
+<dd><p>This removes the debug infomation of functions (used to show the stack frame etc), as well as the source locations and the deprecation information of various symbols. SBCL only. This option has a large effect (+10MB reduction).</p>
+</dd>
+<dt>--delete-macro-definitions, --delete-compiler-macro-definitions</dt>
+<dd><p>This removes all definitions of macros and compiler-macros, assuming that no runtime compilation/interpretation of code will be performed. This option should be portable across implementations. It has ~2MB reduction on SBCL.</p>
+</dd>
+<dt>--delete-compiler-information-sbcl</dt>
+<dd><p>This is an SBCL-specific option which is more aggressive than the above methods (~4MB reduction). In addition to the macro and the compiler-macro definitions, it destroys the internal compiler systems of SBCL by also removing the inlining information, IR1 transformer and IR2 (VOP).</p>
+</dd>
+</dl>
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->
