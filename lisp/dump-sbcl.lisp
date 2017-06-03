@@ -6,12 +6,10 @@
 (defun dump-executable (cmds out script)
   (declare (ignore script))
   (map nil #'funcall (nreverse ros.script.dump:*queue*))
+  (sb-ext:gc :full t)
   (sb-ext:save-lisp-and-die
    out
-   ;; no need to do GC because of :purify t by default
-   ;; however, this only affects old cheyneyGC
-   ;; http://www.sbcl.org/manual/#Efficiency-Hacks
-   :purify t ; just here to make it explicit
+   :purify   ros.script.dump:*purify*
    ; we all want our programs to be small, right?
    #+sb-core-compression :compression
    #+sb-core-compression ros.script.dump:*compression*

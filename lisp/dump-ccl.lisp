@@ -6,8 +6,11 @@
 (defun dump-executable (cmds out script)
   (declare (ignore script))
   (map nil #'funcall (nreverse ros.script.dump:*queue*))
+  (ccl:gc)
   (ccl:save-application
    out
+   :impurify ros.script.dump:*impurify*
+   :purify   ros.script.dump:*purify*
    :toplevel-function
    #'(lambda ()
        (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
