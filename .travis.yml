@@ -146,7 +146,7 @@ script:
          ros install sbcl --sbcl-bin;
          [`ros -e "(ros:ignore-shebang)" -e '(loop for x in (directory "src/lisp/*.ros") do (load x))' 2>&1` == ""];
        fi;
-       ( cd tree-shaker && ./test-tree-shaker.sh ) ;
+       make -C tree-shaker ;
     fi
   - if [ $METHOD != debian ]; then ros config; fi
   - cat /tmp/proxy-log || true
