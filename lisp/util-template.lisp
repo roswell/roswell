@@ -14,10 +14,6 @@
 (defun sanitize (name)
   (remove-if (lambda (x) (find x "./\\")) name))
 
-(defun template-apply (template-name args params)
-  (declare (ignorable template-name args params))
-  (print (list template-name args)))
-
 (defun template-path (name)
   (merge-pathnames (format nil "templates/~A/" name)
                    (first ql:*local-project-directories*)))
@@ -34,6 +30,22 @@
            while i
            collect (code-char i)) 'string)))
 
+(defun copy-file (src dest params)
+  (declare (ignore params))
+  (uiop:copy-file src dest))
+
+(defvar *template-function-plist*
+  '(nil copy-file))
+
+(defun template-apply (template-name args info)
+  (declare (ignorable template-name args info))
+  ;; tbd rename/chmod/template/after-hook
+  (dolist (i (getf info :files))
+    (funcall (getf *template-function-plist* (getf i :method))
+             (merge-pathnames (format nil "~A/~A" template-name (enc-string (getf i :name))) (template-path template-name))
+             (print (ensure-directories-exist (merge-pathnames (getf i :name) *default-pathname-defaults*)))
+             args)))
+
 (defun write-template (name &key
                               (path (template-path name))
                               list)
@@ -47,7 +59,7 @@
               `((defpackage ,package
                   (:use :cl))
                 (in-package ,package)
-                (defvar *params* ,(cons 'list list))
+                (defvar *params* '(,@list))
                 (defun ,(read-from-string name) (_ &rest r)
                   (roswell:include "util-template")
                   (funcall (read-from-string "roswell.util.template:template-apply") _ r *params*)))))))
@@ -72,7 +84,7 @@
       (unless (and (eql 'defvar (first read/))
                    (string-equal  '*params* (second read/))) 
         (error "not init template ~S~%" (list read/)))
-      (rest (third read/)))))
+      (second (third read/)))))
 
 (defun template-init (names)
   (let* ((name (sanitize (first names)))
@@ -119,13 +131,16 @@
 (defun template-list (_)
   "List the installed templates"
   (cond
-    ((not _)
-     (format t "~{~A~%~}" (list-templates :name t)))
-    ((first _)
-     (let* ((name (sanitize (first _)))
+    ((or (first _)
+         (and (config "init.default")
+              (not (equal (config "init.default") "default"))))
+     (let* ((name (or (sanitize (first _))
+                      (config "init.default")))
             (path (first (list-templates :filter name))))
        (when (and path (equal (pathname-type path) "asd"))
-         (print (mapcar (lambda (x) (dec-string (file-namestring x))) (directory (merge-pathnames (format nil "~A/*" name) (make-pathname :defaults path :type nil :name nil))))))))))
+         (print (mapcar (lambda (x) (dec-string (file-namestring x))) (directory (merge-pathnames (format nil "~A/*" name) (make-pathname :defaults path :type nil :name nil))))))))
+    ((not _)
+     (format t "~{~A~%~}" (list-templates :name t)))))
 
 (defun template-set-default (_)
   (let ((name (sanitize (first _))))
@@ -156,7 +171,25 @@
               do (template-add-file name i i))
         (format *error-output* "template ~S is not editable.~%" name))))
 
-(defun template-rm (names)
-  "Remove (delete) a template."
-  (declare (ignorable names))
-  )
+(defun template-remove-file (template-name file-name)
+  (let ((info (read-template template-name)))
+    (uiop:delete-file-if-exists
+     (merge-pathnames (enc-string file-name) (template-dir template-name)))
+    (when (find file-name (getf info :files) :key (lambda (x) (getf x :name)))
+      (setf (getf info :files)
+            (remove file-name (getf info :files)
+                    :key (lambda (x) (getf x :name))))
+      (write-template template-name :list info))))
+
+(defun template-rm (_)
+  "Remove (delete) files from template."
+  (let ((name (config "init.default")))
+    (unless (and name
+                 (not (equal name "default")))
+      (setf name (sanitize (first _))
+            _ (rest _)))
+    (if (and (list-templates :filter name)
+             (not (equal name "default")))
+        (loop for i in _
+              do (template-remove-file name i))
+        (format *error-output* "template ~S is not editable.~%" name))))
