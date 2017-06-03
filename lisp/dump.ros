@@ -117,7 +117,9 @@ With this feature, applications that use docstrings may not work properly."
       (when (documentation s doc-type)
         (setf (documentation s doc-type) nil)))))
 
-(defvar *package-blacklist* '("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP")
+(defvar *package-blacklist* `("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP"
+                                        ;; add impl-specific customization
+                                        #+(or) ,@'())
   "A list of package-designators which is not deleted by delete-all-packages.
 The default value contains the minimal blacklist.")
 
@@ -173,11 +175,18 @@ Notably, it must include all nicknames.")
 
 (defun makunbound-symbols-and-delete-package (pkg-designator)
   (format t "Deleting ~a~%" pkg-designator)
+  (force-output *standard-output*)
   (handler-case
-      (do-symbols (symbol pkg-designator)
-        (ignore-errors (unintern symbol pkg-designator))
-        (ignore-errors (makunbound symbol)) ; due to constants
-        (ignore-errors (fmakunbound symbol)))
+      (progn
+        #-ccl
+        (do-symbols (symbol pkg-designator)
+          (ignore-errors (makunbound symbol))
+          (ignore-errors (fmakunbound symbol))
+          (ignore-errors (unintern symbol pkg-designator)))
+        #+ccl
+        (do-symbols (symbol pkg-designator)
+          ;; f/makunbound causes segv
+          (ignore-errors (unintern symbol pkg-designator))))
     (package-error ()))
   (handler-case
     (delete-package pkg-designator)
