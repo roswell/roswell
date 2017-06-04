@@ -1,4 +1,5 @@
 (roswell:include "util" "util-template")
+(ql:quickload '(:uiop :djula) :silent t)
 (defpackage :roswell.util.template
   (:use :cl :roswell.util)
   (:export
@@ -32,19 +33,46 @@
 
 (defun copy-file (src dest params)
   (declare (ignore params))
+  (when (probe-file dest)
+    (error "file exits ~A" dest))
   (uiop:copy-file src dest))
 
+(defun apply-djula (template-string stream params)
+  (apply 'djula::render-template* (djula::compile-string template-string) stream params))
+
+(defun djula (src dest params)
+  (with-open-file (o dest :direction :output)
+    (apply-djula (uiop:read-file-string src) o params)))
+
 (defvar *template-function-plist*
-  '(nil copy-file))
+  '(nil copy-file
+    :djula djula))
+
+(defun key (string)
+  (when string
+    (let (*read-eval*)
+      (read-from-string (format nil ":~A" string)))))
+
+(defun octal (string)
+  (parse-integer string :radix 8))
 
 (defun template-apply (template-name args info)
   (declare (ignorable template-name args info))
-  ;; tbd rename/chmod/template/after-hook
-  (dolist (i (getf info :files))
-    (funcall (getf *template-function-plist* (getf i :method))
-             (merge-pathnames (format nil "~A/~A" template-name (enc-string (getf i :name))) (template-path template-name))
-             (print (ensure-directories-exist (merge-pathnames (getf i :name) *default-pathname-defaults*)))
-             args)))
+  ;; tbd after-hook
+  (setf args `(:name ,(first args)
+                     ,@(loop for i on (rest args) by #'cddr
+                             while (string-equal (first i) "--" :end1 2)
+                             collect (key (subseq (first i) 2))
+                             collect (second i))))
+  (loop for i in (getf info :files)
+        for from = (merge-pathnames (format nil "~A/~A" template-name (enc-string (getf i :name))) (template-path template-name))
+        for to = (ensure-directories-exist (merge-pathnames (if (getf i :rename)
+                                                                (apply-djula (getf i :rename) nil args)
+                                                                (getf i :name))
+                                                            *default-pathname-defaults*))
+        do (funcall (getf *template-function-plist* (key (getf i :method))) from to args)
+           (when (getf i :chmod)
+             #+sbcl(sb-posix:chmod to (octal (getf i :chmod))))))
 
 (defun write-template (name &key
                               (path (template-path name))
@@ -175,10 +203,10 @@
   (let ((info (read-template template-name)))
     (uiop:delete-file-if-exists
      (merge-pathnames (enc-string file-name) (template-dir template-name)))
-    (when (find file-name (getf info :files) :key (lambda (x) (getf x :name)))
+    (when (find file-name (getf info :files) :key (lambda (x) (getf x :name)) :test 'equal)
       (setf (getf info :files)
             (remove file-name (getf info :files)
-                    :key (lambda (x) (getf x :name))))
+                    :key (lambda (x) (getf x :name)) :test 'equal))
       (write-template template-name :list info))))
 
 (defun template-rm (_)
