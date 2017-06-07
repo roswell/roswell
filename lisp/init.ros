@@ -13,12 +13,10 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.init.3672012201)
 
 (defun main (&optional name &rest r)
-  (when name
-    (unless r
-      (setq r (list name)
-            name "default"))
-    (let ((func (module "init" name)))
-      (if func
-          (apply func name r)
-          (format *error-output* "not supported template ~A~%" name)))))
+  (if name
+      (let ((func (module "init" name)))
+        (apply (or func (module "init" "default"))
+               `(,name ,@(unless func (list name)) ,@r)))
+      ;; show usage
+      ))
 ;;; vim: set ft=lisp lisp:
