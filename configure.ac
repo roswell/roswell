@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([roswell],[17.5.8.78],snmsts@gmail.com)
+AC_INIT([roswell],[17.5.9.78],snmsts@gmail.com)
 
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile lisp/Makefile])
