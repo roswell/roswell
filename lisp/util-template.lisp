@@ -1,23 +1,55 @@
-(roswell:include "util" "util-template")
+#+ros.init
+(roswell:include '("util" "system") "util-template")
+#+quicklisp
 (ql:quickload '(:uiop :djula) :silent t)
 (defpackage :roswell.util.template
-  (:use :cl :roswell.util)
+  (:use :cl)
   (:export
-   :template-init
-   :template-list
-   :template-set-default
-   :template-rm
-   :template-add
-   :template-apply))
+   :*template-function-plist*
+   :*template-base-directories*
+
+   :template-path
+   :template-file-path
+   :template-asd-path
+
+   :templates-list
+   :template-create
+   :template-directory
+   :template-remove-file
+   :template-add-file
+   :template-attr-file
+
+   :template-apply
+
+   #+ros.init :template-default))
 
 (in-package :roswell.util.template)
 
+(defvar *template-base-directories* '())
+(defvar *template-function-plist*
+  '(:djula djula
+    :copy copy-file))
+
+(defun run-n-get-first-result (cmds)
+  (loop for cmd in cmds
+        for result = (ignore-errors (uiop:run-program cmd :output :string))
+        when result
+          return (remove #\Newline result)))
+
+(defvar *author* nil)
+(defun author ()
+  (or *author*
+      (setf *author* (run-n-get-first-result '("git config --global --get user.name"
+                                               "whoami")))))
+
+(defvar *email* nil)
+(defun email ()
+  (or *email*
+      (setf *email* (run-n-get-first-result '("git config --global --get user.email"
+                                              "echo $(whoami)@$(hostname)")))))
+
 (defun sanitize (name)
   (remove-if (lambda (x) (find x "./\\")) name))
-
-(defun template-path (name)
-  (merge-pathnames (format nil "templates/~A/" name)
-                   (first ql:*local-project-directories*)))
 
 (defun enc-string (str)
   (format nil "~{%~36r~}" (loop for i across str collect (char-code i))))
@@ -31,53 +63,91 @@
            while i
            collect (code-char i)) 'string)))
 
+(defun templates-list (&key filter name)
+  (let* ((* (loop for x in (append *template-base-directories* (list (first ql:*local-project-directories*)))
+                  append (directory (merge-pathnames "**/*.asd" x))))
+         (* (remove-if-not (lambda (x) (ignore-errors (string-equal "roswell.init." (pathname-name x) :end2 13))) *))
+         (* (cons (merge-pathnames "init-default.lisp" (ros:opt "lispdir")) *))
+         (* (if filter
+                (let ((filter (sanitize filter)))
+                  (remove-if-not (lambda (x)
+                                   (find (pathname-name x)
+                                         (list (format nil "roswell.init.~A" filter)
+                                               (format nil "init-~A" filter))
+                                         :test 'equal))
+                                 *))
+                *)))
+    (cond
+      (name
+       (mapcar (lambda (x)
+                 (subseq (pathname-name x)
+                         (1+ (position-if
+                              (lambda (x) (find x ".-"))
+                              (pathname-name x) :from-end t))))
+               *))
+      (t *))))
+
+(defun template-path (name)
+  (let ((found (templates-list :filter name)))
+    (if found
+        (make-pathname :type nil :name nil
+                       :defaults (first found))
+        (merge-pathnames (format nil "templates/~A/" (sanitize name)) (first ql:*local-project-directories*)))))
+
+(defun template-file-path (template-name path)
+  (merge-pathnames (enc-string path)
+                   (merge-pathnames (format nil "~A-template/" template-name)
+                                    (template-path template-name))))
+
+(defun template-asd-path (template-name)
+  (make-pathname :defaults (template-path template-name)
+                 :type "asd"
+                 :name (format nil "roswell.init.~A" template-name)))
+
+(defun apply-djula (template-string stream params)
+  (apply 'djula::render-template* (djula::compile-string template-string) stream
+         `(,@params
+           :author ,(author)
+           :email ,(email)
+           :universal_time ,(get-universal-time))))
+
 (defun copy-file (src dest params)
   (declare (ignore params))
   (when (probe-file dest)
     (error "file exits ~A" dest))
   (uiop:copy-file src dest))
 
-(defun apply-djula (template-string stream params)
-  (apply 'djula::render-template* (djula::compile-string template-string) stream params))
-
 (defun djula (src dest params)
   (with-open-file (o dest :direction :output)
     (apply-djula (uiop:read-file-string src) o params)))
 
-(defvar *template-function-plist*
-  '(nil copy-file
-    :djula djula))
-
-(defun key (string)
-  (when string
-    (let (*read-eval*)
-      (read-from-string (format nil ":~A" string)))))
-
-(defun octal (string)
-  (parse-integer string :radix 8))
-
-(defun template-apply (template-name args info)
+(defun template-apply (template-name args info &key (path *default-pathname-defaults*))
   (declare (ignorable template-name args info))
-  ;; tbd after-hook
-  (setf args `(:name ,(first args)
-                     ,@(loop for i on (rest args) by #'cddr
-                             while (string-equal (first i) "--" :end1 2)
-                             collect (key (subseq (first i) 2))
-                             collect (second i))))
-  (loop for i in (getf info :files)
-        for from = (merge-pathnames (format nil "~A/~A" template-name (enc-string (getf i :name))) (template-path template-name))
-        for to = (ensure-directories-exist (merge-pathnames (if (getf i :rename)
-                                                                (apply-djula (getf i :rename) nil args)
-                                                                (getf i :name))
-                                                            *default-pathname-defaults*))
-        do (funcall (getf *template-function-plist* (key (getf i :method))) from to args)
-           (when (getf i :chmod)
-             #+sbcl(sb-posix:chmod to (octal (getf i :chmod))))))
+  ;; tbd after-hook?
+  (flet ((octal (string)
+           (parse-integer string :radix 8))
+         (key (string)
+           (when string
+             (let (*read-eval*)
+               (read-from-string (format nil ":~A" string))))))
+    (setf args `(:name ,(first args)
+                       ,@(loop for i on (rest args) by #'cddr
+                               while (string-equal (first i) "--" :end1 2)
+                               collect (key (subseq (first i) 2))
+                               collect (second i))))
+    (loop for i in (getf info :files)
+          for from = (template-file-path template-name (getf i :name))
+          for to = (ensure-directories-exist (merge-pathnames (if (getf i :rewrite)
+                                                                  (apply-djula (getf i :rewrite) nil args)
+                                                                  (getf i :name))
+                                                              path))
+          do (unless (equal (file-namestring to) "")
+               (funcall (getf *template-function-plist* (key (getf i :method))) from to args))
+             (when (ignore-errors (octal (getf i :chmod)))
+               #+sbcl(sb-posix:chmod to (octal (getf i :chmod)))))))
 
-(defun write-template (name &key
-                              (path (template-path name))
-                              list)
-  (with-open-file (o (merge-pathnames (format nil "roswell.init.~A.asd" name) path)
+(defun template-write (name list)
+  (with-open-file (o (ensure-directories-exist (template-asd-path name))
                      :direction :output
                      :if-exists :supersede
                      :if-does-not-exist :create)
@@ -89,13 +159,13 @@
                 (in-package ,package)
                 (defvar *params* '(,@list))
                 (defun ,(read-from-string name) (_ &rest r)
-                  (roswell:include "util-template")
+                  (asdf:load-system :roswell.util.template :verbose nil)
                   (funcall (read-from-string "roswell.util.template:template-apply") _ r *params*)))))))
 
-(defun read-template (name &key (path (template-path name)))
-  (let ((package)
+(defun template-read (name)
+  (let (package
         read/)
-    (with-open-file (o (merge-pathnames (format nil "roswell.init.~A.asd" name) path)
+    (with-open-file (o (template-asd-path name)
                        :direction :input
                        :if-does-not-exist :error)
       (setq read/ (read o))
@@ -114,110 +184,49 @@
         (error "not init template ~S~%" (list read/)))
       (second (third read/)))))
 
-(defun template-init (names)
-  (let* ((name (sanitize (first names)))
-         (path (template-path name)))
-    (when (probe-file (merge-pathnames ".git/" path))
-      (format *error-output* "already exist ~A~%" path)
-      (ros:quit 0))
-    (ensure-directories-exist path)
-    (uiop:chdir path)
-    (uiop:run-program "git init" :output :interactive :error-output :interactive)
-    (write-template name :path path)))
+(defun template-create (name)
+  (template-write (sanitize name) nil))
 
-(defun list-templates (&key filter name)
-  (let* ((* (directory (merge-pathnames "**/.git/" (first ql:*local-project-directories*))))
-         (* (mapcar (lambda (x) (directory (merge-pathnames "../*.asd" x))) *))
-         (* (apply #'append *))
-         (* (remove-if-not (lambda (x) (ignore-errors (string-equal "roswell.init." (pathname-name x) :end2 13))) *))
-         (* (cons (merge-pathnames "init-default.lisp" (ros:opt "lispdir")) *))
-         (* (if filter
-                (remove-if-not (lambda (x)
-                                 (find (pathname-name x)
-                                       (list (format nil "roswell.init.~A" filter)
-                                             (format nil "init-~A" filter))
-                                       :test 'equal))
-                               *)
-                *)))
-    (cond
-      (name
-       (mapcar (lambda (x)
-                 (subseq (pathname-name x)
-                         (1+ (position-if
-                              (lambda (x) (find x ".-"))
-                              (pathname-name x) :from-end t))))
-               *))
-      (t *))))
+(defun template-directory (name)
+  (getf (template-read (sanitize name)) :files))
 
-(defun template-dir (name)
-  (merge-pathnames (format nil "~A/" name) (make-pathname :defaults (first (list-templates :filter name)) :type nil :name nil)))
+#+ros.init
+(defun (setf template-default) (template-name)
+  (setf (roswell.util:config "init.default") (sanitize template-name)))
 
-(defun list-in-template (name)
-  (mapcar (lambda (x) (dec-string (file-namestring x)))
-          (directory (merge-pathnames "*" (template-dir name)))))
-
-(defun template-list (_)
-  "List the installed templates"
-  (cond
-    ((or (first _)
-         (and (config "init.default")
-              (not (equal (config "init.default") "default"))))
-     (let* ((name (or (sanitize (first _))
-                      (config "init.default")))
-            (path (first (list-templates :filter name))))
-       (when (and path (equal (pathname-type path) "asd"))
-         (print (mapcar (lambda (x) (dec-string (file-namestring x))) (directory (merge-pathnames (format nil "~A/*" name) (make-pathname :defaults path :type nil :name nil))))))))
-    ((not _)
-     (format t "~{~A~%~}" (list-templates :name t)))))
-
-(defun template-set-default (_)
-  (let ((name (sanitize (first _))))
-    (when name
-      (let ((path (list-templates :filter name)))
-        (if path
-            (setf (config "init.default") name)
-            (format *error-output* "template: ~S not found.~%" name))))))
+#+ros.init
+(defun template-default (&optional (default "default"))
+  (or (roswell.util:config "init.default") (sanitize default)))
 
 (defun template-add-file (template-name file-name path-copy-from)
-  (let ((info (read-template template-name)))
+  (let ((template-name (sanitize template-name))
+        (info (template-read template-name)))
     (uiop:copy-file path-copy-from
-                    (merge-pathnames (enc-string file-name) (template-dir template-name)))
+                    (ensure-directories-exist (template-file-path template-name file-name)))
     (unless (find file-name (getf info :files) :key (lambda (x) (getf x :name)))
-      (push (list :name file-name) (getf info :files)))
-    (write-template template-name :list info)))
-
-(defun template-add (_)
-  ;; care windows someday
-  (let ((name (config "init.default")))
-    (unless (and name
-                 (not (equal name "default")))
-      (setf name (sanitize (first _))
-            _ (rest _)))
-    (if (and (list-templates :filter name)
-             (not (equal name "default")))
-        (loop for i in _
-              do (template-add-file name i i))
-        (format *error-output* "template ~S is not editable.~%" name))))
+      (push (list :name file-name :method "copy") (getf info :files)))
+    (template-write template-name info)))
 
 (defun template-remove-file (template-name file-name)
-  (let ((info (read-template template-name)))
+  (let* ((template-name (sanitize template-name))
+         (info (template-read template-name)))
     (uiop:delete-file-if-exists
-     (merge-pathnames (enc-string file-name) (template-dir template-name)))
+     (template-file-path template-name file-name))
     (when (find file-name (getf info :files) :key (lambda (x) (getf x :name)) :test 'equal)
       (setf (getf info :files)
             (remove file-name (getf info :files)
                     :key (lambda (x) (getf x :name)) :test 'equal))
-      (write-template template-name :list info))))
+      (template-write template-name info))))
 
-(defun template-rm (_)
-  "Remove (delete) files from template."
-  (let ((name (config "init.default")))
-    (unless (and name
-                 (not (equal name "default")))
-      (setf name (sanitize (first _))
-            _ (rest _)))
-    (if (and (list-templates :filter name)
-             (not (equal name "default")))
-        (loop for i in _
-              do (template-remove-file name i))
-        (format *error-output* "template ~S is not editable.~%" name))))
+(defun template-attr-file (template-name file-name key value)
+  (let* ((template-name (sanitize template-name))
+         (info (template-read template-name))
+         (found (find file-name (getf info :files) :key (lambda (x) (getf x :name)) :test 'equal)))
+    (when found
+      (if (eql (getf found key #1='#:a) #1#)
+          (setf (cdr (last found)) (list key value))
+          (setf (getf found key ) value))
+      (template-write template-name info))))
+
+#+ros.init
+(roswell.util:system "util-template")

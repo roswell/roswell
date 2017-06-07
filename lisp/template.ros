@@ -3,40 +3,148 @@
 #|[WIP] Manage templates
 exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
-
 (progn
   (roswell:include "util-template"))
-
+;; TBD care windows someday
 (defpackage :ros.script.template.3670908195
   (:use :cl :roswell.util :roswell.util.template))
 (in-package :ros.script.template.3670908195)
 
-(defvar *subcommands*  '(("rm" . template-rm)
-                         ("init"  . template-init)
+(defvar *subcommands*  '(("init"  . template-init)
                          ("list" . template-list)
-                         ("set-default" . template-set-default)
-                         ("delete" . template-rm)
+                         ("checkout" . template-checkout)
                          ("add" . template-add)
-                         ("help" . help)))
+                         ("cat" . template-cat)
+                         ("rm" . template-rm)
+                         ("delete" . template-rm)
+                         ("type" . template-type)
+                         ("chmod" . template-chmod)
+                         ("rewrite" . template-rewrite)
+                         ("help" . template-help)))
 
-(defun usage ()
-  (format *error-output*
-          "~&***WIP*** Usage: ~A ~{~A~^/~} ~%"
-          (opt "wargv0")
-          (mapcar #'car *subcommands*)))
+(defun template-init (names)
+  "Create new template"
+  (let* ((name (first names))
+         (path (template-asd-path name)))
+    (when (probe-file path)
+      (format *error-output* "already exist ~A~%" path)
+      (ros:quit 0))
+    (template-create name)))
 
-(defun help (_)
+(defun template-list (_)
+  "List the installed templates"
+  (let ((name (or (first _) (template-default))))
+    (if (equal name "default")
+        (format t "\"default\" doesn't have list~%")
+        (let ((path (first (templates-list :filter name))))
+          (when (and path (equal (pathname-type path) "asd"))
+            (mapc (lambda (x)
+                    (format t "~5A ~5A ~A ~A~%"
+                            (or (getf x :chmod) "")
+                            (getf x :method "copy")
+                            (getf x :name)
+                            (if (getf x :rewrite)
+                                (format nil "-> ~S" (getf x :rewrite))
+                                "")))
+                  (template-directory name)))))))
+
+(defun template-checkout (_)
+  "Checkout default template to edit."
+  (let ((name (first _)))
+    (unless name
+      (format *error-output* "current default is ~S~%~%candidates:~%~{~A~%~}"
+              (template-default)
+              (templates-list :name t))
+      (ros:quit 1))
+    (let ((path (templates-list :filter name)))
+      (unless path
+        (format *error-output* "template: ~S not found.~%" name)
+        (ros:quit 1))
+      (setf (template-default) name))))
+
+(defun template-add (_)
+  "Add files to template."
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (unless (and (templates-list :filter name)
+                 (not (equal name "default")))
+      (format *error-output* "template ~S is not editable.~%" name)
+      (ros:quit 1))
+    (loop for i in _
+          do (template-add-file name i i))))
+
+(defun template-cat (_)
+  "Show file contents"
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (unless (and (templates-list :filter name)
+                 (not (equal name "default")))
+      (format *error-output* "template ~S does not contain files.~%" name)
+      (ros:quit 1))
+    (loop for i in _
+          do (format t "~A" (uiop:read-file-string (template-file-path name i))))))
+
+(defun template-rm (_)
+  "Remove (delete) files from template."
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (unless (and (templates-list :filter name)
+                 (not (equal name "default")))
+      (format *error-output* "template ~S is not editable.~%" name)
+      (ros:quit 1))
+    (loop for i in _
+          do (template-remove-file name i))))
+
+(defun template-type (_)
+  "Set template type for a file."
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (let ((type (first _))
+          (sets (loop for i on *template-function-plist* by #'cddr
+                      collect (string-downcase (first i)))))
+      (unless (find type sets
+                    :test 'equal)
+        (format *error-output* "should be one of~%~{~A~%~}" sets)
+        (ros:quit 1))
+      (loop for i in (rest _)
+            do (template-attr-file name i :method type)))))
+
+(defun template-chmod (_)
+  "Set mode for a file."
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (let ((mod (first _)))
+      (unless (integerp (ignore-errors (parse-integer mod :radix 8)))
+        (setf mod ""))
+      (loop for i in (rest _)
+            do (template-attr-file name i :chmod mod)))))
+
+(defun template-rewrite (_)
+  "Set path rewrite rule for a file"
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (template-attr-file name (first _) :rewrite (second _))))
+
+(defun template-help (_)
   (declare (ignore _))
   "Print usage and subcommands description"
-  (usage)
+  (format *error-output*
+          "~&Usage: ~A template [subcommand] ~%"
+          (pathname-name (opt "wargv0")))
   (loop
-     for (command . func) in *subcommands*
-     do
-       (format *error-output* "~&~15A ~A" command (documentation func 'function))))
+    for (command . func) in *subcommands*
+    do
+       (format *error-output* "~&~15A ~A~%" command (documentation func 'function))))
 
 (defun main (&optional sub &rest argv)
   (let ((func (cdr (assoc sub *subcommands* :test #'equal))))
     (if func
         (funcall func argv)
-        (usage))))
+        (template-help ()))))
 ;;; vim: set ft=lisp lisp:
