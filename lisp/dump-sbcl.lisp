@@ -60,4 +60,3 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
         (sb-int:clear-info :function :predicate-truth-constraint s)
         (sb-int:clear-info :function :macro-function s)
         (sb-int:clear-info :function :compiler-macro-function s)))))
-n
