@@ -24,6 +24,7 @@ roslisp_DATA = helper.el \
 	delete-dump.lisp \
 	\
 	dump.ros \
+	util-dump.lisp \
 	dump-ccl.lisp dump-clisp.lisp \
 	dump-cmucl.lisp dump-ecl.lisp dump-sbcl.lisp \
 	\

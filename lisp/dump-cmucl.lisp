@@ -1,6 +1,6 @@
-(roswell:include "util")
+(roswell:include "util-dump")
 (defpackage :roswell.dump.cmucl
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :roswell.util.dump))
 (in-package :roswell.dump.cmucl)
 
 ;;; cmucl
@@ -12,11 +12,11 @@
 (defun dump-executable (cmds out)
   (setf ext:*batch-mode* nil)
   (setf ext::*gc-run-time* 0)
-  (map nil #'funcall (nreverse ros.script.dump:*queue*))
+  (map nil #'funcall (nreverse *queue*))
   (ext:gc :full t)
   (ext:save-lisp
    out
-   :purify   ros.script.dump:*purify*
+   :purify *purify*
    :executable t
    :print-herald nil ; suppress verbose startup message
    :init-function

@@ -5,15 +5,13 @@ exec ros -- $0 "$@"
 |#
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (roswell:include "util")
+  (roswell:include "util-dump")
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
-    #+quicklisp(ql:quickload :uiop :silent t))
-  #+quicklisp(ql:quickload '(:trivia) :silent t))
+    #+quicklisp(ql:quickload :uiop :silent t)))
 
 (defpackage :ros.script.dump
-  (:use :cl :roswell.util :trivia)
-  (:export :*compression* :*queue* :*purify* :*impurify*))
+  (:use :cl :roswell.util :roswell.util.dump :trivia))
 (in-package :ros.script.dump)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -102,11 +100,6 @@ exec ros -- $0 "$@"
   '(output
     executable))
 
-(defvar *compression* t "
-  A flag enabling the core compression. Effective on
-  sbcl only, and only effective when sbcl is compiled with
-  sb-core-compression.")
-
 (defun remove-docstrings ()
   "Docstrings are unnecessary when the resulting binary is expected to be a batch program.
 With this feature, applications that use docstrings may not work properly."
@@ -117,8 +110,9 @@ With this feature, applications that use docstrings may not work properly."
       (when (documentation s doc-type)
         (setf (documentation s doc-type) nil)))))
 
-(defvar *package-blacklist* `("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP"
+(defvar *package-blacklist* `("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP" "ROSWELL.UTIL.DUMP"
                                         ;; add impl-specific customization
+                                        #+sbcl "ROSWELL.DUMP.SBCL"
                                         #+(or) ,@'())
   "A list of package-designators which is not deleted by delete-all-packages.
 The default value contains the minimal blacklist.")
@@ -171,8 +165,6 @@ Notably, it must include all nicknames.")
     (dolist (package packages)
       (remhash package sb-impl::*package-names*))))
 
-(defvar *queue* nil "list of functions to be performed before dumping")
-
 (defun makunbound-symbols-and-delete-package (pkg-designator)
   (format t "Deleting ~a~%" pkg-designator)
   (force-output *standard-output*)
@@ -206,9 +198,6 @@ Notably, it must include all nicknames.")
   (map nil #'makunbound-symbols-and-delete-package
        (set-difference (list-all-packages)
                        (mapcar #'find-package *package-blacklist*))))
-
-(defvar *purify* t "Whether running a purifying GC (moves objects to non-GC'd static space) before dump")
-(defvar *impurify* t "CCL only. Impurify all static space objects to dynamic space. Precedes the purifying GC.")
 
 #+sbcl
 (defun delete-fun-debug-info (fun)
@@ -316,7 +305,7 @@ This is a portable implementation."
      (push #'delete-compiler-macro-definitions *queue*)
      (parse-options rest fn))
     ((list* "--delete-compiler-information-sbcl" rest)
-     #+sbcl(push (read-from-string "delete-compiler-information-sbcl") *queue*)
+     #+sbcl(push (read-from-string "roswell.dump.sbcl::delete-compiler-information-sbcl") *queue*)
      (parse-options rest fn))
     (_
      (funcall fn args))))

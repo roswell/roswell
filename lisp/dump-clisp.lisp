@@ -1,11 +1,11 @@
-(roswell:include "util")
+(roswell:include "util-dump")
 (defpackage :roswell.dump.clisp
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :roswell.util.dump))
 (in-package :roswell.dump.clisp)
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
-  (map nil #'funcall (nreverse ros.script.dump:*queue*))
+  (map nil #'funcall (nreverse *queue*))
   (ext:saveinitmem
    out
    :quiet t

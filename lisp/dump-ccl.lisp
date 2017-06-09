@@ -1,16 +1,16 @@
-(roswell:include "util")
+(roswell:include "util-dump")
 (defpackage :roswell.dump.ccl
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :roswell.util.dump))
 (in-package :roswell.dump.ccl)
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
-  (map nil #'funcall (nreverse ros.script.dump:*queue*))
+  (map nil #'funcall (nreverse *queue*))
   (ccl:gc)
   (ccl:save-application
    out
-   :impurify ros.script.dump:*impurify*
-   :purify   ros.script.dump:*purify*
+   :impurify *impurify*
+   :purify   *purify*
    :toplevel-function
    #'(lambda ()
        (setf *load-pathname* (pathname (first (ccl::command-line-arguments))))
