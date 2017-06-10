@@ -1,6 +1,6 @@
-(roswell:include "util")
+(roswell:include "util-dump")
 (defpackage :roswell.dump.ecl
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :roswell.util.dump))
 (in-package :roswell.dump.ecl)
 
 ;;; ecl [WIP]
@@ -37,7 +37,7 @@
              :components ((:file ,(pathname-name path)
                            :type ,(pathname-type path)))
              :class asdf:program-system))
-    (map nil #'funcall (nreverse ros.script.dump:*queue*))
+    (map nil #'funcall (nreverse *queue*))
     (asdf:operate
      'asdf:program-op
      (pathname-name path)))) 
