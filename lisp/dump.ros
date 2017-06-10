@@ -8,10 +8,12 @@ exec ros -- $0 "$@"
   (roswell:include "util-dump")
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
-    #+quicklisp(ql:quickload :uiop :silent t)))
+    #+quicklisp(ql:quickload :uiop :silent t))
+  #+quicklisp
+  (ql:quickload '(:trivia) :silent t))
 
 (defpackage :ros.script.dump
-  (:use :cl :roswell.util :roswell.util.dump :trivia))
+  (:use :cl :roswell.util :roswell.util.dump))
 (in-package :ros.script.dump)
 
 (eval-when (:compile-toplevel :load-toplevel :execute)
@@ -32,7 +34,7 @@ exec ros -- $0 "$@"
                    (format *error-output* "dump ~s already exists~%" (pathname-name path))
                    (format *error-output* "file ~s already exists~%" path))
                (funcall func :output path))))
-    (ematch params
+    (trivia:ematch params
       (nil
        (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (opt "argv0")))
       ((list* "-f" rest)
@@ -46,10 +48,9 @@ exec ros -- $0 "$@"
            (%dump (ensure-directories-exist path) :normal))))))
 
 (defun executable (func params)
-  (ematch params
+  (trivia:ematch params
     (nil
      (format *error-output* "Usage: ros dump executable help~%"))
-
     ((list* script rest)
      (setf script (pathname script))
      (unless (probe-file script)
@@ -59,7 +60,7 @@ exec ros -- $0 "$@"
                     (read-from-string
                      (format nil "(~A)"
                              (opt "restart")))))
-            (output (match* (rest script)
+            (output (trivia:match* (rest script)
                       (((list* "-o" output _) _)
                        output)
                       (((list  "-o") _)
@@ -100,167 +101,8 @@ exec ros -- $0 "$@"
   '(output
     executable))
 
-(defun remove-docstrings ()
-  "Docstrings are unnecessary when the resulting binary is expected to be a batch program.
-With this feature, applications that use docstrings may not work properly."
-  (do-all-symbols (s)
-    (dolist (doc-type '(function compiler-macro setf
-                        method-combination type structure
-                        variable))
-      (when (documentation s doc-type)
-        (setf (documentation s doc-type) nil)))))
-
-(defvar *package-blacklist* `("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP" "ROSWELL.UTIL.DUMP"
-                                        ;; add impl-specific customization
-                                        #+sbcl "ROSWELL.DUMP.SBCL"
-                                        #+(or) ,@'())
-  "A list of package-designators which is not deleted by delete-all-packages.
-The default value contains the minimal blacklist.")
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ignore-errors
-    (when (find-symbol "MAKE-PACKAGE-HASHTABLE" :sb-impl)
-      (push :roswell-dump-newer-sbcl *features*))))
-
-(defvar *additional-blacklist-for-destroy-packages*
-  '("ROS")
-  "An additional list of package-designators that needs to be protected from destroy-packages-sbcl.
-These are appended to the blacklist before destroying the package system.
-Notably, it must include all nicknames.")
-
-(defun destroy-packages-sbcl ()
-  (ematch roswell:*main*
-    ((symbol :package (package :name name))
-     (pushnew name *package-blacklist* :test #'string=)))
-  (setf *package-blacklist*
-        (union *package-blacklist*
-               *additional-blacklist-for-destroy-packages*
-               :test #'string=))
-  #+(and sbcl (not roswell-dump-newer-sbcl))
-  (warn "destroying packages is not supported on older versions of sbcl")
-  #+(not sbcl)
-  (warn "destroying packages is supported only on sbcl")
-  #+roswell-dump-newer-sbcl
-  (let (packages)
-    (setf *features* (delete :roswell-dump-newer-sbcl *features*))
-    (maphash (lambda (package-name package)
-               (unless (member package-name *package-blacklist* :test #'string=)
-                 (format t "Deleting ~s~%" package-name)
-                 (setf (sb-impl::package-%use-list package) nil)
-                 (setf (sb-impl::package-%used-by-list package) nil)
-                 (setf (sb-impl::package-%shadowing-symbols package) nil)
-                 (setf (sb-impl::package-internal-symbols package)
-                       (sb-impl::make-package-hashtable 0))
-                 (setf (sb-impl::package-external-symbols package)
-                       (sb-impl::make-package-hashtable 0))
-                 (setf (sb-impl::package-tables package) #())
-                 (setf (sb-impl::package-%implementation-packages package) nil)
-                 (setf (sb-impl::package-%local-nicknames package) nil)
-                 (setf (sb-impl::package-%locally-nicknamed-by package) nil)
-                 (push package-name packages)
-                 (do-symbols (symbol package-name)
-                   (sb-impl::%set-symbol-package symbol nil)
-                   (unintern symbol))))
-             sb-impl::*package-names*)
-    (dolist (package packages)
-      (remhash package sb-impl::*package-names*))))
-
-(defun makunbound-symbols-and-delete-package (pkg-designator)
-  (format t "Deleting ~a~%" pkg-designator)
-  (force-output *standard-output*)
-  (handler-case
-      (progn
-        #-ccl
-        (do-symbols (symbol pkg-designator)
-          (ignore-errors (makunbound symbol))
-          (ignore-errors (fmakunbound symbol))
-          (ignore-errors (unintern symbol pkg-designator)))
-        #+ccl
-        (do-symbols (symbol pkg-designator)
-          ;; f/makunbound causes segv
-          (ignore-errors (unintern symbol pkg-designator))))
-    (package-error ()))
-  (handler-case
-    (delete-package pkg-designator)
-    (package-error ()))
-  ;; 
-  ;; alternative: more restrictive error handling, handle the name conflict caused during deleting a package
-  ;; cf. http://clhs.lisp.se/Body/f_del_pk.htm
-  #+(or)
-  (handler-bind ((package-error #'continue))
-    (delete-package pkg-designator)))
-
-(defun delete-all-packages ()
-  ;; push the package name of the main function (== package of the given script)
-  (ematch roswell:*main*
-    ((symbol :package (package :name name))
-     (pushnew name *package-blacklist* :test #'string=)))
-  (map nil #'makunbound-symbols-and-delete-package
-       (set-difference (list-all-packages)
-                       (mapcar #'find-package *package-blacklist*))))
-
-#+sbcl
-(defun delete-fun-debug-info (fun)
-  ;; cf. src/code/describe.lisp
-  ;; function-lambda-expression
-  (etypecase fun
-    #+sb-eval
-    (sb-eval:interpreted-function
-     )
-    #+sb-fasteval
-    (sb-interpreter:interpreted-function
-     ;; src/interpreter/function.lisp
-     ;; fun-lambda-expression
-     )
-    (function
-     (let* ((fun (sb-impl::%fun-fun fun)) ; obtain the true function from a funcallable-instance
-            (code (sb-di::fun-code-header fun)))
-       (setf (sb-kernel:%code-debug-info code) nil)))))
-
-(defun delete-debug-info ()
-  #-sbcl
-  (warn "delete-debug-info is available only in SBCL")
-  #+sbcl
-  (do-all-symbols (s)
-    (when (fboundp s)
-      (delete-fun-debug-info (symbol-function s)))
-    (sb-int:clear-info :source-location :declaration s)
-    (sb-int:clear-info :type :source-location s)
-    (sb-int:clear-info :source-location :variable s)
-    (sb-int:clear-info :source-location :constant s)
-    (sb-int:clear-info :source-location :typed-structure s)
-    (sb-int:clear-info :source-location :symbol-macro s)
-    (sb-int:clear-info :source-location :vop s)
-    (sb-int:clear-info :source-location :declaration s)
-    (sb-int:clear-info :source-location :alien-type s)
-    (sb-int:clear-info :function :deprecated s)
-    (sb-int:clear-info :variable :deprecated s)
-    (sb-int:clear-info :type :deprecated s)
-    (sb-int:clear-info :function :deprecated s)
-    (sb-int:clear-info :function :deprecated s)
-    (sb-int:clear-info :function :deprecated s)))
-
-
-(defun delete-macro-definitions ()
-  "Delete the macro functions assuming no run-time compilation would occur.
-This is a portable implementation."
-  (#+sbcl sb-ext:without-package-locks
-   #-sbcl progn
-   (do-all-symbols (s)
-     (when (macro-function s)
-       (fmakunbound s)))))
-
-(defun delete-compiler-macro-definitions ()
-  "Delete the compiler-macros assuming no run-time compilation would occur.
-This is a portable implementation."
-  (#+sbcl sb-ext:without-package-locks
-   #-sbcl progn
-   (do-all-symbols (s)
-     (when (compiler-macro-function s)
-       (setf (compiler-macro-function s) nil)))))
-
 (defun parse-options (args fn)
-  (match args
+  (trivia:match args
     ((list* (or "--enable-compression" "-c") rest)
      (setf *compression* t)
      (parse-options rest fn))
@@ -268,7 +110,7 @@ This is a portable implementation."
      (setf *compression* nil)
      (parse-options rest fn))
     ((list* "--remove-docstrings" rest)
-     (push #'remove-docstrings *queue*)
+     (push (read-from-string "roswell.util.dump:remove-docstrings") *queue*)
      (parse-options rest fn))
     ((list* "--delete-package" name rest)
      (push (lambda () (makunbound-symbols-and-delete-package (string-upcase name))) *queue*)
@@ -281,7 +123,7 @@ This is a portable implementation."
      (pushnew (string-upcase name) *package-blacklist* :test #'string=)
      (parse-options rest fn))
     ((list* "--destroy-packages-sbcl" rest)
-     (push #'destroy-packages-sbcl *queue*)
+     #+sbcl(push (read-from-string "roswell.dump.sbcl:destroy-packages-sbcl") *queue*)
      (parse-options rest fn))
     ((list* "--purify" rest)
      (setf *purify* t)
@@ -296,7 +138,7 @@ This is a portable implementation."
      (setf *impurify* nil)
      (parse-options rest fn))
     ((list* "--delete-debug-info" rest)
-     (push #'delete-debug-info *queue*)
+     #+sbcl(push (read-from-string "roswell.dump.sbcl:delete-debug-info") *queue*)
      (parse-options rest fn))
     ((list* "--delete-macro-definitions" rest)
      (push #'delete-macro-definitions *queue*)
@@ -305,7 +147,7 @@ This is a portable implementation."
      (push #'delete-compiler-macro-definitions *queue*)
      (parse-options rest fn))
     ((list* "--delete-compiler-information-sbcl" rest)
-     #+sbcl(push (read-from-string "roswell.dump.sbcl::delete-compiler-information-sbcl") *queue*)
+     #+sbcl(push (read-from-string "roswell.dump.sbcl:delete-compiler-information-sbcl") *queue*)
      (parse-options rest fn))
     (_
      (funcall fn args))))
@@ -318,7 +160,7 @@ This is a portable implementation."
     (cond
       ((and module r)
        (parse-options
-        r (lambda-ematch
+        r (trivia:lambda-ematch
             ((list* mode args)
              (let ((func (find mode (funcall module :query *subcmds*)
                                :test 'equal
