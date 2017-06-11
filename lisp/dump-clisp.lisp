@@ -5,7 +5,7 @@
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
-  (map nil #'funcall (nreverse *queue*))
+  (preprocess-before-dump)
   (ext:saveinitmem
    out
    :quiet t

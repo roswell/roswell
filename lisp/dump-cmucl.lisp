@@ -12,7 +12,7 @@
 (defun dump-executable (cmds out)
   (setf ext:*batch-mode* nil)
   (setf ext::*gc-run-time* 0)
-  (map nil #'funcall (nreverse *queue*))
+  (preprocess-before-dump)
   (ext:gc :full t)
   (ext:save-lisp
    out

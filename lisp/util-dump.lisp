@@ -2,10 +2,11 @@
 (roswell:include "util" "util-dump")
 (defpackage :roswell.util.dump
   (:use :cl :roswell.util)
-  (:export :*compression* :*queue* :*purify* :*impurify* :remove-docstrings
+  (:export :*compression* :*predump* :*purify* :*impurify* :remove-docstrings
    :*package-blacklist* :*additional-blacklist-for-destroy-packages*
    :makunbound-symbols-and-delete-package :delete-all-packages
-   :delete-macro-definitions :delete-compiler-macro-definitions))
+   :delete-macro-definitions :delete-compiler-macro-definitions
+   :preprocess-before-dump))
 (in-package :roswell.util.dump)
 
 (defvar *compression* t "
@@ -13,14 +14,9 @@
   sbcl only, and only effective when sbcl is compiled with
   sb-core-compression.")
 
-(defvar *queue* nil "list of functions to be performed before dumping")
+(defvar *predump* nil "list of functions to be performed before dumping")
 (defvar *purify* t "Whether running a purifying GC (moves objects to non-GC'd static space) before dump")
 (defvar *impurify* t "CCL only. Impurify all static space objects to dynamic space. Precedes the purifying GC.")
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (ignore-errors
-   (when (find-symbol "MAKE-PACKAGE-HASHTABLE" :sb-impl)
-     (push :roswell-dump-newer-sbcl *features*))))
 
 (defvar *package-blacklist* `("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP" "ROSWELL.UTIL.DUMP"
                                         ;; add impl-specific customization
@@ -96,3 +92,11 @@ This is a portable implementation."
    (do-all-symbols (s)
      (when (compiler-macro-function s)
        (setf (compiler-macro-function s) nil)))))
+
+(defun preprocess-before-dump ()
+  (loop for i in (nreverse *predump*)
+        do (cond ((symbolp i)
+                  (funcall i))
+                 ((listp i)
+                  (apply (first i) (rest i)))))
+  (setf *predump* nil))

@@ -5,7 +5,7 @@
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
-  (map nil #'funcall (nreverse *queue*))
+  (preprocess-before-dump)
   (ccl:gc)
   (ccl:save-application
    out

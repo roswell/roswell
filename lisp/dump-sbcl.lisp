@@ -4,9 +4,14 @@
   (:export :delete-compiler-information-sbcl :destroy-packages-sbcl :delete-debug-info))
 (in-package :roswell.dump.sbcl)
 
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (ignore-errors
+   (when (find-symbol "MAKE-PACKAGE-HASHTABLE" :sb-impl)
+     (push :roswell-dump-newer-sbcl *features*))))
+
 (defun dump-executable (cmds out script)
   (declare (ignore script))
-  (map nil #'funcall (nreverse *queue*))
+  (preprocess-before-dump)
   (sb-ext:gc :full t)
   (sb-ext:save-lisp-and-die
    out
@@ -61,7 +66,6 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
         (sb-int:clear-info :function :predicate-truth-constraint s)
         (sb-int:clear-info :function :macro-function s)
         (sb-int:clear-info :function :compiler-macro-function s)))))
-
 
 (defun destroy-packages-sbcl ()
   (when roswell:*main*
