@@ -2,7 +2,7 @@
 (roswell:include "util" "util-dump")
 (defpackage :roswell.util.dump
   (:use :cl :roswell.util)
-  (:export :*compression* :*predump* :*purify* :*impurify* :remove-docstrings
+  (:export :*compression* :dump-compression :*predump* :*purify* :*impurify* :remove-docstrings
    :*package-blacklist* :*additional-blacklist-for-destroy-packages*
    :makunbound-symbols-and-delete-package :delete-all-packages
    :delete-macro-definitions :delete-compiler-macro-definitions
@@ -30,6 +30,9 @@ The default value contains the minimal blacklist.")
   "An additional list of package-designators that needs to be protected from destroy-packages-sbcl.
 These are appended to the blacklist before destroying the package system.
 Notably, it must include all nicknames.")
+
+(defun dump-compression (param)
+  (setf *compression* param))
 
 (defun remove-docstrings ()
   "Docstrings are unnecessary when the resulting binary is expected to be a batch program.
@@ -95,7 +98,13 @@ This is a portable implementation."
 
 (defun preprocess-before-dump ()
   (loop for i in (nreverse *predump*)
-        do (cond ((symbolp i)
+        do (cond ((and (listp i) (eql (first i) 'set))
+                  (set (second i) (third i)))
+                 ((and (listp i)
+                       (eql (first i) 'pushnew)
+                       (not (find (second i) (third i) :test #'equal)))
+                  (set (third i) (cons (second i) (third i))))
+                 ((symbolp i)
                   (funcall i))
                  ((listp i)
                   (apply (first i) (rest i)))))
