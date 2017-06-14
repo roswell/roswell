@@ -8,16 +8,11 @@ exec ros -- $0 "$@"
   (roswell:include "util-dump")
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
-    #+quicklisp(ql:quickload :uiop :silent t))
-  #+quicklisp
-  (ql:quickload '(:trivia) :silent t))
+    #+quicklisp(ql:quickload :uiop :silent t)))
 
 (defpackage :ros.script.dump
   (:use :cl :roswell.util :roswell.util.dump))
 (in-package :ros.script.dump)
-
-(eval-when (:compile-toplevel :load-toplevel :execute)
-  (setf trivia:*arity-check-by-test-call* nil))
 
 (defun dump-dir ()
   (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
@@ -34,106 +29,100 @@ exec ros -- $0 "$@"
                    (format *error-output* "dump ~s already exists~%" (pathname-name path))
                    (format *error-output* "file ~s already exists~%" path))
                (funcall func :output path))))
-    (trivia:ematch params
-      (nil
+    (cond
+      ((equal params nil)
        (format *error-output* "Usage: ~A [OPTIONS] dump output [-f] [-o OUTPUT] NAME~%" (opt "argv0")))
-      ((list* "-f" rest)
-       (output func rest t))
-      ((list "-o" output)
-       (%dump output))
-      ((list "-o")
+      ((and (equal (first params) "-f"))
+       (output func (rest params) t))
+      ((and (equal (first params) "-o") (second params))
+       (%dump (second params)))
+      ((and (equal (first params) "-o"))
        (format *error-output* "Missing the pathname for an image.~%"))
-      (_ (let ((path (merge-pathnames (format nil "~A.~A" (first params) (core-extention))
+      (t (let ((path (merge-pathnames (format nil "~A.~A" (first params) (core-extention))
                                       (dump-dir))))
            (%dump (ensure-directories-exist path) :normal))))))
 
 (defun executable (func params)
-  (trivia:ematch params
-    (nil
-     (format *error-output* "Usage: ros dump executable help~%"))
-    ((list* script rest)
-     (setf script (pathname script))
-     (unless (probe-file script)
-       (warn "The script ~a does not exist, aborting." script)
-       (ros:quit 1))
-     (let* ((cmds (let ((*read-eval*))
-                    (read-from-string
-                     (format nil "(~A)"
-                             (opt "restart")))))
-            (output (trivia:match* (rest script)
-                      (((list* "-o" output _) _)
-                       output)
-                      (((list  "-o") _)
-                       (warn "Missing argument to -o OUTPUT, falling back to the default behavior")
-                       (trivia.skip:skip))
-                      ((_ (pathname :type (equalp "ros")))
-                       (make-pathname :type
-                                      #-win32 nil
-                                      #+win32 "exe"
-                                      :defaults script))
-                      ((_ _)
-                       script))))
-       (when (string-equal ; odd people may use uppercase extension...
-               (pathname-type script) "ros")
-          ;; Note: Why CMDS needs to be updated?
-          ;; If you use -l,-r or other options, information on the
-          ;; corresponding startup commands are stored in CMDS.
-          ;; we just augment it with MAIN function information, because
-          ;; we can for ros file.
-          ;; Fixme: What is the use case when SCRIPT is not a roswell script?
-          (let ((*package* (find-package :cl-user))
-                roswell:*cmd*)
-            ;; loading script
-            (roswell:script script)) ; <--- !!!WARNING!!! Side-effect on roswell:*main*
-          (let ((main-list (let ((*package* (find-package :keyword)))
-                             `((:entry ,(format nil "~S" roswell:*main*))))))
-            (setf cmds (if (first cmds)
-                           (append cmds main-list)
-                           main-list))))
-       (unless cmds
-         ;; Fixme: when STRING-EQUAL is not satisfied, cmds is something like
-         ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
-         ;; it is better to capture this.
-         (warn "dumping an executable without specifing the initial behaviour."))
-       (funcall func :executable cmds output script)))))
+  (if (not params)
+      (format *error-output* "Usage: ros dump executable help~%")
+      (let ((script (pathname (first params))))
+        (unless (probe-file script)
+          (warn "The script ~a does not exist, aborting." script)
+          (ros:quit 1))
+        (let* ((cmds (let ((*read-eval*))
+                       (read-from-string
+                        (format nil "(~A)"
+                                (opt "restart")))))
+               (output (or (when (equal (second params) "-o")
+                             (or (third params)
+                                 (warn "Missing argument to -o OUTPUT, falling back to default behavior")))
+                           (if (string-equal (pathname-type script) "ros")
+                               (make-pathname :type
+                                              #-win32 nil
+                                              #+win32 "exe"
+                                              :defaults script)
+                               script))))
+          (when (string-equal ; odd people may use uppercase extension...
+                 (pathname-type script) "ros")
+            ;; Note: Why CMDS needs to be updated?
+            ;; If you use -l,-r or other options, information on the
+            ;; corresponding startup commands are stored in CMDS.
+            ;; we just augment it with MAIN function information, because
+            ;; we can for ros file.
+            ;; Fixme: What is the use case when SCRIPT is not a roswell script?
+            (let ((*package* (find-package :cl-user))
+                  roswell:*cmd*)
+              ;; loading script
+              (roswell:script script)) ; <--- !!!WARNING!!! Side-effect on roswell:*main*
+            (let ((main-list (let ((*package* (find-package :keyword)))
+                               `((:entry ,(format nil "~S" roswell:*main*))))))
+              (setf cmds (if (first cmds)
+                             (append cmds main-list)
+                             main-list))))
+          (unless cmds
+            ;; Fixme: when STRING-EQUAL is not satisfied, cmds is something like
+            ;; ((:entry "COMMON-LISP:NIL")), which eventually fails.
+            ;; it is better to capture this.
+            (warn "dumping an executable without specifing the initial behaviour."))
+          (funcall func :executable cmds output script)))))
 
 (defvar *subcmds*
   '(output
     executable))
 
 (defun parse-options (args q)
-  (trivia:match args
-    ((list* (or "--enable-compression" "-c") rest)
-     (parse-options rest (cons `(set *compression* t) q)))
-    ((list* "--disable-compression" rest)
-     (parse-options rest (cons `(set *compression* nil) q)))
-    ((list* "--remove-docstrings" rest)
-     (parse-options rest (cons (read-from-string "roswell.util.dump:remove-docstrings") q)))
-    ((list* "--delete-package" name rest)
-     (parse-options rest (cons `(makunbound-symbols-and-delete-package ,(string-upcase name)) q)))
-    ((list* "--delete-all-packages" rest)
-     (parse-options rest (cons 'delete-all-packages q)))
-    ((list* "--delete-packages-except" name rest)
-     (parse-options rest `(delete-all-packages ,@q (pushnew ,(string-upcase name) *package-blacklist* :test #'string=))))
-    ((list* "--destroy-packages-sbcl" rest)
-     (parse-options rest `(#+sbcl ,(read-from-string "roswell.dump.sbcl:destroy-packages-sbcl") ,@q)))
-    ((list* "--purify" rest)
-     (parse-options rest (cons `(set *purify* t) q)))
-    ((list* "--impurify" rest)
-     (parse-options rest (cons `(set *impurify* t) q)))
-    ((list* "--no-purify" rest)
-     (parse-options rest (cons `(set *purify* nil) q)))
-    ((list* "--no-impurify" rest)
-     (parse-options rest (cons `(set *impurify* nil) q)))
-    ((list* "--delete-debug-info" rest)
-     (parse-options rest `(#+sbcl ,(read-from-string "roswell.dump.sbcl:delete-debug-info") ,@q)))
-    ((list* "--delete-macro-definitions" rest)
-     (parse-options rest (cons 'delete-macro-definitions q)))
-    ((list* "--delete-compiler-macro-definitions" rest)
-     (parse-options rest (cons 'delete-compiler-macro-definitions q)))
-    ((list* "--delete-compiler-information-sbcl" rest)
-     (parse-options rest `(#+sbcl ,(read-from-string "roswell.dump.sbcl:delete-compiler-information-sbcl") ,@q)))
-    (_ (values args q))))
+  (let ((car (first args)))
+    (cond ((find car '("--enable-compression" "-c") :test 'equal)
+           (parse-options (rest args) (cons `(set *compression* t) q)))
+          ((equal car "--disable-compression")
+           (parse-options (rest args) (cons `(set *compression* nil) q)))
+          ((equal car "--remove-docstrings")
+           (parse-options (rest args) (cons (read-from-string "roswell.util.dump:remove-docstrings") q)))
+          ((equal car "--delete-package")
+           (parse-options (cddr args) (cons `(makunbound-symbols-and-delete-package ,(string-upcase (second args))) q)))
+          ((equal car "--delete-all-packages")
+           (parse-options (rest args) (cons 'delete-all-packages q)))
+          ((equal car "--delete-packages-except")
+           (parse-options (cddr args) `(delete-all-packages ,@q (pushnew ,(string-upcase (second args)) *package-blacklist* :test #'string=))))
+          ((equal car "--destroy-packages-sbcl")
+           (parse-options (rest args) `(#+sbcl ,(read-from-string "roswell.dump.sbcl:destroy-packages-sbcl") ,@q)))
+          ((equal car "--purify")
+           (parse-options (rest args) (cons `(set *purify* t) q)))
+          ((equal car "--impurify")
+           (parse-options (rest args) (cons `(set *impurify* t) q)))
+          ((equal car "--no-purify")
+           (parse-options (rest args) (cons `(set *purify* nil) q)))
+          ((equal car "--no-impurify")
+           (parse-options (rest args) (cons `(set *impurify* nil) q)))
+          ((equal car "--delete-debug-info")
+           (parse-options (rest args) `(#+sbcl ,(read-from-string "roswell.dump.sbcl:delete-debug-info") ,@q)))
+          ((equal car "--delete-macro-definitions")
+           (parse-options (rest args) (cons 'delete-macro-definitions q)))
+          ((equal car "--delete-compiler-macro-definitions")
+           (parse-options (rest args) (cons 'delete-compiler-macro-definitions q)))
+          ((equal car "--delete-compiler-information-sbcl")
+           (parse-options (rest args) `(#+sbcl ,(read-from-string "roswell.dump.sbcl:delete-compiler-information-sbcl") ,@q)))
+          (t (values args q)))))
 
 (defun main (&rest r)
   (let ((module (module "dump" (or
