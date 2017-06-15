@@ -20,7 +20,7 @@
 </header>
 <p>ros-init - Create a roswell script (optionally based on a template)</p>
 <h1 id="synopsis">Synopsis</h1>
-<p><strong>ros init NAME [TEMPLATE [ARGS...]]</strong></p>
+<p><strong>ros init [TEMPLATE] NAME [ARGS...]]</strong></p>
 <dl>
 <dt>TEMPLATE</dt>
 <dd><p>Specifies the name of a template, defaulted to <em>default</em> template. However, if <em>TEMPLATE</em> is not specified and <em>FILENAME</em> matches one of the templates being stored, then it automatically uses the template. To suppress this behavior, you should explicitly specify <em>TEMPLATE</em> as <em>default</em>.</p>
@@ -33,7 +33,7 @@
 <!-- # subcommands -->
 
 <h1 id="description">Description</h1>
-<p>Initialises a roswell file based on a template. User-specified templates can be added by <em>ros-template</em>(1).</p>
+<p>Initialises a roswell file based on a template. User-specified templates can be added by <em><a href="ros-template.html">ros-template</a></em>(1).</p>
 <p>The default template is something like:</p>
 <pre><code>#!/bin/sh
 #|-*- mode:lisp -*-|#
@@ -58,7 +58,7 @@ exec ros -Q -- $0 &quot;$@&quot;
 <!-- # Environmental Variables -->
 
 <h1 id="see-also">SEE ALSO</h1>
-<p><em>sbcl</em>(1) <em><a href="ros.html">ros</a></em>(1) <em>ros-template</em>(1)</p>
+<p><em>sbcl</em>(1) <em><a href="ros.html">ros</a></em>(1) <em><a href="ros-template.html">ros-template</a></em>(1)</p>
 <p>_</p>
 </body>
 </html>
