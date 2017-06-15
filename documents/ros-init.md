@@ -2,7 +2,7 @@ ros-init - Create a roswell script (optionally based on a template)
 
 # Synopsis
 
-**ros init NAME [TEMPLATE [ARGS...]]** 
+**ros init [TEMPLATE] NAME [ARGS...]]** 
 
 TEMPLATE
 
