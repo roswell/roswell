@@ -5,24 +5,18 @@
 # http://pandoc.org/README.html#using-variables-in-templates
 # https://github.com/jgm/pandoc-templates/blob/master/default.man
 
-MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md \
-	ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md ros-build.md ros-update.md \
-	ros-help.md
 # separated by semicolons
 PANDOC_AUTHORS="Roswell Project Team"
-
-if MANUAL_INSTALL
-man1_MANS = $(MDS:%.md=man/%.1)
-endif
-
 CLEANFILES=roswell.chm
 
 if MANUAL_GENERATE
+MDS = $(wildcard *.md)
+man1_MANS = $(MDS:%.md=man/%.1)
+
 man/%.1: %.md
 	which pandoc
 	pandoc -f markdown -t man -V title="$*" -V section=$(subst .,,$(suffix $@)) \
 	-V author=$(PANDOC_AUTHORS) --template=default.man $<  > $@
-
 CLEANFILES+=$(man1_MANS)
 endif
 

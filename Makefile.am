@@ -1,6 +1,13 @@
 SUBDIRS = lisp src
 
 if MANUAL_INSTALL
+MDS = ros.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md \
+	ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md ros-build.md ros-update.md \
+	ros-help.md
+man1_MANS = $(MDS:%.md=documents/man/%.1)
+endif
+
+if MANUAL_GENERATE
 SUBDIRS += documents
 endif
 
