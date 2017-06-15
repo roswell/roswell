@@ -1,0 +1,73 @@
+.TH "ros-template" "1" "" "" ""
+.nh \" Turn off hyphenation by default.
+.PP
+ros\-template \- Edit template for ros\-init
+.SH synopsis
+.IP \[bu] 2
+\f[B]ros template\f[] command args...
+.SH Subcommands
+.TP
+.B init template\-name
+Create new template in local\-project directory.
+.RS
+.RE
+.TP
+.B list
+Show file list and states of the files \f[I]type\f[] \f[I]chmod\f[]
+\f[I]rewrite\f[] in templates.
+.RS
+.RE
+.TP
+.B checkout [template\-name]
+When invoked without template\-name,this command shows candidates for
+current templates to operate.If with template\-name, this command choose
+the name as current template.
+.RS
+.RE
+.TP
+.B add [template\-name] [files ...]
+Add files to current template.First parameter could taken as a
+template\-name when current template are \f[I]default\f[].
+.RS
+.RE
+.TP
+.B cat [template\-name] [files ...]
+Show contents in the current template.
+.RS
+.RE
+.TP
+.B rm [template\-name] [files ...]
+Remove file form current template.
+.RS
+.RE
+.TP
+.B type [template\-name] [type] [files ...]
+Change file type.
+current choice for \f[I]type\f[]s are \f[I]djula\f[] or \f[I]copy\f[]
+{{name}} {{author}} {{email}} {{universal_time}} are available variable
+in the template file.
+.RS
+.RE
+.TP
+.B chmod [template\-name] [mode] [files ...]
+Change file mode bits to generate.
+specify mode in octal format.
+.RS
+.RE
+.TP
+.B rewrite [template\-name] file rewrite\-rule
+Change file name using djula template.Variables {{name}} {{author}}
+{{email}} {{universal_time}} are available for rewrite\-rule.
+.RS
+.RE
+.TP
+.B help
+Show the subcommand help.
+.RS
+.RE
+.SH description
+.SH SEE ALSO
+.PP
+\f[I]ros\f[](1) \f[I]ros\-init\f[](1)
+.SH AUTHORS
+Roswell Project Team.
