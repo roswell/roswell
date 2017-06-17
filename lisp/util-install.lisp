@@ -9,6 +9,7 @@
 (in-package :roswell.install)
 
 (defvar *ros-path* nil)
+(defvar *env* "ROSINSTALL")
 (defvar *checkout-default* 'checkout-github)
 
 (defun install-impl (impl version argv cmds)
@@ -43,7 +44,8 @@
 (defun install-system-if-probed (imp)
   (let ((result (or (read-call "ql-dist:find-system" imp)
                     (read-call "ql:where-is-system" imp))))
-    (when result
+    (when (and result
+               (= 1 (count #\, (ros:getenv *env*))))
       (funcall 'install-system-script imp)
       result)))
 
@@ -114,6 +116,7 @@
     with *ros-path* = (make-pathname :defaults (opt "argv0"))
     with _
     with changed
+    with envold = (ros:getenv *env*)
     for impl/version/tag = (first argv)
     for pos = (position #\/ impl/version/tag)
     for impl = (if pos (subseq impl/version/tag 0 pos) impl/version/tag)
@@ -122,6 +125,7 @@
     for version = (if pos2 (subseq version/tag 0 pos2) version/tag)
     for tag = (when pos2 (subseq version/tag (1+ pos2)))
     do (setf argv (rest argv))
+       (setenv *env* (format nil "~A,~A" impl/version/tag envold))
        (cond
          ;;registerd implementations like sbcl ccl-bin abcl etc
          ((setf (values _ argv) (install-impl-if-probed impl version/tag argv)))

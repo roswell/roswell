@@ -35,7 +35,6 @@
 
 (defun roswell-installable-searcher (system-name)
   (let ((name (roswell-installed-system-name system-name))
-        (env "ROSINSTALL")
         pname)
     (and
      name
@@ -43,13 +42,12 @@
             (asdf:find-system pname nil)))
      (prog1
          (or (quicklisp-client:local-projects-searcher name)
-             (unless (find system-name (loop for ar = (ros:getenv env) then (subseq ar (1+ p))
+             (unless (find system-name (loop for ar = (ros:getenv "ROSINSTALL") then (subseq ar (1+ p))
                                              for p = (position #\, ar)
                                              for arg = (if p (subseq ar 0 p) ar)
                                              collect arg
                                              while p)
                            :test 'equal)
-               (roswell.util:setenv env (format nil "~A,~A" system-name (ros:getenv env)))
                (roswell:roswell `("install" ,system-name))
                (quicklisp-client:register-local-projects)
                (quicklisp-client:local-projects-searcher name))
