@@ -15,8 +15,6 @@ exec ros -Q +R -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.install.3671936092)
 
 (defun main (&rest argv)
-  (let ((asdf:*system-definition-search-functions*
-          (remove 'roswell-installable-searcher asdf:*system-definition-search-functions*)))
-    (install argv)))
+  (install argv))
 
 ;;; vim: set ft=lisp lisp:
