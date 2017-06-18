@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 19 Jun 2017 00:12:34 +0900
+
 roswell (17.6.9.79-1) unstable; urgency=low
 
   * New: Introduced some image reduction options for `ros dump`.
