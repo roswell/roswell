@@ -1,6 +1,14 @@
 (defun roswell-configdir ()
   (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
 
+(defun roswell-load (system)
+  (let ((result (substring (shell-command-to-string
+                            (concat "ros -L sbcl-bin -e \"(format t \\\"~A~%\\\" (uiop:native-namestring (ql:where-is-system \\\""
+                                    system
+                                    "\\\")))\"")) 0 -1)))
+    (unless (equal "NIL" result)
+      (load (concat result "roswell/elisp/init.el")))))
+
 (defun roswell-opt (var)
   (with-temp-buffer
     (insert-file-contents (concat (roswell-configdir) "config"))
