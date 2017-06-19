@@ -3,9 +3,8 @@
 (in-package :roswell.init.default)
 
 (defun default (name &rest params)
-  (declare (ignore name))
+  (declare (ignore params))
   (let* ((date (get-universal-time))
-         (name (first params))
          (path (make-pathname :defaults name :type "ros")))
     (handler-case
         (unless

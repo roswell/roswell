@@ -14,9 +14,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (defun main (&optional name &rest r)
   (if name
-      (let ((func (module "init" name)))
-        (apply (or func (module "init" "default"))
-               `(,name ,@(unless func (list name)) ,@r)))
-      ;; show usage
-      ))
+      (apply (or (module "init" name)
+                 (module "init" "default"))
+             `(,name ,@r))
+      #+nil "show usage"))
 ;;; vim: set ft=lisp lisp:
