@@ -8,7 +8,7 @@
   "Parse the lisp version string (such as ccl-bin/1.11) and set it to the correct config slot(s)"
   (destructuring-bind (lisp version) (parse-version-spec impl)
     (cond
-      ((let (func (module "use" lisp))
+      ((let ((func (module "use" lisp)))
          (when func
            (apply func lisp version args))
          func))
