@@ -53,4 +53,5 @@ roslisp_DATA = helper.el \
 	util-template.lisp \
 	\
 	use.ros \
-	util-use.lisp
+	util-use.lisp \
+	use-asdf.lisp
