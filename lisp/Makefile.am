@@ -21,7 +21,7 @@ roslisp_DATA = helper.el \
 	wait.ros \
 	\
 	delete.ros \
-	delete-dump.lisp \
+	delete-dump.lisp delete-git.lisp \
 	\
 	dump.ros \
 	util-dump.lisp \
