@@ -33,7 +33,8 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
                                         (subseq (first r) 0 (position #\/ (first r)))
                                         (first r)))))
          (when func
-           (apply func (rest r)))))
+           (apply func r))
+         func))
       (t
        (let* ((impl-name (first r))
               (path (merge-pathnames (format nil "impls/~A/~A/~A/"

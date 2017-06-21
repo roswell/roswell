@@ -1,22 +1,21 @@
 (defpackage :roswell.delete.dump
-  (:use :cl :ros.util))
+  (:use :cl :roswell.util))
 (in-package :roswell.delete.dump)
 
-(defun dump (params)
-  (declare (ignorable params))
-  (print (list params (config "default.lisp")))
-  (let* ((impl (and (second params) (parse-version-spec (second params))))
-         (name (first params))
-         path)
-    (let ((lisp (or (first impl) (config "default.lisp"))))
-      (setf impl (format nil "~A/~A" lisp
-                         (or (second impl) (config (format nil "~A.version" lisp))))))
-    (setf path (make-pathname :name name
+(defun dump (_ &rest params)
+  (declare (ignore _))
+  (let* ((lisp (multiple-value-list
+                (parse-version-spec
+                 (or (ros:opt "*lisp")
+                     (ros:opt "default.lisp")))))
+         (version (or (second lisp) (ros:opt (format nil "~A.version" (first lisp)))))
+         (impl (first lisp))
+         (path (make-pathname :name (first params)
                               :type (core-extention impl)
                               :defaults
-                              (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                                                       (uname-m) (uname) impl)
-                                               (homedir))))
+                              (merge-pathnames (format nil "impls/~A/~A/~A/~A/dump/"
+                                                       (uname-m) (uname) impl version)
+                                               (homedir)))))
     (if (probe-file path)
         (delete-file path)
-        (format *error-output* "The specified image doesn't exist \"~A ~A\"~%" name impl))))
+        (error "The specified image doesn't exist \"~A/~A\"~%" impl version))))
