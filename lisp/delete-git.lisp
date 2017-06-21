@@ -5,7 +5,7 @@
 (defun git (&rest argv)
   (if (rest argv)
       (dolist (x (rest argv) (roswell:quit 0))
-        (let* ((* (directory (merge-pathnames wild (first ql:*local-project-directories*))))
+        (let* ((* (directory (merge-pathnames "**/.git/" (first ql:*local-project-directories*))))
                (* (mapcar (lambda (x) (directory (merge-pathnames "../*.asd" x))) *))
                (* (apply #'append *))
                (* (remove x * :test (complement #'equal) :key #'pathname-name))

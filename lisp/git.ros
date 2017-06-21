@@ -12,8 +12,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.git.3702458293)
 
 (defun main (&rest argv)
-  (let* ((name (pathname-name *load-pathname*))
-         (wild (format nil "**/.~A/" name)))
+  (let* ((name (pathname-name *load-pathname*)))
     (roswell:exec
      (cond
        ((equal (first argv) "clone")
