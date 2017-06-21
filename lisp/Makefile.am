@@ -41,7 +41,7 @@ roslisp_DATA = helper.el \
 	install-cmu-bin.lisp install-ecl.lisp install-quicklisp.lisp \
 	install-sbcl-bin.lisp install-sbcl.lisp install-slime.lisp \
 	install+externals-clasp.lisp install+ffcall.lisp \
-	install+msys2.lisp install+sigsegv.lisp \
+	install+msys2.lisp install+sigsegv.lisp install-asdf.lisp \
 	\
 	update.ros \
 	update-git.lisp update-hg.lisp update-quicklisp.lisp \
