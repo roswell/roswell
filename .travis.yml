@@ -94,7 +94,7 @@ install:
        echo "sbcl-bin-uri	0	https://github.com/roswell/sbcl_bin/releases/download/" >> ~/.roswell/config;
     fi
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then sudo apt-get install -qq lcab > /dev/null; fi
-  - if [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf; fi
+  - if [ $METHOD = debian ]; then sudo apt-get install -qq debhelper dh-autoreconf fakeroot; fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then brew install curl ; fi
