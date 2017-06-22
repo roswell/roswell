@@ -163,8 +163,8 @@ case "$LISP" in
             ros use clisp/system;
         else
             ros install $LISP;
-            ros use $LISP;
         fi
+        ros install asdf;
         ;;
     abcl)
         install_abcl
