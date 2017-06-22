@@ -48,6 +48,7 @@ roslisp_DATA = helper.el \
 	\
 	list.ros \
 	list-dump.lisp list-git.lisp list-installed.lisp list-versions.lisp \
+	list-asdf.lisp \
 	\
 	template.ros \
 	util-template.lisp \

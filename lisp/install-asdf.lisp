@@ -1,15 +1,11 @@
-(roswell:include "util-install")
+(roswell:include "list-asdf")
 (defpackage :roswell.install.asdf
-  (:use :cl :roswell.install :roswell.util :roswell.locations))
+  (:use :cl :roswell.install :roswell.util :roswell.list.asdf :roswell.locations))
 (in-package :roswell.install.asdf)
 
 (defun help (argv)
   (format *error-output* "no options for asdf~%")
   (cons t argv))
-
-(defun asdf-get-version ()
-  (github-version
-   (asdf-git-version-uri) "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
 
 (defun asdf-install (argv)
   (let* ((version (getf argv :version))
