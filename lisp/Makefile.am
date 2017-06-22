@@ -7,7 +7,6 @@ roslisp_DATA = helper.el \
 	patch-quicklisp.lisp \
 	system.lisp \
 	\
-	asdf.ros \
 	build.ros \
 	config.ros \
 	emacs.ros \
