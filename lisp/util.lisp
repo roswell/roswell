@@ -138,7 +138,7 @@ Example:
    "Interface to roswell C binary."
   (roswell:roswell (if val
                        `("config" "set" ,item ,val)  ;; set
-                       `("config" ,item)) :string t) ;; unset
+                       `("config" "unset" ,item)) :string t) ;; unset
   val)
 
 (defun list% (&rest params)

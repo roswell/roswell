@@ -49,16 +49,13 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
        (loop for i in conf
              do (format *error-output* "~A=~A~%" (first i) (third i))
              finally (format *error-output* "~%Possible subcommands:~%set~%show~%")) 0)
-      ((= 1 len)
-       (setf conf (unconfig conf (first argv)))
+      ((and (equal (first argv) "unset") (= 2 len))
+       (setf conf (unconfig conf (second argv)))
        (save-config path conf) 0)
       ((and (equal (first argv) "set") (= 3 len))
        (setf conf (config conf (second argv) (third argv)))
        (save-config path conf) 0)
       ((and (equal (first argv) "show") (= 2 len))
        (format t "~A~%" (or (third (find (second argv) conf :test 'equal :key #'first)) "")) 0)
-      ((= 2 len)
-       (setf conf (config conf (first argv) (second argv)))
-       (save-config path conf) 0)
       (t 1))))
 ;;; vim: set ft=lisp lisp:
