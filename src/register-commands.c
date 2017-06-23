@@ -15,7 +15,7 @@ OPT_SETVAL(verbose,  0,(strcmp(cmd->name,"verbose")==0)?1|verbose<<1:verbose>>1)
 OPT_SETVAL(testing,  0,1+testing)
 OPT_SETVAL(rc,       1,(strcmp(cmd->name,"rc")==0)?1:0)
 OPT_SETVAL(quicklisp,1,(strcmp(cmd->name,"quicklisp")==0)?1:0)
-OPT_SETVAL(asdf     ,0,(strcmp(cmd->name,"asdf")==0)?1:0)
+OPT_SETVAL(asdf     ,1,(strcmp(cmd->name,"asdf")==0)?1:0)
 OPT_SETVAL(module   ,0,1)
 
 DEF_SUBCMD(opt_program0) {
