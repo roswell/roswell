@@ -104,7 +104,7 @@
 (!-tree
  '("ros"
    ("list" "" "installed" "dump" #+broken "versions" "")
-   ("config" "" "show" "set")
+   ("config" "")
    "version"
    "help"
    ("dump" "" "executable" "output")
