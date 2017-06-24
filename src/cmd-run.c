@@ -109,7 +109,7 @@ void star_rc(void) {
   char* prg=get_opt("program",0);
   char* init=s_cat(configdir(),q("init.lisp"),NULL);
   char* etc=ROSRC;
-  prg=s_cat(q(asdf&&get_opt("asdf.version",0)?"(:eval\"(ros:asdf)\")":""),
+  prg=s_cat(q((asdf==2||(asdf==1&&get_opt("asdf.version",0)))?"(:eval\"(ros:asdf)\")":""),
             q(quicklisp?"(:eval\"(ros:quicklisp)\")":""),
             rc&&file_exist_p(etc)?cat("(:load\"",etc,"\")",NULL):q(""),
             rc&&file_exist_p(init)?cat("(:load\"",init,"\")",NULL):q(""),
