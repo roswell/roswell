@@ -48,6 +48,7 @@ DEF_SUBCMD(cmd_script_frontend) {
   script_frontend_sentinel=1;
   if(strcmp(firsts(arg_),"--")==0)
     arg_=nnthcdr(1,arg_),argc--;
+  if (argc == 0) return -1;
   cond_printf(1,"frontend:script_%s:argc=%d argv[0]=%s\n",cmd->name,argc,firsts(arg_));
 
   for(opt=local_opt;opt;opt=opt->next)
