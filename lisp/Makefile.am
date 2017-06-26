@@ -8,6 +8,8 @@ roslisp_DATA = helper.el \
 	system.lisp \
 	\
 	build.ros \
+	build-ros.lisp \
+	\
 	config.ros \
 	emacs.ros \
 	fmt.ros \

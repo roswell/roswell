@@ -5,46 +5,27 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 |#
 
 (progn
-  (roswell:quicklisp :environment nil)
+  (ros:include "util")
   (unless (find-package :uiop)
     (ql:quickload :uiop :silent t)))
 
 (defpackage :ros.script.build.3672011906
-  (:use :cl))
+  (:use :cl :roswell.util))
 (in-package :ros.script.build.3672011906)
 
-(defun parse-argv (argv)
-  (let* ((header "exec ros")
-         (hl (length header)))
-    (and (equal header (subseq argv 0 (length header)))
-         (loop for last = nil then c
-               for i from 0
-               for c across argv
-               when (and (equal #\- last)
-                         (equal #\- c))
-                 do (return (subseq argv hl (1- i)))))))
-
 (defun help ()
-  (format *error-output* "~&Usage: ~A build <file>~%"
+  (format *error-output* "~&Usage: ~A build <file> [[options]]~%"
           (roswell:opt "argv0")))
 
 (defun main (&rest argv)
-  (let ((file (first argv))
-        opts)
+  (let ((file (first argv)))
     (unless file
       (help)
       (roswell:quit))
     (unless (probe-file file)
       (error "File does not exist: '~A'" file))
-    (unless (equalp (pathname-type file) "ros")
-      (error "Only accept ros script for build: '~A'." file))
-    (with-open-file (in file)
-      (loop repeat 4
-         for line = (read-line in)
-         when (ignore-errors (string= line "exec" :end1 4))
-         do (setf opts (parse-argv line))))
-    (roswell:roswell `(,opts "-L" ,(or (ros:opt "*lisp")
-                                       (ros:opt "default.lisp"))
-                             "dump" "executable" ,@argv)
-                     :interactive nil)))
+    (let ((func (module "build" (pathname-type file))))
+      (if func
+          (apply func argv)
+          (error "'~A' is not acceptable for build." file)))))
 ;;; vim: set ft=lisp lisp:
