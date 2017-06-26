@@ -122,7 +122,8 @@
 
 (defun setup (argv)
   (setf (config "default.lisp") (getf argv :target)
-        (config (format nil "~A.version" (getf argv :target))) (opt "as"))
+        (config (format nil "~A.version" (getf argv :target))) (opt "as")
+        (config "setup.time") (format nil "~A" (get-universal-time)))
   (cons t argv))
 
 (defun install-ros (from)
