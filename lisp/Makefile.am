@@ -15,6 +15,7 @@ roslisp_DATA = helper.el \
 	fmt.ros \
 	get.ros \
 	git.ros \
+	hg.ros \
 	run.ros \
 	setup.ros \
 	shell.ros \
