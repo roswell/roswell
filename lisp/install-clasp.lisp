@@ -15,7 +15,7 @@
                       (getf argv :version))))
   (set-opt "src" (merge-pathnames (format nil "src/clasp/~A/" (getf argv :version)) (homedir)))
   (cons t argv))
- 
+
 (defun clasp-lib (argv)
   (roswell:roswell '("install externals-clasp+") :interactive nil)
   (cons t argv))
