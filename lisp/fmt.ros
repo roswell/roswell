@@ -16,10 +16,36 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (:use :cl))
 (in-package :ros.script.fmt.3707812168)
 
+(defun system (path)
+  (let* ((* (if (probe-file path)
+                (progn 
+                  (asdf:load-asd path)
+                  (pathname-name path))
+                path)) ;;dagerous.
+         (* (asdf:find-system *)))
+    (labels ((r (c)
+               (typecase c
+                 (asdf:system
+                  (append
+                   (directory (merge-pathnames "roswell/*.ros" (asdf:component-pathname c)))
+                   (loop for child in (asdf:component-children c)
+                         append (r child))))
+                 (asdf:module
+                  (loop for child in (asdf:component-children c)
+                        append (r child)))
+                 (asdf:cl-source-file
+                  (list (asdf:component-pathname c)))
+                 (t
+                  (list c)))))
+      (when *
+        (asdf:load-system * :verbose nil)
+        (r *)))))
+
 (defun main (&rest argv)
   "go fmt like something"
   (dolist (arg (if argv
-                   argv ;; tbd should take asd file?
+                   (loop for arg in argv
+                         append (or (system arg) (list arg)))
                    (append (directory "*.lisp")
                            (directory "*.ros"))))
     (let ((buffer (lem-base:find-file-buffer arg)))
