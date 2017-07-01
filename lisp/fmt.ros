@@ -1,26 +1,34 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|[WIP] indent lisp source
-exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
+exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
+(progn ;;init forms
+  (ros:ensure-asdf)
+  #+quicklisp
+  (progn
+    (unless (ql:where-is-system :lem)
+      (roswell:roswell '("git" "clone" "https://github.com/cxxxr/lem.git"))
+      (quicklisp-client:register-local-projects))
+    (ql:quickload '(:swank :lem-base :lem-lisp-syntax) :silent t)))
 
-(progn
-  )
-
-(defpackage :ros.script.fmt.3665046980
+(defpackage :ros.script.fmt.3707812168
   (:use :cl))
-(in-package :ros.script.fmt.3665046980)
+(in-package :ros.script.fmt.3707812168)
 
 (defun main (&rest argv)
-  "go fmt like something it should be implemented in common lisp"
-  (declare (ignore argv))
-  (loop for file in (append (directory "*.lisp")
-                            (directory "*.ros"))
-     do (roswell:roswell `("emacs" "-Q" "-q" "--batch"
-                               "--file" ,(namestring file)
-                               "--eval \"(setq make-backup-files nil)\""
-                               "--eval \"(setq-default indent-tabs-mode nil)\""
-                               "--eval \"(indent-region (point-min) (point-max))\""
-                               "--eval \"(save-buffer)\""
-                               "--eval \"(kill-emacs)\""))))
+  "go fmt like something"
+  (dolist (arg (if argv
+                   argv ;; tbd should take asd file?
+                   (append (directory "*.lisp")
+                           (directory "*.ros"))))
+    (let ((buffer (lem-base:find-file-buffer arg)))
+      (setf (lem-base:buffer-syntax-table buffer)
+            lem-lisp-syntax:*syntax-table*)
+      (setf (lem-base:variable-value 'lem-base:calc-indent-function :buffer buffer)
+            'lem-lisp-syntax:calc-indent)
+      (lem-base:apply-region-lines (lem-base:buffer-start-point buffer)
+                                   (lem-base:buffer-end-point buffer)
+                                   'lem-base:indent-line)
+      (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))))
 ;;; vim: set ft=lisp lisp:
