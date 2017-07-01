@@ -17,12 +17,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.fmt.3707812168)
 
 (defun system (path)
-  (let* ((* (if (probe-file path)
-                (progn 
-                  (asdf:load-asd path)
-                  (pathname-name path))
-                path)) ;;dagerous.
-         (* (asdf:find-system *)))
+  (let ((* (when (probe-file path)
+             (asdf:load-asd path)
+             (pathname-name path))))
     (labels ((r (c)
                (typecase c
                  (asdf:system
@@ -38,23 +35,26 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                  (t
                   (list c)))))
       (when *
-        (asdf:load-system * :verbose nil)
-        (r *)))))
+        (ql:quickload * :silent t)
+        (r (asdf:find-system *))))))
 
 (defun main (&rest argv)
   "go fmt like something"
   (dolist (arg (if argv
-                   (loop for arg in argv
-                         append (or (system arg) (list arg)))
+                   (prog1 (loop for arg in argv
+                                append (or (system arg) (list arg)))
+                     (lem-lisp-syntax:indentation-update))
                    (append (directory "*.lisp")
                            (directory "*.ros"))))
-    (let ((buffer (lem-base:find-file-buffer arg)))
-      (setf (lem-base:buffer-syntax-table buffer)
-            lem-lisp-syntax:*syntax-table*)
-      (setf (lem-base:variable-value 'lem-base:calc-indent-function :buffer buffer)
-            'lem-lisp-syntax:calc-indent)
-      (lem-base:apply-region-lines (lem-base:buffer-start-point buffer)
-                                   (lem-base:buffer-end-point buffer)
-                                   'lem-base:indent-line)
-      (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))))
+    (if (probe-file arg)
+        (let ((buffer (lem-base:find-file-buffer arg)))
+          (setf (lem-base:buffer-syntax-table buffer)
+                lem-lisp-syntax:*syntax-table*)
+          (setf (lem-base:variable-value 'lem-base:calc-indent-function :buffer buffer)
+                'lem-lisp-syntax:calc-indent)
+          (lem-base:apply-region-lines (lem-base:buffer-start-point buffer)
+                                       (lem-base:buffer-end-point buffer)
+                                       'lem-base:indent-line)
+          (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))
+        (format *error-output* "~A is not exist" arg))))
 ;;; vim: set ft=lisp lisp:

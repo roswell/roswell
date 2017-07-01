@@ -49,17 +49,19 @@ Returns NIL when the package in the symbol prefix is not available."
                            (ensure-directories-exist (merge-pathnames l to)))))))
 
 (defun module (prefix name)
-  "Convenient wrapper around quickload and roswell:include.
-(module \"dump\" \"sbcl\") will call (include \"dump-sbcl\") and loads dump-sbcl.lisp ."
-  (read-call "ql:register-local-projects")
+  "Load external system"
   (let ((imp (format nil "roswell.~A.~A" prefix name)))
-    (or
-     (and (or (read-call "ql-dist:find-system" imp)
-              (read-call "ql:where-is-system" imp))
-          (read-call "ql:quickload" imp :silent t))
-     (roswell:include (format nil "~A-~A" prefix name)))
-    (ignore-errors
-     (let (*read-eval*) (read-from-string (format nil "~A::~A" imp name))))))
+    (or #1=(ignore-errors
+            (let (*read-eval*)
+              (read-from-string (format nil "~A::~A" imp name))))
+        (progn
+          (read-call "ql:register-local-projects")
+          (or
+           (and (or (read-call "ql-dist:find-system" imp)
+                    (read-call "ql:where-is-system" imp))
+                (read-call "ql:quickload" imp :silent t))
+           (roswell:include (format nil "~A-~A" prefix name)))
+          #1#))))
 
 (defun set-opt (item val)
   (let ((found (assoc item (roswell::ros-opts) :test 'equal)))
@@ -105,7 +107,7 @@ Example:
      when c collect #\\ into r
      when c collect it into r
      unless c collect i into r
-     finally (return (coerce r 'string))))
+      finally (return (coerce r 'string))))
 
 (defun download (uri file &key proxy (verbose nil) (output :interactive))
   "Interface to curl4 in the roswell C binary"
@@ -123,21 +125,21 @@ Example:
     (unless (probe-file (read-call "roswell.install.7zip+::7za"))
       (roswell:roswell '("install 7zip+"))))
   (roswell:roswell `(,(if verbose "-v" "")"roswell-internal-use tar" "-xf" ,archive "-C" ,dest)
-               (or #-win32 :interactive nil) nil))
+                   (or #-win32 :interactive nil) nil))
 
 (defun core-extention (&optional (impl (opt "impl")))
   "Interface to the roswell C binary. Returns \"core\" on sbcl."
   (roswell:roswell `("roswell-internal-use" "core-extention" ,impl) :string t))
 
 (defun config (c)
-   "Interface to roswell C binary."
+  "Interface to roswell C binary."
   (let ((result (roswell:roswell `("config" "show" ,c) :string t)))
     (unless (zerop (length result)) result)))
 
 (defun (setf config) (val item)
-   "Interface to roswell C binary."
+  "Interface to roswell C binary."
   (roswell:roswell (if val
-                       `("config" "set" ,item ,val)  ;; set
+                       `("config" "set" ,item ,val)          ;; set
                        `("config" "unset" ,item)) :string t) ;; unset
   val)
 
@@ -252,6 +254,6 @@ or (if failed) the user-level installation directory of roswell.
     (setenv "MSYSTEM" (if (= bits 32) "MINGW32" "MINGW64"))
     (setenv "MSYS2_PATH_TYPE" "inherit")
     (setenv "PATH" (format nil "~A;~A\\.roswell\\bin;~A"
-                               (subseq path 0 (1- (length path)))
-                               (roswell:getenv "USERPROFILE")
-                               (roswell:getenv "PATH")))))
+                           (subseq path 0 (1- (length path)))
+                           (roswell:getenv "USERPROFILE")
+                           (roswell:getenv "PATH")))))
