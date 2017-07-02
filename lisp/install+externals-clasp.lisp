@@ -3,15 +3,20 @@
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.externals-clasp+)
 
+(defparameter *external-clasp-version*
+  ;; alias commit
+  '(("4.0"     "489501b0fce58d63d00efbb01d0c3b39a07a57ce")
+    ("3.9.1"   "cb00dd0edc7e698162aa176a7d51b9d704bd2596")))
+
 (defun externals-clasp-get-version ()
-  '("cb00dd0edc7e698162aa176a7d51b9d704bd2596"))
+  (mapcar #'first *external-clasp-version*))
 
 (defun externals-clasp-download (argv)
   (set-opt "download.uri" (format nil "~@{~A~}" "https://github.com/drmeister/externals-clasp/archive/"
-                                  (getf argv :version) ".tar.gz"))
-  (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
-                                (when pos
-                                  (merge-pathnames (format nil "archives/externals-clasp-~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+                                  (or (second (assoc (getf argv :version) *external-clasp-version* :test 'equal))
+                                      (getf argv :version))
+                                  ".tar.gz"))
+  (set-opt "download.archive" (merge-pathnames (format nil "archives/externals-clasp-~A.tar.gz" (getf argv :version)) (homedir)))
   `((,(opt "download.archive") ,(opt "download.uri"))))
 
 (defun externals-clasp-expand (argv)
@@ -28,7 +33,7 @@
     (expand (opt "download.archive") (ensure-directories-exist clasp))
     (ignore-errors
      (ql-impl-util:rename-directory
-      (merge-pathnames (format nil "externals-clasp-~A" v) clasp)
+      (merge-pathnames (format nil "externals-clasp-~A" (or (second (assoc v *external-clasp-version* :test 'equal)) v)) clasp)
       (merge-pathnames (format nil "~A" v) clasp))))
   (cons (not (opt "until-extract")) argv))
 
