@@ -40,7 +40,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
     [terminating NULL] that total 9 are default. */
   int i;
   char* ccl_version=get_opt("version",0);
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path=impldir(arch,os,impl,version);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
@@ -51,7 +51,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   unsetenv("CCL_DEFAULT_DIRECTORY");
 
   ret=conss(issystem?truename(which(strcmp(impl,"ccl32")==0?"ccl32":"ccl")):
-            cat(impl_path,SLASH,binname,EXE_EXTENTION,NULL),ret);
+            cat(home,impl_path,SLASH,binname,EXE_EXTENTION,NULL),ret);
   if(ccl_version)
     ret=conss(q("--version"),ret);
   ret=conss(q("--no-init"),ret);
@@ -60,9 +60,9 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--image-name"),ret);
   if(!image) {
     if(!issystem)
-      ret=conss(cat(impl_path,SLASH,binname,".image",NULL),ret);
+      ret=conss(cat(home,impl_path,SLASH,binname,".image",NULL),ret);
   }else
-    ret=conss(cat(impl_path,SLASH,"dump",SLASH,image,".",binname,NULL),ret);
+    ret=conss(cat(home,impl_path,SLASH,"dump",SLASH,image,".",binname,NULL),ret);
 
   ret=conss(q("--eval"),ret);
   ret=conss(s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL),ret);

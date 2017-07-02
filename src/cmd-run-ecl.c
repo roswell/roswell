@@ -2,6 +2,7 @@
 #include "opt.h"
 
 char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
+  char* home=configdir();
   char* arch=uname_m();
   char* os=uname();
   char* impl=(char*)cmd->name;
@@ -9,7 +10,7 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
   /*[binpath for ecl] -norc -eval init.lisp
     [terminating NULL] that total 5 are default. */
   int i;
-  char* impl_path= cat(configdir(),"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path=impldir(arch,os,impl,version);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -19,11 +20,11 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
   if(strcmp(os,"darwin")==0 && strcmp("system",version)!=0) {
     char* path=getenv("DYLD_FALLBACK_LIBRARY_PATH");
     path=path?q(path):s_cat(q(getenv("HOME")),q("/lib:/usr/local/lib:/lib:/usr/lib"),NULL);
-    path=s_cat(q(impl_path),q("/lib:"),path,NULL);
+    path=s_cat(q(home),q(impl_path),q("/lib:"),path,NULL);
     setenv("DYLD_FALLBACK_LIBRARY_PATH",path,1);
     s(path);
   }
-  ret=conss((strcmp("system",version)==0)?truename(which("ecl")):cat(impl_path,SLASH,"bin",SLASH,"ecl",EXE_EXTENTION,NULL),ret);
+  ret=conss((strcmp("system",version)==0)?truename(which("ecl")):cat(home,impl_path,SLASH,"bin",SLASH,"ecl",EXE_EXTENTION,NULL),ret);
   s(arch),s(os),s(impl_path);
   if(get_opt("version",0))
     ret=conss(q("--version"),ret);

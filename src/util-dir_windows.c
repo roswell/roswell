@@ -60,4 +60,8 @@ int delete_directory(char* pathspec,int recursive) {
   }
 }
 
+char* currentdir(void) {
+  char buf[2048];
+  return append_trail_slash(q_(_getcwd(buf,2048)));
+}
 #endif

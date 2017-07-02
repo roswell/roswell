@@ -10,7 +10,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   /*[binpath for sbcl] --noinform --core param --eval init.lisp
     --no-sysinit --no-userinit [terminating NULL] that total 9 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path=impldir(arch,os,impl,version);
   char *path=NULL;
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
@@ -20,13 +20,13 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* control_stack_size=get_opt("control-stack-size",0);
   char* enable_debugger=get_opt("enable-debugger",0);
 
-  char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
+  char* sbcl_home=cat(home,impl_path,"/lib/sbcl",NULL);
   LVal ret=0;
 
   int issystem=(strcmp("system",version)==0);
   char *bin=issystem?
     strcmp(impl,"sbcl32")==0?truename(which("sbcl32")):truename(which("sbcl")):
-    cat(impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
+    cat(home,impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
   setenv("SBCL_HOME",sbcl_home,1);
 
   s(arch),s(os),s(sbcl_home);
@@ -38,7 +38,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     char* bindir=cat(home,"bin"SLASH,NULL);
     char* script2=q(script?script+1:"");
     int pos= position_char("\"",script2);
-    path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    path=cat(home,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(pos!=-1)
       script2[pos]='\0';
     if(script &&
@@ -53,7 +53,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     }else
       cond_printf(1,"core not found:%s\n",path);
   }else if(!issystem)
-    ret=conss(cat(impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
+    ret=conss(cat(home,impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
               conss(q("--core"),ret));
   s(impl_path);
   if(help)

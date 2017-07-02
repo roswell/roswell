@@ -65,6 +65,12 @@ int delete_directory(char* pathspec,int recursive) {
   s(cmd);
   return ret==0;
 }
+
+char* currentdir(void) {
+  char buf[2048];
+  return append_trail_slash(q_(getcwd(buf,2048)));
+}
+
 #else
 char* homedir(void);
 #endif
@@ -80,7 +86,6 @@ char* configdir(void) {
 char* subcmddir(void) {
   return lispdir();
 }
-
 
 char* pathname_directory(char* path) {
   int i;
@@ -98,4 +103,8 @@ char* file_namestring(char* path) {
   ret=(path[i]=='/')?subseq(path,i+1,0):q(path);
   s(path);
   return ret;
+}
+
+char* impldir(char* arch,char* os,char* impl,char* version) {
+  return cat("impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
 }

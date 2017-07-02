@@ -10,7 +10,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   /*[binpath for clisp] -q -q -M param -repl init.lisp
     [terminating NULL] that total 8 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path=impldir(arch,os,impl,version);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -22,7 +22,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss((strcmp("system",version)==0)?
             truename(which((strcmp(impl,"clisp32")==0)?"clisp32":"clisp")):
-            cat(impl_path,SLASH,"bin",SLASH,"clisp",EXE_EXTENTION,NULL),ret);
+            cat(home,impl_path,SLASH,"bin",SLASH,"clisp",EXE_EXTENTION,NULL),ret);
   if(get_opt("version",0)) {
     ret=conss(q("--version"),ret);
     simple=1;
@@ -37,7 +37,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--help"),ret);
 
   if(image) {
-    char *path=cat(impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(home,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-M"),ret);
       ret=conss(path,ret);

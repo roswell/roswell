@@ -114,7 +114,7 @@ int sbcl_bin_install(struct install_options* param) {
   char* home=configdir();
   char* impl=param->impl;
   char* version=param->version;
-  char* impl_path= cat(home,"impls",SLASH,param->arch,SLASH,param->os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path= cat(home,impldir(param->arch,param->os,impl,version),NULL);
   char* src=param->expand_path;
   char* sbcl_home=cat(impl_path,"/lib/sbcl",NULL);
   char* install_root=q(impl_path);

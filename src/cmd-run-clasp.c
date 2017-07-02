@@ -9,14 +9,14 @@ char** cmd_run_clasp(int argc,char** argv,struct sub_command* cmd) {
   char* version=(char*)cmd->short_name;
   /*[binpath for clasp] -r -n --eval init.lisp */ /* don't know very much about image yet.*/
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path=impldir(arch,os,impl,version);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* program=get_opt("program",0);
 
   LVal ret=0;
 
-  char *bin=cat(impl_path,SLASH,"boehm",SLASH,"cclasp-boehm",EXE_EXTENTION,NULL);
+  char *bin=cat(home,impl_path,SLASH,"boehm",SLASH,"cclasp-boehm",EXE_EXTENTION,NULL);
   s(arch),s(os);
   ret=conss(bin,ret);
   s(impl_path);

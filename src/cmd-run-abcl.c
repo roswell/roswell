@@ -10,7 +10,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
   /*[binpath for abcl] --noinform --noinit --nosystem --eval init.lisp
     [terminating NULL] that total 7 are default. */
   int i;
-  char* impl_path= cat(home,"impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  char* impl_path=impldir(arch,os,impl, version);
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
@@ -20,7 +20,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
 
   s(arch),s(os);
 
-  ret=conss((strcmp("system",version)==0)?truename(which("abcl")):cat(impl_path,SLASH,"abcl",EXE_EXTENTION,NULL),ret);
+  ret=conss((strcmp("system",version)==0)?truename(which("abcl")):cat(home,impl_path,SLASH,"abcl",EXE_EXTENTION,NULL),ret);
   /* runtime options from here */
   ret=conss(q("--noinform"),ret);
   ret=conss(q("--noinit"),ret);

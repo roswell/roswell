@@ -128,6 +128,7 @@ char* escape_string(char* str);
 char* s_escape_string(char* str);
 char* lispdir(void);
 /*util_dir.c */
+char* currentdir(void);
 char* configdir(void);
 char* subcmddir(void);
 char* truename(const char* path);
@@ -137,6 +138,7 @@ int ensure_directories_exist (char* path);
 int directory_exist_p (char* path);
 int change_directory(const char* path);
 int delete_directory(char* pathspec,int recursive);
+char* impldir(char* arch,char* os,char* impl,char* version);
 /*util_file.c */
 int delete_file(char* pathspec);
 int rename_file(char* file,char* new_name);
