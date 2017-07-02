@@ -4,6 +4,9 @@
 
 (defun default (name &rest params)
   (declare (ignore params))
+  (map () (lambda (i)
+            (setf name (remove i name)))
+       "./\\")
   (let* ((date (get-universal-time))
          (path (make-pathname :defaults name :type "ros")))
     (handler-case
