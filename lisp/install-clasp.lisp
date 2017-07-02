@@ -3,8 +3,21 @@
   (:use :cl :roswell.install :roswell.util :roswell.locations))
 (in-package :roswell.install.clasp)
 
+(defparameter *clasp-version*
+  ;; alias commit external-clasp-version
+  '(("2017-06-13" "7a6472a72ff62b8ae4b010bd772f5f674b6af544" "3.9.1")
+    ("2017-06-10" "71bf379fced077b49b479c41a28a124a5c01177d" "3.9.1")
+    ("2017-06-03" "35f15d43e89c848d53b8cc4745120f3a07f60cb2" "3.9.1")
+    ("2017-05-20" "699847a1af369670bbc4fcef7421e4bfb45b3208" "3.9.1")
+    ("2017-05-04" "3771079ff22fdfbb5e2f8f8d4e13b66801da62d1" "3.9.1")
+    ("2017-04-15" "c4ca73300a421ccef78cad4dd4f1b237d7b46982" "3.9.1")
+    ("2017-03-20" "fa20fc6c7ef9b9b615cbb07070ec2de7130a1e03" "3.9.1")
+    ("2017-03-12" "aa7edca94666024ecfbf82cf1f59e1f75074ec3d" "3.9.1")
+    ("2017-02-25" "1802d376053d45925bd654e070c09c7b37d2eb20" "3.9.1")
+    ("2017-02-16" "3f6ffecc31f8d0cc835fe0f87cb88402c95c9519" "3.9.1")))
+
 (defun clasp-get-version ()
-  '("7a6472a72ff62b8ae4b010bd772f5f674b6af544"))
+  (mapcar #'first *clasp-version*))
 
 (defun clasp-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))
@@ -34,7 +47,7 @@
      :output t :ignore-error-status nil)
     (format t "git checkout ~A~%" (getf argv :version))
     (uiop/run-program:run-program
-     (list "git" "checkout" (getf argv :version))
+     (list "git" "checkout" (or (second (assoc (getf argv :version) *clasp-version* :test 'equal)) (getf argv :version)))
      :output t :ignore-error-status nil))
   (cons (not (opt "until-extract")) argv))
 
