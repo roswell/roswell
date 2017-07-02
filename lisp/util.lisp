@@ -50,18 +50,20 @@ Returns NIL when the package in the symbol prefix is not available."
 
 (defun module (prefix name)
   "Load external system"
-  (let ((imp (format nil "roswell.~A.~A" prefix name)))
-    (or #1=(ignore-errors
-            (let (*read-eval*)
-              (read-from-string (format nil "~A::~A" imp name))))
-        (progn
-          (read-call "ql:register-local-projects")
-          (or
-           (and (or (read-call "ql-dist:find-system" imp)
-                    (read-call "ql:where-is-system" imp))
-                (read-call "ql:quickload" imp :silent t))
-           (roswell:include (format nil "~A-~A" prefix name)))
-          #1#))))
+  (and (loop for c across "./\\"
+             never (find c name))
+       (let ((imp (format nil "roswell.~A.~A" prefix name)))
+         (or #1=(ignore-errors
+                 (let (*read-eval*)
+                   (read-from-string (format nil "~A::~A" imp name))))
+             (progn
+               (read-call "ql:register-local-projects")
+               (or
+                (and (or (read-call "ql-dist:find-system" imp)
+                         (read-call "ql:where-is-system" imp))
+                     (read-call "ql:quickload" imp :silent t))
+                (roswell:include (format nil "~A-~A" prefix name)))
+               #1#)))))
 
 (defun set-opt (item val)
   (let ((found (assoc item (roswell::ros-opts) :test 'equal)))
@@ -102,19 +104,19 @@ Example:
 
 (defun backslash-encode (string)
   (loop
-     for i across string
-     for c = (cdr (assoc i *backslash-encode-assoc*))
-     when c collect #\\ into r
-     when c collect it into r
-     unless c collect i into r
-      finally (return (coerce r 'string))))
+    for i across string
+    for c = (cdr (assoc i *backslash-encode-assoc*))
+    when c collect #\\ into r
+    when c collect it into r
+    unless c collect i into r
+    finally (return (coerce r 'string))))
 
 (defun download (uri file &key proxy (verbose nil) (output :interactive))
   "Interface to curl4 in the roswell C binary"
   (declare (ignorable proxy))
   (ensure-directories-exist file)
   (roswell:roswell `("roswell-internal-use" "download" ,(backslash-encode uri)
-                                            ,file ,@(when verbose (list verbose)))
+                     ,file ,@(when verbose (list verbose)))
                    output nil))
 
 (defun expand (archive dest &key verbose)
@@ -156,8 +158,8 @@ Example:
   (or #+win32
       (unless (roswell:getenv "MSYSCON")
         (format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
-                          (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-                                                   #+x86-64 "64" #-x86-64 "32") (homedir)))))
+                                 (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+                                                          #+x86-64 "64" #-x86-64 "32") (homedir)))))
       (which "bash")
       "sh"))
 
@@ -198,10 +200,10 @@ or (if failed) the user-level installation directory of roswell.
       (homedir)))
 
 (defun clone-github (owner name &key
-                                  (alias (format nil "~A/~A" owner name))
-                                  branch force-git
-                                  (path "templates")
-                                  (home (checkoutdir)))
+                     (alias (format nil "~A/~A" owner name))
+                     branch force-git
+                     (path "templates")
+                     (home (checkoutdir)))
   (format *error-output* "install from github ~A/~A~%" owner name)
   (if (or force-git (which "git"))
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
