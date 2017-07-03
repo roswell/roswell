@@ -35,10 +35,11 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   /* runtime options from here */
   if(image) {
     char* ld=lispdir();
-    char* bindir=cat(home,"bin"SLASH,NULL);
+    char* base=dumpbasedir();
+    char* bindir=cat(base,"bin"SLASH,NULL);
     char* script2=q(script?script+1:"");
     int pos= position_char("\"",script2);
-    path=cat(home,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    path=cat(base,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(pos!=-1)
       script2[pos]='\0';
     if(script &&

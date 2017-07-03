@@ -128,7 +128,7 @@ char* escape_string(char* str);
 char* s_escape_string(char* str);
 char* lispdir(void);
 /*util_dir.c */
-char* currentdir(void);
+char* dumpbasedir(void);
 char* configdir(void);
 char* subcmddir(void);
 char* truename(const char* path);

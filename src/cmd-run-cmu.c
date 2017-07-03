@@ -40,7 +40,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss(q("-quiet"),ret);
   if(image) {
-    char *path=cat(home,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(dumpbasedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-core"),ret);
       ret=conss(q(path),ret);

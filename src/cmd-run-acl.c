@@ -34,7 +34,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   }
 
   if(image) {
-    char *path=cat(home,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(dumpbasedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-I"),ret);
       ret=conss(path,ret);

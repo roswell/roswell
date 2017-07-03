@@ -81,7 +81,8 @@ Returns NIL when the package in the symbol prefix is not available."
 
 (defun homedir ()
   "Returns the user-level installation directory of roswell. Example: /home/user/.roswell"
-  (opt "homedir"))
+  (or (probe-file (merge-pathnames ".roswell/" *default-pathname-defaults*))
+      (opt "homedir")))
 
 (defun impl (imp)
   "Returns a full name/version of an implementation. Default: current system.

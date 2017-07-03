@@ -108,3 +108,11 @@ char* file_namestring(char* path) {
 char* impldir(char* arch,char* os,char* impl,char* version) {
   return cat("impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
 }
+
+char* dumpbasedir(void) {
+  char* cd_ = s_cat2(currentdir(),q("."PACKAGE SLASH));
+  if(directory_exist_p(cd_))
+    return cd_;
+  s(cd_);
+  return configdir();
+}
