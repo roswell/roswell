@@ -1,0 +1,17 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#| show system's PATH
+exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:ensure-asdf))
+
+(defpackage :ros.script.which.3708003709
+  (:use :cl))
+(in-package :ros.script.which.3708003709)
+
+(defun main (&rest argv)
+  (dolist (e argv)
+    (format t "~A~%" (or (uiop:native-namestring (ql:where-is-system e))
+                         (format nil "~A not found" e)))))
+;;; vim: set ft=lisp lisp:
