@@ -69,10 +69,10 @@
              (cond ((position (format nil "--with-~A" opt) (getf argv :argv) :test 'equal) (set-opt opt t))
                    ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) (set-opt opt :false)))))
     (loop for (name default description sb-prefix) in *sbcl-options*
-       do
-         (when default
-           (set-opt name (eql default t)))
-         (with name)))
+          do
+          (when default
+            (set-opt name (eql default t)))
+          (with name)))
   (cons (if (opt "core-compression")
             (require-system-package "zlib")
             t)
@@ -81,7 +81,6 @@
 (defun sbcl-start (argv)
   (when (and (find (getf argv :target) '("sbcl-bin" "sbcl") :test 'equal)
              (not (opt "sbcl.compiler")))
-    (format t "Using 'sbcl-bin' to compile SBCL. (default)~%")
     (set-opt "sbcl.compiler" "sbcl-bin"))
   (cons t argv))
 
@@ -142,15 +141,15 @@
                        :direction :output :if-exists :supersede :if-does-not-exist :create)
     (let ((*package* (find-package :roswell.install.sbcl)))
       (format out "~s"
-            `(lambda (list)
-               (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
-                               when (opt name)
-                               collect (list (read-from-string (format nil ":~A~A" (if sb-prefix "sb-" "") name))
-                                             (eql t (opt name)))))
-                 (if (second i)
-                     (pushnew (first i) list)
-                     (setf list (remove (first i) list))))
-               list))))
+              `(lambda (list)
+                 (dolist (i ',(loop for (name default description sb-prefix) in *sbcl-options*
+                                    when (opt name)
+                                    collect (list (read-from-string (format nil ":~A~A" (if sb-prefix "sb-" "") name))
+                                                  (eql t (opt name)))))
+                   (if (second i)
+                       (pushnew (first i) list)
+                       (setf list (remove (first i) list))))
+                 list))))
   (cons t argv))
 
 (defun sbcl-make (argv)
@@ -212,21 +211,21 @@
 (defun sbcl-backup-features (argv)
   (let ((src (opt "src")) origin opts)
     (ignore-errors ;; TBD found error on sbcl/1.1.14. Not so important so far to save features.
-      (with-open-file (out (merge-pathnames "share/features.lisp-expr" (opt "prefix"))
-                           :direction :output
-                           :if-exists :supersede
-                           :if-does-not-exist :create)
-        (flet ((read-from-file (f)
-                 (with-open-file (in (merge-pathnames f src))
-                   (read in))))
-          (setq origin (funcall (compile nil (read-from-file "local-target-features.lisp-expr"))
-                                (read-from-file "base-target-features.lisp-expr"))
-                opts (funcall (if (probe-file (merge-pathnames #1="customize-target-features.lisp" src))
-                                  (compile nil (read-from-file #1#))
-                                  #'identity) (copy-list origin)))
-          (format out "(:+ ~s)~%(:- ~s)~%"
-                  (set-difference opts origin)
-                  (set-difference origin opts))))))
+                   (with-open-file (out (merge-pathnames "share/features.lisp-expr" (opt "prefix"))
+                                        :direction :output
+                                        :if-exists :supersede
+                                        :if-does-not-exist :create)
+                     (flet ((read-from-file (f)
+                              (with-open-file (in (merge-pathnames f src))
+                                (read in))))
+                       (setq origin (funcall (compile nil (read-from-file "local-target-features.lisp-expr"))
+                                             (read-from-file "base-target-features.lisp-expr"))
+                             opts (funcall (if (probe-file (merge-pathnames #1="customize-target-features.lisp" src))
+                                               (compile nil (read-from-file #1#))
+                                               #'identity) (copy-list origin)))
+                       (format out "(:+ ~s)~%(:- ~s)~%"
+                               (set-difference opts origin)
+                               (set-difference origin opts))))))
   (cons t argv))
 
 (defvar *sbcl-copy-files*
@@ -252,12 +251,12 @@
      "obj/sbcl-home/contrib/*.*")
     (:touch
      ,(lambda (from to method)
-              (loop for e in (directory (merge-pathnames "obj/asdf-cache/*" from))
-                 do (funcall method (let ((x (merge-pathnames e "test-passed.test-report")))
-                                      (make-pathname :defaults x
-                                                     :directory (append (pathname-directory to)
-                                                                        (nthcdr (length (pathname-directory from))
-                                                                                (pathname-directory x)))))))))))
+        (loop for e in (directory (merge-pathnames "obj/asdf-cache/*" from))
+              do (funcall method (let ((x (merge-pathnames e "test-passed.test-report")))
+                                   (make-pathname :defaults x
+                                                  :directory (append (pathname-directory to)
+                                                                     (nthcdr (length (pathname-directory from))
+                                                                             (pathname-directory x)))))))))))
 
 (defun sbcl-make-archive (argv)
   (when (opt "archive")
@@ -272,25 +271,25 @@
                                   :direction :probe
                                   :if-does-not-exist :create))))
         (loop :for (method . elts) :in *sbcl-copy-files*
-           :do (case method
-                 (:copy (loop for elt in elts
-                           do (if (and (stringp elt) (wild-pathname-p elt))
-                                  (mapc (lambda (x)
-                                          (copy x (make-pathname :defaults x
-                                                                 :directory (append (pathname-directory to)
-                                                                                    (nthcdr (length (pathname-directory from))
-                                                                                            (pathname-directory x))))))
-                                        (reverse (directory (merge-pathnames elt from))))
-                                  (if (consp elt)
-                                      (progn
-                                        (copy (merge-pathnames (first elt) from)
-                                              (merge-pathnames (first elt) to))
-                                        #+sbcl(sb-posix:chmod (merge-pathnames (first elt) to) (second elt)))
-                                      (copy (merge-pathnames elt from)
-                                            (merge-pathnames elt to))))))
-                 (:touch (loop for elt in elts
-                            do (if (functionp elt)
-                                   (funcall elt from to #'touch)))))))))
+              :do (case method
+                    (:copy (loop for elt in elts
+                                 do (if (and (stringp elt) (wild-pathname-p elt))
+                                        (mapc (lambda (x)
+                                                (copy x (make-pathname :defaults x
+                                                                       :directory (append (pathname-directory to)
+                                                                                          (nthcdr (length (pathname-directory from))
+                                                                                                  (pathname-directory x))))))
+                                              (reverse (directory (merge-pathnames elt from))))
+                                        (if (consp elt)
+                                            (progn
+                                              (copy (merge-pathnames (first elt) from)
+                                                    (merge-pathnames (first elt) to))
+                                              #+sbcl(sb-posix:chmod (merge-pathnames (first elt) to) (second elt)))
+                                            (copy (merge-pathnames elt from)
+                                                  (merge-pathnames elt to))))))
+                    (:touch (loop for elt in elts
+                                  do (if (functionp elt)
+                                         (funcall elt from to #'touch)))))))))
   (cons t argv))
 
 (defun sbcl-clean (argv)
@@ -321,26 +320,26 @@
     (fmt "as" "nickname" "install non-default optioned version of SBCL")
     (fmt "install" t "Download archive")
     (loop for (name default description sb-prefix) in *sbcl-options*
-       do (fmt name default description)))
+          do (fmt name default description)))
   (cons t argv))
 
 (defun sbcl (type)
   (case type
     (:help '(sbcl-help))
     (:install `(,(decide-version 'sbcl-get-version)
-                   sbcl-argv-parse
-                   #+win32 sbcl-msys
-                   sbcl-start
-                   start
-                   ,(decide-download 'sbcl-download)
-                   sbcl-expand
-                   sbcl-patch
-                   sbcl-config
-                   sbcl-make
-                   sbcl-install
-                   #+win32 sbcl-install-win32
-                   sbcl-backup-features
-                   sbcl-make-archive
-                   sbcl-clean
-                   setup))
+                sbcl-argv-parse
+                #+win32 sbcl-msys
+                sbcl-start
+                start
+                ,(decide-download 'sbcl-download)
+                sbcl-expand
+                sbcl-patch
+                sbcl-config
+                sbcl-make
+                sbcl-install
+                #+win32 sbcl-install-win32
+                sbcl-backup-features
+                sbcl-make-archive
+                sbcl-clean
+                setup))
     (:list 'sbcl-get-version)))

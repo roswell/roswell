@@ -3,7 +3,7 @@
 
 The entry of all roswell commands.
 The true internal entry invoked by the C binary is roswell:run.
- (to see how this function is invoked, consult ros.c, cmd-run-sbcl.c etc.)
+(to see how this function is invoked, consult ros.c, cmd-run-sbcl.c etc.)
 All roswell commands are dispatched from this function via the symbol lookup.
 
 For example, -sp SP or --system-package SP will cause the roswell C binary
@@ -96,7 +96,6 @@ have the latest asdf, and this file has a workaround for this.
   (sb-alien:define-alien-routine ("execvp" %execvp) sb-alien:int
     (program sb-alien:c-string)
     (argv (* sb-alien:c-string)))
-
   (defun execvp (program args)
     "Replace current executable with another one."
     (let ((a-args (sb-alien:make-alien sb-alien:c-string
@@ -104,9 +103,9 @@ have the latest asdf, and this file has a workaround for this.
       (unwind-protect
            (progn
              (loop for index from 0 by 1
-                and item in (append args '(nil))
-                do (setf (sb-alien:deref a-args index)
-                         item))
+                   and item in (append args '(nil))
+                   do (setf (sb-alien:deref a-args index)
+                            item))
              (when (minusp
                     (%execvp program a-args))
                (let ((errno (sb-impl::get-errno)))
@@ -152,7 +151,7 @@ have the latest asdf, and this file has a workaround for this.
   (execvp (first args) args)
   #+(and unix ccl)
   (ignore-errors
-    (ccl:with-string-vector (argv args) (ccl::%execvp argv)))
+   (ccl:with-string-vector (argv args) (ccl::%execvp argv)))
   (quit (run-program args :output :interactive)))
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
@@ -180,7 +179,7 @@ have the latest asdf, and this file has a workaround for this.
               for probe = (and path (or (ignore-errors (probe-file path))
                                         #+clisp(ext:probe-directory path)))
               when probe
-                do (set symbol (cons path (symbol-value symbol)))
+              do (set symbol (cons path (symbol-value symbol)))
               until probe)
         t))))
 
@@ -198,10 +197,10 @@ have the latest asdf, and this file has a workaround for this.
                 :name name :type "lisp")
     unless (or (not name)
                (member name *included-names* :test 'string=))
-      do (push name *included-names*)
-         (and (probe-file path)
-              (not (equal provide name))
-              (cl:load path))))
+    do (push name *included-names*)
+    (and (probe-file path)
+         (not (equal provide name))
+         (cl:load path))))
 
 (defmacro deplicated-fun (name lambda-list include read date)
   `(defun ,name ,lambda-list
@@ -253,11 +252,11 @@ have the latest asdf, and this file has a workaround for this.
                 (error "asdf download error?"))
               (when (probe-file path)
                 (ignore-errors
-                  (locally
-                      (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
-                    (handler-bind
-                        (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
-                      (cl:load path)))))))))
+                 (locally
+                     (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
+                   (handler-bind
+                       (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
+                     (cl:load path)))))))))
 
 (let ((symbol (ignore-errors (read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (opt "impl"))))
@@ -285,12 +284,12 @@ have the latest asdf, and this file has a workaround for this.
   (declare (ignorable rest))
   (let ((dir (format nil "~{~A~^:~}"
                      (loop for i = arg then (subseq i (1+ pos))
-                        for pos = (position #\: i)
-                        for part = (if pos (subseq i 0 pos) i)
-                        when (and (not (zerop (length part)))
-                                  (probe-file part))
-                        collect (namestring (probe-file part))
-                        while pos))))
+                           for pos = (position #\: i)
+                           for part = (if pos (subseq i 0 pos) i)
+                           when (and (not (zerop (length part)))
+                                     (probe-file part))
+                           collect (namestring (probe-file part))
+                           while pos))))
     (if (zerop (length dir))
         (warn "Source-registry ~S is invalid. Ignored." arg)
         (funcall (read-from-string "asdf:initialize-source-registry") dir))))
@@ -301,12 +300,12 @@ have the latest asdf, and this file has a workaround for this.
   (unless (find :asdf *features*)
     (error "Can't find asdf to load system"))
   (loop for ar = args then (subseq ar (1+ p))
-     for p = (position #\, ar)
-     for arg = (if p (subseq ar 0 p) ar)
-     do (if (find :quicklisp *features*)
-            (funcall (read-from-string "ql:quickload") arg :silent (not (verbose)))
-            (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg))
-     while p))
+        for p = (position #\, ar)
+        for arg = (if p (subseq ar 0 p) ar)
+        do (if (find :quicklisp *features*)
+               (funcall (read-from-string "ql:quickload") arg :silent (not (verbose)))
+               (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg))
+        while p))
 
 (setf (fdefinition 'load-system)
       #'system)
@@ -406,9 +405,9 @@ have the latest asdf, and this file has a workaround for this.
 (unless (find :ros.init *features*)
   (push :ros.init *features*)
   (loop
-     with *package* = (find-package :cl-user)
-     for i in ext:*args*
-     do (cl:eval (cl:read-from-string i))))
+    with *package* = (find-package :cl-user)
+    for i in ext:*args*
+    do (cl:eval (cl:read-from-string i))))
 
 (unless (find :ros.init *features*)
   (push :ros.init *features*))
