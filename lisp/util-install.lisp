@@ -2,10 +2,10 @@
 (defpackage :roswell.install
   (:use :cl :roswell.util :roswell.locations)
   (:export :*build-hook* :install-impl :read-call :*ros-path*
-   :install-system-script :install-impl-if-probed :install-script-if-probed
-   :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
-   :install :decide-version :decide-download :require-system-package
-   :start :setup :date :github-version :version :install-script :count-line-stream))
+           :install-system-script :install-impl-if-probed :install-script-if-probed
+           :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
+           :install :decide-version :decide-download :require-system-package
+           :start :setup :date :github-version :version :install-script :count-line-stream))
 (in-package :roswell.install)
 
 (defvar *ros-path* nil)
@@ -73,7 +73,7 @@
      (loop for link in (read-call "plump:get-elements-by-tag-name" elts "link")
            for href = (read-call "plump:get-attribute" link "href")
            when (eql (aref href 0) #\/)
-             collect (funcall filter href)))))
+           collect (funcall filter href)))))
 
 (defun checkout-github (impl version tag)
   (clone-github impl version :path "local-projects" :branch tag))
@@ -125,28 +125,28 @@
     for version = (if pos2 (subseq version/tag 0 pos2) version/tag)
     for tag = (when pos2 (subseq version/tag (1+ pos2)))
     do (setf argv (rest argv))
-       (setenv *env* (format nil "~A,~A" impl/version/tag envold))
-       (cond
-         ;;registerd implementations like sbcl ccl-bin abcl etc
-         ((setf (values _ argv) (install-impl-if-probed impl version/tag argv)))
-         ;;local ros file like tool.ros
-         ((install-script-if-probed impl/version/tag))
-         ;;asd/quicklisp registered systems which contain "roswell" directory
-         ((install-system-if-probed impl/version/tag))
-         ;;local relative pathname
-         ((install-localpath-if-probed impl/version/tag))
-         ;;github registerd system like "fukamachi/sblint" checkout
-         (version
-          (funcall *checkout-default* impl version tag)
-          (read-call "quicklisp-client:register-local-projects")
-          (or (and (install-impl-if-probed version nil argv)
-                   (or (setf argv nil) t))
-              (install-system-if-probed version)))
-         (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
+    (setenv *env* (format nil "~A,~A" impl/version/tag envold))
+    (cond
+      ;;registerd implementations like sbcl ccl-bin abcl etc
+      ((setf (values _ argv) (install-impl-if-probed impl version/tag argv)))
+      ;;local ros file like tool.ros
+      ((install-script-if-probed impl/version/tag))
+      ;;asd/quicklisp registered systems which contain "roswell" directory
+      ((install-system-if-probed impl/version/tag))
+      ;;local relative pathname
+      ((install-localpath-if-probed impl/version/tag))
+      ;;github registerd system like "fukamachi/sblint" checkout
+      (version
+       (funcall *checkout-default* impl version tag)
+       (read-call "quicklisp-client:register-local-projects")
+       (or (and (install-impl-if-probed version nil argv)
+                (or (setf argv nil) t))
+           (install-system-if-probed version)))
+      (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" impl)
-            (roswell:quit 1)))
-       (setf changed t)
+         (roswell:quit 1)))
+    (setf changed t)
     while argv
     finally (when changed (roswell:exec `(,(opt "argv0") "setup")))))
 
@@ -174,12 +174,12 @@
                    t)
                   (push to-install result))))
         finally
-           (return
-             (if result
-                 (cond
-                   ((equal mgr "dpkg")
-                    (format *error-output*
-                            "might cause error 'apt-get install ~{~A~^ ~}' would help~%" result)
-                    t)) ;; Don't have confidence.
-                 t))))
+        (return
+          (if result
+              (cond
+                ((equal mgr "dpkg")
+                 (format *error-output*
+                         "might cause error 'apt-get install ~{~A~^ ~}' would help~%" result)
+                 t)) ;; Don't have confidence.
+              t))))
 

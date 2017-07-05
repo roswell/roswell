@@ -8,9 +8,9 @@
   (mapcar #'car *allegro-agreement-uri*))
 
 (defun make-allegro-uri (argv &key
-                                (uname (uname))
-                                (uname-m (uname-m))
-                                (version (getf argv :version)))
+                         (uname (uname))
+                         (uname-m (uname-m))
+                         (version (getf argv :version)))
   (let ((os (intern uname :keyword))
         (machine (intern uname-m :keyword)))
     (cond ((find version '("10.1express" "100express") :test 'equal)

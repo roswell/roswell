@@ -15,7 +15,7 @@
                               (plump:parse file) "a")
                     for x = (string-right-trim "/" (plump:get-attribute a "href"))
                     when (digit-char-p (aref x 0))
-                      collect x)))))
+                    collect x)))))
 
 (defun abcl-bin-impl ()
   (merge-pathnames (format nil "impls/~A/~A/abcl-bin/" (uname-m) (uname)) (homedir)))

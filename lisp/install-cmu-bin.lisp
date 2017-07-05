@@ -10,11 +10,11 @@
                  (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
       (download (format nil "~Arelease/" (cmu-bin-uri)) file))
     (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
-       for href = (plump:get-attribute link "href")
-       for len = (length href)
-       when (and (digit-char-p (aref href 0))
-                 (char= (aref href (1- len)) #\/))
-       collect (string-right-trim "/" href))))
+          for href = (plump:get-attribute link "href")
+          for len = (length href)
+          when (and (digit-char-p (aref href 0))
+                    (char= (aref href (1- len)) #\/))
+          collect (string-right-trim "/" href))))
 
 (defvar *cmu-uname-m-alist*
   '(("x86-64" . "x86")))
@@ -51,12 +51,12 @@
 (defun cmu-bin-expand (argv)
   (loop for archive in (list (opt "download.archive") (opt "download.extra.archive"))
         do (format t "~%Extracting archive:~A~%" (opt "download.archive"))
-           (let* ((impls (merge-pathnames (format nil "impls/~A/~A/cmu-bin/~A/" (uname-m) (uname) (opt "as")) (homedir)))
-                  (path (merge-pathnames (format nil "~A/" (opt "as")) impls)))
-             (expand archive (ensure-directories-exist impls))
-             (and (probe-file path)
-                  (uiop/filesystem:delete-directory-tree
-                   path :validate t))))
+        (let* ((impls (merge-pathnames (format nil "impls/~A/~A/cmu-bin/~A/" (uname-m) (uname) (opt "as")) (homedir)))
+               (path (merge-pathnames (format nil "~A/" (opt "as")) impls)))
+          (expand archive (ensure-directories-exist impls))
+          (and (probe-file path)
+               (uiop/filesystem:delete-directory-tree
+                path :validate t))))
   (cons t argv))
 
 (defun cmu-bin-help (argv)

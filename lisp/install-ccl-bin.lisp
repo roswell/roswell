@@ -14,7 +14,7 @@
           for len = (length href)
           when (and (digit-char-p (aref href 0))
                     (char= (aref href (1- len)) #\/))
-            collect (string-right-trim "/" href))))
+          collect (string-right-trim "/" href))))
 
 (defvar *ccl-uname-m-alist*
   '(("x86-64" . "x86")

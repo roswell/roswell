@@ -19,7 +19,7 @@
                     (not (eql (aref href 0) #\/))
                     (not (find #\: href))
                     (not (equal "latest/" href)))
-            collect (subseq href 0 len))))
+          collect (subseq href 0 len))))
 
 (defun clisp-argv-parse (argv)
   (let ((pos (position "--as" (getf argv :argv) :test 'equal)))

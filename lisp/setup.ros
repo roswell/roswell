@@ -17,9 +17,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         for to from 0
         when (or (eql length to)
                  (eql (aref line to) #\space))
-          collect (prog1
-                      (subseq line from to)
-                    (setq from (1+ to)))
+        collect (prog1
+                    (subseq line from to)
+                  (setq from (1+ to)))
         until (eql length to)))
 
 (defun dump-filter (name)
@@ -92,10 +92,10 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                (format *error-output* "up to date. stop~%")
                t))
       (roswell:roswell `("+R " ,(if (roswell:verbose) "-v" "") " -L " "sbcl-bin"
-                           " --eval " #-win32 "'" "(roswell:ignore-shebang)" #-win32 "'" " "
-                           ,@(loop for i in dir
-                                   collect "--load "
-                                   collect (format nil "~A " i))
-                           "dump output -f " ,dump)
+                         " --eval " #-win32 "'" "(roswell:ignore-shebang)" #-win32 "'" " "
+                         ,@(loop for i in dir
+                                 collect "--load "
+                                 collect (format nil "~A " i))
+                         "dump output -f " ,dump)
                        t nil))))
 ;;; vim: set ft=lisp lisp:

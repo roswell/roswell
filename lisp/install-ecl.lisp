@@ -49,7 +49,7 @@
                             ((position (format nil "--without-~A" opt) (getf argv :argv) :test 'equal) nil)
                             (t default)))))
     (loop for (opt default . nil) in *ecl-options*
-       do (with opt default)))
+          do (with opt default)))
   (cons t argv))
 
 (defun ecl-download (argv)
@@ -125,15 +125,15 @@
   (case type
     (:help '())
     (:install `(#+win32
-                 ecl-msys
-                 ,(decide-version 'ecl-get-version)
-                 ecl-argv-parse
-                 start
-                 ,(decide-download 'ecl-download)
-                 ecl-expand
-                 ecl-config
-                 ecl-make
-                 ecl-install
-                 ecl-clean
-                 setup))
+                ecl-msys
+                ,(decide-version 'ecl-get-version)
+                ecl-argv-parse
+                start
+                ,(decide-download 'ecl-download)
+                ecl-expand
+                ecl-config
+                ecl-make
+                ecl-install
+                ecl-clean
+                setup))
     #+nil(:list 'ecl-get-version)))
