@@ -7,6 +7,12 @@
 (defun load-asd (file)
   (roswell.util:read-call "asdf:load-asd" file))
 (setf *load* (acons 'asd-p 'load-asd (remove 'asd-p *load* :key 'first)))
+(defun ros-p (file)
+  (equal (pathname-type file) "ros"))
+(defun load-ros (file)
+  (let (*cmd* *main*)
+    (script file)))
+(setf *load* (acons 'ros-p 'load-ros (remove 'ros-p *load* :key 'first)))
 (in-package :roswell.util)
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
   "Request URL and write the body of the response to FILE."
