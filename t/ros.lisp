@@ -109,7 +109,6 @@
    "help"
    ("dump" "" "executable" "output")
    "use"
-   "asdf"
    "fmt"
    ;;"build"
    ))
