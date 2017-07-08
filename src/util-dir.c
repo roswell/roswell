@@ -109,7 +109,7 @@ char* impldir(char* arch,char* os,char* impl,char* version) {
   return cat("impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
 }
 
-char* dumpbasedir(void) {
+char* basedir(void) {
   char* cd_ = s_cat2(currentdir(),q("."PACKAGE SLASH));
   if(directory_exist_p(cd_))
     return cd_;

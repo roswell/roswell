@@ -37,7 +37,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--help"),ret);
 
   if(image) {
-    char *path=cat(dumpbasedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-M"),ret);
       ret=conss(path,ret);

@@ -62,7 +62,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
     if(!issystem)
       ret=conss(cat(home,impl_path,SLASH,binname,".image",NULL),ret);
   }else
-    ret=conss(cat(dumpbasedir(),impl_path,SLASH,"dump",SLASH,image,".",binname,NULL),ret);
+    ret=conss(cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".",binname,NULL),ret);
 
   ret=conss(q("--eval"),ret);
   ret=conss(s_cat(q("(progn #-ros.init(cl:load \""),lispdir(),q("init.lisp"),q("\"))"),NULL),ret);
