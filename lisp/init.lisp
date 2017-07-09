@@ -161,10 +161,6 @@ have the latest asdf, and this file has a workaround for this.
                  :type "lisp"
                  :defaults (or path
                                (and environment (getenv environment))
-                               (let ((path (merge-pathnames ".roswell/lisp/quicklisp/"
-                                                            *default-pathname-defaults*)))
-                                 (or (ignore-errors (probe-file path))
-                                     #+clisp(ext:probe-directory path)))
                                (opt "quicklisp"))))
           (local (ignore-errors
                   (truename
