@@ -4,6 +4,7 @@
 
 (defun default (name &rest params)
   (declare (ignore params))
+  (setf name (namestring (make-pathname :defaults name :type nil)))
   (map () (lambda (i)
             (setf name (remove i name)))
        "./\\")
