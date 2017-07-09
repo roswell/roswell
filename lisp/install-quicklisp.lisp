@@ -14,7 +14,7 @@
 
 (defun quicklisp-argv-parse (argv)
   (set-opt "download.uri" (format nil "~A~A" (quicklisp-uri) "quicklisp.lisp"))
-  (set-opt "download.archive" (merge-pathnames (format nil "archives/~A" "quicklisp.lisp") (homedir)))
+  (set-opt "download.archive" (merge-pathnames "archives/quicklisp.lisp" (homedir)))
   (let ((pos (position "--path" (getf argv :argv) :test 'equal)))
     (and pos (ignore-errors (nth (1+ pos) (getf argv :argv)))
          (set-opt "quicklisp" (nth (1+ pos) (getf argv :argv)))))
@@ -57,7 +57,7 @@
        ;; use roswell to download everithing.
        (setf (fdefinition (find-symbol (string :fetch) :qlqs-http))
              (lambda (url file &key (follow-redirects t) quietly
-                                 (maximum-redirects 10))
+                      (maximum-redirects 10))
                "Request URL and write the body of the response to FILE."
                (declare (ignorable url file follow-redirects quietly
                                    maximum-redirects))
