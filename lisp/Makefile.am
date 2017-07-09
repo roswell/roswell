@@ -8,7 +8,7 @@ roslisp_DATA = helper.el \
 	system.lisp \
 	\
 	build.ros \
-	build-ros.lisp \
+	build-ros.lisp build-asd.lisp \
 	\
 	config.ros \
 	emacs.ros \

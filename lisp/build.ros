@@ -14,11 +14,17 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.build.3672011906)
 
 (defun help ()
-  (format *error-output* "~&Usage: ~A build <file> [[options]]~%"
+  (format *error-output* "~&Usage: ~A build [<file>] [[options]]~%"
           (roswell:opt "argv0")))
 
 (defun main (&rest argv)
   (let ((file (first argv)))
+    (unless (and file (pathname-type file))
+      (push (probe-file
+             (make-pathname :name (first (last (pathname-directory *default-pathname-defaults*)))
+                            :type "asd"))
+            argv)
+      (setf file (first argv)))
     (unless file
       (help)
       (roswell:quit))
