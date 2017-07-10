@@ -1,4 +1,3 @@
-roslispdir = $(sysconfdir)/$(PACKAGE)
 ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_windows.c \
 	util-file.c util-file_windows.c util-system.c util-system_windows.c util-cmdline.c proc-opt.c \
 	manual.c manual_windows.c
@@ -8,16 +7,7 @@ html_sbcl_SOURCES =  html.c html-sbcl-bin.c ros.c opt.c $(ros_utils)
 html_sbcl_CFLAGS = "-D ROSWELL_HTML_TEST"
 
 gend.h: FORCE
-	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
-	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
-	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
-	printf '#ifdef HAVE_WINDOWS_H\n'  >> $@.tmp
-	printf '#define LISP_PATH "%s"' "`cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
-	printf '\n#else\n'  >> $@.tmp
-	printf '#define LISP_PATH "%s"' "$(roslispdir)" >> $@.tmp
-	printf '\n#endif\n'  >> $@.tmp
-	cmp -s $@.tmp $@||cp $@.tmp $@
-	rm -f $@.tmp
+	make -C ../lisp ../src/gend.h
 cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c \
