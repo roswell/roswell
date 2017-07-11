@@ -1,3 +1,5 @@
+roslispdir = $(sysconfdir)/$(PACKAGE)
+proslispdir = $(sysconfdir)/$(PACKAGE)/patch
 SUBDIRS = src
 
 if MANUAL_INSTALL
@@ -11,7 +13,6 @@ if MANUAL_GENERATE
 SUBDIRS += documents
 endif
 
-roslispdir = $(sysconfdir)/$(PACKAGE)
 LISPS = helper.el \
 	init.lisp \
 	util.lisp \
@@ -74,6 +75,8 @@ LISPS = helper.el \
 	\
 	which.ros
 roslisp_DATA = $(LISPS:%=lisp/%)
+
+#proslisp_DATA = clisp.patch sbcl-1.3.11.patch sbcl-posix-tests.patch
 
 src/gend.h: FORCE
 	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
