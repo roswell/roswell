@@ -85,6 +85,7 @@ src/gend.h: FORCE
 	printf '#define LISP_PATH "%s"' "$(roslispdir)" >> $@.tmp
 	printf '\n#endif\n'  >> $@.tmp
 	cmp -s $@.tmp $@||cp $@.tmp $@
+	cat $@
 	rm -f $@.tmp
 
 prepare:
