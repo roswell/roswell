@@ -7,7 +7,7 @@ html_sbcl_SOURCES =  html.c html-sbcl-bin.c ros.c opt.c $(ros_utils)
 html_sbcl_CFLAGS = "-D ROSWELL_HTML_TEST"
 
 gend.h: FORCE
-	make -C ../lisp ../src/gend.h
+	make -C .. src/gend.h
 cmd-internal.c: gend.h
 bin_PROGRAMS = ros
 ros_SOURCES = ros.c opt.c download.c download_windows.c archive.c archive_windows.c \

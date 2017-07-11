@@ -5,8 +5,8 @@ AC_PREREQ([2.59])
 AC_INIT([roswell],[17.6.9.79],snmsts@gmail.com)
 
 AM_CONFIG_HEADER(config.h)
-AC_CONFIG_FILES([Makefile src/Makefile lisp/Makefile])
-AC_CONFIG_SRCDIR([src/Makefile.am])
+AC_CONFIG_FILES([Makefile src/Makefile])
+AC_CONFIG_SRCDIR([Makefile.am])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE([enable])
 
