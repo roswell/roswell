@@ -80,7 +80,7 @@ src/gend.h: FORCE
 	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
 	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
 	printf '#ifdef HAVE_WINDOWS_H\n'  >> $@.tmp
-	printf '#define LISP_PATH "%s"' "`cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
+	printf '#define LISP_PATH "%s"' "`mkdir -p $(roslispdir);cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
 	printf '\n#else\n'  >> $@.tmp
 	printf '#define LISP_PATH "%s"' "$(roslispdir)" >> $@.tmp
 	printf '\n#endif\n'  >> $@.tmp
