@@ -1,6 +1,6 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#|[WIP] indent lisp source
+#|Indent lisp source.
 exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 (progn ;;init forms
