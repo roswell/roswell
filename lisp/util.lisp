@@ -201,10 +201,10 @@ or (if failed) the user-level installation directory of roswell.
       (homedir)))
 
 (defun clone-github (owner name &key
-                     (alias (format nil "~A/~A" owner name))
-                     branch force-git
-                     (path "templates")
-                     (home (checkoutdir)))
+                                     (alias (format nil "~A/~A" owner name))
+                                     branch force-git
+                                     (path "templates")
+                                     (home (checkoutdir)))
   (format *error-output* "install from github ~A/~A~%" owner name)
   (if (or force-git (which "git"))
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))

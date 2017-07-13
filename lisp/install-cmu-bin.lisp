@@ -51,12 +51,12 @@
 (defun cmu-bin-expand (argv)
   (loop for archive in (list (opt "download.archive") (opt "download.extra.archive"))
         do (format t "~%Extracting archive:~A~%" (opt "download.archive"))
-        (let* ((impls (merge-pathnames (format nil "impls/~A/~A/cmu-bin/~A/" (uname-m) (uname) (opt "as")) (homedir)))
-               (path (merge-pathnames (format nil "~A/" (opt "as")) impls)))
-          (expand archive (ensure-directories-exist impls))
-          (and (probe-file path)
-               (uiop/filesystem:delete-directory-tree
-                path :validate t))))
+           (let* ((impls (merge-pathnames (format nil "impls/~A/~A/cmu-bin/~A/" (uname-m) (uname) (opt "as")) (homedir)))
+                  (path (merge-pathnames (format nil "~A/" (opt "as")) impls)))
+             (expand archive (ensure-directories-exist impls))
+             (and (probe-file path)
+                  (uiop/filesystem:delete-directory-tree
+                   path :validate t))))
   (cons t argv))
 
 (defun cmu-bin-help (argv)

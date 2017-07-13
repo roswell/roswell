@@ -194,9 +194,9 @@ have the latest asdf, and this file has a workaround for this.
     unless (or (not name)
                (member name *included-names* :test 'string=))
     do (push name *included-names*)
-    (and (probe-file path)
-         (not (equal provide name))
-         (cl:load path))))
+       (and (probe-file path)
+            (not (equal provide name))
+            (cl:load path))))
 
 (defmacro deplicated-fun (name lambda-list include read date)
   `(defun ,name ,lambda-list

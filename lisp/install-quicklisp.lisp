@@ -57,7 +57,7 @@
        ;; use roswell to download everithing.
        (setf (fdefinition (find-symbol (string :fetch) :qlqs-http))
              (lambda (url file &key (follow-redirects t) quietly
-                      (maximum-redirects 10))
+                                    (maximum-redirects 10))
                "Request URL and write the body of the response to FILE."
                (declare (ignorable url file follow-redirects quietly
                                    maximum-redirects))

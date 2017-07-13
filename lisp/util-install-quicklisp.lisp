@@ -29,8 +29,8 @@
       do (if (characterp char)
              (write-char char stream-)
              (funcall char stream))
-      (force-output stream-)
-      (finish-output stream-))))
+         (force-output stream-)
+         (finish-output stream-))))
 
 #+sbcl
 (defun line-number (stream)
