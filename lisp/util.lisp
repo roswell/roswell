@@ -159,8 +159,8 @@ Example:
   (or #+win32
       (unless (roswell:getenv "MSYSCON")
         (format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
-                                 (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-                                                          #+x86-64 "64" #-x86-64 "32") (homedir)))))
+                          (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
+                                                   #+x86-64 "64" #-x86-64 "32") (homedir)))))
       (which "bash")
       "sh"))
 
@@ -187,24 +187,19 @@ ccl-bin      -> (\"ccl-bin\" nil)
             `(,string nil)))))
 
 (defun checkoutdir ()
-  "
-Returns the parent directory of the first local project directory in ql:*local-project-directories*,
-or (if failed) the user-level installation directory of roswell.
-
-(this function does not make sense.)
-"
-  (or (ignore-errors
-       (let*((* (read-from-string "ql:*local-project-directories*")))
-         (setf * (first (symbol-value *))
-               * (merge-pathnames "../" *)
-               * (truename *))))
-      (homedir)))
+  "Returns the parent directory of the first local project directory in ql:*local-project-directories*."
+  ;; see roswell:quicklisp for why.
+  (roswell:quicklisp)
+  (let* ((* (read-from-string "ql:*local-project-directories*"))
+         (* (first (symbol-value *)))
+         (* (merge-pathnames "../" *)))
+    (truename *)))
 
 (defun clone-github (owner name &key
-                                     (alias (format nil "~A/~A" owner name))
-                                     branch force-git
-                                     (path "templates")
-                                     (home (checkoutdir)))
+                                (alias (format nil "~A/~A" owner name))
+                                branch force-git
+                                (path "templates")
+                                (home (checkoutdir)))
   (format *error-output* "install from github ~A/~A~%" owner name)
   (if (or force-git (which "git"))
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
