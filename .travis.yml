@@ -184,3 +184,4 @@ after_success:
        git checkout -b master origin/master;
        (git log -n 1 --oneline|grep "bump version to") && (make release-2;);
     fi
+  - pkill -9 proxy
