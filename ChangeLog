@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 16 Jul 2017 21:28:08 +0900
+
 roswell (17.7.9.80-1) unstable; urgency=low
 
   * New: 'ros fmt' become a beta stage.
