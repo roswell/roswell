@@ -80,7 +80,7 @@ roslisp_DATA = $(LISPS:%=lisp/%)
 
 src/gend.h: FORCE
 	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
-	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e ../.git ]&& \
+	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e .git ]&& \
 	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
 	printf '#ifdef HAVE_WINDOWS_H\n'  >> $@.tmp
 	printf '#define LISP_PATH "%s"' "`mkdir -p $(roslispdir);cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
