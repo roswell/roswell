@@ -150,8 +150,10 @@ script:
     fi
   - if [ $METHOD != debian ]; then ros config; fi
   - cat /tmp/proxy-log || true
+  - pkill -9 proxy
 
 after_success:
+  - $HOME/.rosproxy/proxy;
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then
        lcab -q  src/ros.exe lisp/* ros-$XCC.cab;
        ros ./scripts/release.ros github ros-$XCC.cab;
@@ -174,14 +176,11 @@ after_success:
     fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
-       git remote rename origin old;
-       git remote add origin "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git";
-       git fetch origin release;
-       git fetch origin master;
-       git checkout -b release origin/release;
-       git branch -D master;
-       git checkout -b master origin/master;
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master"] && (git log -n 1 --oneline|grep "bump version to") ; then
+       rm -rf .git
+       git checkout "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" merge;
+       mv merge/.git .git
+       git branch release origin/release
        (git log -n 1 --oneline|grep "bump version to") && (make release-2;);
     fi
   - pkill -9 proxy
