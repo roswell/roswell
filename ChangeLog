@@ -1,8 +1,19 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (17.7.9.80-1) unstable; urgency=low
 
-  *
+  * New: 'ros fmt' become a beta stage.
+  * New: 'ros hg' introduced. almost same as 'ros git'.
+  * New: 'ros which' introduced. shows the path of systems.
+  * New: ``ros build`` takes asd file. prepare asd file which have same name with directory and ``ros build build`` ``ros build test`` .. so on.
+  * New: if roswell invoked directory have ``.roswell`` directory some information are refered from there.
+  * Change: Updated Clasp 2017-06-13. (by gos-k)
+  * Change: ``ros asdf delete/install/list/use`` -> ``ros delete/install/list/use asdf``
+  * Change: (opt "setup.time") are recorded when implementation installed.
+  * Change: 'ros build' take asd.
+  * Change: ``ros fmt`` rewriten (by cxxxr)
+  * Change: ``ros fmt`` takes asd file to know which files to indent.
+  * Fix: avoid segv at 'ros --' (by cxxxr)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Mon, 19 Jun 2017 00:12:34 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Sun, 16 Jul 2017 19:12:29 +0900
 
 roswell (17.6.9.79-1) unstable; urgency=low
 
