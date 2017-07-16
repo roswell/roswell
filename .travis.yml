@@ -153,7 +153,7 @@ script:
   - pkill -9 proxy
 
 after_success:
-  - $HOME/.rosproxy/proxy;
+  - $HOME/.rosproxy/proxy daemon
   - if [ x$TRAVIS_TAG != x ] && [ $METHOD = cross ]; then
        lcab -q  src/ros.exe lisp/* ros-$XCC.cab;
        ros ./scripts/release.ros github ros-$XCC.cab;
