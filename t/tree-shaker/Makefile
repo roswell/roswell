@@ -24,7 +24,7 @@ all: $(targets)
 
 baseline:	 u-baseline.bin  c-baseline.bin
 docstring:	 u-docstring.bin c-docstring.bin
-destroy:	 u-destroy.bin   c-destroy.bin
+#destroy:	 u-destroy.bin   c-destroy.bin
 package:	 u-package.bin   c-package.bin
 packages:	 u-packages.bin  c-packages.bin
 except:          u-except.bin    c-except.bin
@@ -32,7 +32,7 @@ debug:	         u-debug.bin     c-debug.bin
 compiler:	         u-compiler.bin     c-compiler.bin
 macro:	         u-macro.bin     c-macro.bin
 cmacro:	         u-cmacro.bin     c-cmacro.bin
-combined:        u-combined.bin  c-combined.bin
+#combined:        u-combined.bin  c-combined.bin
 
 
 dump = $(call $(firstword $(subst -, ,$@))_dump, $@ $(1))
