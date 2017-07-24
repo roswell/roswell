@@ -89,6 +89,38 @@ char* determin_impl(char* impl) {
   return s_cat(impl,q("/"),version,NULL);
 }
 
+void set_env_opt(char* path) {
+  FILE* fp;
+  char buf[1024];
+  cond_printf(1,"set_env_opt:%s\n",path);
+  if((fp=fopen(path,"r"))==NULL)
+    return;
+  while(fgets(buf,1024,fp) !=NULL) {
+    int i,mode,last;
+    char *name,*value;
+    for(i=0,mode=0,last=0;i<1024&&buf[i]!='\0';++i) {
+      if(buf[i]=='\t'||buf[i]=='\n') {
+        switch (mode++) {
+        case 0:
+          name=subseq(buf,last,i);
+          break;
+        case 2:
+          value=subseq(buf,last,i);
+          if(strcmp("quicklisp",name)==0) {
+            set_opt(&local_opt,"quicklisp",s_escape_string(cat(configdir(),"env",SLASH,value,SLASH,"quicklisp",SLASH,NULL)));
+          }else if(strcmp("dists",name)==0) {
+          }else
+            set_opt(&local_opt,name,q(value));
+          s(name),s(value);
+          break;
+        }
+        last=i+1;
+      }
+    }
+  }
+  fclose (fp);
+}
+
 void star_set_opt(void) {
   char* config=configdir();
   char*lisp=get_opt("lisp",1);
@@ -103,6 +135,9 @@ void star_set_opt(void) {
   if(get_opt("asdf.version",0))
     set_opt(&local_opt,"asdf",get_opt("asdf.version",0));
   s(config);
+  set_env_opt("."PACKAGE_NAME"env");
+  /*If 'roswellenv' not set the below would endup fail to open cause it will be taken as a directory.*/
+  set_env_opt(s_escape_string(cat(configdir(),"env",SLASH,get_opt(PACKAGE_NAME"env",1),SLASH,"config",NULL)));
 }
 
 void star_rc(void) {
