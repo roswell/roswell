@@ -25,6 +25,7 @@ LISPS = helper.el \
 	build-ros.lisp build-asd.lisp \
 	\
 	config.ros \
+	util-config.lisp \
 	emacs.ros \
 	fmt.ros \
 	get.ros \
