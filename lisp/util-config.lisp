@@ -5,14 +5,15 @@
 (in-package :roswell.util.config)
 
 (defun load-config (path)
-  (with-open-file (in path)
-    (loop for line = (read-line in nil nil)
-          while line
-          collect
-          (loop for last = -1 then pos
-                for pos = (position #\Tab line :start (1+ last))
-                collect (subseq line (1+ last) pos)
-                while pos))))
+  (and (probe-file path)
+       (with-open-file (in path)
+         (loop for line = (read-line in nil nil)
+            while line
+            collect
+              (loop for last = -1 then pos
+                 for pos = (position #\Tab line :start (1+ last))
+                 collect (subseq line (1+ last) pos)
+                 while pos)))))
 
 (defun save-config (path config)
   (with-open-file (out path :direction :output
