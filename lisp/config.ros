@@ -12,14 +12,17 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
 (in-package :ros.script.config.3668210854)
 
 (defun main (&rest argv)
-  (let* ((path (if (and (equal (first argv) "--local")
-                        (roswell:opt "roswellenv"))
-                   (progn
-                     (setf argv (cdr argv))
-                     (merge-pathnames (format nil "env/~A/config"
-                                              (roswell:opt "roswellenv"))
-                                      (roswell:opt "homedir")))
-                   (merge-pathnames "config" (roswell:version "confdir"))))
+  (let* ((path (cond ((and (equal (first argv) "--env")
+                           (roswell:opt "roswellenv"))
+                      (setf argv (cdr argv))
+                      (merge-pathnames (format nil "env/~A/config"
+                                               (roswell:opt "roswellenv"))
+                                       (roswell:opt "homedir")))
+                     ((equal (first argv) "--local")
+                      (setf argv (cdr argv))
+                      ".roswellenv")
+                     (t 
+                      (merge-pathnames "config" (roswell:version "confdir")))))
          (conf (load-config path))
          (len (length argv)))
     (cond
