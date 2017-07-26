@@ -1,5 +1,5 @@
 /* -*- tab-width : 2 -*- */
-#include "util.h"
+#include "opt.h"
 
 #ifndef HAVE_WINDOWS_H
 char* homedir(void) {
@@ -110,7 +110,15 @@ char* impldir(char* arch,char* os,char* impl,char* version) {
 }
 
 char* basedir(void) {
-  char* cd_ = s_cat2(currentdir(),q("."PACKAGE SLASH));
+  char* cd_;
+  cond_printf(1,"roswellenv=%s\n",get_opt(PACKAGE_NAME"env",1));
+  if(get_opt(PACKAGE_NAME"env",1)) {
+    cd_ = cat(configdir(),"env",SLASH,get_opt(PACKAGE_NAME"env",1),SLASH,NULL);
+    if(directory_exist_p(cd_))
+      return cd_;
+    s(cd_);
+  }
+  cd_ = s_cat2(currentdir(),q("."PACKAGE SLASH));
   if(directory_exist_p(cd_))
     return cd_;
   s(cd_);

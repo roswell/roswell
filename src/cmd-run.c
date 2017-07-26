@@ -107,7 +107,7 @@ void set_env_opt(char* path) {
         case 2:
           value=subseq(buf,last,i);
           if(strcmp("quicklisp",name)==0) {
-            set_opt(&local_opt,"quicklisp",s_escape_string(cat(configdir(),"env",SLASH,value,SLASH,"quicklisp",SLASH,NULL)));
+            set_opt(&local_opt,"quicklisp",s_escape_string(cat(configdir(),"env"SLASH"lisp",SLASH,value,SLASH,"quicklisp",SLASH,NULL)));
           }else if(strcmp("dists",name)==0) {
           }else
             set_opt(&local_opt,name,q(value));

@@ -14,11 +14,6 @@ exec ros -- $0 "$@"
   (:use :cl :roswell.util :roswell.util.dump))
 (in-package :ros.script.dump)
 
-(defun dump-dir ()
-  (merge-pathnames (format nil "impls/~A/~A/~A/dump/"
-                           (uname-m) (uname) (opt "impl"))
-                   (homedir)))
-
 (defun output (func params &optional force)
   (flet ((%dump (path &optional mode)
            (if (and (not force)

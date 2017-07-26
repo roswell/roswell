@@ -6,7 +6,7 @@
    :*package-blacklist* :*additional-blacklist-for-destroy-packages*
    :makunbound-symbols-and-delete-package :delete-all-packages
    :delete-macro-definitions :delete-compiler-macro-definitions
-   :preprocess-before-dump))
+   :preprocess-before-dump :dump-dir))
 (in-package :roswell.util.dump)
 
 (defvar *compression* t "
@@ -30,6 +30,14 @@ The default value contains the minimal blacklist.")
   "An additional list of package-designators that needs to be protected from destroy-packages-sbcl.
 These are appended to the blacklist before destroying the package system.
 Notably, it must include all nicknames.")
+
+(defun dump-dir ()
+  (merge-pathnames (format nil "~Aimpls/~A/~A/~A/dump/"
+                           (if (opt "roswellenv")
+                               (format nil "env/~A/" (opt "roswellenv"))
+                               "")
+                           (uname-m) (uname) (opt "impl"))
+                   (homedir)))
 
 (defun dump-compression (param)
   (setf *compression* param))
