@@ -23,10 +23,11 @@ exec ros +Q -m roswell -L sbcl-bin -- $0 "$@"
         (finish-output *error-output*)
         (format t "~{~A~%~}"
                 (sort (loop for x in (asdf:registered-systems)
-                            when (ignore-errors (string-equal "roswell.list." x :end2 13))
+                         when (ignore-errors (string-equal "roswell.list." x :end2 13))
                               collect (subseq x 13))
                       #'string<)))
-      (let ((func (module "list" (first r))))
+      (let ((func (let ((*error-output* (make-broadcast-stream)))
+                    (module "list" (first r)))))
         (if func
             (apply func (rest r))
             (format *error-output* "not suppported type for list~%")))))
