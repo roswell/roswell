@@ -39,6 +39,7 @@ LISPS = helper.el \
 	\
 	delete.ros \
 	delete-dump.lisp delete-git.lisp delete-asdf.lisp \
+	delete-env.lisp \
 	\
 	dump.ros \
 	util-dump.lisp \
@@ -49,7 +50,7 @@ LISPS = helper.el \
 	help-install.lisp help-options.lisp help-run.lisp \
 	\
 	init.ros \
-	init-default.lisp \
+	init-default.lisp init-env.lisp \
 	\
 	install.ros \
 	util-install.lisp util-install-quicklisp.lisp \
@@ -65,14 +66,14 @@ LISPS = helper.el \
 	\
 	list.ros \
 	list-dump.lisp list-git.lisp list-installed.lisp list-versions.lisp \
-	list-asdf.lisp \
+	list-asdf.lisp list-env.lisp \
 	\
 	template.ros \
 	util-template.lisp \
 	\
 	use.ros \
 	util-use.lisp \
-	use-asdf.lisp \
+	use-asdf.lisp use-env.lisp \
 	\
 	which.ros
 roslisp_DATA = $(LISPS:%=lisp/%)

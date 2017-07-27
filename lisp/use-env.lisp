@@ -1,0 +1,20 @@
+(ros:include '("list-env" "util-config") "use-env")
+(defpackage :roswell.use.env
+  (:use :cl :roswell.util.config))
+(in-package :roswell.use.env)
+
+(defun env (impl version &rest r)
+  (declare (ignore impl version))
+  (let ((conf (load-config ".roswellenv")))
+    (cond
+      ((null r)
+       (roswell.list.env:env)
+       t)
+      ((member (first r) '("no" "-") :test 'equal)
+       (setf conf (unconfig conf "roswellenv"))
+       (save-config ".roswellenv" conf)
+       t)
+      ((find (first r) (roswell.list.env:env-list) :test 'equal)
+       (setf conf (config conf "roswellenv" (first r)))
+       (save-config ".roswellenv" conf))
+      (t (error "env ~A not exists." (first r))))))
