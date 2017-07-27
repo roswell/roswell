@@ -397,6 +397,9 @@ have the latest asdf, and this file has a workaround for this.
         for *cmd* = (first elt)
         do (apply (intern (string (first elt)) (find-package :ros)) (rest elt))))
 
+(when (opt "roswellenv")
+  (push (read-from-string (format nil ":roswell.env.~A" (opt "roswellenv"))) *features*))
+
 #+clisp
 (unless (find :ros.init *features*)
   (push :ros.init *features*)
