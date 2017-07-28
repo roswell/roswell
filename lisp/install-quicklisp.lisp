@@ -65,6 +65,7 @@
        (let ((*standard-output* (make-broadcast-stream)))
          (funcall (intern (string :install) (find-package :quicklisp-quickstart))
                   :path path
+                  :proxy (opt "quicklisp.proxy")
                   :client-url (opt "quicklisp.client")
                   :dist-url (opt "quicklisp.dist"))))))
   (cons t argv))
