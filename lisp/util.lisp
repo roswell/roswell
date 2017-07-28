@@ -159,8 +159,8 @@ Example:
   (or #+win32
       (unless (roswell:getenv "MSYSCON")
         (format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
-                          (merge-pathnames (format nil "impls/~A/~A/msys~A/usr/bin/bash" (uname-m) (uname)
-                                                   #+x86-64 "64" #-x86-64 "32") (homedir)))))
+                          (merge-pathnames (format nil "impls/~A/~A/msys2/~A/usr/bin/bash" (uname-m) (uname)
+                                                   (config "msys2.version")) (homedir)))))
       (which "bash")
       "sh"))
 
