@@ -71,30 +71,34 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         (when (roswell:verbose)
           (format *error-output* "Parameter for install quicklisp '~{~A ~}'~%" params))
         (roswell:roswell params :interactive nil))))
-  (let ((dir (sort
+  (let* ((dir (sort
               (delete-if-not
                (dump-filter dump)
                (append (directory (make-pathname :defaults *load-pathname* :name :wild :type "ros"))
                        (directory (merge-pathnames "cmds/*.ros" (homedir)))
                        (directory (merge-pathnames "lisp/*.lisp" (homedir)))
-                       (directory (merge-pathnames "bin/*" (homedir))))) #'string< :key 'pathname-name)))
+                       (directory (merge-pathnames "bin/*" (homedir))))) #'string< :key 'pathname-name))
+         (dir (cons (find "init.ros" dir :key #'file-namestring :test 'equal)
+                    (remove "init.ros" dir :key #'file-namestring :test 'equal)))
+         (use-env (equal dump "roswell")))
     (when (roswell:verbose)
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir))
-    (unless (equal dump "roswell")
-      (format *error-output* "building dump:~A~%" dump))
+    (when (or (not (equal dump "roswell"))
+	      (roswell:verbose))
+      (format *error-output* "building dump:~A~%" (make-pathname :defaults (dump-dir use-env) :name dump :type "core")))
     (force-output *error-output*)
     (unless (ignore-errors
               (when (> (file-write-date
-                        (make-pathname :defaults (dump-dir) :name "hage" :type "core"))
+                        (make-pathname :defaults (dump-dir use-env) :name dump :type "core"))
                        (loop for i in dir
                           maximize (file-write-date i)))
                 (format *error-output* "up to date. stop~%")
                 t))
-      (roswell:roswell `("+R " ,(if (roswell:verbose) "-v" "") " -L " "sbcl-bin"
-                               " --eval " #-win32 "'" "(roswell:ignore-shebang)" #-win32 "'" " "
-                               ,@(loop for i in dir
-                                    collect "--load "
+      (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " +Q" " -L " "sbcl-bin"
+			  " --eval " #-win32 "'" "(roswell:ignore-shebang)" #-win32 "'" " "
+			  ,@(loop for i in dir
+			       collect "--load "
                                     collect (format nil "~A " i))
-                               "dump output -f " ,dump)
+			  "dump output -f " ,dump)
                        t nil))))
 ;;; vim: set ft=lisp lisp:

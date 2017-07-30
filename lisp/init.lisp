@@ -168,7 +168,7 @@ have the latest asdf, and this file has a workaround for this.
                     ".roswell/local-projects/"
                     *default-pathname-defaults*)))))
       (when (probe-file path)
-        (cl:load path)
+        (cl:load path :verbose (verbose))
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
               for path in `(,local ,@(and (or path (and environment (getenv environment)))
                                           `(,(merge-pathnames "local-projects/" (opt "homedir")))))
