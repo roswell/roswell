@@ -12,5 +12,5 @@
 (defun env (&rest r)
   (let ((name (third (assoc "roswellenv" (roswell.util.config:load-config ".roswellenv") :test 'equal))))
     (cond ((null r)
-	   (dolist (i (env-list))
-	     (format t "~A~A~%" (if (equal name i) :* " ") i))))))
+           (dolist (i (env-list))
+             (format t "~A~A~%" (if (equal name i) :* " ") i))))))

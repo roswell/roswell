@@ -66,7 +66,7 @@
       (chdir src)
       (format t "~&~S~%" cmd)
       (with-open-file (stream (merge-pathnames "local.config" (opt "src")) :direction :output :if-exists :supersede)
-	(format stream "export PJOBS=~A~%" pjobs))
+        (format stream "export PJOBS=~A~%" pjobs))
       (uiop/run-program:run-program cmd :output t :ignore-error-status nil)))
   (setf (config "externals.clasp.version") (getf argv :version))
   (cons t argv))
