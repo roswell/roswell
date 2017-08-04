@@ -139,11 +139,14 @@ Example:
   (let ((result (roswell:roswell `("config" "show" ,c) :string t)))
     (unless (zerop (length result)) result)))
 
-(defun (setf config) (val item)
+(defun (setf config) (val item &key where)
   "Interface to roswell C binary."
-  (roswell:roswell (if val
-                       `("config" "set" ,item ,val)          ;; set
-                       `("config" "unset" ,item)) :string t) ;; unset
+  (roswell:roswell
+   `("config" ,@(when where `(,(format nil "--~(~A~)" where)))
+              ,(if val "set" "unset")
+              ,item
+              ,@(when val `(,val)))
+   :string t)
   val)
 
 (defun list% (&rest params)
