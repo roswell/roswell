@@ -21,7 +21,10 @@ exec ros +R +Q -m roswell -L sbcl-bin -- $0 "$@"
                      ((equal (first argv) "--local")
                       (setf argv (cdr argv))
                       ".roswellenv")
-                     (t 
+                     ((equal (first argv) "--user")
+                      (setf argv (cdr argv))
+                      (merge-pathnames "config" (roswell:version "confdir")))
+                     (t
                       (merge-pathnames "config" (roswell:version "confdir")))))
          (conf (load-config path))
          (len (length argv)))
