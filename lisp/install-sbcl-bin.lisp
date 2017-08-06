@@ -16,4 +16,5 @@
 (defun sbcl-bin (type)
   (case type
     (:help '(sbcl-bin-help))
-    (:install '(sbcl-bin-argv-parse))))
+    (:install '(sbcl-bin-argv-parse
+		setup))))
