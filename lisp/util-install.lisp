@@ -183,3 +183,9 @@
                     t)) ;; Don't have confidence.
                  t))))
 
+(defun setup (argv)
+  (unless (equal (getf argv :target) "sbcl-bin")
+    (setf (config "default.lisp") (getf argv :target)
+	  (config (format nil "~A.version" (getf argv :target))) (opt "as")))
+  (setf (config "setup.time") (format nil "~A" (get-universal-time)))
+  (cons t argv))

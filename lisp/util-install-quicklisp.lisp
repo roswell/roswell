@@ -119,12 +119,6 @@
       (with-open-file (o p :direction :probe :if-does-not-exist :create))))
   (cons t argv))
 
-(defun setup (argv)
-  (setf (config "default.lisp") (getf argv :target)
-        (config (format nil "~A.version" (getf argv :target))) (opt "as")
-        (config "setup.time") (format nil "~A" (get-universal-time)))
-  (cons t argv))
-
 (defun install-ros (from)
   (let ((to (ensure-directories-exist
              (make-pathname
