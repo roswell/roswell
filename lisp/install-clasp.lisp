@@ -32,7 +32,7 @@
 (defun clasp-lib (argv)
   (let* ((externals-clasp-version (third (assoc (getf argv :version) *clasp-version* :test 'equal)))
          (arg (format nil "/~a" (or externals-clasp-version
-                                    (third (head *clasp-version*))))))
+                                    (third (car *clasp-version*))))))
     (roswell:roswell (list (format nil "install externals-clasp+~a" arg)) :interactive nil)
     (cons t argv)))
 
