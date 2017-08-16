@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 17 Aug 2017 04:11:09 +0900
+
 roswell (17.8.9.81-1) unstable; urgency=low
 
   * New: environment switch facility.
