@@ -162,7 +162,8 @@ have the latest asdf, and this file has a workaround for this.
                  :defaults (or path
                                (let ((script (read-from-string
                                               (format nil "(~A)" (opt "script")))))
-                                 (when (and (equal (file-namestring (first script)) "dump.ros")
+                                 (when (and (first script)
+                                            (equal (file-namestring (first script)) "dump.ros")
                                             (equal (second script) "output")
                                             (equal (third script) "-f")
                                             (equal (fourth script) "roswell"))
