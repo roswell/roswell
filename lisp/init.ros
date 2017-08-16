@@ -6,15 +6,7 @@ exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
 
 (progn
   (roswell:include "util")
-  (let ((script (read-from-string (format nil "(~A)" (ros:opt "script")))))
-    (roswell:quicklisp
-     :environment nil
-     :path (when (and (equal (file-namestring (first script)) "dump.ros")
-                      (equal (second script) "output")
-                      (equal (third script) "-f")
-                      (equal (fourth script) "roswell"))
-             (merge-pathnames "lisp/quicklisp/"
-                              (funcall (read-from-string "roswell.util:homedir")))))))
+  (roswell:quicklisp :environment nil))
 
 (defpackage :ros.script.init.3672012201
   (:use :cl :roswell.util))

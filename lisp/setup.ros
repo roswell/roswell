@@ -78,8 +78,6 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                         (directory (merge-pathnames "cmds/*.ros" (homedir)))
                         (directory (merge-pathnames "lisp/*.lisp" (homedir)))
                         (directory (merge-pathnames "bin/*" (homedir))))) #'string< :key 'pathname-name))
-         (dir (append (remove "init.ros" dir :key #'file-namestring :test (complement #'equal))
-                      (remove "init.ros" dir :key #'file-namestring :test 'equal)))
          (use-env (equal dump "roswell")))
     (when (roswell:verbose)
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir))
@@ -94,7 +92,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                           maximize (file-write-date i)))
                 (format *error-output* "up to date. stop~%")
                 t))
-      (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " +Q" " -L " "sbcl-bin"
+      (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " -Q" " -L " "sbcl-bin"
                           " --eval " #-win32 "'" "(roswell:ignore-shebang)" #-win32 "'" " "
                           ,@(loop for i in dir
                                collect "--load "
