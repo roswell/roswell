@@ -4,10 +4,9 @@
 
 (defun dump (_ &rest params)
   (declare (ignore _))
-  (let* ((lisp (multiple-value-list
-                (parse-version-spec
+  (let* ((lisp (parse-version-spec
                  (or (ros:opt "*lisp")
-                     (ros:opt "default.lisp")))))
+                     (ros:opt "default.lisp"))))
          (version (or (second lisp) (ros:opt (format nil "~A.version" (first lisp)))))
          (impl (first lisp))
          (path (make-pathname :name (first params)
