@@ -28,7 +28,10 @@
   (format *error-output* "~&Installing ccl-bin/~A...~%" (getf argv :version))
   (when (position "--without-install" (getf argv :argv) :test 'equal)
     (set-opt "without-install" t))
-  (cons t argv))
+  (if (equal "arm64" (uname-m))
+      (progn (format *error-output* "~&Not supported platform arm64.~%")
+             (cons nil argv))
+      (cons t argv)))
 
 (defun ccl-bin-download (argv)
   (let ((uname (uname))
