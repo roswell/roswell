@@ -1,5 +1,6 @@
 (defpackage :roswell.list.installed
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util)
+  (:export :installed))
 (in-package :roswell.list.installed)
 
 (defun installed (&rest r)
