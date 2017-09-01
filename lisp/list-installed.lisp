@@ -8,17 +8,14 @@
     ((null r)
      (format *error-output* "Installed implementations:~%")
      (finish-output *error-output*)
-     (let ((dir (directory
+     (dolist (d (directory
                  (make-pathname
                   :defaults (merge-pathnames
                              (format nil "impls/~A/~A/" (uname-m) (uname))
                              (homedir))
                   :name :wild
-                  :type :wild))))
-       (mapc (lambda (d)
-               (let ((impl (first (last (pathname-directory d)))))
-                 (roswell:roswell `("list" "installed" ,impl) *standard-output*)))
-             dir)))
+                  :type :wild)))
+       (installed (first (last (pathname-directory d))))))
     (t
      (dolist (impl/version r)
        (destructuring-bind (impl version) (parse-version-spec impl/version)
@@ -31,13 +28,12 @@
              (progn
                (format *error-output* "~%Installed versions of ~a:~%" impl)
                (finish-output *error-output*)
-               (let ((dir (directory
+               (dolist (d (directory
                            (make-pathname
                             :defaults (merge-pathnames
                                        (format nil "impls/~A/~A/~A/" (uname-m) (uname) impl)
                                        (homedir))
                             :name :wild
-                            :type :wild))))
-                 (mapc (lambda (d)
-                         (format t "~{~A~^/~}~%" (last (pathname-directory d) 2)))
-                       dir)))))))))
+                            :type :wild)))
+                 (format t "~{~A~^/~}~%" (last (pathname-directory d) 2))
+                 (finish-output)))))))))
