@@ -31,6 +31,7 @@ DEF_SUBCMD(opt_take1) {
   int argc=length(arg_);
   const char* arg=cmd->name;
   if(arg && argc>1) {
+    cond_printf(1,"take1:%s:%s\n",arg,firsts(nthcdr(1,arg_)));
     set_opt(&local_opt,arg,firsts(nthcdr(1,arg_)));
     return 2;
   }
@@ -64,6 +65,7 @@ struct proc_opt* register_runtime_options(struct proc_opt* cmd) {
   opt=add_command(opt,"image","-m",opt_take1,1,0);
   opt=add_command(opt,"module","-M",opt_module,1,0);
   opt=add_command(opt,"lisp","-L",opt_take1,1,0);
+  opt=add_command(opt,PACKAGE_NAME"env","-N",opt_take1,1,0);
 
   /*opt=add_command(opt,"file","-f",opt_program,1,0,"include lisp FILE while building","FILE");*/
   opt=add_command(opt,"load","-l",opt_program,1,0);
