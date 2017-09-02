@@ -52,6 +52,25 @@
    (let ((res (uiop:run-program "sysctl hw.logicalcpu" :output :string)))
      (parse-integer (subseq str(1+ (position #\: res))) :junk-allowed t))))
 
+(defun total-memory ()
+  "Return system installed memory in Bytes"
+  #+linux
+  (ignore-errors
+    (with-open-file (stream #p"/proc/meminfo")
+      (loop
+           with len = (length "MemTotal:")
+          for line = (read-line stream nil nil)
+           while line
+           when (equal (subseq line 0 len)
+                       "MemTotal:")
+           do (return-from count-memory
+                (values (* 1024 (read-from-string line t nil :start len)))))))
+  #+darwin
+  :tbd
+  nil)
+
+(defvar *memory/cpu* 1000000000 "when building,memory which should be assignd to a cpu more than this in byte.")
+
 (defun externals-clasp-make (argv)
   (with-open-file (out (ensure-directories-exist
                         (merge-pathnames (format nil "log/externals-clasp/~A/make.log"
@@ -59,7 +78,11 @@
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((pjobs (or (count-cpu) 1))
+    (let* ((pjobs (max (min (or (count-cpu) 1)
+                            (floor (or (total-memory)
+                                       most-positive-fixnum)
+                                   *memory/cpu*))
+                       1))
            (src (opt "src"))
            (cmd "make")
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
