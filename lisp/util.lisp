@@ -3,7 +3,7 @@
   (:use :cl)
   (:import-from :ros :opt :ensure-asdf)
   (:export
-   :uname :uname-m :homedir :config :impl :which :list% :config-env
+   :uname :uname-m :homedir :config :impl :which :config-env
    :parse-version-spec :download :expand :sh :chdir :system :module
    :core-extention :clone-github :opt :read-call :set-opt :copy-dir
    :roswell-installable-searcher :setenv :unsetenv :ensure-asdf))
@@ -148,10 +148,6 @@ Example:
               ,@(when val `(,val)))
    :string t)
   val)
-
-(defun list% (&rest params)
-  (string-right-trim #.(format nil "~A" #\Newline)
-                     (roswell:roswell `("list" ,@params) :string nil)))
 
 (defun chdir (dir &optional (verbose t))
   (when verbose
