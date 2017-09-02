@@ -15,7 +15,7 @@ char* truename(const char* path) {
   return ret?ret:which((char*)path);
 }
 
-int ensure_directories_exist (char* path) {
+int ensure_directories_exist(char* path) {
   int len = strlen(path);
   cond_printf(1,"ensure_directories_exist:%s\n",path);
   if(len) {
