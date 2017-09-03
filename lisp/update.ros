@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Update installed systems.
-exec ros -Q -m roswell -L sbcl-bin -- $0 "$@"
+exec ros -Q -m roswell -N roswell -- $0 "$@"
 |#
 (progn ;;init forms
   (roswell:ensure-asdf)
