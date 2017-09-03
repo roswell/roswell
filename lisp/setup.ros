@@ -78,16 +78,16 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                         (directory (merge-pathnames "cmds/*.ros" (homedir)))
                         (directory (merge-pathnames "lisp/*.lisp" (homedir)))
                         (directory (merge-pathnames "bin/*" (homedir))))) #'string< :key 'pathname-name))
-         (use-env (equal dump "roswell")))
+         (dump-dir (dump-dir (and (equal "roswell" dump) "roswell"))))
     (when (roswell:verbose)
       (format *error-output* "Targets for dump:~%~{~A~%~}~%" dir))
     (when (or (not (equal dump "roswell"))
               (roswell:verbose))
-      (format *error-output* "building dump:~A~%" (make-pathname :defaults (dump-dir use-env) :name dump :type "core")))
+      (format *error-output* "building dump:~A~%" (make-pathname :defaults dump-dir :name dump :type "core")))
     (force-output *error-output*)
     (unless (ignore-errors
               (when (> (file-write-date
-                        (make-pathname :defaults (dump-dir use-env) :name dump :type "core"))
+                        (make-pathname :defaults dump-dir :name dump :type "core"))
                        (loop for i in dir
                           maximize (file-write-date i)))
                 (format *error-output* "up to date. stop~%")
@@ -98,5 +98,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                                collect "--load "
                                     collect (format nil "~A " i))
                           "dump output -f " ,dump)
-                       t nil))))
+                       t nil)))
+  (when (equal dump "roswell")
+    (ignore-errors
+      (roswell:roswell '("init" "env" "roswell")))))
 ;;; vim: set ft=lisp lisp:

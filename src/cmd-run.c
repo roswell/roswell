@@ -125,16 +125,15 @@ void star_set_opt(void) {
   char* config=configdir();
   char*lisp=get_opt("lisp",1);
   char*image=get_opt("image",0);
-  if(!image ||
-     strcmp("roswell",image)!=0) {
+  if(!get_opt(PACKAGE_NAME"env",0))
     set_env_opt("."PACKAGE_NAME"env");
-    /*If 'roswellenv' not set the below would endup fail to open cause it will be taken as a directory.*/
-    set_env_opt(s_escape_string(cat(configdir(),"env",SLASH,get_opt(PACKAGE_NAME"env",1),SLASH,"config",NULL)));
-  }
+  /*If 'roswellenv' not set the below would endup fail to open cause it will be taken as a directory.*/
+  set_env_opt(s_escape_string(cat(configdir(),"env",SLASH,get_opt(PACKAGE_NAME"env",1),SLASH,"config",NULL)));
+
   lisp=lisp?lisp:get_opt("*lisp",0);
   set_opt(&local_opt,"impl",determin_impl(lisp));
   if(!get_opt("quicklisp",0))
-    set_opt(&local_opt,"quicklisp",s_escape_string(cat(basedir(),"lisp",SLASH,"quicklisp",SLASH,NULL)));
+    set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"lisp",SLASH,"quicklisp",SLASH,NULL)));
   set_opt(&local_opt,"argv0",argv_orig[0]);
   set_opt(&local_opt,"wargv0",which(argv_orig[0]));
   set_opt(&local_opt,"homedir",q(config));

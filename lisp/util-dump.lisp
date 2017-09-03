@@ -31,12 +31,12 @@ The default value contains the minimal blacklist.")
 These are appended to the blacklist before destroying the package system.
 Notably, it must include all nicknames.")
 
-(defun dump-dir (use-env)
+(defun dump-dir (&optional env)
   (merge-pathnames (format nil "~Aimpls/~A/~A/~A/dump/"
-                           (if (and (not use-env)
-                                    (opt "roswellenv"))
-                               (format nil "env/~A/" (opt "roswellenv"))
-                               "")
+                           (let ((env (or env (opt "roswellenv"))))
+                             (if env
+                                 (format nil "env/~A/" env)
+                                 ""))
                            (uname-m) (uname) (opt "impl"))
                    (homedir)))
 
