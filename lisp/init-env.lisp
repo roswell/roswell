@@ -27,10 +27,8 @@
           (when out
             (format out "default.lisp	0	~A~%" lisp)
             (format out "~A.version	0	~A~%" lisp ver)
-            (when name
-              (format out "quicklisp	0	~A~%" name)
-              (install-quicklisp (merge-pathnames "lisp/quicklisp/" (make-pathname :defaults path :name nil))))
             (format t "~&Successfully generated: ~A~%" path)
             t))
-      (format *error-output* "~&File already exists: ~A~%" path)
+      (unless (equal name "roswell")
+        (format *error-output* "~&File already exists: ~A~%" path))
       (roswell:quit 1))))
