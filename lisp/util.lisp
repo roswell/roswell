@@ -142,11 +142,15 @@ Example:
 (defun (setf config) (val item &key where)
   "Interface to roswell C binary."
   (roswell:roswell
-   `("config" ,@(when where `(,(format nil "--~(~A~)" where)))
-              ,(if val "set" "unset")
-              ,item
-              ,@(when val `(,val)))
-   :string t)
+   `(,@(when (stringp where)
+             `("-N" ,where))
+       "config" ,@(cond
+                   ((stringp where) `("--env"))
+                   (where `(,(format nil "--~(~A~)" where))))
+       ,(if val "set" "unset")
+       ,item
+       ,@(when val `(,val)))
+       :string t)
   val)
 
 (defun chdir (dir &optional (verbose t))

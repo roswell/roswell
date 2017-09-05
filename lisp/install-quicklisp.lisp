@@ -39,8 +39,13 @@
      (sb-posix:setgid (parse-integer gid)))
    (let ((uid (sb-posix:getenv "SUDO_UID")))
      (sb-posix:setuid (parse-integer uid))))
-  (let ((archive (opt "download.archive"))
-        (path (opt "quicklisp")))
+  (let*((archive (opt "download.archive"))
+        (env (opt "roswellenv"))
+        (path (if env
+                  (merge-pathnames (format nil "env/~A/lisp/quicklisp/" env) (homedir))
+                  (opt "quicklisp"))))
+    (when env
+      (setf (config "quicklisp" :where env) env))
     (quicklisp-patch path)
     (cond
       ((probe-file (merge-pathnames "setup.lisp" path))
@@ -57,7 +62,7 @@
        ;; use roswell to download everithing.
        (setf (fdefinition (find-symbol (string :fetch) :qlqs-http))
              (lambda (url file &key (follow-redirects t) quietly
-                                    (maximum-redirects 10))
+                                 (maximum-redirects 10))
                "Request URL and write the body of the response to FILE."
                (declare (ignorable url file follow-redirects quietly
                                    maximum-redirects))

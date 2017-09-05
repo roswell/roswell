@@ -31,7 +31,10 @@ DEF_SUBCMD(opt_take1) {
   int argc=length(arg_);
   const char* arg=cmd->name;
   if(arg && argc>1) {
-    cond_printf(1,"take1:%s:%s\n",arg,firsts(nthcdr(1,arg_)));
+    char* current=get_opt(arg,0);
+    cond_printf(1,"take1:%s:%s,%s\n",arg,firsts(nthcdr(1,arg_)),current);
+    if(current)
+      set_opt(&local_opt,cat("*",arg,NULL),current);
     set_opt(&local_opt,arg,firsts(nthcdr(1,arg_)));
     return 2;
   }
