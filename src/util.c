@@ -19,6 +19,10 @@ char* uname_m(void) {
     s(p2);
     return q("x86");
   }
+  if(strcmp(p2,"i386")==0) {
+    s(p2);
+    return q("x86");
+  }
   if(strcmp(p2,"amd64")==0) {
     s(p2);
     return q("x86-64");
