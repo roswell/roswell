@@ -1,13 +1,16 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (17.9.10.82-1) unstable; urgency=low
 
-  *
+  * Fix: make `ros list installed`,`ros delete` and `ros use` better output.
+  * Change: Updated Clasp 2017-08-24. (by gos-k)
+  * Change: externals-clasp limit pjobs when memory are limited.
+  * Change: `-N` option to specify roswellenv.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Thu, 17 Aug 2017 04:11:09 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 11 Sep 2017 03:35:42 +0900
 
 roswell (17.8.9.81-1) unstable; urgency=low
 
   * New: environment switch facility.
-  * Change: Updated Clasp 2017-06-13. (by gos-k)
+  * Change: Updated Clasp 2017-08-15. (by gos-k)
   * fix: msys2 path (by jaccarmac)
   * fix: initial proxy support (by egao1980)
 
