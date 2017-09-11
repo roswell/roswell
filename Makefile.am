@@ -38,7 +38,7 @@ LISPS = helper.el \
 	wait.ros \
 	\
 	delete.ros \
-	delete-dump.lisp delete-git.lisp delete-asdf.lisp \
+	delete-default.lisp delete-dump.lisp delete-git.lisp delete-asdf.lisp \
 	delete-env.lisp \
 	\
 	dump.ros \

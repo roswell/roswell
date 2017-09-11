@@ -5,48 +5,17 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 |#
 
 (progn
-  (roswell:include '("util-use" "list-installed"))
-  (roswell:quicklisp :environment nil)
-  (unless (find-package :uiop)
-    (ql:quickload :uiop :silent t)))
+  (roswell:include '("util-main" "delete-default")))
 
 (defpackage :ros.script.delete.3672011943
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util.main))
 (in-package :ros.script.delete.3672011943)
 
-(defun main (&rest r)
-  (let* ((default (config "default.lisp"))
-         (verstring (format nil "~A.version" default))
-         (config (format nil "~A/~A" default (config verstring))))
-    (cond
-      ((null r)
-       (format *error-output* "Usage: ros delete dump [IMAGES...]~%")
-       (format *error-output* "Usage: ros delete [IMPLS...]~2%")
-       (format *error-output* "Possible subcommands:~%")
-       (finish-output *error-output*)
-       (format t "dump~%")
-       (finish-output)
-       (format *error-output* "~%Possible candidates of installed impls for deletion:~2%")
-       (finish-output *error-output*)
-       (let ((*error-output* (make-broadcast-stream)))
-         (roswell.list.installed:installed)))
-      ((let ((func (module "delete" (if (position #\/ (first r))
-                                        (subseq (first r) 0 (position #\/ (first r)))
-                                        (first r)))))
-         (when func
-           (apply func r))
-         func))
-      (t
-       (let* ((impl-name (first r))
-              (path (merge-pathnames (format nil "impls/~A/~A/~A/"
-                                             (uname-m) (uname) impl-name)
-                                     (homedir))))
-         (unless (position :up (pathname-directory path))
-           (cond ((probe-file path)
-                  (uiop/filesystem:delete-directory-tree path :validate t)
-                  (format t "~&~A was deleted successfully.~%" impl-name)
-                  (when (equal impl-name config)
-                    (format t "~&clear config ~S~%" verstring)
-                    (setf (config verstring) "")))
-                 (t (format *error-output* "~&~A is not installed.~%" impl-name)))))))))
+(defun main (&rest argv)
+  (module-main argv
+               :default "default"
+               :usage "default"
+               :mod-name (lambda (x) (if (position #\/ x)
+                                         (subseq x 0 (position #\/ x))
+                                         x))))
 ;;; vim: set ft=lisp lisp:
