@@ -15,7 +15,7 @@ endif
 
 LISPS = helper.el \
 	init.lisp \
-	util.lisp \
+	util.lisp util-main.lisp \
 	util-swank.lisp \
 	locations.lisp \
 	patch-quicklisp.lisp \

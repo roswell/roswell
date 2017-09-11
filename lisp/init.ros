@@ -3,19 +3,15 @@
 #|Creates a new ros script, optionally based on a template.
 exec ros -Q -m roswell -N roswell -- $0 "$@"
 |#
-
 (progn
-  (roswell:include "util")
-  (roswell:quicklisp :environment nil))
+  (roswell:include "util-main"))
 
 (defpackage :ros.script.init.3672012201
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util.main))
 (in-package :ros.script.init.3672012201)
 
-(defun main (&optional name &rest r)
-  (if name
-      (apply (or (module "init" name)
-                 (module "init" "default"))
-             `(,name ,@r))
-      #+nil "show usage"))
+(defun main (&rest r)
+  (module-main r :default "default")
+  ;; show usage ?
+  )
 ;;; vim: set ft=lisp lisp:
