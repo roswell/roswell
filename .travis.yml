@@ -176,7 +176,7 @@ after_success:
     fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master"] && (git log -n 1 --oneline|grep "bump version to") ; then
+  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ] && (git log -n 1 --oneline|grep "bump version to") ; then
        rm -rf .git;
        git checkout "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" merge;
        mv merge/.git .git;
