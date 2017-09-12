@@ -102,12 +102,13 @@
            :continue))
      finally #1#))
 
-(defun shelly-main (args &key (package (find-package :cl-user)) debug (eval t))
+(defun shelly-main (args &key (package (find-package :cl-user)) debug eval)
   "shelly flavored main"
   ;; tbd document...
   (let ((read (read% args :package package)))
     (when debug
       (print read))
-    (when eval
-      (dolist (exp read)
-        (eval exp)))))
+    (if eval
+        (funcall eval read)
+        (dolist (exp read)
+          (eval exp)))))
