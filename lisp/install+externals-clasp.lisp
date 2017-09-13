@@ -63,7 +63,7 @@
            while line
            when (equal (subseq line 0 len)
                        "MemTotal:")
-           do (return-from count-memory
+           do (return-from total-memory
                 (values (* 1024 (read-from-string line t nil :start len)))))))
   #+darwin
   :tbd
