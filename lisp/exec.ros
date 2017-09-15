@@ -1,0 +1,28 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#| <Put a one-line description here>
+exec ros -Q -- $0 "$@"
+|#
+(progn ;;init forms
+  (roswell:include "util")
+  )
+
+(defpackage :ros.script.exec.3714434941
+  (:use :cl :roswell.util))
+(in-package :ros.script.exec.3714434941)
+
+(defun main (&rest argv)
+  (let* ((env (roswell:opt "roswellenv"))
+         (path (merge-pathnames
+                (format nil (if env
+                                "env/~A/bin/"
+                                "bin/")
+                        env)
+                (homedir))))
+    (setenv "PATH" (format nil
+                           #-win32 "~A:~A"
+                           #+win32 "~A;~A"
+                           (namestring path)
+                           (roswell:getenv "PATH")))
+    (roswell:exec argv)))
+;;; vim: set ft=lisp lisp:
