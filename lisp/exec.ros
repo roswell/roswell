@@ -1,20 +1,20 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
-#| <Put a one-line description here>
-exec ros -Q -- $0 "$@"
+#|Set PATH for env then execute.
+exec ros -m roswell -N roswell -- $0 "$@"
 |#
 (progn ;;init forms
-  (roswell:include "util")
-  )
+  (roswell:include "util"))
 
 (defpackage :ros.script.exec.3714434941
   (:use :cl :roswell.util))
 (in-package :ros.script.exec.3714434941)
 
 (defun main (&rest argv)
-  (let* ((env (roswell:opt "roswellenv"))
+  (let* ((env (third (assoc "roswellenv" (roswell.util.config:load-config ".roswellenv") :test 'equal)))
          (path (merge-pathnames
-                (format nil (if env
+                (format nil (if (and env
+                                     (not (equal env "roswell")))
                                 "env/~A/bin/"
                                 "bin/")
                         env)
