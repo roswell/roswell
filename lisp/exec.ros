@@ -4,7 +4,7 @@
 exec ros -m roswell -N roswell -- $0 "$@"
 |#
 (progn ;;init forms
-  (roswell:include "util"))
+  (roswell:include "util-config"))
 
 (defpackage :ros.script.exec.3714434941
   (:use :cl :roswell.util))
