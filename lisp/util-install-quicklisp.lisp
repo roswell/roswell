@@ -122,7 +122,7 @@
 (defun install-ros (from)
   (let ((to (ensure-directories-exist
              (make-pathname
-              :defaults (merge-pathnames "bin/" (homedir))
+              :defaults (merge-pathnames "bin/" (checkoutdir))
               :name (pathname-name from)
               :type (unless (or (equalp (pathname-type from) "ros"))
                       (pathname-type from))))))
