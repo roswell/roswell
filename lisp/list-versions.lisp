@@ -2,10 +2,11 @@
   (:use :cl :roswell.util))
 (in-package :roswell.list.versions)
 
-(defun versions (&rest params)
+(defun versions (&rest args)
   ;; Experimental?
-  (if params
-      (destructuring-bind (impl version) (parse-version-spec (impl (first params)))
+  (setf args (cdr args))
+  (if args
+      (destructuring-bind (impl version) (parse-version-spec (impl (first args)))
         (declare (ignore version))
         (format *error-output* "Installable versions for ~A:~%" impl)
         (let ((fun (module "install" impl)))

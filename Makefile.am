@@ -66,6 +66,7 @@ LISPS = helper.el \
 	update-git.lisp update-hg.lisp update-quicklisp.lisp \
 	\
 	list.ros \
+	list-default.lisp \
 	list-dump.lisp list-git.lisp list-installed.lisp list-versions.lisp \
 	list-asdf.lisp list-env.lisp \
 	\

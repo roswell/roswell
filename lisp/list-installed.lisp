@@ -4,6 +4,7 @@
 (in-package :roswell.list.installed)
 
 (defun installed (&rest r)
+  (setf r (cdr r))
   (cond
     ((null r)
      (format *error-output* "Installed implementations:~%")
@@ -15,7 +16,7 @@
                              (homedir))
                   :name :wild
                   :type :wild)))
-       (installed (first (last (pathname-directory d))))))
+       (installed nil (first (last (pathname-directory d))))))
     (t
      (dolist (impl/version r)
        (destructuring-bind (impl version) (parse-version-spec impl/version)

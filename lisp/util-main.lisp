@@ -4,7 +4,9 @@
   (:export :module-main))
 (in-package :roswell.util.main)
 
-(defun module-main (args &key default usage (mod-name #'identity))
+(defun module-main (args &key default usage
+                           (mod-name #'identity)
+                           (error-output *error-output*))
   (let* ((name (first args))
          (packagename (package-name *package*))
          (pos (loop repeat 3
@@ -17,8 +19,9 @@
                        (subseq packagename (1+ (second pos)) (third pos)))))
     (cond
       ((and name
-            (module module-name (funcall mod-name name)))
-       (apply (module module-name name) args))
+            (let ((*error-output* error-output))
+              (module module-name (funcall mod-name name))))
+       (apply (module module-name (funcall mod-name name)) args))
       ((and name
             default
             (module module-name default))
