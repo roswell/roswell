@@ -3,7 +3,7 @@
 (in-package :roswell.list.dump)
 
 (defun dump (&rest args)
-  (setf args (cdr args)
+  (setf args (cdr args))
   (loop
     with impl = (impl (or (first args)
                           (ros:opt "*lisp")
