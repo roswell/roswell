@@ -19,6 +19,7 @@ LISPS = helper.el \
 	util-swank.lisp \
 	locations.lisp \
 	patch-quicklisp.lisp \
+	extend-quicklisp.lisp \
 	system.lisp \
 	\
 	build.ros \
