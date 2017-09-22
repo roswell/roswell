@@ -179,16 +179,15 @@ have the latest asdf, and this file has a workaround for this.
       (when (probe-file path)
         (cl:load path :verbose (verbose))
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
-              for path in `(,local
-                            ,(when (opt "roswellenv")
-                                   (merge-pathnames (format nil "env/~A/local-projects/" (opt "roswellenv"))
-                                                    (opt "homedir")))
-                            ,(merge-pathnames "local-projects/" (opt "homedir")))
-              for probe = (and path (or (ignore-errors (probe-file path))
-                                        #+clisp(ext:probe-directory path)))
-              when probe
-              do (set symbol (cons path (symbol-value symbol)))
-              until probe)
+           for path in `(,local
+                         ,(ignore-errors
+                           (truename (merge-pathnames "../../../local-projects/" (first (symbol-value symbol)))))
+                         ,(merge-pathnames "local-projects/" (opt "homedir")))
+           for probe = (and path (or (ignore-errors (probe-file path))
+                                     #+clisp(ext:probe-directory path)))
+           when probe
+           do (set symbol (cons path (symbol-value symbol)))
+           until probe)
         t))))
 
 (defvar *included-names* '("init"))
@@ -410,7 +409,8 @@ have the latest asdf, and this file has a workaround for this.
         do (apply (intern (string (first elt)) (find-package :ros)) (rest elt))))
 
 (when (opt "roswellenv")
-  (push (read-from-string (format nil ":roswell.env.~A" (opt "roswellenv"))) *features*))
+  (pushnew :roswellenv *features*)
+  (pushnew (read-from-string (format nil ":roswell.env.~A" (opt "roswellenv"))) *features*))
 
 #+clisp
 (unless (find :ros.init *features*)
