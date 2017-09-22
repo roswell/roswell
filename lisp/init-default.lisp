@@ -21,7 +21,7 @@
                     (format out "~@{~A~%~}"
                             "#!/bin/sh"
                             "#|-*- mode:lisp -*-|#"
-                            "#| <Put a one-line description here>"
+                            "#|"
                             "exec ros -Q -- $0 \"$@\"" "|#"
                             "(progn ;;init forms"
                             "  (ros:ensure-asdf)"
