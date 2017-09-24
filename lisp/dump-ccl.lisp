@@ -8,7 +8,7 @@
   (preprocess-before-dump)
   (ccl:gc)
   (ccl:save-application
-   out
+   (make-pathname :defaults out :type (or #+windows "exe"))
    :impurify *impurify*
    :purify   *purify*
    :toplevel-function
