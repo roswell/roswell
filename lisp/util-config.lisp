@@ -1,7 +1,7 @@
 (roswell:include "util" "util-config")
 (defpackage :roswell.util.config
   (:use :cl)
-  (:export :load-config :save-config :unconfig :config))
+  (:export :load-config :save-config :unconfig :config :env))
 (in-package :roswell.util.config)
 
 (defun load-config (path)
@@ -33,3 +33,9 @@
           config)
         (cons (list var "0" val)
               config))))
+
+(defun env ()
+  (or (roswell:opt "*roswellenv")
+      (third (assoc "roswellenv"
+                    (load-config ".roswellenv")
+                    :test 'equal))))
