@@ -252,7 +252,7 @@ have the latest asdf, and this file has a workaround for this.
             (let* ((version-installed (opt "asdf.version"))
                    (version (or version-installed
                                 (unless no-download
-                                  (roswell '("ros" "asdf" "install"))
+                                  (roswell '("ros" "install" "asdf"))
                                   (roswell '("config" "show" "asdf.version") :string t))))
                    (path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir"))))
               (when (equal version "NIL")
