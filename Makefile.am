@@ -20,6 +20,7 @@ LISPS = helper.el \
 	locations.lisp \
 	patch-quicklisp.lisp \
 	extend-quicklisp.lisp \
+	extend-quicklisp-system.lisp \
 	system.lisp \
 	\
 	build.ros \

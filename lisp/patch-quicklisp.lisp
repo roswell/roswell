@@ -1,5 +1,3 @@
 ;; load from quicklisp
-(roswell:include "util")
-(asdf:defsystem roswell.extend.quicklisp
-  :components ((:file "extend-quicklisp")))
+(roswell:include '("util" "extend-quicklisp-system"))
 (ql:quickload :roswell.extend.quicklisp :silent t)
