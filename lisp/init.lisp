@@ -82,10 +82,10 @@ have the latest asdf, and this file has a workaround for this.
       (setf sentinel
             (or sentinel
                 (when (and (opt "asdf")
-                           (or (and (find :asdf *features*)
-                                    (not (equal (opt "asdf")
-                                                (funcall (read-from-string "asdf:asdf-version")))))
-                               (not (find :asdf *features*))))
+                           (and (find :asdf *features*)
+                                (not (or (equal (opt "asdf")
+                                                (funcall (read-from-string "asdf:asdf-version")))
+                                         (= (length (opt "asdf")) 40)))))
                   (funcall 'asdf :no-download t))
                 (find :asdf *features*)
                 (ignore-errors (require "asdf")))
@@ -207,7 +207,7 @@ have the latest asdf, and this file has a workaround for this.
     do (push name *included-names*)
        (and (probe-file path)
             (not (equal provide name))
-            (cl:load path))))
+            (funcall 'load path))))
 
 (defmacro deplicated-fun (name lambda-list include read date)
   `(defun ,name ,lambda-list
@@ -252,7 +252,7 @@ have the latest asdf, and this file has a workaround for this.
             (let* ((version-installed (opt "asdf.version"))
                    (version (or version-installed
                                 (unless no-download
-                                  (roswell '("ros" "install" "asdf"))
+                                  (roswell '("install" "asdf"))
                                   (roswell '("config" "show" "asdf.version") :string t))))
                    (path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir"))))
               (when (equal version "NIL")
@@ -263,7 +263,7 @@ have the latest asdf, and this file has a workaround for this.
                      (declare #+sbcl(sb-ext:muffle-conditions sb-kernel:redefinition-warning))
                    (handler-bind
                        (#+sbcl(sb-kernel:redefinition-warning #'muffle-warning))
-                     (cl:load path)))))))))
+                     (funcall 'load path)))))))))
 
 (let ((symbol (ignore-errors (read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (opt "impl"))))
