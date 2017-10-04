@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Get and set options
-exec ros +R +Q -m roswell -N roswell -- $0 "$@"
+exec ros +R +Q +A -m roswell -N roswell -- $0 "$@"
 |#
 
 (progn
