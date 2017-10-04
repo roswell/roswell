@@ -141,6 +141,8 @@ void star_set_opt(void) {
   set_opt(&local_opt,"lispdir",q(lispdir()));
   if(get_opt("asdf.version",0))
     set_opt(&local_opt,"asdf",get_opt("asdf.version",0));
+  set_opt(&local_opt,"uname",uname());
+  set_opt(&local_opt,"uname-m",uname_m());
   s(config);
 }
 

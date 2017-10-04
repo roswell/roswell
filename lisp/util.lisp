@@ -73,11 +73,11 @@ Returns NIL when the package in the symbol prefix is not available."
 
 (defun uname ()
   "Returns uname. Example: linux , darwin"
-  (roswell:roswell '("roswell-internal-use" "uname") :string t))
+  (roswell:opt "uname"))
 
 (defun uname-m ()
   "Returns the machine type as a string. Example: x86-64"
-  (roswell:roswell '("roswell-internal-use" "uname" "-m") :string t))
+  (roswell:opt "uname-m"))
 
 (defun homedir ()
   "Returns the user-level installation directory of roswell. Example: /home/user/.roswell"
