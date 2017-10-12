@@ -1,3 +1,13 @@
+roswell (17.10.10.83-1) unstable; urgency=low
+
+  * New: ros exec command options would take care PATH. with this command,PATH setting is not required.
+  * Fix: support old FreeBSD box (by Payphone)
+  * Fix: asdf related errors.
+  * Change: Updated external clasp 5.0. (by gos-k)
+  * Change: Updated clasp 2017-09-17.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 11 Sep 2017 03:35:42 +0900
+
 roswell (17.9.10.82-1) unstable; urgency=low
 
   * Fix: make `ros list installed`,`ros delete` and `ros use` better output.
