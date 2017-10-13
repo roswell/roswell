@@ -11,17 +11,6 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (:use :cl :roswell.util :roswell.util.dump))
 (in-package :ros.script.setup.3672012282)
 
-(defun split-spaces (line)
-  (loop with from = 0
-        with length = (length line)
-        for to from 0
-        when (or (eql length to)
-                 (eql (aref line to) #\space))
-        collect (prog1
-                    (subseq line from to)
-                  (setq from (1+ to)))
-        until (eql length to)))
-
 (defun dump-filter (name)
   (lambda (file)
     (ignore-errors
@@ -31,7 +20,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
               (equal "#|" (subseq (setq line (read-line in)) 0 2))
               (equal "|#" (subseq line (- (length line) 2) (length line)))
               (equal "#|" (subseq (setq line (read-line in)) 0 2))
-              (setq line (split-spaces (read-line in)))
+              (setq line (split-sequence #\space (read-line in)))
               (setq pos (position "-m" line :test 'equal))
               (equal (nth (1+ pos) line) name)
               (equal "|#" (subseq (read-line in) 0 2))

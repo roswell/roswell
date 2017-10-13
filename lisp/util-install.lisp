@@ -114,16 +114,14 @@
   (read-call "quicklisp-client:register-local-projects")
   (loop
     with *ros-path* = (make-pathname :defaults (opt "argv0"))
-    with _
     with changed
     with envold = (ros:getenv *env*)
     for impl/version/tag = (first argv)
-    for pos = (position #\/ impl/version/tag)
-    for impl = (if pos (subseq impl/version/tag 0 pos) impl/version/tag)
-    for version/tag = (when pos (subseq impl/version/tag (1+ pos)))
-    for pos2 = (position #\/ version/tag)
-    for version = (if pos2 (subseq version/tag 0 pos2) version/tag)
-    for tag = (when pos2 (subseq version/tag (1+ pos2)))
+    for _ = (remove "" (split-sequence #\/ impl/version/tag) :test 'equal)
+    for impl = (first _)
+    for version = (second _)
+    for tag = (format nil "~{~A~^/~}" (cddr _))
+    for version/tag = (format nil "~A/~A" version tag)
     do (setf argv (rest argv))
        (setenv *env* (format nil "~A,~A" impl/version/tag envold))
        (cond

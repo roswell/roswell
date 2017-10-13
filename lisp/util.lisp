@@ -6,8 +6,19 @@
    :uname :uname-m :homedir :config :impl :which :config-env :checkoutdir
    :parse-version-spec :download :expand :sh :chdir :system :module
    :core-extention :clone-github :opt :read-call :set-opt :copy-dir
-   :roswell-installable-searcher :setenv :unsetenv :ensure-asdf))
+   :roswell-installable-searcher :setenv :unsetenv :ensure-asdf :split-sequence))
 (in-package :roswell.util)
+
+(defun split-sequence (del seq &key end start (test #'eql) &allow-other-keys)
+  (loop with from = (or start 0)
+     with length = (or end (length seq))
+     for to from from
+     when (or (= length to)
+              (funcall test (elt seq to) del))
+     collect (prog1
+                 (subseq seq from to)
+               (setq from (1+ to)))
+     until (= length to)))
 
 (defun setenv (name value)
   (declare (ignorable name value))
