@@ -120,8 +120,9 @@
     for _ = (remove "" (split-sequence #\/ impl/version/tag) :test 'equal)
     for impl = (first _)
     for version = (second _)
-    for tag = (format nil "~{~A~^/~}" (cddr _))
-    for version/tag = (format nil "~A/~A" version tag)
+    for tag = (and (cddr _) (format nil "~{~A~^/~}" (cddr _)))
+    for version/tag = (if tag (format nil "~A/~A" version tag)
+                          version)
     do (setf argv (rest argv))
        (setenv *env* (format nil "~A,~A" impl/version/tag envold))
        (cond
