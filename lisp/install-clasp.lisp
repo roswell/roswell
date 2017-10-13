@@ -32,12 +32,15 @@
   (set-opt "src" (merge-pathnames (format nil "src/clasp/~A/" (getf argv :version)) (homedir)))
   (cons t argv))
 
+(defun clasp-get-externals-clasp-version (argv)
+  (or (third (assoc (getf argv :version) *clasp-version* :test 'equal))
+      (config "externals.clasp.version")))
+
 (defun clasp-lib (argv)
-  (let* ((externals-clasp-version (third (assoc (getf argv :version) *clasp-version* :test 'equal)))
-         (arg (format nil "/~a" (or externals-clasp-version
-                                    (third (car *clasp-version*))))))
-    (roswell:roswell (list (format nil "install externals-clasp+~a" arg)) :interactive nil)
-    (cons t argv)))
+  (roswell:roswell (list (format nil "install externals-clasp+/~a"
+                                 (clasp-get-externals-clasp-version argv)))
+                   :interactive nil)
+  (cons t argv))
 
 (defun clasp-expand (argv)
   (let ((output (namestring (opt "src"))))
@@ -68,7 +71,7 @@
                          :direction :output :if-exists :supersede)
       (format out "EXTERNALS_CLASP_DIR = '~A'~%" (namestring (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A"
                                                                                       (uname-m) (uname)
-                                                                                      (config "externals.clasp.version"))
+                                                                                      (clasp-get-externals-clasp-version argv))
                                                                               (homedir))))
       (format out "SBCL                = '~A'~%" (namestring (merge-pathnames "bin/sbcl" sbcl-base))))
     (setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base)))
