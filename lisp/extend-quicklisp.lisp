@@ -31,18 +31,17 @@
 
 (defun roswell-installed-system-name (system-name)
   ;;  should return repo part of system-name.
-  ;; "user/repo" "user/repo/branch" "git://bra/bra/bra/repo.git" "github://user/repo"
+  ;; "user//repo" "user//repo/branch" "git://bra/bra/bra/repo.git" "github://user/repo"
   (if (find #\: system-name)
       (values nil "not implemented yet");; TBD
-      (let ((beg (position #\/ system-name)))
-        (and beg (incf beg) (/= (length system-name) beg)
-             (subseq system-name beg (position #\/ system-name :start beg))))))
+      (second (remove "" (roswell.util:split-sequence #\/ system-name) :test 'equal))))
 
 (defun roswell-installable-searcher (system-name)
   (let ((name (roswell-installed-system-name system-name))
         pname)
     (and
      name
+     (> (count #\/ system-name) 1)
      (not (when (setf pname (read-call "asdf/find-system:primary-system-name" system-name))
             (asdf:find-system pname nil)))
      (prog1
@@ -57,7 +56,8 @@
                (quicklisp-client:register-local-projects)
                (quicklisp-client:local-projects-searcher name))
              (return-from roswell-installable-searcher)) ;;can't find.
-       (eval `(asdf:defsystem ,system-name :depends-on (,name)))))))
+       (eval `(asdf:defsystem ,system-name :depends-on (,name))))
+     (asdf:find-system system-name))))
 
 (unless (find 'roswell-installable-searcher asdf:*system-definition-search-functions*)
   (setf asdf:*system-definition-search-functions*
