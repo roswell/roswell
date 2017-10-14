@@ -59,9 +59,11 @@
        (eval `(asdf:defsystem ,system-name :depends-on (,name))))
      (asdf:find-system system-name))))
 
-(unless (find 'roswell-installable-searcher asdf:*system-definition-search-functions*)
-  (setf asdf:*system-definition-search-functions*
-        (append asdf:*system-definition-search-functions* (list 'roswell-installable-searcher))))
+
+(unless (find 'roswell-installable-searcher (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))
+  (set (read-from-string "asdf:*system-definition-search-functions*")
+       (append (symbol-value (read-from-string "asdf:*system-definition-search-functions*"))
+               (list 'roswell-installable-searcher))))
 
 (in-package #:ql-dist)
 (let ((*error-output* (make-broadcast-stream)))
