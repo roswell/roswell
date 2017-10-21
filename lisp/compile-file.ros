@@ -1,0 +1,74 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|
+exec ros +Q +A -- $0 "$@"
+|#
+(progn ;;init forms
+  (ros:asdf)
+  #-asdf(ros:ensure-asdf)
+  (roswell:include "util")
+  )
+
+(defpackage :ros.script.compile-file.3716986869
+  (:use :cl :roswell.util))
+(in-package :ros.script.compile-file.3716986869)
+
+(defun fasl-dir (&optional env)
+  (merge-pathnames (format nil "~Aimpls/~A/~A/~A/fasl/"
+                           (let ((env (or env (opt "roswellenv"))))
+                             (if env
+                                 (format nil "env/~A/" env)
+                                 ""))
+                           (uname-m) (uname) (opt "impl"))
+                   (homedir)))
+
+(defmacro consume (argv &rest cond)
+  (let (default
+        (params (gensym)))
+    `(loop for ,params on ,argv
+        unless (cond
+                 ,@(loop for e in cond
+                      when (or (eql (caar e) :in)
+                               (eql (caar e) :on))
+                      do (setf default e)
+                      else
+                      collect `((equal (first ,params) ,(caar e))
+                                (let ,(loop for i in (cdar e)
+                                         for j from 1
+                                  collect `(,i (nth ,j ,params)))
+                                  ,@(cdr e)
+                                  ,@(unless (zerop (length (cdar e)))
+                                            `((setf ,params (nthcdr ,(length (cdar e)) ,params))))
+                                  t))))
+        do (let ((,(cadar default) (car ,params)))
+             ,@(cdr default)))))
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (let ((out t))
+    (consume
+     argv
+     (("-o" opt)
+      (setf out opt))
+     (("-o-")
+      (setf out nil))
+     (("-o.")
+      (setf out t))
+     ((:in file)
+      (asdf:compile-file*
+       file
+       :output-file
+       (make-pathname
+        :defaults (cond ((eql out t) (uiop:getcwd))
+                        (out out)
+                        (t (fasl-dir)))
+        :name (pathname-name file)
+        :type (format nil "~A~A"
+                      (if (eql out t)
+                          (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))
+                          (pathname-type file))
+                      (if (ros:opt"asdf.version")
+                          (format nil "_~A"
+                                  (substitute #\- #\/ (substitute #\_ #\. (ros:opt"asdf.version"))))
+                          ""))))))))
+;;; vim: set ft=lisp lisp:

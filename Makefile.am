@@ -27,6 +27,7 @@ LISPS = helper.el \
 	build-ros.lisp build-asd.lisp \
 	\
 	config.ros \
+	compile-file.ros \
 	util-config.lisp \
 	emacs.ros \
 	exec.ros \
