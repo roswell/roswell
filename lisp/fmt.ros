@@ -61,5 +61,5 @@ exec ros -Q -N roswell -- $0 "$@"
                                        (lem-base:buffer-end-point buffer)
                                        'lem-base:indent-line)
           (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))
-        (format *error-output* "~A is not exist" arg))))
+        (format *error-output* "~A does not exist" arg))))
 ;;; vim: set ft=lisp lisp:

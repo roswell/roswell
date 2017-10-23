@@ -220,8 +220,8 @@ DEF_SUBCMD(cmd_run_star) {
   s(opts);
   if(arg)
     exist?
-      cond_printf(0,"%s is not executable.Missing 32bit glibc?\n",arg[0]):
-      cond_printf(0,"%s is not exist.stop.\n",get_opt("impl",0));
+      cond_printf(0,"%s is not executable. Missing 32bit glibc?\n",arg[0]):
+      cond_printf(0,"%s does not exist.stop.\n",get_opt("impl",0));
   return 1;
 }
 

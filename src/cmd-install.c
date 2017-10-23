@@ -119,7 +119,7 @@ DEF_SUBCMD(cmd_install) {
       char* install_ros=s_cat2(lispdir(),q("install.ros"));
       cond_printf(1,"%s \n",install_ros);
       if(verbose&1) {
-        cond_printf(1,"%s is not implemented internal. %s argc:%d\n",param.impl,install_ros,argc);
+        cond_printf(1,"%s has not been implemented internally yet. %s argc:%d\n",param.impl,install_ros,argc);
         for(i=0;i<argc;++i)
           cond_printf(1,"%s:",firsts(nthcdr(i,arg_)));
         cond_printf(1,"\n");
