@@ -191,7 +191,7 @@ have the latest asdf, and this file has a workaround for this.
         t))))
 
 (defvar *included-names* '("init"))
-(defparameter *include-path* *load-pathname*)
+(defparameter *include-path* (or #.*compile-file-pathname* *load-pathname*))
 
 (defun include (names &optional provide)
   (loop
@@ -209,18 +209,6 @@ have the latest asdf, and this file has a workaround for this.
             (not (equal provide name))
             (funcall 'load path))))
 
-(defmacro deplicated-fun (name lambda-list include read date)
-  `(defun ,name ,lambda-list
-     (format *error-output*
-             ,(let ((*package* (find-package :keyword)))
-                (format nil "deplicated function '~S'.~%Use '~A' instead to support Roswell after ~A"
-                        name read date)))
-     (include ,include)
-     (funcall (read-from-string ,read) ,@lambda-list)))
-
-(deplicated-fun setenv (name value) "util" "ROSWELL.UTIL:SETENV" "2017/08")
-(deplicated-fun unsetenv (name) "util" "ROSWELL.UTIL:UNSETENV" "2017/08")
-
 (defun swank (&rest params)
   (include "util-swank")
   (apply (read-from-string "roswell.util.swank:swank") params))
@@ -231,7 +219,6 @@ have the latest asdf, and this file has a workaround for this.
         until (or (not x) (eq x #\newline)))
   (values))
 
-(compile 'shebang-reader)
 (defun ignore-shebang ()
   (set-dispatch-macro-character #\# #\! #'shebang-reader))
 
@@ -257,6 +244,10 @@ have the latest asdf, and this file has a workaround for this.
                    (path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir"))))
               (when (equal version "NIL")
                 (error "asdf download error?"))
+              (let ((fasl (format nil "~A_~A"
+                                  (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))
+                                  (substitute #\_ #\. (opt "asdf.version")))))
+                (setf path (or (probe-file (make-pathname :defaults path :type fasl)) path)))
               (when (probe-file path)
                 (ignore-errors
                  (locally
@@ -267,6 +258,8 @@ have the latest asdf, and this file has a workaround for this.
 
 (let ((symbol (ignore-errors (read-from-string "asdf::*user-cache*")))
       (impl (substitute #\- #\/ (opt "impl"))))
+  (when (opt "asdf.version")
+    (setq impl (format nil "~A-~A" impl (opt "asdf.version"))))
   (when (and symbol (boundp symbol))
     (cond ((listp (symbol-value symbol))
            (set symbol (append (symbol-value symbol) (list impl))))
