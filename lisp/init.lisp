@@ -75,17 +75,17 @@ have the latest asdf, and this file has a workaround for this.
         nil ret)))
 
 (let (sentinel)
-  (defun ensure-asdf ()
+  (defun ensure-asdf (&key (version (opt "asdf.version")))
     (let ((*error-output* (if (verbose)
                               *error-output*
                               (make-broadcast-stream))))
       (setf sentinel
             (or sentinel
-                (when (and (opt "asdf")
+                (when (and version
                            (and (find :asdf *features*)
-                                (not (or (equal (opt "asdf")
+                                (not (or (equal version
                                                 (funcall (read-from-string "asdf:asdf-version")))
-                                         (= (length (opt "asdf")) 40)))))
+                                         (= (length version) 40)))))
                   (funcall 'asdf :no-download t))
                 (find :asdf *features*)
                 (ignore-errors (require "asdf")))
@@ -244,9 +244,7 @@ have the latest asdf, and this file has a workaround for this.
                    (path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir"))))
               (when (equal version "NIL")
                 (error "asdf download error?"))
-              (let ((fasl (format nil "~A_~A"
-                                  (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))
-                                  (substitute #\_ #\. (opt "asdf.version")))))
+              (let ((fasl (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))))
                 (setf path (or (probe-file (make-pathname :defaults path :type fasl)) path)))
               (when (probe-file path)
                 (ignore-errors

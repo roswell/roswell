@@ -4,8 +4,7 @@
 exec ros +Q +A -- $0 "$@"
 |#
 (progn ;;init forms
-  (ros:asdf)
-  #-asdf(ros:ensure-asdf)
+  #-asdf(ros:ensure-asdf :version nil)
   (roswell:include "util")
   )
 
@@ -45,30 +44,47 @@ exec ros +Q +A -- $0 "$@"
 
 (defun main (&rest argv)
   (declare (ignorable argv))
-  (let ((out t))
+  (let ((out t)
+        asdf)
     (consume
      argv
      (("-o" opt)
-      (setf out opt))
+      (uiop:chdir
+       (setf *default-pathname-defaults* (truename opt)))
+      (setf out t))
      (("-o-")
       (setf out nil))
      (("-o.")
       (setf out t))
+     (("-asdf")
+      (setf asdf t))
+     (("+asdf")
+      (setf asdf nil))
      ((:in file)
-      (asdf:compile-file*
-       file
-       :output-file
-       (make-pathname
-        :defaults (cond ((eql out t) (uiop:getcwd))
-                        (out out)
-                        (t (fasl-dir)))
-        :name (pathname-name file)
-        :type (format nil "~A~A"
-                      (if (eql out t)
-                          (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))
-                          (pathname-type file))
-                      (if (ros:opt"asdf.version")
-                          (format nil "_~A"
-                                  (substitute #\- #\/ (substitute #\_ #\. (ros:opt"asdf.version"))))
-                          ""))))))))
+      (if asdf
+          (uiop:chdir
+           (setf *default-pathname-defaults*
+                 (merge-pathnames (format nil "lisp/asdf/~A/" file) (homedir))))
+          (when (ros:opt "asdf.version")
+            (ros:asdf)))
+      (funcall (read-from-string "asdf:compile-file*")
+               (if asdf
+                   "asdf.lisp"
+                   file)
+               :output-file
+               (make-pathname
+                :defaults (if (or out asdf)
+                              (uiop:getcwd)
+                              (fasl-dir))
+                :name (if asdf
+                          "asdf"
+                          (pathname-name file))
+                :type (format nil "~A~@[_~A~]"
+                              (if (or out asdf)
+                                  (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))
+                                  (pathname-type file))
+                              (and (not asdf)
+                                   (ros:opt"asdf.version")
+                                   (substitute #\- #\/ (substitute #\_ #\. (ros:opt"asdf.version")))))))))))
+
 ;;; vim: set ft=lisp lisp:
