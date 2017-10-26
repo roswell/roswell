@@ -244,8 +244,10 @@ have the latest asdf, and this file has a workaround for this.
                    (path (merge-pathnames (format nil "lisp/asdf/~A/asdf.lisp" version) (opt "homedir"))))
               (when (equal version "NIL")
                 (error "asdf download error?"))
-              (let ((fasl (substitute #\- #\/ (substitute #\_ #\. (opt "impl")))))
-                (setf path (or (probe-file (make-pathname :defaults path :type fasl)) path)))
+              (let ((fasl (make-pathname :defaults path :type (substitute #\- #\/ (substitute #\_ #\. (opt "impl"))))))
+                (unless (probe-file fasl)
+                  (roswell `("compile-file" "-asdf" ,(opt "asdf.version")) :string t))
+                (setf path (or (probe-file fasl) path)))
               (when (probe-file path)
                 (ignore-errors
                  (locally
