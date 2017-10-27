@@ -5,7 +5,8 @@
 
 (defparameter *clasp-version*
   ;; alias commit external-clasp-version
-  '(("2017-10-12" "d9730c986661441db19064ccbd6961def8a7f793" "5.0")
+  '(("2017-10-27" "c4c0e740dba84dc3cdf4fd3dfa88404cb05f1932" "5.0")
+    ("2017-10-12" "d9730c986661441db19064ccbd6961def8a7f793" "5.0")
     ("2017-09-17" "04a94c3824892c7c5f6eec142f45868d5496571b" "5.0")
     ("2017-08-24" "96f3376fe238510ba1f97553601f500f4fe41196" "3.9.1")
     ("2017-08-15" "c0af3c5839ab5d5ef918f9732abbf6b6e7ef4f85" "3.9.1")
