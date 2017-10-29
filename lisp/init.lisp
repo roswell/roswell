@@ -155,6 +155,7 @@ have the latest asdf, and this file has a workaround for this.
   (quit (run-program args :output :interactive)))
 
 (defun quicklisp (&key path (environment "QUICKLISP_HOME"))
+  "Corresponds to -Q command. Finds and loads setup.lisp for quicklisp, and adds appropriate local-project paths."
   (unless (find :quicklisp *features*)
     (let ((path (make-pathname
                  :name "setup"

@@ -13,6 +13,7 @@
 (defvar *checkout-default* 'checkout-github)
 
 (defun install-impl (impl version argv cmds)
+  "See install-impl-if-probed."
   (when cmds
     (let ((param `(t :target ,impl :version ,version :version-not-specified nil :argv ,argv)))
       (handler-case
@@ -26,6 +27,8 @@
           (roswell:roswell `(,(format nil "deleteing ~A/~A" (getf (cdr param) :target) (getf (cdr param) :version))) :string t))))))
 
 (defun install-impl-if-probed (imp version argv)
+  "Install the implementation when there is a file named install-XXXX (e.g. install-sbcl) in the roswell directory.
+These files contain the `recipes` for download/build the binaries/sources of these implementations."
   (values (let ((fun (module "install" imp)))
             (when fun
               (install-impl imp version argv (funcall fun :install))
@@ -34,6 +37,7 @@
           argv))
 
 (defun install-script-if-probed (impl/version)
+  "Install a .ros script (ros install XXX.ros or just ros install XXX if it is in the current directory)"
   (let* (sub
          (result (and (pathname-name impl/version)
                       (probe-file (setf sub (make-pathname :defaults impl/version :type "ros"))))))
@@ -42,6 +46,7 @@
       result)))
 
 (defun install-system-if-probed (imp)
+  "Install the quicklisp system."
   (let ((result (or (read-call "ql-dist:find-system" imp)
                     (read-call "ql:where-is-system" imp))))
     (when (and result
@@ -50,6 +55,8 @@
       result)))
 
 (defun install-localpath-if-probed (namestring)
+  "To install a system by local path. NAMESTRING should be a path to an asdf file.
+To differentiate it from the system with the same name in quicklisp, the path should start with '.', contain at least one '/'."
   (when (and (eql #\. (aref namestring 0))
              (find #\/ namestring))
     (let* ((path (truename namestring))
@@ -76,6 +83,7 @@
            collect (funcall filter href)))))
 
 (defun checkout-github (impl version tag)
+  "Install a system from github."
   (clone-github impl version :path "local-projects" :branch tag))
 
 (defun install (argv)
