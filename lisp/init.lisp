@@ -161,22 +161,13 @@ have the latest asdf, and this file has a workaround for this.
                  :name "setup"
                  :type "lisp"
                  :defaults (or path
-                               (let ((script (read-from-string
-                                              (format nil "(~A)" (opt "script")))))
-                                 (when (and (first script)
-                                            (equal (file-namestring (first script)) "dump.ros")
-                                            (equal (second script) "output")
-                                            (equal (third script) "-f")
-                                            (equal (fourth script) "roswell"))
-                                   (merge-pathnames "lisp/quicklisp/"
-                                                    (opt "homedir"))))
                                (and environment (getenv environment))
                                (opt "quicklisp"))))
           (local (ignore-errors
-                  (truename
-                   (merge-pathnames
-                    ".roswell/local-projects/"
-                    *default-pathname-defaults*)))))
+                   (truename
+                    (merge-pathnames
+                     ".roswell/local-projects/"
+                     *default-pathname-defaults*)))))
       (when (probe-file path)
         (cl:load path :verbose (verbose))
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
