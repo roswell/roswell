@@ -32,16 +32,16 @@
 (defun roswell-installed-system-name (system-name)
   ;;  should return repo part of system-name.
   ;; "user//repo" "user//repo/branch" "git://bra/bra/bra/repo.git" "github://user/repo"
-  (if (find #\: system-name)
-      (values nil "not implemented yet");; TBD
-      (second (remove "" (roswell.util:split-sequence #\/ system-name) :test 'equal))))
+  (when (find "" (split-sequence #\/ system-name) :test 'equal)
+    (if (find #\: system-name)
+        (values nil "not implemented yet") ;; TBD
+        (second (remove "" (split-sequence #\/ system-name) :test 'equal)))))
 
 (defun roswell-installable-searcher (system-name)
   (let ((name (roswell-installed-system-name system-name))
         pname)
     (and
      name
-     (> (count #\/ system-name) 1)
      (not (when (setf pname (read-call "asdf/find-system:primary-system-name" system-name))
             (asdf:find-system pname nil)))
      (prog1
@@ -59,11 +59,10 @@
        (eval `(asdf:defsystem ,system-name :depends-on (,name))))
      (asdf:find-system system-name))))
 
-
 (unless (find 'roswell-installable-searcher (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))
   (set (read-from-string "asdf:*system-definition-search-functions*")
-       (append (symbol-value (read-from-string "asdf:*system-definition-search-functions*"))
-               (list 'roswell-installable-searcher))))
+       (append (list 'roswell-installable-searcher)
+               (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))))
 
 (in-package #:ql-dist)
 (let ((*error-output* (make-broadcast-stream)))
