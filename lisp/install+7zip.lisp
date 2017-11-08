@@ -1,3 +1,4 @@
+;;;/*
 (roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.7zip+
   (:use :cl :roswell.install :roswell.util :roswell.locations))
@@ -19,9 +20,7 @@
     (values (merge-pathnames "7za.exe" prefix) version)))
 
 (defun unzip (path output-path)
-  (zip:unzip
-   path
-   output-path))
+  #+win32(zip:unzip path output-path))
 
 (defun setup-7za (argv)
   (format t "setting up 7zip...~%")
@@ -33,7 +32,7 @@
           (format t "7zip already setup~%")
           (progn
             (format t "archive=~A extract ~A~%" archive (7za-uri))
-            (download (7za-uri) (ensure-directories-exist archive))
+            #-win32(download (7za-uri) (ensure-directories-exist archive))
             (unzip archive (ensure-directories-exist prefix)))))
     (cons t argv)))
 
@@ -45,3 +44,11 @@
   (case type
     (:help '(7z-help))
     (:install '(setup-7za))))
+#|*/
+var f=WSH.Arguments(0),d=WSH.Arguments(1),
+o=new ActiveXObject('Scripting.FileSystemObject'),
+s=new ActiveXObject('Shell.Application');
+if(!o.FolderExists(d)){o.CreateFolder(d);}
+if(o.FileExists(f)){s.NameSpace(o.getFolder(d).Path).
+CopyHere(s.NameSpace(o.getFile(f).Path).Items(),20);}
+//|#
