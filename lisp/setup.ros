@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Initial setup
-exec ros -Q -L sbcl-bin -- $0 "$@"
+exec ros -Q -N roswell -- $0 "$@"
 |#
 
 (progn
@@ -81,7 +81,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
                           maximize (file-write-date i)))
                 (format *error-output* "up to date. stop~%")
                 t))
-      (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " +A" " -Q" " -L " "sbcl-bin "
+      (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " +A" " -Q"
+                          ,(if (opt "roswellenv") (format nil " -N ~A " (opt "roswellenv")) " -L sbcl-bin ")
                           ,@(loop for i in dir
                                collect "--load "
                                     collect (format nil "~A " i))

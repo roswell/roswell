@@ -1,5 +1,5 @@
 #+ros.init
-(roswell:include "util" "util-dump")
+(roswell:include '("util" "util-config") "util-dump")
 (defpackage :roswell.util.dump
   (:use :cl :roswell.util)
   (:export :*compression* :dump-compression :*predump* :*purify* :*impurify* :remove-docstrings
@@ -32,13 +32,24 @@ These are appended to the blacklist before destroying the package system.
 Notably, it must include all nicknames.")
 
 (defun dump-dir (&optional env)
-  (merge-pathnames (format nil "~Aimpls/~A/~A/~A/dump/"
-                           (let ((env (or env (opt "roswellenv"))))
+  (let ((env (or env (opt "roswellenv"))))
+    (merge-pathnames (format nil "~Aimpls/~A/~A/~A/dump/"
                              (if env
                                  (format nil "env/~A/" env)
-                                 ""))
-                           (uname-m) (uname) (opt "impl"))
-                   (homedir)))
+                                 "")
+                             (uname-m) (uname)
+                             (or (when env
+                                   (let* ((conf
+                                           (roswell.util.config:load-config
+                                            (merge-pathnames (format nil "env/~A/config" env)
+                                                             (homedir))))
+                                          (lisp (third (assoc "default.lisp" conf :test 'equal)))
+                                          (version (third (assoc (format nil "~a.version" lisp)
+                                                                 conf :test 'equal))))
+                                     (and lisp version
+                                          (format nil "~A/~A" lisp version))))
+                                 (opt "impl")))
+                     (homedir))))
 
 (defun dump-compression (param)
   (setf *compression* param))
