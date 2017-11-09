@@ -268,9 +268,12 @@ have the latest asdf, and this file has a workaround for this.
 
 #+sbcl
 (when (ignore-errors (string-equal (opt "impl") "sbcl-bin" :end1 8))
-  (let ((path (merge-pathnames (format nil "src/sbcl-~A/" (lisp-implementation-version)) (opt "homedir"))))
-    (when (probe-file path)
-      (sb-ext:set-sbcl-source-location path))))
+  (flet ((source (version)
+           (let ((path (merge-pathnames (format nil "src/sbcl-~A/" version) (opt "homedir"))))
+             (when (probe-file path)
+               (sb-ext:set-sbcl-source-location path)))))
+    (or (source (lisp-implementation-version))
+        (source "git"))))
 
 (defun source-registry (arg &rest rest)
   (declare (ignorable rest))
