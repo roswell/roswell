@@ -66,10 +66,13 @@ LVal directory(char* path) {
   if(dir==NULL)
     return 0;
   while((dirent=readdir(dir))!=0) {
-    char* str=q(dirent->d_name);
-    if(dirent->d_type & DT_DIR)
-      str=s_cat2(str,q("/"));
-    ret=conss(str,ret);
+    if(!(strcmp(dirent->d_name,".")==0 ||
+         strcmp(dirent->d_name,"..")==0)) {
+      char* str=q(dirent->d_name);
+      if(dirent->d_type & DT_DIR)
+        str=s_cat2(str,q("/"));
+      ret=conss(str,ret);
+    }
   }
   closedir(dir);
   return ret;
