@@ -1,5 +1,5 @@
 roslispdir = $(sysconfdir)/$(PACKAGE)
-proslispdir = $(sysconfdir)/$(PACKAGE)/patch
+roslisppatchdir = $(sysconfdir)/$(PACKAGE)/patch
 SUBDIRS = src
 
 if MANUAL_INSTALL
@@ -83,7 +83,7 @@ LISPS = helper.el \
 	which.ros
 roslisp_DATA = $(LISPS:%=lisp/%)
 
-#proslisp_DATA = clisp.patch sbcl-1.3.11.patch sbcl-posix-tests.patch
+roslisppatch_DATA = patch/sbcl-1.3.11.patch patch/sbcl-posix-tests.patch
 
 src/gend.h: FORCE
 	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp

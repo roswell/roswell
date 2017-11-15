@@ -120,17 +120,25 @@
           (format o "~S~%" v))))))
   (cons (not (opt "until-extract")) argv))
 
-(defun sbcl-patch (argv)
+(defvar *sbcl-patch-list-cache* nil)
+(defun sbcl-patch-list ()
+  (or *sbcl-patch-list-cache*
+      (setf *sbcl-patch-list-cache*
+            (loop for i in (list
+                            #+darwin "sbcl-posix-tests.patch"
+                            #+linux  "sbcl-1.3.11.patch")
+               collect (merge-pathnames (format nil "patch/~A" i) (opt "lispdir"))))))
+
+(defun sbcl-patch (argv &key revert (src (opt "src")))
   (unless (opt "sbcl.patchless")
-    (let ((file (merge-pathnames "tmp/sbcl.patch" (homedir))))
-      (dolist (uri (list
-                    #+darwin (sbcl-patch1-uri)
-                    #+linux  (sbcl-patch2-uri)))
-        (format t "~&Downloading patch: ~A~%" uri)
-        (download uri file)
-        (chdir (opt "src"))
-        (format t "~%Applying patch:~%")
-        (uiop/run-program:run-program "patch -p0 -N" :output t :input file :ignore-error-status t))))
+    (dolist (patch (sbcl-patch-list))
+      (format t "~%Applying patch:~A~%" (file-namestring patch))
+      (chdir src)
+      (uiop/run-program:run-program
+       (if revert
+           "patch -p0 -R -r -"
+           "patch -p0 -N -r -")
+       :output t :input patch :ignore-error-status t)))
   (cons t argv))
 
 (defun sbcl-config (argv)
