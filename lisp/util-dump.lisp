@@ -32,7 +32,7 @@ These are appended to the blacklist before destroying the package system.
 Notably, it must include all nicknames.")
 
 (defun dump-dir (&optional env)
-  (let ((env (or env (opt "roswellenv"))))
+  (let ((env (or env (opt "roswellenv*"))))
     (merge-pathnames (format nil "~Aimpls/~A/~A/~A/dump/"
                              (if env
                                  (format nil "env/~A/" env)
