@@ -3,11 +3,13 @@
   (and
    (ignore-errors (read-from-string "asdf:load-asd"))
    (equal (pathname-type file) "asd")))
+
 (defun load-asd (file)
   (roswell.util:read-call "asdf:load-asd" file))
 (setf *load* (acons 'asd-p 'load-asd (remove 'asd-p *load* :key 'first)))
 (defun ros-p (file)
-  (equal (pathname-type file) "ros"))
+  (or(equal (pathname-type file) "ros")
+     (null (pathname-type file))))
 (defun load-ros (file)
   (let (*cmd* *main*)
     (script file)))
