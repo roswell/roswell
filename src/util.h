@@ -127,6 +127,7 @@ char* append_trail_slash(char* str);
 char* escape_string(char* str);
 char* s_escape_string(char* str);
 char* lispdir(void);
+char* patchdir(void);
 /*util_dir.c */
 char* basedir(void);
 char* configdir(void);

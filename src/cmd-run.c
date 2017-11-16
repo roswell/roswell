@@ -139,6 +139,7 @@ void star_set_opt(void) {
   set_opt(&local_opt,"homedir",q(config));
   set_opt(&local_opt,"verbose",qsprintf(10,"%d",verbose));
   set_opt(&local_opt,"lispdir",q(lispdir()));
+  set_opt(&local_opt,"patchdir",append_trail_slash(q(patchdir())));
   if(get_opt("asdf.version",0))
     set_opt(&local_opt,"asdf",get_opt("asdf.version",0));
   set_opt(&local_opt,"uname",uname());

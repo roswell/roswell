@@ -127,7 +127,7 @@
             (loop for i in (list
                             #+darwin "sbcl-posix-tests.patch"
                             #+linux  "sbcl-1.3.11.patch")
-               collect (merge-pathnames (format nil "patch/~A" i) (opt "lispdir"))))))
+               collect (probe-file (merge-pathnames i (opt "patchdir")))))))
 
 (defun sbcl-patch (argv &key revert (src (opt "src")))
   (unless (opt "sbcl.patchless")

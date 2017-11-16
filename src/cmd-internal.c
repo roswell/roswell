@@ -174,6 +174,9 @@ char* lispdir(void) {
   result=append_trail_slash(q(LISP_PATH));
   return q(result);
 }
+char* patchdir(void) {
+  return PATCH_PATH;
+}
 
 DEF_SUBCMD(opt_version) {
   fprintf(stderr,"%s",PACKAGE_STRING);
