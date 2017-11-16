@@ -90,11 +90,11 @@ src/gend.h: FORCE
 	(printf "#define ROS_REVISION \"" && ((which git>/dev/null&&[ -e .git ]&& \
 	(git log -n 1 --oneline|cut -d' ' -f1| tr -d '\n'| tr -d '\r'))||printf "") && printf "\"\n") >> $@.tmp
 	printf '#define PATCH_PATH "%s"\n' "$(roslisppatchdir)" >> $@.tmp
-	printf '#ifdef HAVE_WINDOWS_H\n'  >> $@.tmp
-	printf '#define LISP_PATH "%s"' "`mkdir -p $(roslispdir);cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
-	printf '\n#else\n'  >> $@.tmp
-	printf '#define LISP_PATH "%s"' "$(roslispdir)" >> $@.tmp
-	printf '\n#endif\n'  >> $@.tmp
+if WITH_WINDOWS
+	printf '#define LISP_PATH "%s"\n' "`mkdir -p $(roslispdir);cd $(roslispdir); pwd -W 2>/dev/null`" >> $@.tmp
+else
+	printf '#define LISP_PATH "%s"\n' "$(roslispdir)" >> $@.tmp
+endif
 	cmp -s $@.tmp $@||cp $@.tmp $@
 	cat $@
 	rm -f $@.tmp
