@@ -5,11 +5,11 @@ roswell does not function without help of C codes.
 
 |#
 
-(defsystem roswell
+(defsystem "roswell"
   :version "17.10.10.84"
   :author "SANO Masatoshi"
   :license "MIT"
-  :depends-on (:simple-date-time :split-sequence :plump :zip)
+  :depends-on ("simple-date-time" "split-sequence" "plump" "zip")
   :components ((:module "lisp"
                 :components
                 ((:file "install-allegro" :depends-on ("util-install-quicklisp"))

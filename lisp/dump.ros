@@ -8,7 +8,7 @@ exec ros -- $0 "$@"
   (roswell:include "util-dump")
   (unless (find-package :uiop)
     #-quicklisp(require :uiop)
-    #+quicklisp(ql:quickload :uiop :silent t)))
+    #+quicklisp(ql:quickload "uiop" :silent t)))
 
 (defpackage :ros.script.dump
   (:use :cl :roswell.util :roswell.util.dump))

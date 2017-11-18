@@ -10,7 +10,7 @@ exec ros -Q -N roswell -- $0 "$@"
     (unless (ql:where-is-system :lem)
       (roswell:roswell '("git" "clone" "https://github.com/cxxxr/lem.git"))
       (quicklisp-client:register-local-projects))
-    (ql:quickload '(:swank :lem-base :lem-lisp-syntax) :silent t)))
+    (ql:quickload '("swank" "lem-base" "lem-lisp-syntax") :silent t)))
 
 (defpackage :ros.script.fmt.3707812168
   (:use :cl))
