@@ -88,8 +88,7 @@ have the latest asdf, and this file has a workaround for this.
                                          (= (length version) 40)))))
                   (funcall 'asdf :no-download t))
                 (find :asdf *features*)
-                (ignore-errors (require "asdf"))
-                (ignore-errors (quicklisp)))
+                (ignore-errors (require "asdf")))
             sentinel (not (not sentinel))))))
 
 #+(and unix sbcl) ;; from swank
