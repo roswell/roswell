@@ -88,7 +88,8 @@ have the latest asdf, and this file has a workaround for this.
                                          (= (length version) 40)))))
                   (funcall 'asdf :no-download t))
                 (find :asdf *features*)
-                (ignore-errors (require "asdf")))
+                (ignore-errors (require "asdf"))
+                (ignore-errors (quicklisp)))
             sentinel (not (not sentinel))))))
 
 #+(and unix sbcl) ;; from swank
@@ -237,6 +238,8 @@ have the latest asdf, and this file has a workaround for this.
               (when (equal version "NIL")
                 (error "asdf download error?"))
               (let ((fasl (make-pathname :defaults path :type (substitute #\- #\/ (substitute #\_ #\. (opt "impl"))))))
+                (when (verbose)
+                  (format *error-output* "asdf fasl:~A~%" fasl))
                 (unless (probe-file fasl)
                   (roswell `("compile-file" "-asdf" ,(opt "asdf.version")) :string t))
                 (setf path (or (probe-file fasl) path)))
