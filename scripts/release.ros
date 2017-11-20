@@ -157,6 +157,10 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
        ,(format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" version)
        "git push"))))
 
+(defun changelog (argv)
+  (declare (ignore argv))
+  (prepare-changelog))
+
 (defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
   (ignore-errors
     (find tagname
@@ -194,7 +198,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(release prepare github debian release-2)
+  (let ((subcmd (find subcmd '(release prepare github debian release-2 changelog)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))
