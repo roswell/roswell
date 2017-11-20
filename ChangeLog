@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 20 Nov 2017 13:48:36 +0900
+
 roswell (17.10.10.84-1) unstable; urgency=low
 
   * Change: ros install ecl accept branch name.
