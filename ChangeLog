@@ -1,8 +1,14 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (17.11.10.85-1) unstable; urgency=low
 
-  *
+  * New: support using compiled init.lisp via ros compile-file.(not completed)
+  * New: ``ros install asdf``ed asdf lisp are automatically compiled.
+  * New: include patch files for compile sbcl.
+  * Change: to fix conflict with slash sepalated package-infered-system. github installed system are reffered 'user//repo' style.
+  * Change: Updated clasp 2017-11-05.
+  * Change: prevent doing mkdir when make. (reported by sheepduke #277)
+  * Fix: ``ros insall sbcl`` are success on windows (failed if sb-posix are loaded)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Mon, 20 Nov 2017 13:48:36 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 20 Nov 2017 13:49:25 +0900
 
 roswell (17.10.10.84-1) unstable; urgency=low
 
