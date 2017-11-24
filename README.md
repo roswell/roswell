@@ -21,14 +21,14 @@ Checkout [issues list](https://github.com/roswell/roswell/issues) if you are int
 
 See our [github wiki](https://github.com/roswell/roswell/wiki).
 We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
-* [Linux (arch)](https://github.com/roswell/roswell/wiki/1.-Installation#linux)
-* [Mac OS X (brew)](https://github.com/roswell/roswell/wiki/1.-Installation#mac-os-x--homebrew)
-* [Windows](https://github.com/roswell/roswell/wiki/1.-Installation#windows)
-* [Building from Source](https://github.com/roswell/roswell/wiki/1.-Installation#building-from-source)
+* [Linux (arch)](https://github.com/roswell/roswell/wiki/Installation#linux)
+* [Mac OS X (brew)](https://github.com/roswell/roswell/wiki/Installation#mac-os-x--homebrew)
+* [Windows](https://github.com/roswell/roswell/wiki/Installation#windows)
+* [Building from Source](https://github.com/roswell/roswell/wiki/Installation#building-from-source)
 
 ## Features
 
-[Feature comparison is available!](https://github.com/roswell/roswell/wiki/0.-What's-the-Difference%3F)
+[Feature comparison is available!](https://github.com/roswell/roswell/wiki/How-is-Roswell-different)
 
 * Implementation Manager
 * Scripting environment (similar to cl-launch)
@@ -37,7 +37,7 @@ We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Wind
 * **Novel** : Better integration to the command-line interface (Bash completion, etc)
 * **Novel** : Infrastructure for bundling/installing the scripts to/from a quicklisp system
 * **Novel** : Better support for Windows environment (tested exhaustively)
-* **Novel** : Better integration to CI environment (e.g. [Travis-CI](https://github.com/roswell/roswell/wiki/4.1-Travis-CI), [CircleCI](https://github.com/roswell/roswell/wiki/4.2-Circle-CI), [Coveralls](https://github.com/roswell/roswell/wiki/4.3-Coverall))
+* **Novel** : Better integration to CI environment (e.g. [Travis-CI](https://github.com/roswell/roswell/wiki/Travis-CI), [CircleCI](https://github.com/roswell/roswell/wiki/4.2-Circle-CI), [Coveralls](https://github.com/roswell/roswell/wiki/Coveralls))
 
 ## Usage
 
