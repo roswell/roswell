@@ -12,6 +12,9 @@ ros --version    # if roswell runs successfully
 ros config
 ```
 
+We may assign explanatory tags to bad questions instead of replying to it.
+See this famous text on how to ask good questions http://catb.org/~esr/faqs/smart-questions.html
+
 ## How to reproduce the issue
 
 ```sh

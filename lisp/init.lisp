@@ -171,9 +171,14 @@ have the latest asdf, and this file has a workaround for this.
       (when (probe-file path)
         (cl:load path :verbose (verbose))
         (loop with symbol = (read-from-string "ql:*local-project-directories*")
-           for path in `(,local
+           ;; ql:*local-project-directories* defaults to a list of a single pathname,
+           ;; which is <directory containing setup.lisp>/local-projects/ .
+           for path in `(;; Searches local-project/ in the current directory
+                         ,local
+                         ;; This is WHAAAAAT????
                          ,(ignore-errors
-                           (truename (merge-pathnames "../../../local-projects/" (first (symbol-value symbol)))))
+                            (truename (merge-pathnames "../../../local-projects/" (first (symbol-value symbol)))))
+                         ;; Searches local-project/ in e.g. ~/.roswell/
                          ,(merge-pathnames "local-projects/" (opt "homedir")))
            for probe = (and path (or (ignore-errors (probe-file path))
                                      #+clisp(ext:probe-directory path)))
@@ -186,6 +191,13 @@ have the latest asdf, and this file has a workaround for this.
 (defparameter *include-path* (or #.*compile-file-pathname* *load-pathname*))
 
 (defun include (names &optional provide)
+  "CL:LOAD the files in the same directory as this init.lisp.
+The same file never loaded twice.
+NAMES is a list of lisp file name strings without extension.
+PROVIDE is a string used for grouping/naming a set of included files.
+PROVIDE is just a marker and does not correspond to a file.
+As a hacky side effect, files with the same name as PROVIDE is not loaded.
+"
   (loop
     for name in `(,provide
                   ,@(if (listp names)
@@ -194,12 +206,11 @@ have the latest asdf, and this file has a workaround for this.
     for path = (make-pathname
                 :defaults *include-path*
                 :name name :type "lisp")
-    unless (or (not name)
-               (member name *included-names* :test 'string=))
-    do (push name *included-names*)
-       (and (probe-file path)
-            (not (equal provide name))
-            (funcall 'load path))))
+    do (when (and name (not (member name *included-names* :test 'string=)))
+         (push name *included-names*)
+         (when (and (probe-file path)
+                    (not (equal provide name)))
+           (funcall 'load path)))))
 
 (defun swank (&rest params)
   (include "util-swank")
