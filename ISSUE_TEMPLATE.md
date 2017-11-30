@@ -12,8 +12,8 @@ ros --version    # if roswell runs successfully
 ros config
 ```
 
-Please make sure to update roswell before submitting issues, it could be already fixed.
-The latest version number is available from here: https://github.com/roswell/roswell/releases
+We may assign explanatory tags to bad questions instead of replying to it.
+See this famous text on how to ask good questions http://catb.org/~esr/faqs/smart-questions.html
 
 ## How to reproduce the issue
 
