@@ -9,7 +9,8 @@
         (finish-output *error-output*)
         (format t "~{~A~%~}"
                 (sort (loop for x in (asdf:registered-systems)
-                         when (ignore-errors (string-equal "roswell.list." x :end2 13))
+                         when (ignore-errors (and (string-equal "roswell.list." x :end2 13)
+                                                  (not (string-equal "roswell.list.default" x))))
                          collect (subseq x 13))
                       #'string<)))
       (format *error-output* "not suppported type for list:~A~%" (first r))))
