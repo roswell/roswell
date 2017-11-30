@@ -175,7 +175,7 @@ have the latest asdf, and this file has a workaround for this.
            ;; which is <directory containing setup.lisp>/local-projects/ .
            for path in `(;; Searches local-project/ in the current directory
                          ,local
-                         ;; This is used when setup.lisp is found in a non-standard place, e.g. by the environment variable QUICKLISP_HOME
+                         ;; This is WHAAAAAT????
                          ,(ignore-errors
                             (truename (merge-pathnames "../../../local-projects/" (first (symbol-value symbol)))))
                          ;; Searches local-project/ in e.g. ~/.roswell/
