@@ -12,6 +12,9 @@ ros --version    # if roswell runs successfully
 ros config
 ```
 
+Please make sure to update roswell before submitting issues, it could be already fixed.
+The latest version number is available from here: https://github.com/roswell/roswell/releases
+
 ## How to reproduce the issue
 
 ```sh
