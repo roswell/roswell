@@ -16,21 +16,25 @@
     (re-search-forward (concat "^" var "\t[^\t]+\t\\(.*\\)$"))
     (match-string 1)))
 
-(defun roswell-slime-directory ()
+(defun roswell-directory (type)
   (concat
    (roswell-configdir)
-   "lisp/slime/"
-   (roswell-opt "slime.version")
+   "lisp/"
+   type
+   "/"
+   (roswell-opt (concat type ".version"))
    "/"))
 
 (defvar roswell-slime-contribs '(slime-fancy))
 
-(let* ((slime-directory (roswell-slime-directory)))
-  (add-to-list 'load-path slime-directory)
-  (require 'slime-autoloads)
-  (setq slime-backend (expand-file-name "swank-loader.lisp"
-                                        slime-directory))
-  (setq slime-path slime-directory)
-  (slime-setup roswell-slime-contribs))
+(let ((type (or (ignore-errors (roswell-opt "emacs.type")) "slime")))
+  (when (equal type "slime")
+    (let* ((slime-directory (roswell-directory type)))
+      (add-to-list 'load-path slime-directory)
+      (require 'slime-autoloads)
+      (setq slime-backend (expand-file-name "swank-loader.lisp"
+                                            slime-directory))
+      (setq slime-path slime-directory)
+      (slime-setup roswell-slime-contribs))))
 
 (setq inferior-lisp-program "ros run")
