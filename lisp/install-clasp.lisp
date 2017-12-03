@@ -5,7 +5,8 @@
 
 (defparameter *clasp-version*
   ;; alias commit external-clasp-version
-  '(("2017-11-05" "fb57b58cb27527469a0798ae5645e9e87bad7de4" "5.0")
+  '(("2017-11-20" "97f9f147a35d9b18d9581bcd7c816aa45aecd894" "5.0")
+    ("2017-11-05" "fb57b58cb27527469a0798ae5645e9e87bad7de4" "5.0")
     ("2017-10-27" "c4c0e740dba84dc3cdf4fd3dfa88404cb05f1932" "5.0")
     ("2017-10-12" "d9730c986661441db19064ccbd6961def8a7f793" "5.0")
     ("2017-09-17" "04a94c3824892c7c5f6eec142f45868d5496571b" "5.0")
@@ -76,6 +77,11 @@
                                                                                       (uname-m) (uname)
                                                                                       (clasp-get-externals-clasp-version argv))
                                                                               (homedir))))
+
+      (let* ((path (format nil "lib/~A/~A/externals-clasp/~A/build/release/bin/llvm-config"
+                          (uname-m) (uname)
+                          (clasp-get-externals-clasp-version argv))))
+        (format out "LLVM_CONFIG_BINARY  = '~A'~%" (namestring (merge-pathnames path (homedir)))))
       (format out "SBCL                = '~A'~%" (namestring (merge-pathnames "bin/sbcl" sbcl-base))))
     (setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base)))
     (format t "with sbcl-bin(~A) build clasp" sbcl-base))
