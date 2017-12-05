@@ -85,26 +85,40 @@
   (cons t argv))
 
 (defun sbcl-download (argv)
-  (set-opt "download.uri" (format nil "~@{~A~}" (sbcl-uri) "sbcl-"
-                                  (getf argv :version) ".tar.gz"))
-  (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
-                                (when pos
-                                  (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
   (cond
-    ((equal "git" (getf argv :version)) ()) ;; skip downloading if version is 'git'
-    (t `((,(opt "download.archive") ,(opt "download.uri"))))))
+    ((or (equal "git" (getf argv :version))
+         (probe-file (merge-pathnames "src/sbcl-git/" (homedir))))
+     (set-opt "src" (merge-pathnames "src/sbcl-git/" (homedir)))
+     ()) ;; skip downloading if version is 'git'
+    (t
+     (set-opt "download.uri" (format nil "~@{~A~}" (sbcl-uri) "sbcl-"
+                                     (getf argv :version) ".tar.gz"))
+     (set-opt "download.archive" (let ((pos (position #\/ (opt "download.uri") :from-end t)))
+                                   (when pos
+                                     (merge-pathnames (format nil "archives/~A" (subseq (opt "download.uri") (1+ pos))) (homedir)))))
+     `((,(opt "download.archive") ,(opt "download.uri"))))))
 
 (defun sbcl-expand (argv)
-  (let ((h (homedir))
-        (v (getf argv :version)))
+  (let* ((h (homedir))
+         (v (getf argv :version))
+         (gitsrc (merge-pathnames "src/sbcl-git/" h)))
     (cond
       ((equal "git" (getf argv :version))
-       (unless (probe-file (merge-pathnames "src/sbcl-git" h))
+       (unless (probe-file gitsrc)
          (clone-github "sbcl" "sbcl" :path (merge-pathnames "src/" h))
          (ql-impl-util:rename-directory
           (merge-pathnames "src/sbcl/sbcl" h)
           (merge-pathnames "src/sbcl-git" h))
          (uiop/filesystem:delete-directory-tree (merge-pathnames "src/sbcl/" h) :validate t)))
+      ((probe-file gitsrc)
+       (funcall 'sbcl-patch argv :revert t) ;; revert patch.
+       (chdir gitsrc)
+       (uiop/run-program:run-program "git checkout master")
+       (uiop/run-program:run-program "git pull")
+       (or (uiop/run-program:run-program
+            (format nil "git checkout ~A" (getf argv :version)) :ignore-error-status t)
+           (uiop/run-program:run-program
+            (format nil "git checkout sbcl-~A" (getf argv :version)))))
       (t
        (format t "~%Extracting archive:~A~%" (opt "download.archive"))
        (expand (opt "download.archive")
