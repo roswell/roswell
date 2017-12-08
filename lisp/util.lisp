@@ -214,7 +214,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
                                 branch force-git
                                 (path "templates")
                                 (home (checkoutdir)))
-  (format *error-output* "install from github ~A/~A~%" owner name)
+  (format *error-output* "Installing from github ~A/~A~%" owner name)
   (if (or force-git (which "git"))
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
         (setq branch (if branch (format nil "-b ~A" branch) ""))
