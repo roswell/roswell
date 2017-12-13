@@ -36,12 +36,22 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   if(help)
     ret=conss(q("--help"),ret);
 
+  {
+    char* path=cat(basedir(),impl_path,SLASH,"lib",SLASH,NULL);
+    LVal d=directory(path);
+    if(d) {
+      path=s_cat(path,q(firsts(d)),NULL);
+      cond_printf(1,"lisplibdir=%s\n",path);
+      ret=conss(q("-B"),ret);
+      ret=conss(path,ret);
+    }
+  }
   if(image) {
     char *path=cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-M"),ret);
       ret=conss(path,ret);
-    } else {
+    }else {
       cond_printf(1,"core not found:%s\n",path);
       s(path);
     }
