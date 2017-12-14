@@ -251,7 +251,7 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
                 (when (verbose)
                   (format *error-output* "asdf fasl:~A~%" fasl))
                 (unless (probe-file fasl)
-                  (roswell `("compile-file" "-asdf" ,(opt "asdf.version")) :string t))
+                  (roswell `("-L" ,(opt "impl") "compile-file" "-asdf" ,version) :string t))
                 (setf path (or (probe-file fasl) path)))
               (when (probe-file path)
                 (ignore-errors
