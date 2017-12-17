@@ -8,10 +8,8 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_QUICKLISP_DIST_URI=https://github.com/roswell/quicklisp/releases/download/dist/quicklisp.txt
   matrix:
-    - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
-    - METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=NO
     - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=cmu-bin/2017-04
+    - METHOD=ci LISP=cmu-bin/2017-10
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=clisp
@@ -33,15 +31,8 @@ cache:
 matrix:
   allow_failures:
     - env: METHOD=brew
-    - env: METHOD=ci LISP=sbcl-bin ALLOW_FAILURES=YES
     - env: METHOD=ci LISP=sbcl/git
   include:
-      - sudo: required
-        os: linux
-        env: METHOD=ci LISP=alisp APT_UNINSTALL="libc6-i386"
-      - sudo: required
-        os: linux
-        env: METHOD=ci LISP=cmucl APT_UNINSTALL="libc6-i386"
       - sudo: required
         os: linux
         env: METHOD=cross XCC=i686-w64-mingw32-gcc HOST="--host=i686-w64-mingw32" PREFIX="--prefix=/usr/i686-w64-mingw32"
