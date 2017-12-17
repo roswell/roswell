@@ -82,9 +82,11 @@ exec ros -Q -N roswell -- $0 "$@"
                 (format *error-output* "up to date. stop~%")
                 t))
       (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " +A" " -Q"
-                          ,(if (opt "roswellenv*")
-                               (format nil " -N ~A " (opt "roswellenv*"))
-                               (format nil " -L ~A " (opt "impl")))
+                          ,(let ((env* (opt "roswellenv*")))
+                             (if (and env*
+                                      (not (equal env* "-")))
+                                 (format nil " -N ~A " env*)
+                                 (format nil " -L ~A " (opt "impl"))))
                           ,@(loop for i in dir
                                collect "--load "
                                     collect (format nil "~A " i))
