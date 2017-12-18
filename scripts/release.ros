@@ -5,10 +5,10 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 (progn
   (ros:ensure-asdf)
-  (ql:quickload '("cl-ppcre" "split-sequence" "snmsts//sn.github")))
+  (ql:quickload '("cl-ppcre" "split-sequence" "local-time") :silent t))
 
 (defpackage :ros.script.release.3703769340
-  (:use :cl :sn.github.repos.releases))
+  (:use :cl))
 (in-package :ros.script.release.3703769340)
 
 (defvar *project-path* (truename (merge-pathnames "../" (make-pathname :name nil :type nil :defaults *load-pathname*))))
@@ -161,44 +161,9 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (declare (ignore argv))
   (prepare-changelog))
 
-(defun release-exist-p (tagname &key (owner *owner*) (repo *repo*))
-  (ignore-errors
-    (find tagname
-          (releases-list owner repo)
-          :key (lambda (x) (getf x :|tag_name|))
-          :test 'equal)))
-
-(defun ensure-release-exists (tagname &key (owner *owner*) (repo *repo*))
-  (let ((found (release-exist-p tagname :owner owner :repo repo)))
-    (if found
-        found
-        (releases-create owner repo tagname))))
-
-(defun asset-upload (path tagname &key (owner *owner*) (repo *repo*))
-  (releases-asset-upload
-   owner repo
-   (getf (release-exist-p tagname :owner owner :repo repo) :|id|) path))
-
-(defun github (argv)
-  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
-    (error "GITHUB_OAUTH_TOKEN must be set"))
-  (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
-  (asset-upload (pathname (first argv)) (uiop:getenv "TRAVIS_TAG")))
-
-(defun debian (argv)
-  (declare (ignore argv))
-  (unless (uiop:getenv "GITHUB_OAUTH_TOKEN")
-    (error "GITHUB_OAUTH_TOKEN must be set"))
-  (ensure-release-exists (uiop:getenv "TRAVIS_TAG"))
-  (loop for i in (directory (make-pathname
-                             :type :wild :name :wild
-                             :defaults (merge-pathnames "debian/debian/" *project-path*)))
-     when (pathname-name i)
-     do (asset-upload (pathname i) (uiop:getenv "TRAVIS_TAG"))))
-
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(release prepare github debian release-2 changelog)
+  (let ((subcmd (find subcmd '(release prepare release-2 changelog)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))
