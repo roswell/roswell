@@ -1,3 +1,11 @@
+roswell (17.12.10.86-1) unstable; urgency=low
+
+  * Change: if you've already clone sbcl repo by 'ros install sbcl/git' your next compilation is not download src from archive but checkout via git.
+  * Change: Updated clasp 2017-12-12.
+  * Fix: some bug related env.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 18 Dec 2017 16:17:43 +0900
+
 roswell (17.11.10.85-1) unstable; urgency=low
 
   * New: support using compiled init.lisp via ros compile-file.(not completed)
