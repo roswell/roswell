@@ -35,6 +35,7 @@
 (defuri sbcl-git-version-uri "https://github.com/sbcl/sbcl/releases.atom")
 (defuri ccl-git-version-uri  "https://github.com/roswell/ccl_bin/releases.atom")
 (defuri slime-git-version-uri"https://github.com/slime/slime/releases.atom")
+(defuri sly-git-version-uri  "https://github.com/joaotavora/sly/releases.atom")
 
 (defuri asdf-uri "https://github.com/roswell/asdf/archive/")
 (defuri ecl-uri  "https://github.com/roswell/ecl/archive/")

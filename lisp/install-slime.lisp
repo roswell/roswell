@@ -4,7 +4,8 @@
   (ql:quickload '(:plump) :silent t))
 
 (defpackage :roswell.install.slime
-  (:use :cl :roswell.install :roswell.locations :roswell.util))
+  (:use :cl :roswell.install :roswell.locations :roswell.util)
+  (:export :slime-write-helper))
 (in-package :roswell.install.slime)
 
 (defun slime-help (argv)
@@ -98,6 +99,7 @@
           (slime-from-ql name)))
       (t (name-error name)))
     (setf (config "slime.version") name)
+    (setf (config "emacs.type") "slime")
     (slime-write-helper))
   (cons t argv))
 

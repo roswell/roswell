@@ -28,13 +28,16 @@
 (defvar roswell-slime-contribs '(slime-fancy))
 
 (let ((type (or (ignore-errors (roswell-opt "emacs.type")) "slime")))
-  (when (equal type "slime")
-    (let* ((slime-directory (roswell-directory type)))
-      (add-to-list 'load-path slime-directory)
-      (require 'slime-autoloads)
-      (setq slime-backend (expand-file-name "swank-loader.lisp"
-                                            slime-directory))
-      (setq slime-path slime-directory)
-      (slime-setup roswell-slime-contribs))))
+  (cond ((equal type "slime")
+         (let ((slime-directory (roswell-directory type)))
+           (add-to-list 'load-path slime-directory)
+           (require 'slime-autoloads)
+           (setq slime-backend (expand-file-name "swank-loader.lisp"
+                                                 slime-directory))
+           (setq slime-path slime-directory)
+           (slime-setup roswell-slime-contribs)))
+        ((equal type "sly")
+         (add-to-list 'load-path (roswell-directory type))
+         (require 'sly-autoloads))))
 
 (setq inferior-lisp-program "ros run")

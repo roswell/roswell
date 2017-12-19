@@ -12,7 +12,8 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 (in-package :ros.script.git.3702458293)
 
 (defun location (key)
-  (let ((found (or (cdr (assoc key `(("sbcl" . ,(merge-pathnames "src/sbcl-git/" (homedir))))
+  (let ((found (or (cdr (assoc key `(("sbcl" . ,(merge-pathnames "src/sbcl-git/" (homedir)))
+                                     ("sly" . ,(merge-pathnames "lisp/sly/git/" (homedir))))
                                :test 'equal))
                    (ql:where-is-system key))))
     (when found
