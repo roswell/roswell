@@ -21,10 +21,10 @@
   (roswell:quit 1))
 
 (defun slime-from-git (name)
-  (let* ((str (slime-uri))
-         (end (position #\/ str :from-end t))
-         (end2 (position #\. str :from-end t))
-         (start (position #\/ str :from-end t :end end)))
+  (let* ((str (slime-git-version-uri))
+         (end2 (position #\/ str :from-end t))
+         (end (position #\/ str :from-end t :end end2))
+         (start (position #\/ str :from-end t :end  end)))
     (clone-github
      (subseq str (1+ start) end)
      (subseq str (1+ end) end2)
