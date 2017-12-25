@@ -54,7 +54,7 @@ LISPS = helper.el \
 	help-install.lisp help-options.lisp help-run.lisp \
 	\
 	init.ros \
-	init-default.lisp init-env.lisp \
+	init-default.lisp init-env.lisp init-system.lisp \
 	\
 	install.ros \
 	util-install.lisp util-install-quicklisp.lisp \
