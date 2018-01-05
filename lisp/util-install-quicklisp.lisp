@@ -1,6 +1,6 @@
 (roswell:include '("util-install" "system") "util-install-quicklisp")
 (roswell:quicklisp :environment nil)
-(ql:quickload '(:uiop :simple-date-time :split-sequence :plump :cl-ppcre #+win32 :zip) :silent t)
+(ql:quickload '("uiop" "simple-date-time" "split-sequence" "plump" "cl-ppcre" #+win32 :zip) :silent t)
 (in-package :roswell.install)
 
 (defvar *build-hook* nil)
