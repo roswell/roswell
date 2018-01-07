@@ -46,8 +46,8 @@ exec ros -Q -N roswell -- $0 "$@"
   #-win32
   (ignore-errors
     (require :sb-posix)
-    (sb-posix:setgid (parse-integer (sb-posix:getenv "SUDO_GID")))
-    (sb-posix:setuid (parse-integer (sb-posix:getenv "SUDO_UID"))))
+    #+sbcl(sb-posix:setgid (parse-integer (sb-posix:getenv "SUDO_GID")))
+    #+sbcl(sb-posix:setuid (parse-integer (sb-posix:getenv "SUDO_UID"))))
   (unless (probe-file (merge-pathnames "setup.lisp" (opt "quicklisp")))
     (format *error-output* "Installing Quicklisp...~%")
     (flet ((opt (x)

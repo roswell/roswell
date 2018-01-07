@@ -1,7 +1,5 @@
 (roswell:include '("util-install-quicklisp"))
 (roswell:quicklisp :environment nil)
-(unless (find-package :plump)
-  (ql:quickload '(:plump) :silent t))
 
 (defpackage :roswell.install.slime
   (:use :cl :roswell.install :roswell.locations :roswell.util)
