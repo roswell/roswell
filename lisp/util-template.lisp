@@ -1,7 +1,7 @@
 #+ros.init
 (roswell:include '("util" "system") "util-template")
 #+quicklisp
-(ql:quickload '(:uiop :djula) :silent t)
+(ql:quickload '("uiop" "djula") :silent t)
 (defpackage :roswell.util.template
   (:use :cl)
   (:export
