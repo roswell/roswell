@@ -47,7 +47,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
        (strncmp(ld,script2,strlen(ld)) ==0 ||
         strncmp(bindir,script2,strlen(bindir)) ==0) &&
        (!file_exist_p(core) ||
-        (file_newer_p(script2,core) && !file_newer_p(core,script2)))) {
+        (file_newer_p(script2,core) && !file_newer_p(core,script2))) &&
+       strcmp(impl,DEFAULT_IMPL)==0) {
       cond_printf(1,"\nbuildcore:%s\ncause newer script:%s\n",core,script2);
       setup(image);
     }
