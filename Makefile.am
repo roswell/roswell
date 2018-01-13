@@ -31,6 +31,8 @@ LISPS = helper.el \
 	util-config.lisp \
 	emacs.ros \
 	exec.ros \
+	dist.ros \
+	dist-list.lisp \
 	fmt.ros \
 	get.ros \
 	git.ros \

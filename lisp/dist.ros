@@ -1,0 +1,22 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|[WIP]Quicklisp dist.
+exec ros -Q -m roswell -N roswell -- $0 "$@"
+|#
+(progn
+  (roswell:include "util-main")
+  (roswell:include "util-config"))
+
+(defpackage :ros.script.dist.3714094546
+  (:use :cl :roswell.util.main))
+(in-package :ros.script.dist.3714094546)
+
+(defun main (&rest args)
+  (let* ((env (roswell.util.config:env))
+         (ql-setup:*quicklisp-home*
+          (if env
+              (merge-pathnames (format nil "env/~A/lisp/quicklisp/" env)
+                               (roswell.util:homedir))
+              ql-setup:*quicklisp-home*)))
+    (module-main args)))
+;;; vim: set ft=lisp lisp:
