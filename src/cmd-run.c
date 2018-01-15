@@ -38,7 +38,7 @@ DEF_SUBCMD(cmd_run) {
   }
 }
 
-int setup(char* target) {
+int setup(char* target,char* env) {
   if(lock_apply("setup",2))
     return 0; /* lock file exists */
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
@@ -47,7 +47,7 @@ int setup(char* target) {
   char* version=get_opt(DEFAULT_IMPL".version",0);
   if(!version)
     SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n")
-  SETUP_SYSTEM(cat(argv_orig[0]," -N - -L "DEFAULT_IMPL"/",version," ",v,"setup ",target,NULL),"Making core for Roswell...\n")
+  SETUP_SYSTEM(cat(argv_orig[0]," -N ",env," -L "DEFAULT_IMPL"/",version," ",v,"setup ",target,NULL),"Making core for Roswell...\n")
   lock_apply("setup",1);
   return 1;
 }
@@ -81,7 +81,7 @@ char* determin_impl(char* impl) {
   if(!(impl && version)) {
     s(impl);
     impl=q(DEFAULT_IMPL);
-    setup(PACKAGE);
+    setup(PACKAGE,"-");
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);
     version=get_opt(DEFAULT_IMPL".version",0);

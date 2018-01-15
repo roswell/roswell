@@ -82,7 +82,7 @@ exec ros -Q -N roswell -- $0 "$@"
                 (format *error-output* "up to date. stop~%")
                 t))
       (roswell:roswell `(,(if (roswell:verbose) "-v" "") " +R" " +A" " -Q"
-                          ,(let ((env* (opt "roswellenv*")))
+                          ,(let ((env* (opt "*roswellenv")))
                              (if (and env*
                                       (not (equal env* "-")))
                                  (format nil " -N ~A " env*)

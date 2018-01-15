@@ -34,7 +34,9 @@ exec ros -- $0 "$@"
       ((and (equal (first params) "-o"))
        (format *error-output* "Missing the pathname for an image.~%"))
       (t (let ((path (merge-pathnames (format nil "~A.~A" (first params) (core-extention))
-                                      (dump-dir (and (equal (first params) "roswell") "roswell")))))
+                                      (dump-dir (if (equal (first params) "roswell")
+                                                    "roswell"
+                                                    (opt "roswellenv"))))))
            (%dump (ensure-directories-exist path) :normal))))))
 
 (defun executable (func params)

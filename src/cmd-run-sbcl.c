@@ -38,6 +38,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     char* ld=lispdir();
     char* base=basedir();
     char* bindir=cat(base,"bin"SLASH,NULL);
+    char* bindir2=cat(home,"bin"SLASH,NULL);
     char* script2=q(script?script+1:"");
     int pos= position_char("\"",script2);
     core=cat(base,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
@@ -45,14 +46,17 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
       script2[pos]='\0';
     if(script &&
        (strncmp(ld,script2,strlen(ld)) ==0 ||
-        strncmp(bindir,script2,strlen(bindir)) ==0) &&
+        strncmp(bindir,script2,strlen(bindir)) ==0 ||
+        strncmp(bindir2,script2,strlen(bindir2)) ==0) &&
        (!file_exist_p(core) ||
         (file_newer_p(script2,core) && !file_newer_p(core,script2))) &&
        strcmp(impl,DEFAULT_IMPL)==0) {
-      cond_printf(1,"\nbuildcore:%s\ncause newer script:%s\n",core,script2);
-      setup(image);
+      char* env = get_opt(PACKAGE_NAME"env",1);
+      if(!env) env = "-";
+      cond_printf(1,"\nbuildcore:%s\ncause newer script:%s\nenv:%s\n",core,script2,env);
+      setup(image,env);
     }
-    s(ld),s(script2),s(bindir);
+    s(ld),s(script2),s(bindir),s(bindir2);
     if(file_exist_p(core)) {
       ret=conss(core,conss(q("--core"),ret));
     }else
