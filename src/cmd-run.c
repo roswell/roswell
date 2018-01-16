@@ -46,8 +46,13 @@ int setup(char* target,char* env) {
   cond_printf(1,"verbose-option:'%s'\n",v);
   char* version=get_opt(DEFAULT_IMPL".version",0);
   if(!version)
-    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n")
-  SETUP_SYSTEM(cat(argv_orig[0]," -N ",env," -L "DEFAULT_IMPL"/",version," ",v,"setup ",target,NULL),"Making core for Roswell...\n")
+    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
+  if(strcmp(env,"-")!=0) {
+    char *cmd =cat(argv_orig[0]," init env ",env,NULL);
+    System(cmd);
+    s(cmd);
+  }
+  SETUP_SYSTEM(cat(argv_orig[0]," -N ",env," -L "DEFAULT_IMPL"/",version," ",v,"setup ",target,NULL),"Making core for Roswell...\n");
   lock_apply("setup",1);
   return 1;
 }
