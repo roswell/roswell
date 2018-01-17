@@ -88,10 +88,10 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--no-userinit"),ret);
     if(script && !enable_debugger)
       ret=conss(q("--disable-debugger"),ret);
-    char* initlisp=cat(home,impl_path,SLASH,"fasl",SLASH,"init.lisp_",NULL);
+    char* initlisp=cat(home,impl_path,SLASH,"fasl",SLASH,"init.lisp",NULL);
     char* asdf=get_opt("asdf.version",0);
     if(asdf)
-      initlisp=s_cat2(initlisp,substitute_char('_','.',q(asdf)));
+      initlisp=s_cat(initlisp,q("_"),substitute_char('_','.',q(asdf)),NULL);
     if(!file_exist_p(initlisp)) {
       s(initlisp);
       initlisp=s_cat2(s_escape_string(lispdir()),q("init.lisp"));
