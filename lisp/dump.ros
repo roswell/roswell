@@ -103,6 +103,8 @@ exec ros -- $0 "$@"
            (parse-options (cddr args) `(delete-all-packages ,@q (pushnew ,(string-upcase (second args)) *package-blacklist* :test #'string=))))
           ((equal car "--destroy-packages-sbcl")
            (parse-options (rest args) `(#+sbcl ,(read-from-string "roswell.dump.sbcl:destroy-packages-sbcl") ,@q)))
+          ((equal car "--copy-shared-object")
+           (parse-options (rest args) (cons `(set *copy-shared* t) q)))
           ((equal car "--purify")
            (parse-options (rest args) (cons `(set *purify* t) q)))
           ((equal car "--impurify")

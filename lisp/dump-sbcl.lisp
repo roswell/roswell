@@ -13,6 +13,20 @@
   (declare (ignore script))
   (preprocess-before-dump)
   (sb-ext:gc :full t)
+  (when *copy-shared*
+    (setf sb-sys:*shared-objects*
+          (loop for d in sb-sys:*shared-objects*
+             for p = (sb-alien::shared-object-pathname d)
+             collect (if (find ".cache" (pathname-directory p) :test 'equal)
+                         (progn
+                           (uiop:copy-file p (merge-pathnames (file-namestring p)
+                                                              (make-pathname :defaults *default-pathname-defaults* :type nil :name nil)))
+                           (sb-alien::make-shared-object
+                            :pathname (make-pathname :defaults (format nil "./~A" (file-namestring p)))
+                            :namestring (format nil "./~A" (file-namestring p))
+                            :handle (sb-alien::shared-object-handle d)
+                            :dont-save (sb-alien::shared-object-dont-save d)))
+                         d))))
   (sb-ext:save-lisp-and-die
    out
    :purify *purify*
