@@ -1,3 +1,14 @@
+roswell (18.1.10.87-1) unstable; urgency=low
+
+  * New: implement 'ros install sly' works like 'ros install slime'.
+  * Change: Updated clasp 2017-12-20.
+  * Fix: Don't swallow exit code on Windows (by Wilfredo Velázquez-Rodríguez)
+  * Fix: error installing allegro if Volume mounted on path which include Spaces (by Antonio Juan Querol)
+  * Fix: env bug.
+  * New: 'ros build script.ros --bundle-shared-object'  to bundle shared file to current directory.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 22 Jan 2018 00:25:21 +0900
+
 roswell (17.12.10.86-1) unstable; urgency=low
 
   * Change: if you've already clone sbcl repo by 'ros install sbcl/git' your next compilation is not download src from archive but checkout via git.

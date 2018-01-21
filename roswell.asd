@@ -6,7 +6,7 @@ roswell does not function without help of C codes.
 |#
 
 (defsystem "roswell"
-  :version "17.12.10.86"
+  :version "18.1.10.87"
   :author "SANO Masatoshi"
   :license "MIT"
   :depends-on ("simple-date-time" "split-sequence" "plump" "zip")
