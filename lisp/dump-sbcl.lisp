@@ -13,7 +13,7 @@
   (declare (ignore script))
   (preprocess-before-dump)
   (sb-ext:gc :full t)
-  (when *copy-shared*
+  (when *bundle-shared*
     (setf sb-sys:*shared-objects*
           (loop for d in sb-sys:*shared-objects*
              for p = (sb-alien::shared-object-pathname d)

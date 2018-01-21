@@ -2,7 +2,7 @@
 (roswell:include '("util" "util-config") "util-dump")
 (defpackage :roswell.util.dump
   (:use :cl :roswell.util)
-  (:export :*compression* :dump-compression :*predump* :*purify* :*impurify* :*copy-shared*
+  (:export :*compression* :dump-compression :*predump* :*purify* :*impurify* :*bundle-shared*
    :remove-docstrings :*package-blacklist* :*additional-blacklist-for-destroy-packages*
    :makunbound-symbols-and-delete-package :delete-all-packages
    :delete-macro-definitions :delete-compiler-macro-definitions
@@ -17,7 +17,7 @@
 (defvar *predump* nil "list of functions to be performed before dumping")
 (defvar *purify* t "Whether running a purifying GC (moves objects to non-GC'd static space) before dump")
 (defvar *impurify* t "CCL only. Impurify all static space objects to dynamic space. Precedes the purifying GC.")
-(defvar *copy-shared* nil "copy shared object")
+(defvar *bundle-shared* nil "bundle shared object to binary path")
 
 (defvar *package-blacklist* `("KEYWORD" "ROSWELL" "ROS.SCRIPT.DUMP" "ROSWELL.UTIL.DUMP"
                                         ;; add impl-specific customization
