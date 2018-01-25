@@ -61,7 +61,7 @@ Returns NIL when the package in the symbol prefix is not available."
 
 (defun module (prefix name)
   "Load external system"
-  (and (loop for c across "./\\"
+  (and (loop for c across "/\\"
              never (find c name))
        (let ((imp (format nil "roswell.~A.~A" prefix name)))
          (or #1=(ignore-errors
