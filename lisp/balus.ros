@@ -1,0 +1,23 @@
+#!/bin/sh
+#|-*- mode:lisp -*-|#
+#|delete all.
+exec ros +A -Q -m roswell -N roswell -- $0 "$@"
+|#
+(progn ;;init forms
+  )
+
+(defpackage :ros.script.balus.3727238241
+  (:use :cl))
+(in-package :ros.script.balus.3727238241)
+
+(defun main (&rest argv)
+  (declare (ignorable argv))
+  (if  (or #-win32 (yes-or-no-p "Delete all?"))
+       (progn
+         (uiop/filesystem:delete-file-if-exists (merge-pathnames ".roswell/config" (user-homedir-pathname)))
+         (uiop/filesystem:delete-directory-tree (merge-pathnames "~/.roswell/impls/" (user-homedir-pathname))
+                                                :if-does-not-exist :ignore :validate t)
+         (uiop/filesystem:delete-directory-tree (merge-pathnames "~/.roswell/src/" (user-homedir-pathname))
+                                                :if-does-not-exist :ignore :validate t))
+       #+win32(format t "not supported")))
+;;; vim: set ft=lisp lisp:

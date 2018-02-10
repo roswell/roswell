@@ -23,6 +23,7 @@ LISPS = helper.el \
 	extend-quicklisp-system.lisp \
 	system.lisp \
 	\
+	balus.ros \
 	build.ros \
 	build-ros.lisp build-asd.lisp \
 	\
