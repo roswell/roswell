@@ -203,7 +203,7 @@
         (info (template-read template-name)))
     (uiop:copy-file path-copy-from
                     (ensure-directories-exist (template-file-path template-name file-name)))
-    (unless (find file-name (getf info :files) :key (lambda (x) (getf x :name)))
+    (unless (find file-name (getf info :files) :key (lambda (x) (getf x :name)) :test 'equal)
       (push (list :name file-name :method "copy") (getf info :files)))
     (template-write template-name info)))
 
