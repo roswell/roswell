@@ -86,7 +86,7 @@ exec ros -Q -N roswell -- $0 "$@"
                              (if (and env*
                                       (not (equal env* "-")))
                                  (format nil " -N ~A " env*)
-                                 (format nil " -L ~A " (opt "impl"))))
+                                 (format nil " -L ~A " (or (opt "*lisp") (opt "impl")))))
                           ,@(loop for i in dir
                                collect "--load "
                                     collect (format nil "~A " i))

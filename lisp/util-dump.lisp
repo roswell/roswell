@@ -34,6 +34,8 @@ Notably, it must include all nicknames.")
 
 (defun dump-dir (&optional env)
   (let ((env (or env (opt "*roswellenv"))))
+    (setf env (if (equal env "-") nil
+                  env))
     (merge-pathnames (format nil "~Aimpls/~A/~A/~A/dump/"
                              (if env
                                  (format nil "env/~A/" env)
@@ -41,14 +43,15 @@ Notably, it must include all nicknames.")
                              (uname-m) (uname)
                              (or (when env
                                    (let* ((conf
-                                           (roswell.util.config:load-config
-                                            (merge-pathnames (format nil "env/~A/config" env)
-                                                             (homedir))))
+                                            (roswell.util.config:load-config
+                                             (merge-pathnames (format nil "env/~A/config" env)
+                                                              (homedir))))
                                           (lisp (third (assoc "default.lisp" conf :test 'equal)))
                                           (version (third (assoc (format nil "~a.version" lisp)
                                                                  conf :test 'equal))))
                                      (and lisp version
                                           (format nil "~A/~A" lisp version))))
+                                 (opt "*lisp")
                                  (opt "impl")))
                      (homedir))))
 
