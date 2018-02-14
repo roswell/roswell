@@ -14,6 +14,7 @@
 
    :templates-list
    :template-create
+   :template-remove
    :template-directory
    :template-remove-file
    :template-add-file
@@ -186,6 +187,13 @@
 
 (defun template-create (name)
   (template-write (sanitize name) nil))
+
+(defun template-remove (name)
+  (uiop:delete-directory-tree
+   (template-path name)
+   :validate (lambda (path)
+               (equal (car (last (pathname-directory path)))
+                      name))))
 
 (defun template-directory (name)
   (getf (template-read (sanitize name)) :files))

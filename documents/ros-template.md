@@ -10,6 +10,10 @@ init template-name
 
   : Create new template in local-project directory.
 
+deinit template-name
+
+  : Remove a template from local-project directory.
+
 list
 
   : Show file list and states of the files *type* *chmod* *rewrite* in templates.
