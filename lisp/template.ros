@@ -11,6 +11,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 (in-package :ros.script.template.3670908195)
 
 (defvar *subcommands*  '(("init"  . template-init)
+                         ("deinit" . template-deinit)
                          ("list" . template-list)
                          ("checkout" . template-checkout)
                          ("add" . template-add)
@@ -30,6 +31,23 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
       (format *error-output* "already exist ~A~%" path)
       (ros:quit 0))
     (template-create name)))
+
+(defun template-deinit (names)
+  "Remove a template"
+  (let* ((name (first names))
+         (path (template-asd-path name)))
+    (unless name
+      (format *error-output* "template name is required.~%")
+      (ros:quit 1))
+    (when (equal name "default")
+      (format *error-output* "can't remove \"default\".~%")
+      (ros:quit 1))
+    (unless (probe-file path)
+      (format *error-output* "template: ~S not found.~%" name)
+      (ros:quit 1))
+    (template-remove name)
+    (when (equal (template-default) name)
+      (setf (template-default) "default"))))
 
 (defun template-list (_)
   "List the installed templates"
