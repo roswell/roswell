@@ -81,10 +81,9 @@
     (cond
       (name
        (mapcar (lambda (x)
-                 (subseq (pathname-name x)
-                         (1+ (position-if
-                              (lambda (x) (find x ".-"))
-                              (pathname-name x) :from-end t))))
+                 (cond
+                   ((equal (pathname-name x) "init-default") "default")
+                   (t (subseq (pathname-name x) 13))))
                *))
       (t *))))
 
