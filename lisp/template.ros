@@ -16,6 +16,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
                          ("checkout" . template-checkout)
                          ("add" . template-add)
                          ("cat" . template-cat)
+                         ("edit" . template-edit)
                          ("rm" . template-rm)
                          ("delete" . template-rm)
                          ("type" . template-type)
@@ -103,6 +104,20 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
       (ros:quit 1))
     (loop for i in _
           do (format t "~A" (uiop:read-file-string (template-file-path name i))))))
+
+(defun template-edit (_)
+  "Edit file contents"
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (unless (and (templates-list :filter name)
+                 (not (equal name "default")))
+      (format *error-output* "template ~S does not contain files.~%" name)
+      (ros:quit 1))
+    #+unix
+    (roswell:exec `("/usr/bin/editor"
+                    ,@(loop for i in _
+                            collect (uiop:native-namestring (template-file-path name i)))))))
 
 (defun template-rm (_)
   "Remove (delete) files from template."
