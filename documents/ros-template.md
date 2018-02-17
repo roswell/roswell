@@ -46,6 +46,10 @@ rewrite [template-name] file rewrite-rule
 
   : Change file name using djula template.Variables {{name}} {{author}} {{email}} {{universal_time}} are available for rewrite-rule.
 
+export [template-name] [directory]
+
+  : Export files in current template to current directory.
+
 help
 
   : Show the subcommand help.
