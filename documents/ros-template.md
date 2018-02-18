@@ -50,6 +50,10 @@ export [template-name] [directory]
 
   : Export files in current template to current directory.
 
+import [directory]
+
+  : Import template in current directory
+
 help
 
   : Show the subcommand help.

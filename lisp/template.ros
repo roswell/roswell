@@ -22,6 +22,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
                          ("chmod" . template-chmod)
                          ("rewrite" . template-rewrite)
                          ("export" . template-export)
+                         ("import" . template-import)
                          ("help" . template-help)))
 
 (defun template-init (names)
@@ -165,6 +166,15 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
       (unless (string= dst "/" :start1 (1- (length dst)))
         (setf dst (format nil "~A/" dst))))
     (template-export-files name dst)))
+
+(defun template-import (_)
+  "Import template"
+  (let ((src "./"))
+    (when (first _)
+      (setf src (first _))
+      (unless (string= src "/" :start1 (1- (length src)))
+        (setf src (format nil "~A/" src))))
+    (template-import-files src)))
 
 (defun template-help (_)
   (declare (ignore _))

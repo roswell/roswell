@@ -20,6 +20,7 @@
    :template-add-file
    :template-attr-file
    :template-export-files
+   :template-import-files
 
    :template-apply
 
@@ -163,10 +164,10 @@
                   (asdf:load-system :roswell.util.template :verbose nil)
                   (funcall (read-from-string "roswell.util.template:template-apply") _ r *params*)))))))
 
-(defun template-read (name)
+(defun template-read-asd (asd-path)
   (let (package
         read/)
-    (with-open-file (o (template-asd-path name)
+    (with-open-file (o asd-path
                        :direction :input
                        :if-does-not-exist :error)
       (setq read/ (read o))
@@ -184,6 +185,9 @@
                    (string-equal  '*params* (second read/))) 
         (error "not init template ~S~%" (list read/)))
       (second (third read/)))))
+
+(defun template-read (name)
+  (template-read-asd (template-asd-path name)))
 
 (defun template-create (name)
   (template-write (sanitize name) nil))
@@ -251,3 +255,24 @@
             (template-directory template-name))
       (uiop:copy-file path
                       (merge-pathnames (format nil "~A.asd" (pathname-name path)) dst)))))
+
+(defun template-import-files (src)
+  (let ((asd-path (first (directory (merge-pathnames "roswell.init.*.asd" src)))))
+    (unless asd-path
+      (error "\"roswell.init.*.asd\" is not exist"))
+    (let ((name (subseq (pathname-name asd-path) 13)))
+      (when (templates-list :filter name)
+        (template-remove name))
+      (template-create name)
+      (uiop:with-current-directory (src)
+        (mapc (lambda (x)
+                (let ((file-name (getf x :name))
+                      (chmod (getf x :chmod))
+                      (rewrite (getf x :rewrite)))
+                  (template-add-file name file-name file-name)
+                  (template-attr-file name file-name :method (getf x :method))
+                  (when rewrite
+                    (template-attr-file name file-name :rewrite rewrite))
+                  (when chmod
+                    (template-attr-file name file-name :chmod chmod))))
+              (reverse (getf (template-read-asd asd-path) :files)))))))
