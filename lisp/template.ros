@@ -22,6 +22,8 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
                          ("type" . template-type)
                          ("chmod" . template-chmod)
                          ("rewrite" . template-rewrite)
+                         ("export" . template-export)
+                         ("import" . template-import)
                          ("help" . template-help)))
 
 (defun template-init (names)
@@ -163,6 +165,31 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
     (when (equal name "default")
       (setf name (pop _)))
     (template-attr-file name (first _) :rewrite (second _))))
+
+(defun template-export (_)
+  "Export template to directory"
+  (let ((name (template-default))
+        (dst "./"))
+    (when (and (equal name "default") (first _))
+      (setf name (pop _)))
+    (unless (and (templates-list :filter name)
+                 (not (equal name "default")))
+      (format *error-output* "template ~S can't be exported.~%" name)
+      (ros:quit 1))
+    (when (first _)
+      (setf dst (first _))
+      (unless (string= dst "/" :start1 (1- (length dst)))
+        (setf dst (format nil "~A/" dst))))
+    (template-export-files name dst)))
+
+(defun template-import (_)
+  "Import template"
+  (let ((src "./"))
+    (when (first _)
+      (setf src (first _))
+      (unless (string= src "/" :start1 (1- (length src)))
+        (setf src (format nil "~A/" src))))
+    (template-import-files src)))
 
 (defun template-help (_)
   (declare (ignore _))
