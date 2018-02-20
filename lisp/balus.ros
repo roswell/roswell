@@ -14,10 +14,20 @@ exec ros +A -Q -m roswell -N roswell -- $0 "$@"
   (declare (ignorable argv))
   (if  (or #-win32 (yes-or-no-p "Delete all?"))
        (progn
-         (uiop/filesystem:delete-file-if-exists (merge-pathnames ".roswell/config" (user-homedir-pathname)))
-         (uiop/filesystem:delete-directory-tree (merge-pathnames ".roswell/impls/" (user-homedir-pathname))
-                                                :if-does-not-exist :ignore :validate t)
-         (uiop/filesystem:delete-directory-tree (merge-pathnames ".roswell/src/" (user-homedir-pathname))
-                                                :if-does-not-exist :ignore :validate t))
+         (mapc (lambda (x)
+                 (uiop/filesystem:delete-file-if-exists
+                  (merge-pathnames x (user-homedir-pathname))))
+               '(".roswell/config"
+                 ".roswell/helper.el"))
+         (mapc (lambda (x)
+                 (uiop/filesystem:delete-directory-tree
+                  (merge-pathnames x (merge-pathnames ".roswell/" (user-homedir-pathname)))
+                  :if-does-not-exist :ignore :validate t))
+               '("archives/"
+                 "lib/"
+                 "impls/"
+                 "src/"
+                 "lisp/"
+                 "tmp/")))
        #+win32(format t "not supported")))
 ;;; vim: set ft=lisp lisp:
