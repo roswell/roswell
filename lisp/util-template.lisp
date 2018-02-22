@@ -16,9 +16,11 @@
    :template-create
    :template-remove
    :template-directory
+   :template-parameter
    :template-remove-file
    :template-add-file
    :template-attr-file
+   :template-attr-common
    :template-export-files
    :template-import-files
 
@@ -202,6 +204,9 @@
 (defun template-directory (name)
   (getf (template-read (sanitize name)) :files))
 
+(defun template-parameter (name)
+  (getf (template-read (sanitize name)) :common))
+
 #+ros.init
 (defun (setf template-default) (template-name)
   (setf (roswell.util:config "init.default") (sanitize template-name)))
@@ -216,7 +221,9 @@
     (uiop:copy-file path-copy-from
                     (ensure-directories-exist (template-file-path template-name file-name)))
     (unless (find file-name (getf info :files) :key (lambda (x) (getf x :name)) :test 'equal)
-      (push (list :name file-name :method "copy") (getf info :files)))
+      (let ((method (getf (getf info :common) :default-method)))
+        (push (list :name file-name :method (if method method "copy"))
+              (getf info :files))))
     (template-write template-name info)))
 
 (defun template-remove-file (template-name file-name)
@@ -239,6 +246,12 @@
           (setf (cdr (last found)) (list key value))
           (setf (getf found key ) value))
       (template-write template-name info))))
+
+(defun template-attr-common (template-name key value)
+  (let* ((template-name (sanitize template-name))
+         (info (template-read template-name)))
+    (setf (getf (getf info :common) key) value)
+    (template-write template-name info)))
 
 #+ros.init
 (roswell.util:system "util-template")

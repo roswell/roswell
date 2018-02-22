@@ -141,12 +141,18 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
     (let ((type (first _))
           (sets (loop for i on *template-function-plist* by #'cddr
                       collect (string-downcase (first i)))))
+      (unless type
+        (let ((type (getf (template-parameter name) :default-method)))
+          (format t "current default type is \"~A\"~%" (if type type "copy")))
+        (ros:quit 0))
       (unless (find type sets
                     :test 'equal)
         (format *error-output* "should be one of~%~{~A~%~}" sets)
         (ros:quit 1))
-      (loop for i in (rest _)
-            do (template-attr-file name i :method type)))))
+      (if (rest _)
+          (loop for i in (rest _)
+                do (template-attr-file name i :method type))
+          (template-attr-common name :default-method type)))))
 
 (defun template-chmod (_)
   "Set mode for a file."
