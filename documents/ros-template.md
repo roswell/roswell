@@ -36,7 +36,7 @@ rm [template-name] [files ...]
 
 type [template-name] [type] [files ...]
 
-  : Change file type. current choice for *type*s are *djula* or *copy* {{name}} {{author}} {{email}} {{universal_time}} are available variable in the template file.
+  : Change file type. current choice for *type*s are *djula* or *copy* {{name}} {{author}} {{email}} {{universal_time}} are available variable in the template file. Withoug files, change default type.
 
 chmod [template-name] [mode] [files ...] 
 
