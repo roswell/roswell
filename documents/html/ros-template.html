@@ -43,6 +43,9 @@
 <dt>cat [template-name] [files ...]</dt>
 <dd><p>Show contents in the current template.</p>
 </dd>
+<dt>edit [template-name] [files ...]</dt>
+<dd><p>Edit content of files in template using <code>/usr/bin/editor</code>.</p>
+</dd>
 <dt>rm [template-name] [files ...]</dt>
 <dd><p>Remove file form current template.</p>
 </dd>
@@ -69,7 +72,75 @@
  
 <!--   : description. end with a period. -->
 
-<h1 id="description">description</h1>
+<h1 id="description">Description</h1>
+<p>The <em><a href="ros-template.html">ros-template</a></em>(1) command manages templates of projects.</p>
+<h2 id="create-template">Create template</h2>
+<p>First, the <code>init</code> sub-command creates an empty template.</p>
+<pre><code>$ ros template init sample-template</code></pre>
+<p>Many of sub-commands take a template name as first argument. But you can omit it by the <code>checkout</code> sub-commands. After the following, such sub-commands are applied to <code>sample-template</code>.</p>
+<pre><code>$ ros template checkout sample-template</code></pre>
+<p>Next, the <code>add</code> sub-command adds local file[s] to template. Then, the <code>list</code> sub-command shows information of files in template.</p>
+<pre><code>$ echo &quot;Hello {{ author }}!!&quot; &gt; sample.txt
+$ ros template add sample.txt
+$ ros template list
+      copy  sample.txt </code></pre>
+<p>The word <em>copy</em> means a strategy when applying the template. There are the following 2 strategies.</p>
+<ul>
+<li><em>copy</em> simply copies the file as-is.</li>
+<li><em>djula</em> processes the content of the file by template engine, <a href="http://mmontone.github.io/djula/">Djula</a>.
+<ul>
+<li>Available variables are explained later.</li>
+</ul></li>
+</ul>
+<p>The <code>type</code> sub-command changes it. In addition, default strategy (<em>copy</em>) can be changed for each template by the <code>type</code> sub-command without file names (Ex. <code>ros template type djula</code>).</p>
+<pre><code>$ ros template type djula sample.txt
+$ ros template list
+      djula sample.txt </code></pre>
+<p>The <code>sample.txt</code> will be simply output as <code>sample.txt</code> in default. But you can change it by the <code>rewrite</code> sub-command. In the following example, it will be output as <code>sample_&lt;project name&gt;.txt</code>.</p>
+<pre><code>$ ros template rewrite sample.txt &quot;sample-{{ name }}.txt&quot;
+$ ros template list
+      djula sample.txt -&gt; &quot;sample-{{ name }}.txt&quot;</code></pre>
+<p>Note: Rewrite rules are always processed by Djula irrespective of strategy of the file.</p>
+<h2 id="apply-template">Apply template</h2>
+<p><em><a href="ros-init.html">ros-init</a></em>(1) can specify a template.</p>
+<pre><code>$ mkdir temp ; cd temp
+$ ros init sample-template some-project
+$ ls
+sample-some-project.txt
+$ cat sample-some-project.txt # Assume that &quot;author&quot; is &quot;alien&quot;
+Hello alien!!</code></pre>
+<p>The file name and its content are processed by Djula as explained in the above. The following variables can be used in defaut.</p>
+<ul>
+<li>{{name}}: A project name specified in <em><a href="ros-init.html">ros-init</a></em>(1)</li>
+<li>{{author}}: An author name extracted from config of Git or <code>whoami</code></li>
+<li>{{email}}: An e-mail address extracted from config of Git or created using <code>whoami</code> and <code>hostname</code></li>
+<li>{{universal_time}}: A universal time created by <code>get-universal-time</code> function</li>
+</ul>
+<p>In addition, you can use original variables as the followings.</p>
+<pre><code>$ echo &quot;Hello {{ area }}!!&quot; &gt; sample.txt
+$ ros template add sample.txt # Note: It overwrites existing
+$ mkdir temp ; cd temp
+$ ros init sample-template roswell --area 51
+$ cat sample-roswell.txt
+Hello 51!!</code></pre>
+<h2 id="export-and-import-template">Export and import template</h2>
+<p>Basically, <em><a href="ros-template.html">ros-template</a></em>(1) is designed to internally manage added files.</p>
+<p>However, if you want to, for example, manage it using Git in a local directory or to install distributed templates, you can use the <code>export</code> and <code>import</code> sub-commands.</p>
+<p>First, the <code>export</code> sub-command exports added files and a setting file <code>roswell.init.&lt;template name&gt;.asd</code> that is internally created and editted.</p>
+<pre><code>$ ros template export dir
+$ ls dir
+roswell.init.sample-template.asd  sample.txt
+$ cat dir/sample.txt
+Hello {{ area }}!!</code></pre>
+<p>Second, the <code>import</code> sub-command imports them.</p>
+<pre><code># Assume that this is another machine...
+$ ros template list sample-template # nothing is output 
+$ ls downloaded
+roswell.init.sample-template.asd  sample.txt
+$ ros template import downloaded
+$ ros template list sample-template
+      djula sample.txt -&gt; &quot;sample-{{ name }}.txt&quot;</code></pre>
+<p>Note: If there is a template whose name is same, it will be overwritten.</p>
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->

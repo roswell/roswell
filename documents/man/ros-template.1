@@ -41,6 +41,11 @@ Show contents in the current template.
 .RS
 .RE
 .TP
+.B edit [template\-name] [files ...]
+Edit content of files in template using \f[C]/usr/bin/editor\f[].
+.RS
+.RE
+.TP
 .B rm [template\-name] [files ...]
 Remove file form current template.
 .RS
@@ -81,7 +86,164 @@ Import template in current directory
 Show the subcommand help.
 .RS
 .RE
-.SH description
+.SH Description
+.PP
+The \f[I]ros\-template\f[](1) command manages templates of projects.
+.SS Create template
+.PP
+First, the \f[C]init\f[] sub\-command creates an empty template.
+.IP
+.nf
+\f[C]
+$\ ros\ template\ init\ sample\-template
+\f[]
+.fi
+.PP
+Many of sub\-commands take a template name as first argument.
+But you can omit it by the \f[C]checkout\f[] sub\-commands.
+After the following, such sub\-commands are applied to
+\f[C]sample\-template\f[].
+.IP
+.nf
+\f[C]
+$\ ros\ template\ checkout\ sample\-template
+\f[]
+.fi
+.PP
+Next, the \f[C]add\f[] sub\-command adds local file[s] to template.
+Then, the \f[C]list\f[] sub\-command shows information of files in
+template.
+.IP
+.nf
+\f[C]
+$\ echo\ "Hello\ {{\ author\ }}!!"\ >\ sample.txt
+$\ ros\ template\ add\ sample.txt
+$\ ros\ template\ list
+\ \ \ \ \ \ copy\ \ sample.txt\ 
+\f[]
+.fi
+.PP
+The word \f[I]copy\f[] means a strategy when applying the template.
+There are the following 2 strategies.
+.IP \[bu] 2
+\f[I]copy\f[] simply copies the file as\-is.
+.IP \[bu] 2
+\f[I]djula\f[] processes the content of the file by template engine,
+Djula (http://mmontone.github.io/djula/).
+.RS 2
+.IP \[bu] 2
+Available variables are explained later.
+.RE
+.PP
+The \f[C]type\f[] sub\-command changes it.
+In addition, default strategy (\f[I]copy\f[]) can be changed for each
+template by the \f[C]type\f[] sub\-command without file names (Ex.
+\f[C]ros\ template\ type\ djula\f[]).
+.IP
+.nf
+\f[C]
+$\ ros\ template\ type\ djula\ sample.txt
+$\ ros\ template\ list
+\ \ \ \ \ \ djula\ sample.txt\ 
+\f[]
+.fi
+.PP
+The \f[C]sample.txt\f[] will be simply output as \f[C]sample.txt\f[] in
+default.
+But you can change it by the \f[C]rewrite\f[] sub\-command.
+In the following example, it will be output as
+\f[C]sample_<project\ name>.txt\f[].
+.IP
+.nf
+\f[C]
+$\ ros\ template\ rewrite\ sample.txt\ "sample\-{{\ name\ }}.txt"
+$\ ros\ template\ list
+\ \ \ \ \ \ djula\ sample.txt\ \->\ "sample\-{{\ name\ }}.txt"
+\f[]
+.fi
+.PP
+Note: Rewrite rules are always processed by Djula irrespective of
+strategy of the file.
+.SS Apply template
+.PP
+\f[I]ros\-init\f[](1) can specify a template.
+.IP
+.nf
+\f[C]
+$\ mkdir\ temp\ ;\ cd\ temp
+$\ ros\ init\ sample\-template\ some\-project
+$\ ls
+sample\-some\-project.txt
+$\ cat\ sample\-some\-project.txt\ #\ Assume\ that\ "author"\ is\ "alien"
+Hello\ alien!!
+\f[]
+.fi
+.PP
+The file name and its content are processed by Djula as explained in the
+above.
+The following variables can be used in defaut.
+.IP \[bu] 2
+{{name}}: A project name specified in \f[I]ros\-init\f[](1)
+.IP \[bu] 2
+{{author}}: An author name extracted from config of Git or
+\f[C]whoami\f[]
+.IP \[bu] 2
+{{email}}: An e\-mail address extracted from config of Git or created
+using \f[C]whoami\f[] and \f[C]hostname\f[]
+.IP \[bu] 2
+{{universal_time}}: A universal time created by
+\f[C]get\-universal\-time\f[] function
+.PP
+In addition, you can use original variables as the followings.
+.IP
+.nf
+\f[C]
+$\ echo\ "Hello\ {{\ area\ }}!!"\ >\ sample.txt
+$\ ros\ template\ add\ sample.txt\ #\ Note:\ It\ overwrites\ existing
+$\ mkdir\ temp\ ;\ cd\ temp
+$\ ros\ init\ sample\-template\ roswell\ \-\-area\ 51
+$\ cat\ sample\-roswell.txt
+Hello\ 51!!
+\f[]
+.fi
+.SS Export and import template
+.PP
+Basically, \f[I]ros\-template\f[](1) is designed to internally manage
+added files.
+.PP
+However, if you want to, for example, manage it using Git in a local
+directory or to install distributed templates, you can use the
+\f[C]export\f[] and \f[C]import\f[] sub\-commands.
+.PP
+First, the \f[C]export\f[] sub\-command exports added files and a
+setting file \f[C]roswell.init.<template\ name>.asd\f[] that is
+internally created and editted.
+.IP
+.nf
+\f[C]
+$\ ros\ template\ export\ dir
+$\ ls\ dir
+roswell.init.sample\-template.asd\ \ sample.txt
+$\ cat\ dir/sample.txt
+Hello\ {{\ area\ }}!!
+\f[]
+.fi
+.PP
+Second, the \f[C]import\f[] sub\-command imports them.
+.IP
+.nf
+\f[C]
+#\ Assume\ that\ this\ is\ another\ machine...
+$\ ros\ template\ list\ sample\-template\ #\ nothing\ is\ output\ 
+$\ ls\ downloaded
+roswell.init.sample\-template.asd\ \ sample.txt
+$\ ros\ template\ import\ downloaded
+$\ ros\ template\ list\ sample\-template
+\ \ \ \ \ \ djula\ sample.txt\ \->\ "sample\-{{\ name\ }}.txt"
+\f[]
+.fi
+.PP
+Note: If there is a template whose name is same, it will be overwritten.
 .SH SEE ALSO
 .PP
 \f[I]ros\f[](1) \f[I]ros\-init\f[](1)
