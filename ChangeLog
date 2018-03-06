@@ -1,10 +1,10 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (18.3.10.89-1) unstable; urgency=low
 
   * New: 'ros balus' for delete config.
   * New: 'ros templete' implementation (by eshamster)
   * Fix: 7zip installation failure (by Akihide Nano)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Tue, 06 Mar 2018 13:07:57 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 06 Mar 2018 15:24:44 +0900
 
 roswell (18.1.10.87-1) unstable; urgency=low
 
