@@ -73,27 +73,25 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
              nil
              (local-time:universal-to-timestamp (get-universal-time))))))
 
-(defun edit-changelog ()
-  (let ((lines (with-open-file (in (merge-pathnames "ChangeLog" *project-path*))
-                 (loop for l = (read-line in nil nil)
-                       while l
-                       collect l))))
-    (with-open-file (out (merge-pathnames "ChangeLog" *project-path*)
-                         :direction :output :if-exists :supersede)
+(defun edit-changelog () 
+  (let* ((path (merge-pathnames "ChangeLog" *project-path*))
+         (lines (uiop:read-file-lines path))
+         done)
+    (with-open-file (out path :direction :output :if-exists :supersede)
       (loop for l in lines
-            with version = t
-            with date
-            with done
-            when (and version (cl-ppcre:scan *dummy-version* l))
-              do (setf version nil
-                       l (cl-ppcre:regex-replace
-                          *dummy-version* l *new-version*)
-                       date t)
-            when (and date (cl-ppcre:scan "^ --" l))
-              do (setf date nil
-                       l (signature)
-                       done t)
-            do (format out "~A~%" l)))))
+         with version = t
+         with date
+         do (cond ((and version (cl-ppcre:scan *dummy-version* l))
+                   (setf version nil
+                         l (cl-ppcre:regex-replace
+                            *dummy-version* l *new-version*)
+                         date t))
+                  ((and date (cl-ppcre:scan "^ --" l))
+                   (setf date nil
+                         l (signature)
+                         done t)))
+           (format out "~A~%" l)))
+    done))
 
 (defun prepare-changelog ()
   (uiop:run-program "git checkout master" :output :interactive :error-output :interactive)
@@ -127,7 +125,8 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (setf *new-version* (inc-version (find-version))))
   (format t "~&new version name is ~S~%" *new-version*)
   (force-output)
-  (edit-changelog)
+  (unless (edit-changelog)
+    (error "changelog isn't prepared"))
   (edit-configure-ac)
   (edit-roswell-asd)
   (show-how-to-release))
@@ -146,7 +145,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (mapc
      (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
      `("git checkout release"
-       "git merge --allow-unrelated-histories master"
+       "git merge master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push"
        "git push --tags"))
