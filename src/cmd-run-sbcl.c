@@ -54,7 +54,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
       char* env = get_opt(PACKAGE_NAME"env",1);
       if(!env) env = "-";
       cond_printf(1,"\nbuildcore:%s\ncause newer script:%s\nenv:%s\n",core,script2,env);
-      setup(image,env);
+      setup(image,env,impl);
     }
     s(ld),s(script2),s(bindir),s(bindir2);
     if(file_exist_p(core)) {

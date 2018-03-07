@@ -38,7 +38,7 @@ DEF_SUBCMD(cmd_run) {
   }
 }
 
-int setup(char* target,char* env) {
+int setup(char* target,char* env,char* impl) {
   if(lock_apply("setup",2))
     return 0; /* lock file exists */
   char* v=verbose==1?"-v ":(verbose==2?"-v -v ":"");
@@ -86,7 +86,7 @@ char* determin_impl(char* impl) {
   if(!(impl && version)) {
     s(impl);
     impl=q(DEFAULT_IMPL);
-    setup(PACKAGE,"-");
+    setup(PACKAGE,"-",impl);
     char* path=s_cat(configdir(),q("config"),NULL);
     global_opt=load_opts(path),s(path);
     version=get_opt(DEFAULT_IMPL".version",0);
