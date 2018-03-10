@@ -11,7 +11,12 @@ exec ros +A -Q -m roswell -N roswell -- $0 "$@"
 (in-package :ros.script.init.3672012201)
 
 (defun main (&rest r)
-  (module-main r :default "default")
+  (let ((ql:*local-project-directories*
+         (append (mapcar (lambda (path)
+                           (merge-pathnames "templates/" path))
+                         ql:*local-project-directories*)
+                 ql:*local-project-directories*)))
+    (module-main r :default "default"))
   ;; show usage ?
   )
 ;;; vim: set ft=lisp lisp:
