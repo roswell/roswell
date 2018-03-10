@@ -148,17 +148,16 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
        "git merge master"
        ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
        "git push"
-       "git push --tags"))
-    (prepare-changelog)
-    (mapc
-     (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
-     `("git add ChangeLog"
-       ,(format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" version)
-       "git push"))))
+       "git push --tags"))))
 
 (defun changelog (argv)
   (declare (ignore argv))
-  (prepare-changelog))
+  (prepare-changelog)
+  (let ((version (find-version)))
+    (mapc
+     (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
+     `("git add ChangeLog"
+       ,(format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" version)))))
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
