@@ -33,7 +33,7 @@ LISPS = helper.el \
 	emacs.ros \
 	exec.ros \
 	dist.ros \
-	dist-list.lisp \
+	dist-list.lisp dist-clean.lisp \
 	fmt.ros \
 	get.ros \
 	git.ros \
