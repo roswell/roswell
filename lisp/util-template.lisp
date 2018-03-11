@@ -69,7 +69,10 @@
            collect (code-char i)) 'string)))
 
 (defun templates-list (&key filter name)
-  (let* ((* (loop for x in (append *template-base-directories* (list (first ql:*local-project-directories*)))
+  (let* ((* (loop for x in (append *template-base-directories*
+                                   (mapcar (lambda (path)
+                                             (merge-pathnames "templates/" path))
+                                           ql:*local-project-directories*))
                   append (directory (merge-pathnames "**/*.asd" x))))
          (* (remove-if-not (lambda (x) (ignore-errors (string-equal "roswell.init." (pathname-name x) :end2 13))) *))
          (* (cons (merge-pathnames "init-default.lisp" (ros:opt "lispdir")) *))
