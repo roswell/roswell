@@ -60,7 +60,7 @@ AC_ARG_ENABLE([manual_generation],
 AM_CONDITIONAL(MANUAL_GENERATE,[test x$manual_generate = x"true"])
 
 AC_ARG_ENABLE([manual_install],
-  [AC_HELP_STRING([--enable-manual-installation],[install manual if enabled])],
+  [AC_HELP_STRING([--disable-manual-installation],[install manual if enabled])],
   [case "${enableval}" in
     yes) manual_install=true ;;
     no)  manual_install=false ;;
