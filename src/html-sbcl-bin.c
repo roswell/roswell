@@ -24,7 +24,7 @@ LVal filter_sbcl_uri(LVal v) {
       m2=q(third);
       i=3;
     }
-    i=(strcmp(m2,m)==0 && strcmp(firsts(nthcdr(i,ret)),u)==0);
+    i=(strcmp(m2,m)==0 && strncmp(firsts(nthcdr(i,ret)),u,strlen(u)));
 
     s(m2),s(str),s(m),s(u),sL(ret);
     return i?toNumber(1):0;
