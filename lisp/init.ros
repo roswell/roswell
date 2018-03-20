@@ -16,7 +16,9 @@ exec ros +A -Q -m roswell -N roswell -- $0 "$@"
                            (merge-pathnames "templates/" path))
                          ql:*local-project-directories*)
                  ql:*local-project-directories*)))
-    (module-main r :default "default"))
+    (module-main r :default (or (when (equal (roswell:opt "init.use-checkout") "true")
+                                  (roswell:opt "init.default"))
+                                "default")))
   ;; show usage ?
   )
 ;;; vim: set ft=lisp lisp:
