@@ -29,6 +29,7 @@
   #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-setenv")))))
            (when f (funcall f name value 1)))
   #+ecl(ext:setenv name value)
+  #+lispworks (hcl:setenv name name value)
   value)
 
 (defun unsetenv (name)
@@ -38,6 +39,7 @@
   #+clisp(system::setenv name nil)
   #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-unsetenv")))))
            (when f (funcall f name)))
+  #+lispworks(hcl:setenv name nil)
   nil)
 
 (defun read-call (func &rest params)

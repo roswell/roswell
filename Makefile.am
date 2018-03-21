@@ -65,7 +65,7 @@ LISPS = helper.el \
 	install-ccl-bin.lisp install-clasp.lisp install-clisp.lisp \
 	install-cmu-bin.lisp install-ecl.lisp install-quicklisp.lisp \
 	install-sbcl-bin.lisp install-sbcl.lisp install-slime.lisp \
-	install-sly.lisp \
+	install-sly.lisp install-lispworks.lisp \
 	install+externals-clasp.lisp install+ffcall.lisp \
 	install+msys2.lisp install+sigsegv.lisp install-asdf.lisp \
 	\
