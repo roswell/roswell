@@ -33,6 +33,5 @@ char** cmd_run_lispworks(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q(argv[i]),ret);
 
   ret=nreverse(ret);
-  print_list(ret);
   return stringlist_array(ret);
 }
