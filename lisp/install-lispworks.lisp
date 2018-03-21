@@ -1,5 +1,6 @@
+(roswell:include "util-install-quicklisp")
 (defpackage :roswell.install.lispworks
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.install :roswell.util))
 (in-package :roswell.install.lispworks)
 
 (defparameter *code*
@@ -25,8 +26,7 @@
   (second (member option argv :test #'string=)))
 
 (defun touch (file)
-  (with-open-file (stream file :direction :output :if-exists :supersede :if-does-not-exist :create))
-  file)
+  (open file :direction :probe :if-does-not-exist :create))
 
 (defun guess-version (lw-tar)
   (let ((list (uiop:split-string (pathname-name lw-tar) :separator "-.")))
@@ -44,15 +44,19 @@
       (uiop:run-program (list lw-program "-build" (princ-to-string lw-file))))))
 
 (defun install-1 (prefix lw-tar lwdoc-tar)
-  (ensure-directories-exist prefix)
-  (setf prefix (probe-file prefix))
-  (uiop:run-program (format nil "tar -zxf '~A' -C '~A'" lw-tar prefix))
-  (when lwdoc-tar (uiop:run-program (format nil "tar -zxf '~A' -C '~A'" lwdoc-tar prefix)))
-  (let ((lwlicfile (merge-pathnames "lib/7-1-0-0/config/lwlicense" prefix)))
-    (touch lwlicfile)
-    (sb-posix:chmod (probe-file lwlicfile) #o666)))
+  (let ((target (ensure-directories-exist (make-pathname :defaults prefix :name nil :type nil))))
+    (if target
+        (progn
+          (expand lw-tar target)
+          (when lwdoc-tar
+            (expand lwdoc-tar target))
+          ;; only works with 7.1??? better to follow normal install step..
+          (let ((lwlicfile (merge-pathnames "lib/7-1-0-0/config/lwlicense" target)))
+            (touch lwlicfile)
+            (sb-posix:chmod (probe-file lwlicfile) #o666)))
+        (error "~S not exists" target))))
 
-(defun install (argv)
+(defun lw-install (argv)
   (let* ((argv (getf argv :argv))
          (lw-tar (get-option argv "--lw-tar"))
          (lwdoc-tar (get-option argv "--lwdoc-tar"))
@@ -70,7 +74,8 @@
         (uiop:run-program (list lw-program
                                 "--lwlicenseserial" serial-number
                                 "--lwlicensekey" key))
-        (build-lw-console prefix lw-program)))))
+        (build-lw-console prefix lw-program))))
+  (cons t argv))
 
 (defun help (argv)
   (format t "lispworks install options~%")
@@ -91,5 +96,6 @@
 (defun lispworks (type)
   (case type
     (:help '(help))
-    (:install '(install))
+    (:install '(lw-install
+                setup))
     (:list)))
