@@ -11,7 +11,8 @@
     (loop :until (null args)
           :for arg := (pop args)
           :do (cond ((string= arg \"--eval\")
-                     (eval (read-from-string (pop args))))))))
+                     (eval (read-from-string (pop args)))))))
+  (lw:start-tty-listener))
 
 (pushnew '(\"Main\" (:priority 60000000 :restart-action :continue) main)
          mp:*initial-processes*)
