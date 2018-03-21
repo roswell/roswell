@@ -1,5 +1,5 @@
 (defpackage :roswell.install.lispworks
-  (:use :cl :roswell.util))
+  (:use :cl :roswell.util :roswell.install))
 (in-package :roswell.install.lispworks)
 
 (defparameter *code*
@@ -91,5 +91,5 @@
 (defun lispworks (type)
   (case type
     (:help '(help))
-    (:install '(install))
+    (:install '(install setup))
     (:list)))
