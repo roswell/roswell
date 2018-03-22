@@ -44,6 +44,12 @@
       :close-stream
       (uiop:run-program (list lw-program "-build" (princ-to-string lw-file))))))
 
+(defun lw-runtime-name (lw-tar)
+  (multiple-value-bind (major minor arch os)
+      (guess-version lw-tar)
+    (format nil "lispworks-~D-~D-0-~A-~A"
+            major minor arch os)))
+
 (defun install-1 (prefix lw-tar lwdoc-tar)
   (let ((target (ensure-directories-exist (make-pathname :defaults prefix :name nil :type nil))))
     (if target
@@ -51,8 +57,11 @@
           (expand lw-tar target)
           (when lwdoc-tar
             (expand lwdoc-tar target))
-          ;; only works with 7.1??? better to follow normal install step..
-          (let ((lwlicfile (merge-pathnames "lib/7-1-0-0/config/lwlicense" target)))
+          (let ((lwlicfile
+                  (multiple-value-bind (major minor)
+                      (guess-version lw-tar)
+                    (merge-pathnames (format nil "lib/~D-~D-0-0/config/lwlicense" major minor)
+                                     target))))
             (touch lwlicfile)
             (sb-posix:chmod (probe-file lwlicfile) #o666)))
         (error "~S not exists" target))))
@@ -66,16 +75,13 @@
          (prefix (merge-pathnames (make-pathname
                                    :directory (list :relative "impls" (uname-m) (uname) "LispWorks"))
                                   (homedir))))
-    (multiple-value-bind (major minor arch os)
-        (guess-version lw-tar)
-      (install-1 prefix lw-tar lwdoc-tar)
-      (let ((lw-program (merge-pathnames (format nil "lispworks-~D-~D-0-~A-~A"
-                                                 major minor arch os)
-                                         prefix)))
-        (uiop:run-program (list lw-program
-                                "--lwlicenseserial" serial-number
-                                "--lwlicensekey" key))
-        (build-lw-console prefix lw-program))))
+    (install-1 prefix lw-tar lwdoc-tar)
+    (let ((lw-program (merge-pathnames (lw-runtime-name lw-tar)
+                                       prefix)))
+      (uiop:run-program (list lw-program
+                              "--lwlicenseserial" serial-number
+                              "--lwlicensekey" key))
+      (build-lw-console prefix lw-program)))
   (cons t argv))
 
 (defun help (argv)
