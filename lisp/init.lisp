@@ -52,7 +52,8 @@ have the latest asdf, and this file has a workaround for this.
   #+ecl(ext:getenv x)
   #+sbcl(sb-posix:getenv x)
   #+allegro(sys:getenv x)
-  #-(or abcl ecl ccl clisp sbcl cmucl allegro clasp)
+  #+lispworks(hcl:getenv x)
+  #-(or abcl ecl ccl clisp sbcl cmucl allegro clasp lispworks)
   (when (find :asdf *features*)
     (funcall (read-from-string "asdf::getenv") x)))
 
@@ -123,6 +124,7 @@ have the latest asdf, and this file has a workaround for this.
     #+clisp (ext:exit ret)
     #+ccl (ccl:quit ret)
     #+cmucl (progn (finish-output) (finish-output *error-output*) (unix:unix-exit ret))
+    #+lispworks (lw:quit :status ret)
     (ignore-errors
      (progn (ensure-asdf)
             (funcall (read-from-string "asdf::quit") ret)))
