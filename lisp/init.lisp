@@ -124,7 +124,7 @@ have the latest asdf, and this file has a workaround for this.
     #+clisp (ext:exit ret)
     #+ccl (ccl:quit ret)
     #+cmucl (progn (finish-output) (finish-output *error-output*) (unix:unix-exit ret))
-    #+lispworks (lw:quit)
+    #+lispworks (lw:quit :status ret)
     (ignore-errors
      (progn (ensure-asdf)
             (funcall (read-from-string "asdf::quit") ret)))
