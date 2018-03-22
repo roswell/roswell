@@ -21,7 +21,7 @@ DEF_SUBCMD(cmd_uname) {
   int argc=length(arg_);
 
   if(argc==1) {
-    printf("%s\n",uname());
+    printf("%s\n",uname_s());
   }else if(argc==2) {
     if(strncmp(firsts(nthcdr(1,arg_)),"-m",2)==0)
       printf("%s\n",uname_m());

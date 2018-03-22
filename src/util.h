@@ -157,7 +157,7 @@ char* backslash_decode(char* str);
 char** parse_cmdline(char* cmdline,int *argc);
 int free_cmdline(char** argv);
 char* determin_impl(char* impl);
-char* uname(void);
+char* uname_s(void);
 char* uname_m(void);
 char* which(char* cmd);
 LVal directory(char* path);

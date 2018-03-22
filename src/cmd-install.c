@@ -77,7 +77,7 @@ DEF_SUBCMD(cmd_install) {
   install_cmds *cmds=NULL;
   struct install_options param;
   int ret=1,k;
-  param.os=uname();
+  param.os=uname_s();
   param.arch=uname_m();
   param.arch_in_archive_name=0;
   param.version_not_specified=1;

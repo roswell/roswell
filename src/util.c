@@ -3,7 +3,7 @@
 
 #ifndef HAVE_WINDOWS_H
 
-char* uname(void) {
+char* uname_s(void) {
   char *p,*p2;
   p2=remove_char("\r\n",p=system_("uname"));
   s(p);

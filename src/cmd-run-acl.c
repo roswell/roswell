@@ -5,7 +5,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   char** arg=NULL;
   char* home=configdir();
   char* arch=uname_m();
-  char* os=uname();
+  char* os=uname_s();
   char* impl=(char*)cmd->name;
   char* lisp=strcmp(impl,"mlisp")==0?"mlisp":"alisp";
   char* version=(char*)cmd->short_name;

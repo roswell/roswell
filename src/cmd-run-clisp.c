@@ -4,7 +4,7 @@
 char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char* home=configdir();
   char* arch=uname_m();
-  char* os=uname();
+  char* os=uname_s();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
   /*[binpath for clisp] -q -q -M param -repl init.lisp

@@ -3,7 +3,7 @@
 char** cmd_run_lispworks(int argc,char** argv,struct sub_command* cmd) {
   char* home=configdir();
   char* arch=uname_m();
-  char* os=uname();
+  char* os=uname_s();
 
   char* help=get_opt("help",0);
   char* script=get_opt("script",0);

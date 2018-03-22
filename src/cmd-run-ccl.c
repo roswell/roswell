@@ -4,7 +4,7 @@
 char* ccl_binname(char* bit) {
   char* ret=q("");
   char* _uname_m=uname_m();
-  char* _uname=uname();
+  char* _uname=uname_s();
   if(strcmp(_uname,"linux")==0) {
     if(strcmp(_uname_m,"armhf")!=0)
       ret=s_cat(ret,q("l"),NULL);
@@ -33,7 +33,7 @@ char** cmd_run_ccl(int argc,char** argv,struct sub_command* cmd) {
   char* binname=get_opt("ccl.bit",0);
   char* home=configdir();
   char* arch=uname_m();
-  char* os=uname();
+  char* os=uname_s();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
   /*[binpath for ccl] --no-init --quiet --batch --image-name param --eval init.lisp

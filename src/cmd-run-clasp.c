@@ -4,7 +4,7 @@
 char** cmd_run_clasp(int argc,char** argv,struct sub_command* cmd) {
   char* home=configdir();
   char* arch=uname_m();
-  char* os=uname();
+  char* os=uname_s();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
   /*[binpath for clasp] -r -n --eval init.lisp */ /* don't know very much about image yet.*/
