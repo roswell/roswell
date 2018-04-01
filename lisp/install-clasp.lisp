@@ -5,7 +5,8 @@
 
 (defparameter *clasp-version*
   ;; alias commit external-clasp-version
-  '(("2018-03-11" "ee3e6c7f94e1e9a692541caa9f71ba73cfdbc292" "5.0")
+  '(("2018-04-01" "d0de68494af19e8b52fb56d83399b0c27b22a528" "5.0")
+    ("2018-03-11" "ee3e6c7f94e1e9a692541caa9f71ba73cfdbc292" "5.0")
     ("2018-02-05" "948467383606819bedafd2998c2139e190bd3391" "5.0")
     ("2017-12-20" "46634ed2f4dd927059e9d3ab00a00aee1f8991e3" "5.0")
     ("2017-12-12" "141be6a01d806efc64725e516dce8a58d3d1f732" "5.0")
@@ -55,7 +56,7 @@
     (unless (probe-file output)
       (format t "git clone clasp~%")
       (uiop/run-program:run-program
-       (list "git" "clone" "https://github.com/drmeister/clasp.git" output)
+       (list "git" "clone" "https://github.com/clasp-developers/clasp.git" output)
        :output t :ignore-error-status nil))
     (chdir (opt "src"))
     (format t "git fetch~%")
@@ -96,7 +97,7 @@
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
     (let* ((src (opt "src"))
-           (cmd "./waf configure update_submodules build_cboehm")
+           (cmd "./waf configure update_dependencies build_cboehm")
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
       (format t "~&~S~%" cmd)
