@@ -1,8 +1,10 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (18.4.10.90-1) unstable; urgency=low
 
-  *
+  * Change: Updated clasp 2018-04-01. (by gos-k)
+  * New: lispworks support (by cxxxr)
+  * Fix: ignore suffix to support OpenBSD installation.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Tue, 03 Apr 2018 13:38:44 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 03 Apr 2018 13:42:57 +0900
 
 roswell (18.3.10.89-1) unstable; urgency=low
 
