@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 03 Apr 2018 13:38:44 +0900
+
 roswell (18.3.10.89-1) unstable; urgency=low
 
   * New: 'ros balus' for delete config.
