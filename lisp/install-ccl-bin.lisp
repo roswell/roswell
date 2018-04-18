@@ -5,7 +5,7 @@
 
 (defun ccl-bin-get-version ()
   (format *error-output* "Checking version to install...~%")
-  (github-version (ccl-git-version-uri) "ccl_bin" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
+  (cddr (github-version (ccl-git-version-uri) "ccl_bin" (lambda (href) (subseq href (1+ (position #\/ href :from-end t)))))))
 
 (defvar *ccl-uname-m-alist*
   '(("x86-64" . "x86")

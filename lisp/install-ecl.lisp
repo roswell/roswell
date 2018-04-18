@@ -10,8 +10,9 @@
   (format *error-output* "Checking version to install....~%")
   (github-version (ecl-git-version-uri) "ecl"
                   (lambda (href)
-                    (let ((a (subseq href (1+ (position #\/ href :from-end t)))))
-                      (subseq a (position-if #'digit-char-p a))))))
+                    (let ((a (ignore-errors
+                               (subseq href (1+ (position #\/ href :from-end t :end (position #\/ href :from-end t)))))))
+                      (ignore-errors (subseq a (position-if #'digit-char-p a)))))))
 
 (defun ecl-version-filename (version)
   (or

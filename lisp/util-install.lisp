@@ -79,8 +79,8 @@ To differentiate it from the system with the same name in quicklisp, the path sh
     (nreverse
      (loop for link in (read-call "plump:get-elements-by-tag-name" elts "link")
            for href = (read-call "plump:get-attribute" link "href")
-           when (eql (aref href 0) #\/)
-           collect (funcall filter href)))))
+           when (funcall filter href)
+           collect it))))
 
 (defun checkout-github (impl version tag)
   "Install a system from github."

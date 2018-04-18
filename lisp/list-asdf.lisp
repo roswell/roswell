@@ -5,8 +5,8 @@
 (in-package :roswell.list.asdf)
 
 (defun asdf-get-version ()
-  (github-version
-   (asdf-git-version-uri) "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t))))))
+  (cddr (github-version
+   (asdf-git-version-uri) "asdf" (lambda (href) (subseq href (1+ (position #\/ href :from-end t)))))))
 
 (defun asdf (&rest r)
   (declare (ignore r))

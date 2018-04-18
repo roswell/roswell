@@ -10,8 +10,8 @@
 
 (defun sly-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (cons "git" (github-version (sly-git-version-uri) "sly" 
-                  (lambda (href) (subseq href (+ 1 (position #\/ href :from-end t)))))))
+  (cons "git" (cddr (github-version (sly-git-version-uri) "sly"
+                  (lambda (href) (subseq href (+ 1 (position #\/ href :from-end t))))))))
 
 (defun sly-from-git (name)
   (if (probe-file (merge-pathnames "lisp/sly/git/" (homedir)))
