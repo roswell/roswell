@@ -14,7 +14,7 @@ int unsetenv(const char* name) {
   s(s_);
 }
 
-char* uname(void) {
+char* uname_s(void) {
   return q("windows");
 }
 
