@@ -93,13 +93,14 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
            (format out "~A~%" l)))
     done))
 
-(defun prepare-changelog ()
-  (uiop:run-program "git checkout master" :output :interactive :error-output :interactive)
-  (let ((lines (with-open-file (in (merge-pathnames "ChangeLog" *project-path*))
-                 (loop for l = (read-line in nil nil)
-                       while l
-                       collect l)))
-        (*new-version* *dummy-version*))
+(defun ! (x)
+  (uiop:run-program x :output :interactive :error-output :interactive))
+
+(defun prepare-changelog (argv)
+  (declare (ignore argv))
+  (! "git checkout master")
+  (let* ((lines (uiop:read-file-lines (merge-pathnames "ChangeLog" *project-path*)))
+         (*new-version* *dummy-version*))
     (with-open-file (out (merge-pathnames "ChangeLog" *project-path*)
                          :direction :output :if-exists :supersede)
       (format out "~{~A~%~}~{~A~%~}"
@@ -126,42 +127,43 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (format t "~&new version name is ~S~%" *new-version*)
   (force-output)
   (unless (edit-changelog)
-    (error "changelog isn't prepared"))
+    (format *error-output* "changelog isn't prepared~%Type make release-changelog before make prepare~%")
+    (ros:quit))
   (edit-configure-ac)
   (edit-roswell-asd)
   (show-how-to-release))
 
 (defun release (argv)
   (declare (ignore argv))
-  (let ((version (find-version)))
-    (mapc
-     #'uiop:run-program
-     `("git add ChangeLog configure.ac roswell.asd"
-       ,(format nil "git commit -m \"bump version to ~A\"" version)))))
+  (!"git checkout master")
+  (!"git add ChangeLog configure.ac roswell.asd")
+  (!(format nil "git commit -m \"bump version to ~A\"" (find-version))))
 
-(defun release-2 (argv)
+(defun release-push (argv)
   (declare (ignore argv))
+  ;; TBD check commit message to ensure just released.
+  (!"git checkout release")
+  (!"git merge master")
   (let ((version (find-version)))
-    (mapc
-     (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
-     `("git checkout release"
-       "git merge master"
-       ,(format nil "git tag -a \"v~A\" -m \"v~A\"" version version)
-       "git push"
-       "git push --tags"))))
+    (! (format nil "git tag -a \"v~A\" -m \"v~A\""  version version)))
+  (!"git checkout master")
+  (format *error-output* "~{~A~%~}~%"
+          '("Type"
+            "git push origin release:release"
+            "git push --tags"
+            "git push origin master:master")))
+
 
 (defun changelog (argv)
-  (declare (ignore argv))
-  (prepare-changelog)
-  (let ((version (find-version)))
-    (mapc
-     (lambda (x) (uiop:run-program x :output :interactive :error-output :interactive))
-     `("git add ChangeLog"
-       ,(format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" version)))))
+  "prepare changelog lines for newrelease"
+  (! "git checkout master")
+  (prepare-changelog argv)
+  (! "git add ChangeLog")
+  (! (format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" (find-version))))
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(release prepare release-2 changelog)
+  (let ((subcmd (find subcmd '(prepare release release-push changelog)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))

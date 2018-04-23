@@ -103,13 +103,14 @@ endif
 	cat $@
 	rm -f $@.tmp
 
-prepare:
+release-prepare:
 	ros scripts/release.ros prepare
-release:
+release-commit:
 	ros scripts/release.ros release
-release-2:
-	ros scripts/release.ros release-2
-
+release-push:
+	ros scripts/release.ros release-push
+release-changelog:
+	ros scripts/release.ros changelog
 winrelease:
 	mkdir -p roswell/lisp
 	mkdir -p roswell/documents
@@ -122,4 +123,4 @@ test:
 	run-prove roswell-test.asd
 
 FORCE:
-.PHONY: prepare release release-2 test winrelease FORCE
+.PHONY: release-prepare release release-push test winrelease FORCE
