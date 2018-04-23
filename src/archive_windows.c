@@ -5,7 +5,7 @@
 char* extract_command_str(int flags,const char *filename,int do_extract,const char* outputpath,char* type) {
   char* str;
   char* _uname_m=uname_m();
-  char* _uname=uname();
+  char* _uname=uname_s();
   char* _confdir=configdir();
   char* exe=s_escape_string(cat(_confdir,"impls",SLASH,_uname_m,SLASH,_uname,SLASH,"7za",SLASH,"9.20",SLASH,"7za.exe",NULL));
   char *outputpath2=q(outputpath);
