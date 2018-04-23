@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 23 Apr 2018 13:46:19 +0900
+
 roswell (18.4.10.90-1) unstable; urgency=low
 
   * Change: Updated clasp 2018-04-01. (by gos-k)
