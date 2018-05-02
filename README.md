@@ -166,7 +166,7 @@ SANO Masatoshi (snmsts@gmail.com)
 
 ## Special Thanks to
  * Eitaro Fukamachi (e.arrows@gmail.com) for naming this project.
- * Sunrin SHIMURA for [keens/cim](https://github.com/keens/cim) that motivate me to start this project.
+ * Sunrin SHIMURA for [sionescu/cim](https://github.com/sionescu/CIM) that motivate me to start this project.
 
 ## Project
  * https://github.com/roswell/roswell
