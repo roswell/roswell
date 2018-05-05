@@ -16,6 +16,7 @@
 #ifndef HAVE_WINDOWS_H
 #include <pwd.h>
 #include <unistd.h>
+#include <grp.h>
 #include <signal.h>
 #include <dirent.h>
 #include <sys/types.h>

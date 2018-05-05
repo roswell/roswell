@@ -119,6 +119,7 @@ void setup_uid(int euid_or_uid) {
            seteuid(uid)==0))
         cond_printf(0,"Error setegid/seteuid \n");
     }else {
+      setgroups(0, NULL);
       if(!(setgid(gid)==0 &&
            setuid(uid)==0))
         cond_printf(0,"Error setgid/setuid \n");
