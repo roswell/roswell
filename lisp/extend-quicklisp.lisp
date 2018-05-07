@@ -66,6 +66,15 @@
        (append (list 'roswell-installable-searcher)
                (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))))
 
+(pushnew 'roswell-dist-enumeration-function ql-dist:*dist-enumeration-functions*)
+
+(defclass roswell-dist (ql-dist:dist)
+  ())
+
+(defun roswell-dist-enumeration-function ()
+  (loop for file in (directory (merge-pathnames "dists/*/distinfo.txt" (roswell.util:homedir)))
+     collect (ql-dist::make-dist-from-file file 'roswell-dist)))
+
 (in-package #:ql-dist)
 (let ((*error-output* (make-broadcast-stream)))
   (when
