@@ -34,7 +34,7 @@ LISPS = helper.el \
 	exec.ros \
 	dist.ros \
 	dist-list.lisp dist-clean.lisp dist-enable.lisp dist-disable.lisp \
-	dist-use.lisp dist-versions.lisp \
+	dist-use.lisp dist-versions.lisp dist-preference.lisp \
 	fmt.ros \
 	get.ros \
 	git.ros \
@@ -58,7 +58,7 @@ LISPS = helper.el \
 	help-install.lisp help-options.lisp help-run.lisp \
 	\
 	init.ros \
-	init-default.lisp init-env.lisp \
+	init-default.lisp init-env.lisp init-dist.lisp \
 	\
 	install.ros \
 	util-install.lisp util-install-quicklisp.lisp \
