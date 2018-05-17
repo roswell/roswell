@@ -10,10 +10,15 @@ char* qsprintf(int bufsize,char* format,...) {
   return result;
 }
 
-char* s_cat2(char* a,char* b) {
+char* cat2(char* a,char* b) {
   char* ret= (char*)alloc(strlen(a)+strlen(b)+1);
   strcpy(ret,a);
   strcat(ret,b);
+  return ret;
+}
+
+char* s_cat2(char* a,char* b) {
+  char* ret=cat2(a,b);
   dealloc(a);
   dealloc(b);
   return ret;
@@ -32,13 +37,13 @@ char* s_cat(char* first,...) {
 }
 
 char* cat(char* first,...) {
-  char* ret=q_(first);
-  char* i;
+  char *ret=q_(first);
+  char *old_ret, *i;
   va_list list;
   va_start(list,first);
 
   for(i=va_arg( list , char*);i!=NULL;i=va_arg( list , char*))
-    ret=s_cat2(ret,q_(i));
+      old_ret=ret,ret=cat2(ret,i),dealloc(old_ret);
   va_end(list);
   return ret;
 }
