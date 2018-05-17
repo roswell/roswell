@@ -171,11 +171,11 @@ char* lispdir(void) {
   /* $(bindir)/../lisp/ */
   LISPDIR_CANDIDATE(cat(ros_bin,"lisp",SLASH,NULL));
   s(ros_bin);
-  result=append_trail_slash(q(LISP_PATH));
+  result=append_trail_slash(LISP_PATH);
   return q(result);
 }
 char* patchdir(void) {
-  return append_trail_slash(q(PATCH_PATH));
+  return append_trail_slash(PATCH_PATH);
 }
 
 DEF_SUBCMD(opt_version) {
