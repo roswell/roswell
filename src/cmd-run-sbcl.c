@@ -20,16 +20,21 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* withoutroswell=get_opt("without-roswell",0);
   char* enable_debugger=get_opt("enable-debugger",0);
 
-  char* sbcl_home=cat(home,impl_path,"/lib/sbcl",NULL);
   LVal ret=0;
 
   int issystem=(strcmp("system",version)==0);
   char *bin=issystem?
     strcmp(impl,"sbcl32")==0?truename(which("sbcl32")):truename(which("sbcl")):
     cat(home,impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
-  setenv("SBCL_HOME",sbcl_home,1);
 
-  s(arch),s(os),s(sbcl_home);
+  s(arch),s(os);
+
+  if (!issystem) {
+    char* sbcl_home=cat(home,impl_path,SLASH,"lib",SLASH,"sbcl",NULL);
+    setenv("SBCL_HOME",sbcl_home,1);
+    s(sbcl_home);
+  }
+
   ret=conss(bin,ret);
 
   /* runtime options from here */

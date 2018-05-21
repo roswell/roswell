@@ -91,7 +91,7 @@ char* pathname_directory(char* path) {
   int i;
   char* ret;
   for(i=strlen(path)-1;i>=0&&path[i]!=SLASH[0];--i);
-  ret=append_trail_slash(i?subseq(path,0,i):path);
+  ret=(i>=0)?subseq(path,0,i):append_trail_slash(".");
   s(path);
   return ret;
 }
