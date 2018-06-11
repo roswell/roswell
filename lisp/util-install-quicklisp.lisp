@@ -63,7 +63,11 @@
     (setf *version-func* function)
     (let ((version (getf argv :version)))
       (when (or (null version) (equal version "latest"))
-        (setf (getf argv :version) (first (funcall *version-func*))
+        (setf (getf argv :version)
+              (let ((version (first (funcall *version-func*))))
+                (unless version
+                  (format t "Decide version failure ~A.~%" function))
+                version)
               (getf argv :version-not-specified) 0)))
     (cons t argv)))
 
