@@ -18,5 +18,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
               (merge-pathnames (format nil "env/~A/lisp/quicklisp/" env)
                                (roswell.util:homedir))
               ql-setup:*quicklisp-home*)))
-    (module-main args)))
+    (module-main args
+                 :default "default"
+                 :usage "default")))
 ;;; vim: set ft=lisp lisp:
