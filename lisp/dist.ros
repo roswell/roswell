@@ -20,5 +20,6 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
               ql-setup:*quicklisp-home*)))
     (module-main args
                  :default "default"
-                 :usage "default")))
+                 :usage "default"
+                 :error-output (make-broadcast-stream))))
 ;;; vim: set ft=lisp lisp:
