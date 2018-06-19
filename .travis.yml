@@ -12,6 +12,7 @@ env:
     - METHOD=ci LISP=cmu-bin/2017-10
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
+    - METHOD=ci LISP=mkcl
     - METHOD=ci LISP=clisp
     - METHOD=ci LISP=abcl
     - METHOD=ci LISP=ccl-bin
@@ -139,11 +140,4 @@ after_success:
     fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
-  - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ] && (git log -n 1 --oneline|grep "bump version to") ; then
-       rm -rf .git;
-       git checkout "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" merge;
-       mv merge/.git .git;
-       git branch release origin/release;
-       (git log -n 1 --oneline|grep "bump version to") && (make release-2;);
-    fi
   - pkill -9 proxy
