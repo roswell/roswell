@@ -1,8 +1,14 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (18.6.10.92-1) unstable; urgency=low
 
-  *
+  * New: new dist support mkcl
+  * New: ros dist (WIP)
+  * Change: Updated clasp 2018-05-17. by gos-k
+  * Fix: Fix windows build.
+  * Fix: setgroups before setuid for fix RPM packaging by Bheesham Persaud
+  * Fix: launch of system SBCL by Olivier Certner
+  * Fix: dump-sbcl for newer sbcl. by Masataro Asai
 
- -- SANO Masatoshi <snmsts@gmail.com>  Tue, 19 Jun 2018 14:42:59 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 19 Jun 2018 14:55:56 +0900
 
 roswell (18.4.10.91-1) unstable; urgency=low
 
