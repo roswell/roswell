@@ -7,7 +7,10 @@
 (eval-when (:compile-toplevel :load-toplevel :execute)
   (ignore-errors
    (when (find-symbol "MAKE-PACKAGE-HASHTABLE" :sb-impl)
-     (push :roswell-dump-newer-sbcl *features*))))
+     (pushnew :roswell-dump-newer-sbcl *features*)
+     (when (and (find-symbol "INFO-HASHTABLE" :sb-impl)
+                (find-symbol "INFO-MAPHASH" :sb-int))
+       (pushnew :roswell-dump-sbcl-use-info-hashtable *features*)))))
 
 (defun dump-executable (cmds out script)
   (declare (ignore script))
@@ -96,27 +99,38 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
   #+roswell-dump-newer-sbcl
   (let (packages)
     (setf *features* (delete :roswell-dump-newer-sbcl *features*))
-    (maphash (lambda (package-name package)
-               (unless (member package-name *package-blacklist* :test #'string=)
-                 (format t "Deleting ~s~%" package-name)
-                 (setf (sb-impl::package-%use-list package) nil)
-                 (setf (sb-impl::package-%used-by-list package) nil)
-                 (setf (sb-impl::package-%shadowing-symbols package) nil)
-                 (setf (sb-impl::package-internal-symbols package)
-                       (sb-impl::make-package-hashtable 0))
-                 (setf (sb-impl::package-external-symbols package)
-                       (sb-impl::make-package-hashtable 0))
-                 (setf (sb-impl::package-tables package) #())
-                 (setf (sb-impl::package-%implementation-packages package) nil)
-                 (setf (sb-impl::package-%local-nicknames package) nil)
-                 (setf (sb-impl::package-%locally-nicknamed-by package) nil)
-                 (push package-name packages)
-                 (do-symbols (symbol package-name)
-                   (sb-impl::%set-symbol-package symbol nil)
-                   (unintern symbol))))
-             sb-impl::*package-names*)
-    (dolist (package packages)
-      (remhash package sb-impl::*package-names*))))
+    (flet ((destroyer (package-name package)
+             (unless (member package-name *package-blacklist* :test #'string=)
+               (format t "Deleting ~s~%" package-name)
+               (setf (sb-impl::package-%use-list package) nil)
+               (setf (sb-impl::package-%used-by-list package) nil)
+               (setf (sb-impl::package-%shadowing-symbols package) nil)
+               (setf (sb-impl::package-internal-symbols package)
+                     (sb-impl::make-package-hashtable 0))
+               (setf (sb-impl::package-external-symbols package)
+                     (sb-impl::make-package-hashtable 0))
+               (setf (sb-impl::package-tables package) #())
+               (setf (sb-impl::package-%implementation-packages package) nil)
+               (setf (sb-impl::package-%local-nicknames package) nil)
+               (setf (sb-impl::package-%locally-nicknamed-by package) nil)
+               (push package-name packages)
+               (do-symbols (symbol package-name)
+                 (sb-impl::%set-symbol-package symbol nil)
+                 (unintern symbol)))))
+      (etypecase sb-impl::*package-names*
+        (hash-table
+         (maphash #'destroyer sb-impl::*package-names*)
+         (dolist (package packages)
+           (remhash package sb-impl::*package-names*)))
+        
+        #+roswell-dump-sbcl-use-info-hashtable
+        (sb-impl::info-hashtable
+         ;; sb-int:info-maphash is a macro ... weird
+         (sb-int:info-maphash #'destroyer sb-impl::*package-names*)
+         ;; info-hashtable does not have remhash
+         )))))
+
+;; TODO: why not just use delete-package? document it
 
 (defun delete-fun-debug-info (fun)
   ;; cf. src/code/describe.lisp
