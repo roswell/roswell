@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 19 Jun 2018 14:42:59 +0900
+
 roswell (18.4.10.91-1) unstable; urgency=low
 
   * Fix: support github chnaging format.
