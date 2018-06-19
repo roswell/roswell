@@ -18,6 +18,8 @@
     (let ((param `(t :target ,impl :version ,version :version-not-specified nil :argv ,argv)))
       (handler-case
           (loop for call in cmds
+                when (roswell:verbose)
+                  do (format *error-output* "~&:<install ~A~%~S~%:>" call (rest param))
                 do (setq param (funcall call (rest param)))
                 while (first param))
         #+sbcl
