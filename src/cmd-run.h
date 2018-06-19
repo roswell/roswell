@@ -23,6 +23,7 @@ extern char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_lispworks(int argc,char** argv,struct sub_command* cmd);
+extern char** cmd_run_mkcl(int argc,char** argv,struct sub_command* cmd);
 extern LVal register_runtime_options();
 int setup(char* target,char* env,char* impl);
 #define SETUP_SYSTEM(sys,msg) {\

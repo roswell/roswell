@@ -21,6 +21,7 @@ struct run_impl_t impls_to_run[]={
   {"alisp",&cmd_run_acl},
   {"allegro",&cmd_run_acl},
   {"lispworks",&cmd_run_lispworks},
+  {"mkcl",&cmd_run_mkcl},
 };
 
 struct proc_opt run;
