@@ -60,6 +60,8 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
   #-sbcl
   (warn "delete-compiler is available only in SBCL")
   #+sbcl
+  (declare (sb-ext:muffle-conditions style-warning))
+  #+sbcl
   (do-all-symbols (s)
     (when (fboundp s)
       (setf (sb-int:info :function :inlinep s) :notinline)
