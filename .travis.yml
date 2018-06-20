@@ -33,6 +33,7 @@ matrix:
   allow_failures:
     - env: METHOD=brew
     - env: METHOD=ci LISP=sbcl/git
+    - env: METHOD=ci LISP=mkcl
   include:
       - sudo: required
         os: linux
