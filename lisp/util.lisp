@@ -181,7 +181,11 @@ Example:
       "sh"))
 
 (defvar *version*
-  `(:roswell ,(roswell:version)
+  `(:roswell ,(or (ignore-errors (roswell:version))
+                  (progn
+                    (pushnew :ros.without-bin *features*)
+                    (read-call "asdf:component-version"
+                               (read-call "asdf:find-system" :roswell))))
     :lisp ,(lisp-implementation-type)
     :version ,(lisp-implementation-version))
   "Stores the version information for roswell binary and the current implementation.")

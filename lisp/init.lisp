@@ -72,9 +72,10 @@ have the latest asdf, and this file has a workaround for this.
   (second (assoc param (ros-opts) :test 'equal)))
 
 (defun verbose ()
-  (let ((ret (parse-integer (opt "verbose"))))
-    (if (zerop ret)
-        nil ret)))
+  (and (opt "verbose")
+       (let ((ret (parse-integer (opt "verbose"))))
+         (if (zerop ret)
+             nil ret))))
 
 (let (sentinel)
   (defun ensure-asdf (&key (version (opt "asdf.version")))
