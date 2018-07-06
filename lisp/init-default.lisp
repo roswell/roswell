@@ -41,7 +41,6 @@
                             "  (declare (ignorable argv)))"
                             ";;; vim: set ft=lisp lisp:")
                     (format t "~&Successfully generated: ~A~%" path)
-                    (format t "params ~S~%" params)
                     t))
               #+sbcl (sb-posix:chmod path #o700))
           (format *error-output* "~&File already exists: ~A~%" path)
