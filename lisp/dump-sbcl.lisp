@@ -23,7 +23,7 @@
              collect (if (find ".cache" (pathname-directory p) :test 'equal)
                          (progn
                            (uiop:copy-file p (merge-pathnames (file-namestring p)
-                                                              (make-pathname :defaults *default-pathname-defaults* :type nil :name nil)))
+                                                              (make-pathname :defaults out :type nil :name nil)))
                            (sb-alien::make-shared-object
                             :pathname (make-pathname :defaults (format nil "./~A" (file-namestring p)))
                             :namestring (format nil "./~A" (file-namestring p))
