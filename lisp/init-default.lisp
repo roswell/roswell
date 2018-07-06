@@ -3,7 +3,9 @@
 (in-package :roswell.init.default)
 
 (defun default (name &rest params)
-  (declare (ignore params))
+  (setf params (loop for (i j) on params by #'cddr
+                     collect (intern i :keyword)
+                     collect j))
   (setf name (namestring (make-pathname :defaults name :type nil)))
   (map () (lambda (i)
             (setf name (remove i name)))
@@ -25,7 +27,10 @@
                             "exec ros -Q -- $0 \"$@\"" "|#"
                             "(progn ;;init forms"
                             "  (ros:ensure-asdf)"
-                            "  ;;#+quicklisp (ql:quickload '() :silent t)"
+                            (let ((lib (getf params :|lib|)))
+                              (format nil "  ~A#+quicklisp(ql:quickload '(~A) :silent t)"
+                                      (if lib "" ";;")
+                                      (or lib "")))
                             "  )"
                             ""
                             (format nil "(defpackage :ros.script.~A.~A" name date)
@@ -36,6 +41,7 @@
                             "  (declare (ignorable argv)))"
                             ";;; vim: set ft=lisp lisp:")
                     (format t "~&Successfully generated: ~A~%" path)
+                    (format t "params ~S~%" params)
                     t))
               #+sbcl (sb-posix:chmod path #o700))
           (format *error-output* "~&File already exists: ~A~%" path)
