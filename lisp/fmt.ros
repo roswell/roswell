@@ -36,7 +36,8 @@ exec ros -Q -N roswell -- $0 "$@"
                  (t
                   (list c)))))
       (when *
-        (ql:quickload * :silent t)
+        (ql:quickload * :silent (not (ros:verbose)))
+        (lem-lisp-syntax.indent:indentation-update)
         (r (asdf:find-system *))))))
 
 (defun main (&rest argv)
@@ -57,9 +58,8 @@ exec ros -Q -N roswell -- $0 "$@"
                 lem-lisp-syntax:*syntax-table*)
           (setf (lem-base:variable-value 'lem-base:calc-indent-function :buffer buffer)
                 'lem-lisp-syntax:calc-indent)
-          (lem-base:apply-region-lines (lem-base:buffer-start-point buffer)
-                                       (lem-base:buffer-end-point buffer)
-                                       'lem-base:indent-line)
+          (lem-base:indent-region (lem-base:buffer-start-point buffer)
+                                  (lem-base:buffer-end-point buffer))
           (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))
         (format *error-output* "~A does not exist" arg))))
 ;;; vim: set ft=lisp lisp:
