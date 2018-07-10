@@ -60,6 +60,11 @@ exec ros -Q -N roswell -- $0 "$@"
                 'lem-lisp-syntax:calc-indent)
           (lem-base:indent-region (lem-base:buffer-start-point buffer)
                                   (lem-base:buffer-end-point buffer))
+          (loop with regexp = "[ 	]+$" ;; remove trailing spaces.
+                for start = (lem-base:search-forward-regexp (lem-base:copy-point (lem-base:buffer-start-point buffer)) regexp)
+                while start
+                for end = (lem-base:search-backward-regexp (lem-base:copy-point start) regexp)
+                do (lem-base:delete-between-points start end))
           (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))
         (format *error-output* "~A does not exist" arg))))
 ;;; vim: set ft=lisp lisp:
