@@ -10,8 +10,8 @@
 (defvar *msys2-bits*)
 
 (defun msys2-get-version ()
-  '("20150916"))
-;;sha1 "88fa66ac2a18715a542e0768b1af9b2f6e3680b2"
+  '("20180531"))
+;;sha1 "309f604a165179d50fbe4131cf87bd160769f974"
 ;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 
 (defun msys2-setup (argv)
