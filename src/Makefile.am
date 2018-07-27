@@ -28,5 +28,8 @@ noinst_HEADERS = util.h opt.h cmd-install.h gend.h cmd-run.h
 
 CLEANFILES = gend.h
 
+check-syntax:
+	$(CC) -Wall -fsyntax-only $(CHK_SOURCES)
+
 FORCE:
-.PHONY: FORCE
+.PHONY: FORCE check-syntax
