@@ -157,7 +157,7 @@ char* lispdir(void) {
     return q(result);
 
   w=which(argv_orig[0]);
-  ros_bin=append_trail_slash(pathname_directory(truename(w)));
+  ros_bin=pathname_directory(truename(w));
   s(w);
 
   /* $(bindir)/lisp/ */
