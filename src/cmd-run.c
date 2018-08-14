@@ -47,8 +47,12 @@ int setup(char* target,char* env,char* impl) {
   lock_apply("setup",0);
   cond_printf(1,"verbose-option:'%s'\n",v);
   char* version=get_opt(DEFAULT_IMPL".version",0);
-  if(!version)
+  if(!version) {
+    char* path=s_cat(configdir(),q("config"),NULL);
     SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
+    global_opt=load_opts(path),s(path);
+    version=get_opt(DEFAULT_IMPL".version",0);
+  }
   if(strcmp(env,"-")!=0) {
     char *cmd =cat(argv_orig[0]," init env ",env,NULL);
     System(cmd);
@@ -89,8 +93,6 @@ char* determin_impl(char* impl) {
     s(impl);
     impl=q(DEFAULT_IMPL);
     setup(PACKAGE,"-",impl);
-    char* path=s_cat(configdir(),q("config"),NULL);
-    global_opt=load_opts(path),s(path);
     version=get_opt(DEFAULT_IMPL".version",0);
   }
   return s_cat(impl,q("/"),version,NULL);
