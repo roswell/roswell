@@ -93,12 +93,7 @@
 (when (equal (ros:opt "default.lisp") "sbcl-bin")
   (! "ros install ccl-bin/1.11")
   (! "ros use sbcl-bin")
-  (! "ros delete ccl-bin/1.11")
-  (progn
-    (setenv "MAKEFLAGS" "-j 2")
-    (prog1 (! "ros install clisp")
-      (unsetenv "MAKEFLAGS")))
-  (! "ros use sbcl-bin"))
+  (! "ros delete ccl-bin/1.11"))
 #+broken (! "ros list versions")
 
 (!-tree
