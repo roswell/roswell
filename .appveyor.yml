@@ -27,7 +27,7 @@ install:
            do pacman --noconfirm -Suy autoconf automake mingw-w64-"+ $env:MSYS2_ARCH + "-gcc make zlib-devel python3 && break || sleep 15; done");
          &("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "pacman --noconfirm -R -s bash-completion tftp-hpa inetutils util-linux tzcode time dash flex pax-git file bsdcpio bsdtar lndir";
          &("msys" + $env:MSYS2_BITS + "\usr\bin\bash") -lc "yes|pacman --noconfirm -Sc";
-         &("msys" + $env:MSYS2_BITS + "\autorebase.bat");
+         #&("msys" + $env:MSYS2_BITS + "\autorebase.bat");
         }
 
 build_script:
