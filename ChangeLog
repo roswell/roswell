@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 15 Aug 2018 15:24:24 +0900
+
 roswell (18.6.10.92-1) unstable; urgency=low
 
   * New: new dist support mkcl
