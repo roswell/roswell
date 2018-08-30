@@ -82,7 +82,10 @@
     (format *error-output* "~{~A~%~}"
             `(,(format nil "helper.el installed in ~S" (namestring target)) ""
               "To use, add this to your ~/.emacs:" ""
-              ,(format nil "  (load (expand-file-name ~S))" enough)))))
+              ,(format nil
+                       "  (load (expand-file-name ~S))"
+                       #-win32 enough
+                       #+win32 (namestring target))))))
 
 (defun slime-install (argv)
   (let ((name (or (getf argv :version) (substitute #\. #\- (ql:dist-version "quicklisp")))))
