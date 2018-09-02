@@ -31,6 +31,11 @@ exec ros -m roswell -N roswell -- $0 "$@"
     (mute-error-if-not-verbose
      (roswell:exec
       `("emacs" "-l" ,(namestring path) "--eval"
-                ,(format nil "(setq inferior-lisp-program \"ros -Q ~:[~;~:*-L ~A ~]run\")" (roswell:opt "*lisp"))
+                ,(format nil
+                         #-win32
+                         "(setq inferior-lisp-program \"ros -Q ~:[~;~:*-L ~A ~]run\")"
+                         #+win32
+                         "\"(setq inferior-lisp-program \\\"ros -Q ~:[~;~:*-L ~A ~]run\\\")\""
+                         (roswell:opt "*lisp"))
                 ,@argv)))))
 ;;; vim: set ft=lisp lisp:
