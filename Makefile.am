@@ -33,7 +33,7 @@ LISPS = helper.el \
 	emacs.ros \
 	exec.ros \
 	dist.ros \
-	dist-list.lisp dist-clean.lisp dist-enable.lisp dist-disable.lisp \
+	dist-list.lisp dist-clean.lisp dist-enable.lisp dist-disable.lisp dist-add.lisp \
 	dist-use.lisp dist-versions.lisp dist-preference.lisp dist-default.lisp \
 	fmt.ros \
 	get.ros \
