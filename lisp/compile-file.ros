@@ -1,7 +1,7 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|
-exec ros +Q +A -- $0 "$@"
+exec ros -Q +A -- $0 "$@"
 |#
 (progn ;;init forms
   #-asdf(ros:ensure-asdf :version nil)
@@ -49,8 +49,8 @@ exec ros +Q +A -- $0 "$@"
     (consume
      argv
      (("-o" opt)
-      (uiop:chdir
-       (setf *default-pathname-defaults* (truename opt)))
+      (read-call "uiop:chdir"
+                 (setf *default-pathname-defaults* (truename opt)))
       (setf out t))
      (("-o-")
       (setf out nil))
@@ -62,19 +62,19 @@ exec ros +Q +A -- $0 "$@"
       (setf asdf nil))
      ((:in file)
       (if asdf
-          (uiop:chdir
-           (setf *default-pathname-defaults*
-                 (merge-pathnames (format nil "lisp/asdf/~A/" file) (homedir))))
+          (read-call "uiop:chdir"
+                     (setf *default-pathname-defaults*
+                           (merge-pathnames (format nil "lisp/asdf/~A/" file) (homedir))))
           (when (ros:opt "asdf.version")
             (ros:asdf)))
       (funcall (read-from-string "asdf:compile-file*")
                (if asdf
-                   "asdf.lisp"
+                   (merge-pathnames "asdf.lisp" *default-pathname-defaults*)
                    file)
                :output-file
                (make-pathname
                 :defaults (if (or out asdf)
-                              (uiop:getcwd)
+                              *default-pathname-defaults*
                               (fasl-dir))
                 :name (if asdf
                           "asdf"
