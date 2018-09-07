@@ -78,6 +78,7 @@ LISPS = helper.el \
 	list-dump.lisp list-git.lisp list-installed.lisp list-versions.lisp \
 	list-asdf.lisp list-env.lisp \
 	\
+	make-depends.ros \
 	template.ros \
 	util-template.lisp \
 	\
