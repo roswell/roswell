@@ -150,7 +150,13 @@ To differentiate it from the system with the same name in quicklisp, the path sh
           (read-call "quicklisp-client:register-local-projects")
           (or (and (install-impl-if-probed version nil argv)
                    (or (setf argv nil) t))
-              (install-system-if-probed version)))
+              (install-system-if-probed version)
+              (let ((project (merge-pathnames (format nil "local-projects/~A/~A/project.lisp" impl version)
+                                              (roswell.util:checkoutdir))))
+                (when (probe-file project)
+                  (let ((system (with-open-file (i project)
+                                  (second (assoc "asd" (second (second (first (nth 1 (read i))))) :test #'equal)))))
+                    (install-system-if-probed system))))))
          (t (format *error-output* "'~A' is not a valid target for 'install' -- It should be a name of either:
 + a quicklisp-installable system
 + a common lisp installation ~%" impl)
