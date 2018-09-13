@@ -76,47 +76,64 @@
      collect (ql-dist::make-dist-from-file file 'roswell-dist)))
 
 (in-package #:ql-dist)
+(defvar *install-use-roswell* t)
 (let ((*error-output* (make-broadcast-stream)))
-  (when
-      (or
-       (loop for k in '(:win32 :windows :mswindows)
-             never (find k *features*))
-       (probe-file
-        (merge-pathnames
-         (format nil "impls/~A/windows/7za/9.20/7za.exe"
-                 (roswell:roswell '("roswell-internal-use" "uname" "-m") :string
-                              T))
-         (roswell.util:homedir))))
-    (defmethod install ((release release))
-      (let ((archive (ensure-local-archive-file release))
-            (output
-              (relative-to (dist release)
-                           (make-pathname :directory (list :relative "software"))))
-            (tracking (install-metadata-file release)))
-        (ensure-directories-exist output)
-        (ensure-directories-exist tracking)
-        (roswell:roswell
-         `("roswell-internal-use" "tar" "-xf" ,archive "-C" ,output))
-        (ensure-directories-exist tracking)
-        (with-open-file
-            (stream tracking :direction :output :if-exists :supersede)
-          (write-line (qenough (base-directory release)) stream))
-        (let ((provided (provided-systems release)) (dist (dist release)))
-          (dolist (file (system-files release))
-            (let ((system (find-system-in-dist (pathname-name file) dist)))
-              (unless (member system provided)
-                (error
-                 "FIND-SYSTEM-IN-DIST returned ~A but I expected one of ~A"
-                 system provided))
-              (let ((system-tracking (install-metadata-file system))
-                    (system-file
-                      (merge-pathnames file (base-directory release))))
-                (ensure-directories-exist system-tracking)
-                (unless (probe-file system-file)
-                  (error "release claims to have ~A, but I can't find it"
-                         system-file))
-                (with-open-file
-                    (stream system-tracking :direction :output :if-exists
-                                                       :supersede)
-                  (write-line (qenough system-file) stream))))))
-        release))))
+  (when (or
+         (loop for k in '(:win32 :windows :mswindows)
+               never (find k *features*))
+         (probe-file
+          (merge-pathnames
+           (format nil "impls/~A/windows/7za/9.20/7za.exe"
+                   (roswell:roswell '("roswell-internal-use" "uname" "-m") :string
+                                    T))
+           (roswell.util:homedir))))
+    (defmethod install :around ((release release))
+      (if *install-use-roswell*
+          (let ((archive (ensure-local-archive-file release))
+                (output
+                  (relative-to (dist release)
+                               (make-pathname :directory (list :relative "software"))))
+                (tracking (install-metadata-file release)))
+            (ensure-directories-exist output)
+            (ensure-directories-exist tracking)
+            (roswell:roswell
+             `("roswell-internal-use" "tar" "-xf" ,archive "-C" ,output))
+            (ensure-directories-exist tracking)
+            (with-open-file
+                (stream tracking :direction :output :if-exists :supersede)
+              (write-line (qenough (base-directory release)) stream))
+            (let ((provided (provided-systems release)) (dist (dist release)))
+              (dolist (file (system-files release))
+                (let ((system (find-system-in-dist (pathname-name file) dist)))
+                  (unless (member system provided)
+                    (error
+                     "FIND-SYSTEM-IN-DIST returned ~A but I expected one of ~A"
+                     system provided))
+                  (let ((system-tracking (install-metadata-file system))
+                        (system-file
+                          (merge-pathnames file (base-directory release))))
+                    (ensure-directories-exist system-tracking)
+                    (unless (probe-file system-file)
+                      (error "release claims to have ~A, but I can't find it"
+                             system-file))
+                    (with-open-file
+                        (stream system-tracking :direction :output :if-exists
+                                :supersede)
+                      (write-line (qenough system-file) stream))))))
+            release)
+          (call-next-method)))))
+
+(in-package :roswell)
+(defun revert-extension ()
+  (setf ql-http:*fetch-scheme-functions*
+        (acons "http" 'ql-http:http-fetch
+               (remove "http" ql-http:*fetch-scheme-functions* :key 'first :test 'equal))
+        ql-http:*fetch-scheme-functions*
+        (remove "https" ql-http:*fetch-scheme-functions* :key 'first :test 'equal)
+        ql-dist:*dist-enumeration-functions*
+        (remove 'roswell-dist-enumeration-function )
+        ql-dist::*install-use-roswell* nil)
+  (ignore-errors
+   (set (read-from-string "asdf:*system-definition-search-functions*")
+        (remove 'roswell.util:roswell-installable-searcher (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))))
+  t)
