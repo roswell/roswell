@@ -1,8 +1,11 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (18.9.10.94-1) unstable; urgency=low
 
-  *
+  * Fix: some fix applied (by Hamayama)
+  * New: 'ros make-depends' to prepare dependency file for Make
+  * Change: local-projects are not edited when 'QUICKLISP_HOME' are set (requested by Fukamachi)
+  * Change: 'ros install' support 'ros project' generated system.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Mon, 17 Sep 2018 00:27:01 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 17 Sep 2018 00:37:36 +0900
 
 roswell (18.8.10.93-1) unstable; urgency=low
 
