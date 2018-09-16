@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 17 Sep 2018 00:27:01 +0900
+
 roswell (18.8.10.93-1) unstable; urgency=low
 
   * Fix: update msys2 version (by Satoaki MIYAO)
