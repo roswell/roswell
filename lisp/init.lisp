@@ -185,7 +185,7 @@ have the latest asdf, and this file has a workaround for this.
                               ,(ignore-errors
                                 (truename (merge-pathnames "../../../local-projects/" (first (symbol-value symbol)))))
                               ;; Searches local-project/ in e.g. ~/.roswell/
-                              ,(merge-pathnames "local-projects/" (opt "homedir")))
+                              ,(ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))))
                 for probe = (and path (or (ignore-errors (probe-file path))
                                           #+clisp(ext:probe-directory path)))
                 when probe
