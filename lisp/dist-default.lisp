@@ -9,10 +9,9 @@
         (format *error-output* "Possible subcommands:~%")
         (finish-output *error-output*)
         (format t "~{~A~%~}"
-                (sort (loop for x in (asdf:registered-systems)
-                         when (ignore-errors (and (string-equal "roswell.dist." x :end2 13)
-                                                  (not (string-equal "roswell.dist.default" x))))
-                         collect (subseq x 13))
+                (sort (loop for x in (mapcar (lambda (x) (pathname-name x)) (directory (merge-pathnames "dist-*.lisp" (ros:opt "lispdir"))))
+                            when (ignore-errors (not (string-equal "dist-default" x)))
+                            collect (subseq x 5))
                       #'string<)))
       (format *error-output* "not suppported type for dist:~A~%" (first r))))
 
