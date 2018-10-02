@@ -131,7 +131,7 @@
         ql-http:*fetch-scheme-functions*
         (remove "https" ql-http:*fetch-scheme-functions* :key 'first :test 'equal)
         ql-dist:*dist-enumeration-functions*
-        (remove 'roswell-dist-enumeration-function )
+        (remove 'roswell-dist-enumeration-function ql-dist:*dist-enumeration-functions*)
         ql-dist::*install-use-roswell* nil)
   (ignore-errors
    (set (read-from-string "asdf:*system-definition-search-functions*")
