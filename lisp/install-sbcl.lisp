@@ -73,9 +73,9 @@
              (when default
                (set-opt name (eql default t)))
              (with name)))
-  (cons (if (opt "core-compression")
-            (require-system-package "zlib")
-            t)
+  (cons (if (eql (opt "core-compression") :false)
+            t
+            (require-system-package "zlib"))
         argv))
 
 (defun sbcl-start (argv)
