@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 09 Oct 2018 17:25:49 +0800
+
 roswell (18.9.10.94-1) unstable; urgency=low
 
   * Fix: some fix applied (by Hamayama)
