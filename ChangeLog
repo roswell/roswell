@@ -1,8 +1,11 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (18.10.10.95-1) unstable; urgency=low
 
-  *
+  * Fix: ignore .sbclrc when 'ros install sbcl'
+  * Fix: ECL build broken.(reported by Anton Vodonosov)
+  * Change: hopefully improve zlib notification (reporetd by Michał Herda)
+  * Change: add bzip2 dependency on debian package.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Tue, 09 Oct 2018 17:25:49 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 09 Oct 2018 17:33:39 +0800
 
 roswell (18.9.10.94-1) unstable; urgency=low
 
