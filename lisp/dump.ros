@@ -127,7 +127,8 @@ exec ros -- $0 "$@"
   (let ((module (module "dump" (or
                                 #+ccl "ccl"
                                 #+cmucl "cmucl"
-                                (remove #\Space (string-downcase (lisp-implementation-type)))))))
+                                (remove #\Space (string-downcase (lisp-implementation-type))))))
+        (*features* (cons :roswell.dump *features*)))
     (cond
       ((and module r)
        (multiple-value-bind (args *predump*)
