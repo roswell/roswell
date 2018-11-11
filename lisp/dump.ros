@@ -127,8 +127,7 @@ exec ros -- $0 "$@"
   (let ((module (module "dump" (or
                                 #+ccl "ccl"
                                 #+cmucl "cmucl"
-                                (remove #\Space (string-downcase (lisp-implementation-type))))))
-        (*features* (cons :roswell.dump *features*)))
+                                (remove #\Space (string-downcase (lisp-implementation-type)))))))
     (cond
       ((and module r)
        (multiple-value-bind (args *predump*)
@@ -137,7 +136,10 @@ exec ros -- $0 "$@"
                 (subcmd (find mode (funcall module :query *subcmds*)
                               :test 'equal
                               :key 'string-downcase))
-                (args (rest args)))
+                (args (rest args))
+                (*features* (cons (let (*read-eval*)
+                                    (read-from-string (format nil ":roswell.dump.~A" mode)))
+                                  *features*)))
            (if subcmd
                (funcall subcmd module args)
                (format *error-output* "'~A' is not a valid command for '~A' subcommand for ~A ~%"
