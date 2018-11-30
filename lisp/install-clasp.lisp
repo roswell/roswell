@@ -5,7 +5,8 @@
 
 (defparameter *clasp-version*
   ;; alias commit external-clasp-version
-  '(("2018-05-17" "b561e8fa7300ae774e7d75eb6d6514926657c557" "5.0-20171109")
+  '(("2018-11-28" "2f2b52ccb750048460562b5987a7eaf7a1aa4445" "6.0.1")
+    ("2018-05-17" "b561e8fa7300ae774e7d75eb6d6514926657c557" "5.0-20171109")
     ("2018-04-01" "d0de68494af19e8b52fb56d83399b0c27b22a528" "5.0")
     ("2018-03-11" "ee3e6c7f94e1e9a692541caa9f71ba73cfdbc292" "5.0")
     ("2018-02-05" "948467383606819bedafd2998c2139e190bd3391" "5.0")
@@ -59,6 +60,7 @@
       (uiop/run-program:run-program
        (list "git" "clone" "https://github.com/clasp-developers/clasp.git" output)
        :output t :ignore-error-status nil))
+
     (chdir (opt "src"))
     (format t "git fetch~%")
     (uiop/run-program:run-program
@@ -79,16 +81,14 @@
                                     (homedir))))
     (with-open-file (out (merge-pathnames "wscript.config" (opt "src"))
                          :direction :output :if-exists :supersede)
-      (format out "EXTERNALS_CLASP_DIR = '~A'~%" (namestring (merge-pathnames (format nil "lib/~A/~A/externals-clasp/~A"
-                                                                                      (uname-m) (uname)
-                                                                                      (clasp-get-externals-clasp-version argv))
-                                                                              (homedir))))
-
-      (let* ((path (format nil "lib/~A/~A/externals-clasp/~A/build/release/bin/llvm-config"
-                          (uname-m) (uname)
-                          (clasp-get-externals-clasp-version argv))))
+      ;; replace externals-clasp to externals_clasp
+      ;; skip version check of clasp's wscript
+      (let* ((path (format nil "lib/~A/~A/externals_clasp/~A/build/release/bin/llvm-config"
+                           (uname-m) (uname)
+                           (clasp-get-externals-clasp-version argv))))
         (format out "LLVM_CONFIG_BINARY  = '~A'~%" (namestring (merge-pathnames path (homedir)))))
-      (format out "SBCL                = '~A'~%" (namestring (merge-pathnames "bin/sbcl" sbcl-base))))
+      (format out "SBCL                = '~A'~%" (namestring (merge-pathnames "bin/sbcl" sbcl-base)))
+      (format out "USE_PARALLEL_BUILD  = True~%"))
     (setenv "SBCL_HOME" (namestring (merge-pathnames "lib/sbcl" sbcl-base)))
     (format t "with sbcl-bin(~A) build clasp" sbcl-base))
   (with-open-file (out (ensure-directories-exist
@@ -98,7 +98,7 @@
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
     (let* ((src (opt "src"))
-           (cmd "./waf update_dependencies configure build_cboehm")
+           (cmd "./waf configure build_dboehm")
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (chdir src)
       (format t "~&~S~%" cmd)
