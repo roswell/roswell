@@ -121,8 +121,10 @@ winrelease:
 	cd documents;MSYSTEM=MINGW64 make roswell.chm
 	cp documents/roswell.chm roswell/documents
 	7z a Roswell-`if [ $$MSYSTEM = 'MINGW64' ];then echo x86_64 ;else echo i686; fi`.zip roswell/ros.exe roswell/lisp/*.* roswell/documents/roswell.chm
+debian:
+	ros debian/debian.ros all
 test:
 	run-prove roswell-test.asd
 
 FORCE:
-.PHONY: release-prepare release release-push test winrelease FORCE
+.PHONY: release-prepare release release-push test winrelease debian FORCE
