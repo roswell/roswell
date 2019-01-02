@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 02 Jan 2019 11:16:36 +0800
+
 roswell (18.10.10.95-1) unstable; urgency=low
 
   * Fix: ignore .sbclrc when 'ros install sbcl'
