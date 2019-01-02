@@ -1,8 +1,9 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.1.10.96-1) unstable; urgency=low
 
-  *
+  * New: 'ros checkout' to checkout from remote repository (WIP)
+  * Change: Updated clasp 2018-11-28. by gos-k
 
- -- SANO Masatoshi <snmsts@gmail.com>  Wed, 02 Jan 2019 11:16:36 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 02 Jan 2019 11:16:55 +0800
 
 roswell (18.10.10.95-1) unstable; urgency=low
 
