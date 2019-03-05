@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 05 Mar 2019 17:20:48 +0800
+
 roswell (19.1.10.96-1) unstable; urgency=low
 
   * New: 'ros checkout' to checkout from remote repository (WIP)
