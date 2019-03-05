@@ -114,7 +114,7 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
                (setf (sb-impl::package-tables package) #())
                (setf (sb-impl::package-%implementation-packages package) nil)
                (setf (sb-impl::package-%local-nicknames package) nil)
-               (setf (sb-impl::package-%locally-nicknamed-by package) nil)
+               ;;(setf (sb-impl::package-%locally-nicknamed-by package) nil)
                (push package-name packages)
                (do-symbols (symbol package-name)
                  (sb-impl::%set-symbol-package symbol nil)
