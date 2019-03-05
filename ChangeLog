@@ -1,8 +1,10 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.3.10.97-1) unstable; urgency=low
 
-  *
+  * Change: Updated clasp 2019-01-19. by gos-k
+  * Fix: Ensure that path is checked for in update-hg and update-git. by jsjolen
+  * Fix: dump core fails at initial launch.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Tue, 05 Mar 2019 17:20:48 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 05 Mar 2019 17:24:43 +0800
 
 roswell (19.1.10.96-1) unstable; urgency=low
 
