@@ -3,7 +3,7 @@ set -e
 
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/.roswell
-ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/${TRAVIS_REPO_SLUG}}
+ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
 ROSWELL_BRANCH=${ROSWELL_BRANCH:-release}
 ROSWELL_INSTALL_DIR=${ROSWELL_INSTALL_DIR:-/usr/local}
 ROSWELL_PLATFORMHTML_BASE=${ROSWELL_PLATFORMHTML_BASE:-https://github.com/roswell/sbcl_bin/releases/download/files/build.html}
