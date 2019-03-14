@@ -14,14 +14,23 @@
                  do (return (subseq argv hl (1- i)))))))
 
 (defun ros (&rest argv)
-  (let (opts)
+  (let (opts
+        impl-argv
+        dump-argv)
+    (dolist (l (rest argv))
+      (if (find #\= l)
+          (push l impl-argv)
+          (push l dump-argv)))
+    (setf impl-argv (nreverse impl-argv)
+          dump-argv (nreverse dump-argv))
     (with-open-file (in (first argv))
       (loop repeat 4
             for line = (read-line in)
             when (ignore-errors (string= line "exec" :end1 4))
               do (setf opts (parse-argv line))))
     (roswell:roswell `(,@(when (roswell:verbose) '("-v"))
+                       ,@impl-argv
                          ,opts "-L" ,(or (ros:opt "*lisp")
                                          (ros:opt "default.lisp"))
-                         "dump" ,@(rest argv) "executable" ,(first argv))
+                         "dump" ,@dump-argv "executable" ,(first argv))
                      :interactive nil)))
