@@ -4,6 +4,8 @@
 AC_PREREQ([2.59])
 AC_INIT([roswell],[19.3.10.97],snmsts@gmail.com)
 
+
+
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_SRCDIR([Makefile.am])
@@ -32,6 +34,20 @@ AC_CHECK_HEADERS(windows.h,[with_windows=true])
 AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])
 AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
+
+# This code needs git
+# Check for git source version at config time
+AC_SUBST([git_version], m4_esyscmd_s([git describe |  sed -n -e 's/^.*-g//p'],[git SHA1 for HEAD.])) 
+AC_SUBST([git_version_long], m4_esyscmd_s([git describe --abbrev=7 --dirty]), [long version for git source])
+
+# Define rosdir and rospatchdir
+# TODO: Make these ./configure line options.
+# See https://www.gnu.org/prep/standards/html_node/Directory-Variables.html#Directory-Variables
+# Especially 'lispdir' example for emacs.
+roslispdir='${sysconfdir}/roswell'
+AC_SUBST(roslispdir)
+roslisppatchdir='${roslispdir}/patch'
+AC_SUBST(roslisppatchdir)
 
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
