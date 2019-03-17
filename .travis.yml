@@ -7,6 +7,7 @@ env:
     - ROSWELL_BRANCH=$TRAVIS_BRANCH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_QUICKLISP_DIST_URI=https://github.com/roswell/quicklisp/releases/download/dist/quicklisp.txt
+    - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
   matrix:
     - METHOD=ci LISP=alisp
     - METHOD=ci LISP=cmu-bin/2017-10
