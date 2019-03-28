@@ -35,10 +35,17 @@ AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])
 AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
 
-# This code needs git
-# Check for git source version at config time
-AC_SUBST([git_version], m4_esyscmd_s([git describe |  sed -n -e 's/^.*-g//p'],[git SHA1 for HEAD.])) 
-AC_SUBST([git_version_long], m4_esyscmd_s([git describe --abbrev=7 --dirty]), [long version for git source])
+# Git is optional, so fail gracefully, build from tar may not have .git/
+AC_CHECK_PROG(GIT_CHECK,git,yes)
+AS_IF([test "x$GIT_CHECK" = xyes],
+      [AC_SUBST([git_version], `set -o pipefail ; { git describe  | sed -n -e 's/^.*-g//p' ; } 2>/dev/null || echo 'NO-GIT-REVISION'
+`,[git SHA1 for HEAD.])],
+      [AC_SUBST([git_version],[NO-GIT-REVISION])])
+      
+AS_IF([test "x$GIT_CHECK" = xyes],      
+      [AC_SUBST([git_version_long], `set -e | git describe --abbrev=7 --dirty 2>/dev/null || echo 'NO-GIT-REVISION'`, [long version for git source])],
+      [AC_SUBST([git_version_long], [NO-GIT-REVISION])])
+
 
 # Define rosdir and rospatchdir
 # TODO: Make these ./configure line options.
