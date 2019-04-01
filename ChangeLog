@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- snmsts <snmsts@gmail.com>  Mon, 01 Apr 2019 07:43:52 +0200
+
 roswell (19.3.10.97-1) unstable; urgency=low
 
   * Change: Updated clasp 2019-01-19. by gos-k
