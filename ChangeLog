@@ -1,8 +1,9 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.4.10.98-1) unstable; urgency=low
 
-  *
+  * Fix: enable to pass implementation option from 'ros build' command. (reported by Kanai Hiroki)
+  * Fix: Travis on clone issue solved by ROSWELL_REPO definition in .travis.yml by Tom Rake.
 
- -- snmsts <snmsts@gmail.com>  Mon, 01 Apr 2019 07:43:52 +0200
+ -- snmsts <snmsts@gmail.com>  Mon, 01 Apr 2019 07:52:05 +0200
 
 roswell (19.3.10.97-1) unstable; urgency=low
 
