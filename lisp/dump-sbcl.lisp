@@ -139,7 +139,7 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
   ;; function-lambda-expression
   (etypecase fun
     #+sb-eval
-    (sb-eval:interpreted-function
+    (sb-eval::interpreted-function
      )
     #+sb-fasteval
     (sb-interpreter:interpreted-function
