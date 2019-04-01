@@ -7,8 +7,20 @@ html_sbcl_SOURCES =  html.c html-sbcl-bin.c main.c opt.c $(ros_utils)
 html_sbcl_CFLAGS = "-D ROSWELL_HTML_TEST"
 
 gend.h: FORCE
-	make -C .. src/gend.h
-cmd-internal.c: gend.h
+	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
+	printf '#define ROS_REVISION "@git_version@"\n' >> $@.tmp
+	printf '#define PATCH_PATH "@roslisppatchdir@"\n' >> $@.tmp
+if WITH_WINDOWS
+	printf '#define LISP_PATH "%s"\n' "`mkdir -p @roslispdir@;cd @roslispdir@; pwd -W 2>/dev/null`" >> $@.tmp
+else
+	printf '#define LISP_PATH "@roslispdir@"\n' >> $@.tmp
+endif
+	cmp -s $@.tmp $@||cp $@.tmp $@
+	cat $@
+	rm -f $@.tmp
+
+cmd-internal.o: gend.h
+
 bin_PROGRAMS = ros
 ros_SOURCES = main.c opt.c download.c download_windows.c archive.c archive_windows.c \
 	register-commands.c html.c html-sbcl-bin.c \

@@ -4,6 +4,8 @@
 AC_PREREQ([2.59])
 AC_INIT([roswell],[19.4.10.98],snmsts@gmail.com)
 
+
+
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_SRCDIR([Makefile.am])
@@ -32,6 +34,27 @@ AC_CHECK_HEADERS(windows.h,[with_windows=true])
 AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])
 AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
+
+# Git is optional, so fail gracefully, build from tar may not have .git/
+AC_CHECK_PROG(GIT_CHECK,git,yes)
+AS_IF([test "x$GIT_CHECK" = xyes],
+      [AC_SUBST([git_version], `set -o pipefail ; { git describe  | sed -n -e 's/^.*-g//p' ; } 2>/dev/null || echo 'NO-GIT-REVISION'
+`,[git SHA1 for HEAD.])],
+      [AC_SUBST([git_version],[NO-GIT-REVISION])])
+      
+AS_IF([test "x$GIT_CHECK" = xyes],      
+      [AC_SUBST([git_version_long], `set -e | git describe --abbrev=7 --dirty 2>/dev/null || echo 'NO-GIT-REVISION'`, [long version for git source])],
+      [AC_SUBST([git_version_long], [NO-GIT-REVISION])])
+
+
+# Define rosdir and rospatchdir
+# TODO: Make these ./configure line options.
+# See https://www.gnu.org/prep/standards/html_node/Directory-Variables.html#Directory-Variables
+# Especially 'lispdir' example for emacs.
+roslispdir='${sysconfdir}/roswell'
+AC_SUBST(roslispdir)
+roslisppatchdir='${roslispdir}/patch'
+AC_SUBST(roslisppatchdir)
 
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
