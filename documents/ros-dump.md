@@ -2,7 +2,7 @@ ros-dump - make a dumped image of a roswell script
 
 # Synopsis
 
-**ros [OPTIONS1...]  [OPTIONS2...] MODE** args...
+**ros [OPTIONS1...] dump [OPTIONS2...] MODE** args...
 
 `OPTIONS1` specify the standard roswell options such as `-L` or `-m LISP`.
 `OPTIONS2` specify the image reduction options we describe later.
