@@ -31,7 +31,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (setf (first version) (- (nth 5 d) 2000)
           (second version) (nth 4 d)
           (fourth version) (1+ (fourth version)))
-    (format nil "~{~A~^.~}" version)))
+    (format nil "~{~2,'0d~^.~}" version)))
 
 (defun edit-file (path match replace version &key test)
   (let ((file (with-open-file (in path :direction :input)
