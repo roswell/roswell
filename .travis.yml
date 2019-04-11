@@ -1,6 +1,6 @@
 language: c
 sudo: false
-dist: trusty
+dist: xenial
 env:
   global:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
