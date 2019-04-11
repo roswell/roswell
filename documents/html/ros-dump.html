@@ -28,7 +28,6 @@
 <!-- Fixme: what kind of? this is unnecessarily retracting the users from using this feature -->
 <!-- There might be a limitation regarding this feature depending on the lisp -->
 <!-- implementation used by roswell at the time of building.   -->
-
 <p>The dumped image is generally not compatible between the different implementations, and also between the versions.</p>
 <h1 id="dump-modes">Dump modes</h1>
 <h2 id="output--f--o-output-name">output [-f] [-o OUTPUT] NAME</h2>
@@ -54,11 +53,8 @@
 <p>Reduction options are processed in the left-to-right manner.</p>
 <dl>
 <dt>--disable-compression, --enable-compression, -c</dt>
-<dd>These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful
+<dd><p>These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful only on SBCL. Compression is enabled by default.</p>
 </dd>
-</dl>
-<p>only on SBCL. Compression is enabled by default.</p>
-<dl>
 <dt>--remove-docstrings</dt>
 <dd><p>This option removes all docstrings from all symbols in the entire lisp image.</p>
 </dd>
@@ -75,17 +71,11 @@
 <dd><p>This is an sbcl-specific option which is even more aggressive than the above methods (&gt;10MB reduction). It destroys the package system by modifying the internal tables for packages, cleaning up the caches for package-use-list etc. The blacklist is shared among --delete-all-packages and --destroy-packages-sbcl. However, this method does not call fmakunbound/makunbound, so combining the two methods can result in a more aggressive image size reduction. Due to the nature of this option, it is desirable to specify it as the last method (i.e. rightmost).</p>
 </dd>
 <dt>--purify, --no-purify</dt>
-<dd>This is common to CCL, SBCL, CMUCL. Moves all objects to the static space
+<dd><p>This is common to CCL, SBCL, CMUCL. Moves all objects to the static space where GC does not scan, for the later performance of GC. Purification is enabled by default.</p>
 </dd>
-</dl>
-<p>where GC does not scan, for the later performance of GC. Purification is enabled by default.</p>
-<dl>
 <dt>--impurify, --no-impurify</dt>
-<dd>This is an CCL-specific option (enabled by default).
+<dd><p>This is an CCL-specific option (enabled by default). It moves all objects to the dynamic space before saving the image. This allows the static-space objects to be GC'ed. When purification is enabled, it impurifies all objects before running the purifying GC.</p>
 </dd>
-</dl>
-<p>It moves all objects to the dynamic space before saving the image. This allows the static-space objects to be GC'ed. When purification is enabled, it impurifies all objects before running the purifying GC.</p>
-<dl>
 <dt>--delete-debug-info</dt>
 <dd><p>This removes the debug infomation of functions (used to show the stack frame etc), as well as the source locations and the deprecation information of various symbols. SBCL only. This option has a large effect (+10MB reduction).</p>
 </dd>
@@ -99,7 +89,6 @@
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->
-
 <h1 id="see-also">SEE ALSO</h1>
 <p><em>sbcl</em>(1) <em><a href="ros.html">ros</a></em>(1) <em><a href="ros-init.html">ros-init</a></em>(1) _</p>
 </body>

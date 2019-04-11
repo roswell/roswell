@@ -34,7 +34,6 @@
 </dd>
 </dl>
 <!-- # subcommands -->
-
 <h1 id="installing-a-lisp-implementation">Installing a Lisp Implementation</h1>
 <p>When the <code>impl</code> or <code>system</code> matches to one of the supported implementations, it fetches, downloads and installs it to one of the internal directory managed by roswell (~/.roswell, or <code>ROSWELL_INSTALL_DIR</code>). In order to use the installed implementation, you have to run <em>ros-use(1)</em>.</p>
 <p>For example, the following command downloads the latest sbcl binary from sbcl.org. Note that this may be different from the default binary installed by roswell, called <code>sbcl-bin</code>. <code>sbcl-bin</code> is a stable and well-tested version of the sbcl binary which is supposed to be a little older than the latest sbcl.</p>
@@ -60,7 +59,6 @@ $ ...</code></pre>
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->
-
 <h1 id="installing-a-quicklisp-system-and-the-bundled-roswell-scripts">Installing a quicklisp system and the bundled roswell scripts</h1>
 <p>If the specified name does not match any of the implementations, roswell tries to find a quicklisp system of the given name.</p>
 <pre><code>$ ros install alexandria</code></pre>

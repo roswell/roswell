@@ -22,34 +22,24 @@
 <h1 id="synopsis">Synopsis</h1>
 <p><strong>ros list [type] [options]</strong></p>
 <!-- # subcommands -->
-
 <!-- somecommand -->
 <!-- :description. end with a period. -->
-
 <h1 id="description">Description</h1>
 <p><strong>ros list</strong> shows the list of the materials installed by roswell.</p>
 <dl>
 <dt>installed [ [ IMPL | IMPL/VERSION ]...]</dt>
-<dd>List the implementations that have been already installed. Optionally
+<dd><p>List the implementations that have been already installed. Optionally providing IMPL shows the installed versions of the implementation.</p>
 </dd>
-</dl>
-<p>providing IMPL shows the installed versions of the implementation.</p>
-<dl>
 <dt>dump [IMPL]</dt>
-<dd>List the internal dumped images that are compatible with IMPL. When
+<dd><p>List the internal dumped images that are compatible with IMPL. When IMPL is ommited, it is defaulted to the current lisp implementation in use. Images are in <code>$ROSWELL_INSTALL_DIR/impl/.../dump/</code>.</p>
 </dd>
-</dl>
-<p>IMPL is ommited, it is defaulted to the current lisp implementation in use. Images are in <code>$ROSWELL_INSTALL_DIR/impl/.../dump/</code>.</p>
-<dl>
 <dt>versions [IMPL]</dt>
-<dd>List the installable versions for IMPL. When IMPL is ommited, it is
+<dd><p>List the installable versions for IMPL. When IMPL is ommited, it is defaulted to the current lisp implementation in use. This feature is experimental.</p>
 </dd>
 </dl>
-<p>defaulted to the current lisp implementation in use. This feature is experimental.</p>
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->
-
 <h1 id="see-also">SEE ALSO</h1>
 <p><em>sbcl</em>(1) <em><a href="ros.html">ros</a></em>(1)</p>
 <p>_</p>
