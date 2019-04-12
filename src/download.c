@@ -91,6 +91,7 @@ int download_simple (char* uri,char* path,int opt) {
     int lenuri=strlen(uri);
     int https=(lenuri>5 && strncmp("https",uri,5)==0);
     int httponly= get_opt("proxy.http.only",0) && strcmp(get_opt("proxy.http.only",0),"1")==0;
+    int ignoressl= get_opt("ssl.ignore_verify",0) && strcmp(get_opt("ssl.ignore_verify", 0), "1") ==0;
     if(current&& ((https && !httponly) || !https)) {
       /*<[protocol://][user:password@]proxyhost[:port]>*/
       char *reserve,*protocol=NULL,*userpwd=NULL,*port=NULL,*uri=NULL;
@@ -122,6 +123,10 @@ int download_simple (char* uri,char* path,int opt) {
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
     curl_easy_setopt(curl,CURLOPT_WRITEDATA,bodyfile);
+    if(ignoressl) {
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0); 
+        curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
+    }
     res=curl_easy_perform(curl);
     if(res != CURLE_OK && verbose) {
       fprintf(stderr, "curl_easy_perform() failed: %s\n",
