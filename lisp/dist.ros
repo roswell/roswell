@@ -5,7 +5,12 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 |#
 (progn
   (roswell:include "util-main")
-  (roswell:include "util-config"))
+  (roswell:include "util-config")
+  (ignore-errors
+     #+quicklisp(ql:quickload "gh-dist" :silent t)
+     (uiop:symbol-call :gh-dist :setup))
+  (mapc #'load (directory (merge-pathnames "dist-*.lisp" (ros:opt "lispdir"))))
+  )
 
 (defpackage :ros.script.dist.3714094546
   (:use :cl :roswell.util.main))
