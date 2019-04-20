@@ -17,9 +17,9 @@
 (in-package :roswell.util)
 (defun fetch-via-roswell (url file &key (follow-redirects t) quietly (maximum-redirects 10))
   "Request URL and write the body of the response to FILE."
-  (declare (ignorable follow-redirects quietly maximum-redirects))
+  (declare (ignorable follow-redirects maximum-redirects))
   (download (ql-http::urlstring (ql-http:url url)) file
-            :verbose "2"
+            :verbose (if quietly nil "2")
             :output (if (find :abcl *features*)
                         :interactive
                         *standard-output*))
