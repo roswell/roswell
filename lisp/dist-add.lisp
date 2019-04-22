@@ -6,6 +6,7 @@
   (let ((gh-support (asdf:find-system "gh-dist")))
     (dolist (elm (rest r))
       (if (and gh-support
-               (= 1 (count #\/ elm)))
-          (uiop:symbol-call :gh-dist :install elm :prompt nil)
+               (= 0 (count #\/ elm))
+               (not (zerop (count #\- elm))))
+          (uiop:symbol-call :gh-dist :install (substitute #\/ #\- elm :count 1) :prompt nil)
           (ql-dist:install-dist elm :prompt nil)))))
