@@ -51,7 +51,13 @@ Notably, it must include all nicknames.")
                                                                  conf :test 'equal))))
                                      (and lisp version
                                           (format nil "~A/~A" lisp version))))
-                                 (opt "*lisp")
+                                 (when (opt "*lisp")
+                                   (let ((lisp (opt "*lisp")))
+                                     (if (find #\/ lisp)
+                                         lisp
+                                         (let ((version (opt  (format nil "~a.version" lisp))))
+                                           (and version
+                                                (format nil "~A/~A" lisp version))))))
                                  (opt "impl")))
                      (homedir))))
 
