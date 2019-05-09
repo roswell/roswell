@@ -113,6 +113,9 @@ debian:
 	ros debian/debian.ros all
 test:
 	run-prove roswell-test.asd
+brewpr:
+	git pull
+	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
 FORCE:
 .PHONY: release-prepare release release-push test winrelease debian FORCE
