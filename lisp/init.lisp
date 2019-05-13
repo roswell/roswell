@@ -68,8 +68,11 @@ have the latest asdf, and this file has a workaround for this.
                (or (read-from-string (getenv "ROS_OPTS"))
                    '()))))))
 
-(defun opt (param)
-  (second (assoc param (ros-opts) :test 'equal)))
+(defun opt (param &key from-end)
+  (second (assoc param
+                 (funcall (if from-end #'reverse #'identity)
+                          (ros-opts))
+                 :test 'equal)))
 
 (defun verbose ()
   (and (opt "verbose")
