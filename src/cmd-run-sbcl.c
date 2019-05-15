@@ -105,12 +105,10 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--eval"),ret);
     ret=conss(s_cat(q("(progn #-ros.init(cl:load \""),initlisp,q("\"))"),NULL),ret);
     s(impl_path);
-    if(program || script) {
-      ret=conss(q("--eval"),ret);
-      ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
-                      script?cat("(:script ",script,")(:quit ())",NULL):q(""),
-                      q("))"),NULL),ret);
-    }
+    ret=conss(q("--eval"),ret);
+    ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
+                    script?cat("(:script ",script,")(:quit ())",NULL):q(""),
+                    q("))"),NULL),ret);
   }
   for(;i<argc;++i)
     ret=conss(q(argv[i]),ret);

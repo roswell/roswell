@@ -70,11 +70,9 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   ret=conss(q("CL-USER"),ret);
   if(!simple) {
     ret=conss(s_cat(s_escape_string(lispdir()),q("init.lisp"),NULL),ret);
-
-    if(program || script)
-      ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
-                      script?cat("(:script ",script,")(:quit ())",NULL):q(""),
-                      q("))"),NULL),ret);
+    ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
+                    script?cat("(:script ",script,")(:quit ())",NULL):q(""),
+                    q("))"),NULL),ret);
   }
   s(impl_path);
 

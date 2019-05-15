@@ -21,12 +21,10 @@ char** cmd_run_lispworks(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss(q("-eval"),ret);
   ret=conss(s_cat(q("(progn #-ros.init(cl:load \""),s_escape_string(lispdir()),q("init.lisp"),q("\"))"),NULL),ret);
-  if(program || script) {
-    ret=conss(q("-eval"),ret);
-    ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
-                    script?cat("(:script ",script,")","(:quit ())",NULL):q(""),
-                    q("))"),NULL),ret);
-  }
+  ret=conss(q("-eval"),ret);
+  ret=conss(s_cat(q("(ros:run '("),q(program?program:""),
+                  script?cat("(:script ",script,")","(:quit ())",NULL):q(""),
+                  q("))"),NULL),ret);
 
   int i;
   for(;i<argc;++i)

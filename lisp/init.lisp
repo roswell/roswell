@@ -28,10 +28,11 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :*load* :*cmd* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf :revert-extension
-           :roswell :exec :setenv :unsetenv :version :swank :verbose)
+           :roswell :exec :setenv :unsetenv :version :swank :verbose :*init-hook*)
   (:documentation "Roswell backend."))
 
 (in-package :roswell)
+(defvar *init-hook* nil)
 (defparameter *argv* nil)
 (defparameter *ros-opts* nil)
 (defparameter *main* nil)
@@ -416,7 +417,9 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
   (loop for elt in list
         for *cmd* = (first elt)
-        do (apply (intern (string (first elt)) (find-package :ros)) (rest elt))))
+        do (apply (intern (string (first elt)) (find-package :ros)) (rest elt)))
+  (loop for f in *init-hook*
+        do (ignore-errors (funcall f))))
 
 (when (opt "roswellenv")
   (pushnew :roswellenv *features*)
