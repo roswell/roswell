@@ -91,15 +91,10 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
   /* search ros script commands in specific path */
   if(popt->top && position_char(".",arg0)==-1) {
     LVal list,v;
-    if(module) {
-      char* PATH=getenv("ROSWELLPATH");
-      list=PATH?split_string(PATH,PATHSEP):0;
-    }else {
-      char* cnf=configdir();
-      char* cnf2=subcmddir();
-      list=stringlist(cnf,cnf2,NULL);
-      s(cnf),s(cnf2);
-    }
+    char* cnf=configdir();
+    char* cnf2=subcmddir();
+    list=stringlist(cnf,cnf2,NULL);
+    s(cnf),s(cnf2);
     for(v=list;v;v=rest(v)) {
       char* cmddir=firsts(v);
       char* cmdpath=cat(cmddir,arg0,".ros",NULL);
@@ -107,7 +102,7 @@ void proc_cmd(LVal arg,struct proc_opt *popt) {
         if(file_exist_p(cmdpath))
           dispatch(conss(q_(cmdpath),rest(arg)),popt);
         s(cmdpath);
-        if(!module && !rest(v)) {
+        if(!rest(v)) {
           cmdpath=cat(cmddir,"+",arg0,".ros",NULL);
           if(file_exist_p(cmdpath))
             dispatch(conss(q_(cmdpath),arg),popt);

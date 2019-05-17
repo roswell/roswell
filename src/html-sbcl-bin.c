@@ -57,7 +57,6 @@ char* lispdir(void) {
 }
 char** argv_orig;
 int verbose=1;
-int module;
 int main(int argc,char** argv) {
   printf("version is %s\n",sbcl_bin(argv[1],1));
 }

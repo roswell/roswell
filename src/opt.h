@@ -28,7 +28,6 @@ extern struct opts* global_opt;
 extern struct opts* local_opt;
 extern int asdf;
 extern int quicklisp;
-extern int module;
 extern int rc;
 DEF_SUBCMD(opt_version);
 DEF_SUBCMD(cmd_internal);

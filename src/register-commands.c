@@ -16,7 +16,6 @@ OPT_SETVAL(testing,  0,1+testing)
 OPT_SETVAL(rc,       1,(strcmp(cmd->name,"rc")==0)?1:0)
 OPT_SETVAL(quicklisp,1,(strcmp(cmd->name,"quicklisp")==0)?2:0)
 OPT_SETVAL(asdf     ,1,(strcmp(cmd->name,"asdf")==0)?1:0)
-OPT_SETVAL(module   ,0,1)
 
 DEF_SUBCMD(opt_program0) {
   if(cmd->name) {
@@ -66,7 +65,6 @@ struct proc_opt* register_runtime_options(struct proc_opt* cmd) {
   opt=add_command(opt,"version" ,NULL,opt_version,1,1);
   opt=add_command(opt,"wrap","-w",opt_take1,1,0);
   opt=add_command(opt,"image","-m",opt_take1,1,0);
-  opt=add_command(opt,"module","-M",opt_module,1,0);
   opt=add_command(opt,"lisp","-L",opt_take1,1,0);
   opt=add_command(opt,PACKAGE_NAME"env","-N",opt_take1,1,0);
 

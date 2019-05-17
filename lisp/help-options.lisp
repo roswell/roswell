@@ -7,7 +7,6 @@
   '((()              ("--version")             "Print version information and quit")
     (("-w" "CODE")   ("--wrap" "CODE")         "Run roswell with a shell wrapper CODE,")
     (("-m" "IMAGE")  ("--image" "IMAGE")       "continue from Lisp image IMAGE")
-    (("-M" "NAME")   ("--module" "NAME")       "Execute ros script found in 'ROSWELLPATH'.(python's -m)")
     (("-L" "NAME")   ("--lisp" "NAME")         "Run roswell with a lisp impl NAME[/VERSION].")
     (("-l" "FILE")   ("--load" "FILE")         "load lisp FILE while building")
     (("-S" "X")      ("--source-registry" "X") "override source registry of asdf systems")
