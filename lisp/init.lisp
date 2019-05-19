@@ -418,7 +418,7 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
   (loop for elt in list
         for *cmd* = (first elt)
         do (apply (intern (string (first elt)) (find-package :ros)) (rest elt)))
-  (loop for f in *init-hook*
+  (loop for f in (reverse *init-hook*)
         do (ignore-errors (funcall f))))
 
 (when (opt "roswellenv")
