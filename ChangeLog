@@ -1,8 +1,18 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.05.10.99-1) unstable; urgency=low
 
-  *
+  * New: appimage build script by TANIGUCHI Masaya
+  * New: ignore ssl verifycation option by lambdasakura
+  * New: 'make brewpr' for update homebrew.
+  * New: prepare init-hook (WIP)
+  * Fix: Autotools fix for mingw64 environment by Tom Rake
+  * Fix: sbcl dump by by Masataro Asai
+  * Fix: use correct lispworks command line argument -eval by Jingtao Xu
+  * Fix: 'ros dump' error when sbcl-bin updated.
+  * Change: 'ros install' would check local project ealier than builtin implement installer.
+  * Change: version scheme 19.4.10.98 -> 19.05.10.99 month would always consume 2 digits.
+  * Change: Updated clasp 2019-03-30. by gos-k
 
- -- SANO Masatoshi <snmsts@gmail.com>  Mon, 20 May 2019 16:09:38 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 20 May 2019 16:09:46 +0800
 
 roswell (19.4.10.98-1) unstable; urgency=low
 

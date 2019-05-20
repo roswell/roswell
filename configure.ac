@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([roswell],[19.4.10.98],snmsts@gmail.com)
+AC_INIT([roswell],[19.05.10.99],snmsts@gmail.com)
 
 
 
