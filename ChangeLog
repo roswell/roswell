@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 20 May 2019 16:09:38 +0800
+
 roswell (19.4.10.98-1) unstable; urgency=low
 
   * Fix: enable to pass implementation option from 'ros build' command. (reported by Kanai Hiroki)
