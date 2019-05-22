@@ -237,8 +237,30 @@ ccl-bin      -> (\"ccl-bin\" nil)
         (setq branch (or branch "master"))
         (download (format nil "https://github.com/~A/archive/~A.tar.gz" alias branch) path/)
         (expand path/ (ensure-directories-exist dir))
-        (rename-file (first (directory (merge-pathnames "*/" dir)))
-                     (merge-pathnames (format nil "~A/~A/" path alias) home))
+        (let ((from (first (directory (merge-pathnames "*/" dir))))
+              (to   (merge-pathnames (format nil "~A/~A/" path alias) home)))
+          ;; workaround for windows
+          ;;  (backup directory is used because rename-file fails
+          ;;   if destination directory already exists.)
+          #+win32
+          (if (funcall (intern (string :probe-file*) :uiop) to)
+              (let ((backup (merge-pathnames ".backup/" (make-pathname :defaults path/ :name nil :type nil)))
+                    (done   nil))
+                (funcall (intern (string :delete-directory-tree) :uiop) backup :if-does-not-exist :ignore :validate t)
+                (rename-file to backup)
+                (handler-bind
+                    ((error
+                       (lambda (c)
+                         (declare (ignore c))
+                         (funcall (intern (string :delete-directory-tree) :uiop) to :if-does-not-exist :ignore :validate t)
+                         (rename-file backup to))))
+                  (rename-file from to)
+                  (setf done t))
+                (when done
+                  (funcall (intern (string :delete-directory-tree) :uiop) backup :if-does-not-exist :ignore :validate t)))
+              (rename-file from to))
+          #-win32
+          (rename-file from to))
         (delete-file path/)
         (funcall (intern (string :delete-directory-tree) :uiop) dir :if-does-not-exist :ignore :validate t)
         t)))
