@@ -5,7 +5,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 |#
 (progn ;;init forms
   (roswell:ensure-asdf)
-  (roswell:include '("update-git" "update-hg")))
+  (roswell:include '("update-git" "update-hg" "update-default")))
 
 (defpackage :ros.script.update.3692404755
   (:use :cl :roswell.util))
@@ -13,7 +13,8 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 
 (defvar *update-functions*
   (list (module "update" "git")
-        (module "update" "hg")))
+        (module "update" "hg")
+        (module "update" "default")))
 
 (defun main (&rest argv)
   (if argv

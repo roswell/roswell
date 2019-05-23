@@ -72,7 +72,7 @@ LISPS = helper.el \
 	install+msys2.lisp install+sigsegv.lisp install-asdf.lisp \
 	\
 	update.ros \
-	update-git.lisp update-hg.lisp update-quicklisp.lisp \
+	update-git.lisp update-hg.lisp update-quicklisp.lisp update-default.lisp \
 	\
 	list.ros \
 	list-default.lisp \
