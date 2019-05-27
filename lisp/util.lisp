@@ -217,19 +217,21 @@ ccl-bin      -> (\"ccl-bin\" nil)
 
 (defun clone-github (owner name &key
                                 (alias (format nil "~A/~A" owner name))
-                                branch force-git
+                                branch force-git (git t)
                                 (path "templates")
                                 (home (checkoutdir)))
-  (format *error-output* "Installing from github ~A/~A~%" owner name)
-  (if (or force-git (which "git"))
+  (format *error-output* "Installing from github ~A~%" alias)
+  (if (or force-git
+          (and git
+               (which "git")))
       (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
         (setq branch (if branch (format nil "-b ~A" branch) ""))
         (if (funcall (intern (string :probe-file*) :uiop) dir)
             ()
             (funcall (intern (string :run-program) :uiop)
-                     (format nil "git clone ~A https://github.com/~A/~A.git ~A"
+                     (format nil "git clone ~A https://github.com/~A.git ~A"
                              branch
-                             owner name
+                             alias
                              (namestring (ensure-directories-exist dir))))))
       (let* ((path/ (merge-pathnames (format nil "~A/~A.tgz" path alias) home))
              (dir (merge-pathnames ".expand/" (make-pathname :defaults path/ :name nil :type nil)))
