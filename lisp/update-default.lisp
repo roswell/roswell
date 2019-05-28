@@ -7,5 +7,9 @@
   (declare (ignore args))
   (let* ((subpath (uiop:subpathp param (first ql:*local-project-directories*)))
          (target (when subpath
-                   (format nil "~{~A~^/~}" (remove-if-not #'stringp (pathname-directory subpath))))))
-    (format *error-output* "Target project would be ~A~%" target)))
+                   (remove-if-not #'stringp (pathname-directory subpath)))))
+    (format *error-output* "Target project would be ~A~%" target)
+    (clone-github (first target) (second target)
+                  :git nil
+                  :path "local-projects"
+                  :force-update t)))
