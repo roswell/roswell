@@ -1,9 +1,10 @@
 #!/bin/sh
 #|-*- mode:lisp -*-|#
 #|Creates a new ros script, optionally based on a template.
-exec ros +A -Q -m roswell -N roswell -- $0 "$@"
+exec ros +Q -m roswell -N roswell -- $0 "$@"
 |#
 (progn
+  (ros:ensure-asdf)
   (roswell:include "util-main"))
 
 (defpackage :ros.script.init.3672012201
@@ -11,11 +12,12 @@ exec ros +A -Q -m roswell -N roswell -- $0 "$@"
 (in-package :ros.script.init.3672012201)
 
 (defun main (&rest r)
-  (let ((ql:*local-project-directories*
-         (append (mapcar (lambda (path)
-                           (merge-pathnames "templates/" path))
-                         ql:*local-project-directories*)
-                 ql:*local-project-directories*)))
+  (let (#+quicklisp
+        (ql:*local-project-directories*
+          (append (mapcar (lambda (path)
+                            (merge-pathnames "templates/" path))
+                          ql:*local-project-directories*)
+                  ql:*local-project-directories*)))
     (module-main r :default (or (when (equal (roswell:opt "init.use-checkout") "true")
                                   (roswell:opt "init.default"))
                                 "default")))
