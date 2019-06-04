@@ -70,14 +70,16 @@ before_install:
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
-  - if ! [ -f "$HOME/.rosproxy/proxy" ]; then
+  - if [ $TRAVIS_OS_NAME != windows ] && ![ -f "$HOME/.rosproxy/proxy" ]; then
       curl -L https://github.com/snmsts/roswell-proxy/releases/download/v0.5/v0.5-$TRAVIS_OS_NAME.tgz |tar xzf -;
       cp proxy $HOME/.rosproxy/proxy;
     fi
-  - $HOME/.rosproxy/proxy daemon
-  - mkdir ~/.roswell
-  - echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
-  - echo "proxy.http.only	0	1" >> ~/.roswell/config
+  - if [ $TRAVIS_OS_NAME != windows ]; then
+       $HOME/.rosproxy/proxy daemon;
+       mkdir ~/.roswell
+       echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
+       echo "proxy.http.only	0	1" >> ~/.roswell/config
+    fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then brew install curl ; fi
@@ -124,11 +126,15 @@ script:
        make -C t/tree-shaker ;
     fi
   - ros config
-  - cat /tmp/proxy-log || true
-  - pkill -9 proxy
+  - if [ $TRAVIS_OS_NAME != windows ]; then
+       cat /tmp/proxy-log || true;
+       pkill -9 proxy;
+    fi
 
 after_success:
-  - $HOME/.rosproxy/proxy daemon
+  - if [ $TRAVIS_OS_NAME != windows ]; then
+       $HOME/.rosproxy/proxy daemon;
+    fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then
        git config user.email "auto@example.com";
        git config user.name "Travis-CI";
@@ -144,4 +150,6 @@ after_success:
     fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
-  - pkill -9 proxy
+  - if [ $TRAVIS_OS_NAME != windows ]; then
+       pkill -9 proxy;
+    fi
