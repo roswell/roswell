@@ -28,3 +28,4 @@ scripts/roswell*
 /documents/html/ros.css.map
 /documents/ros.css.map
 *TAGS
+.vscode
