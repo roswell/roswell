@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
 
+ROSWELL_RELEASE_VERSION=19.05.10.99
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
@@ -110,11 +111,17 @@ if which sudo >/dev/null; then
 fi
 
 if uname -s | grep -e MSYS_NT;then
-    curl -L "https://ci.appveyor.com/api/projects/snmsts/roswell-en89n/artifacts/Roswell-x86_64.zip?branch=master&job=Environment%3A%20MSYS2_ARCH%3Dx86_64,%20MSYS2_BITS%3D64,%20MSYSTEM%3DMINGW64,%20METHOD%3Dcross" --output /tmp/roswell.zip
+    if [ $ROSWELL_BRANCH = release ]; then
+        curl -L https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_$ROSWELL_RELEASE_VERSION_amd64.zip \
+            --output /tmp/roswell.zip
+    else
+        curl -L "https://ci.appveyor.com/api/projects/snmsts/roswell-en89n/artifacts/Roswell-x86_64.zip?branch=master&job=Environment%3A%20MSYS2_ARCH%3Dx86_64,%20MSYS2_BITS%3D64,%20MSYSTEM%3DMINGW64,%20METHOD%3Dcross" \
+            --output /tmp/roswell.zip
+    fi
     unzip /tmp/roswell.zip -d /tmp/
-    mkdir -p ~/.roswell/bin
-    cp /tmp/roswell/ros.exe ~/.roswell/bin
-    cp -r /tmp/roswell/lisp ~/.roswell/bin/lisp
+    mkdir -p $ROSWELL_INSTALL_DIR/bin
+    cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
+    cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
 fi
 
 if ! which ros >/dev/null; then
