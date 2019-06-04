@@ -76,9 +76,9 @@ install:
     fi
   - if [ $TRAVIS_OS_NAME != windows ]; then
        $HOME/.rosproxy/proxy daemon;
-       mkdir ~/.roswell
-       echo "ros.proxy	0	localhost:5000" > ~/.roswell/config
-       echo "proxy.http.only	0	1" >> ~/.roswell/config
+       mkdir ~/.roswell;
+       echo "ros.proxy	0	localhost:5000" > ~/.roswell/config;
+       echo "proxy.http.only	0	1" >> ~/.roswell/config;
     fi
   - if [ $METHOD = documents ]; then sudo apt-get install -qq pandoc ruby-sass; pandoc -v; fi
   - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
