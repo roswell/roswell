@@ -42,6 +42,8 @@ matrix:
       - sudo: required
         os: linux
         env: METHOD=documents
+      - os: windows
+        env: METHOD=ci LISP=sbcl-bin
 
 #branches:
 #  except:
