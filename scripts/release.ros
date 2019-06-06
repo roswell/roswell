@@ -60,6 +60,12 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
              "^([ ]*:version[ ]*\")([^\"]*)(\".*)$"
              version :test test))
 
+(defun edit-install-for-ci-sh (&optional (version *new-version*) test)
+  (edit-file (merge-pathnames "scripts/install-for-ci.sh" *project-path*)
+             "^ROSWELL_RELEASE_VERSION=(.*)"
+             "^(ROSWELL_RELEASE_VERSION=)(.*)()$"
+             version :test test))
+
 (defun signature ()
   (flet ((f (cmd)
            (string-right-trim
@@ -131,6 +137,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (ros:quit))
   (edit-configure-ac)
   (edit-roswell-asd)
+  (edit-install-for-ci-sh)
   (show-how-to-release))
 
 (defun release (argv)
