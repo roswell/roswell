@@ -21,6 +21,7 @@ env:
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
     - METHOD=ci LISP=sbcl/git
+    - ROSWELL_BRANCH=release METHOD=ci LISP=sbcl-bin
 
 os:
   - osx
