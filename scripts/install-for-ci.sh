@@ -129,7 +129,7 @@ install_roswell_bin () {
                 curl -L https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_$ROSWELL_RELEASE_VERSION-1_amd64.deb \
                     --output /tmp/roswell.deb
             fi
-            if [ -f /tmp/roswell.deb ]
+            if [ -f /tmp/roswell.deb ]; then
                 $SUDO dpkg -i /tmp/roswell.deb
             fi
         fi
