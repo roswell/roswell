@@ -30,6 +30,7 @@
            (when f (funcall f name value 1)))
   #+ecl(ext:setenv name value)
   #+lispworks (hcl:setenv name name value)
+  #+mkcl(mkcl:setenv name value)
   value)
 
 (defun unsetenv (name)
@@ -40,6 +41,7 @@
   #+cmucl(let ((f (ignore-errors (symbol-function (read-from-string "unix:unix-unsetenv")))))
            (when f (funcall f name)))
   #+lispworks(hcl:setenv name nil)
+  #+mkcl(mkcl:setenv name nil)
   nil)
 
 (defun read-call (func &rest params)
