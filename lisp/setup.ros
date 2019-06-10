@@ -49,7 +49,7 @@ exec ros -Q -N roswell -- $0 "$@"
     #+sbcl(sb-posix:setgid (parse-integer (sb-posix:getenv "SUDO_GID")))
     #+sbcl(sb-posix:setuid (parse-integer (sb-posix:getenv "SUDO_UID"))))
   (unless (probe-file (merge-pathnames "setup.lisp" (opt "quicklisp")))
-    (format *error-output* "Installing Quicklisp...~%")
+    (format *error-output* "Installing Quicklisp...")
     (flet ((opt (x)
              (when (opt x)
                (list (format nil "~A=~A" x (opt x))))))
@@ -58,8 +58,9 @@ exec ros -Q -N roswell -- $0 "$@"
                         "install"
                         "quicklisp")))
         (when (roswell:verbose)
-          (format *error-output* "Parameter for install quicklisp '~{~A ~}'~%" params))
-        (roswell:roswell params :interactive nil))))
+          (format *error-output* "~%Parameter for install quicklisp '~{~A ~}'" params))
+        (force-output *error-output*)
+        (format *error-output* " Done ~S~%" (length (roswell:roswell params :interactive nil))))))
   (let* ((dir (sort
                (delete-if-not
                 (dump-filter dump)
