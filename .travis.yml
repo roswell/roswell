@@ -46,11 +46,11 @@ matrix:
         env: METHOD=ci LISP=sbcl-bin
       - sudo: required
         os: linux
-        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=$HOME/usr/local METHOD=ci LISP=sbcl-bin
+        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=/usr/local METHOD=ci LISP=sbcl-bin
       - os: osx
-        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=$HOME/usr/local METHOD=ci LISP=sbcl-bin
+        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=/usr/local METHOD=ci LISP=sbcl-bin
       - os: windows
-        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=$HOME/usr/local METHOD=ci LISP=sbcl-bin
+        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=/usr/local METHOD=ci LISP=sbcl-bin
 
 
 #branches:
