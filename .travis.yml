@@ -21,7 +21,6 @@ env:
     - METHOD=ci LISP=sbcl/1.1.14
     - METHOD=ci LISP=ccl32
     - METHOD=ci LISP=sbcl/git
-    - ROSWELL_BRANCH=release METHOD=ci LISP=sbcl-bin
 
 os:
   - osx
@@ -45,6 +44,14 @@ matrix:
         env: METHOD=documents
       - os: windows
         env: METHOD=ci LISP=sbcl-bin
+      - sudo: required
+        os: linux
+        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=$HOME/usr/local METHOD=ci LISP=sbcl-bin
+      - os: osx
+        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=$HOME/usr/local METHOD=ci LISP=sbcl-bin
+      - os: windows
+        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=$HOME/usr/local METHOD=ci LISP=sbcl-bin
+
 
 #branches:
 #  except:
