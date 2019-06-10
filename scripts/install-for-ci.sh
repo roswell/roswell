@@ -124,13 +124,14 @@ install_roswell_bin () {
     elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null && which dpkg >/dev/null; then
         if ! [ -w "$ROSWELL_INSTALL_DIR" ]; then
             if [ $ROSWELL_BRANCH = release ]; then
-                curl -L https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_$ROSWELL_RELEASE_VERSION-1_amd64.deb \
-                    --output /tmp/roswell.deb
+                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_$ROSWELL_RELEASE_VERSION-1_amd64.deb" /tmp/roswell.deb
             fi
             if [ -f /tmp/roswell.deb ]; then
                 $SUDO dpkg -i /tmp/roswell.deb
             fi
         fi
+    elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
+        apt_unless_installed roswell
     fi
 }
 
