@@ -61,16 +61,7 @@
      (merge-pathnames "abcl" dir)
      (format
       nil
-      (if (not (zerop (length
-                       (remove-if-not
-                        (lambda ($)
-                          (and (cl-ppcre:scan "version" $)
-                               (cl-ppcre:scan "1\\.8" $)))
-                        (split-sequence:split-sequence
-                         #\Newline
-                         (nth-value 1(uiop:run-program "java -version"  :error-output :string)))))))
-          "exec ~A -Xmx4g -cp \"~Aabcl-contrib.jar\" -jar \"~:*~Aabcl.jar\" \"\$@\""
-          "exec ~A -Xmx4g -XX:MaxPermSize=1g -cp \"~Aabcl-contrib.jar\" -jar \"~:*~Aabcl.jar\" \"\$@\"")
+      "exec ~A -Xmx4g -cp \"~Aabcl-contrib.jar\" -jar \"~:*~Aabcl.jar\" \"\$@\""
       java dir))
     (cons t argv)))
 
