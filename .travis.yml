@@ -10,7 +10,7 @@ env:
     - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
   matrix:
     - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=cmu-bin/2017-10
+    - METHOD=ci LISP=cmu-bin/2019-06
     - METHOD=ci LISP=sbcl
     - METHOD=ci LISP=ecl
     - METHOD=ci LISP=mkcl
@@ -44,14 +44,6 @@ matrix:
         env: METHOD=documents
       - os: windows
         env: METHOD=ci LISP=sbcl-bin
-      - sudo: required
-        os: linux
-        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=/usr/local METHOD=ci LISP=sbcl-bin
-      - os: osx
-        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=/usr/local METHOD=ci LISP=sbcl-bin
-      - os: windows
-        env: ROSWELL_BRANCH=release ROSWELL_INSTALL_DIR=/usr/local METHOD=ci LISP=sbcl-bin
-
 
 #branches:
 #  except:
