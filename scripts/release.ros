@@ -58,7 +58,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (edit-file (merge-pathnames "roswell.asd" *project-path*)
              "^[ ]*:version[ ]*\"[^,]*\"[ ]*$"
              "^([ ]*:version[ ]*\")([^\"]*)(\".*)$"
-             version :test test))
+             (cl-ppcre:regex-replace-all "(\\.|^)0+([0-9])" version "\\{1}\\{2}") :test test))
 
 (defun edit-install-for-ci-sh (&optional (version *new-version*) test)
   (edit-file (merge-pathnames "scripts/install-for-ci.sh" *project-path*)
