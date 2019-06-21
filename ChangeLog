@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 21 Jun 2019 21:27:09 +0800
+
 roswell (19.05.10.99-1) unstable; urgency=low
 
   * New: appimage build script by TANIGUCHI Masaya
