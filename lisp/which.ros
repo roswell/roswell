@@ -13,8 +13,8 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 (defun main (&rest argv)
   (dolist (name argv)
     (let ((system (asdf:find-system name nil)))
-      (format t "~A~%"
-              (if system
-                  (uiop:native-namestring (asdf:system-source-file system))
-                  (format nil "~A not found" name))))))
+      (if system
+          (format t "~A~%"
+                  (uiop:native-namestring (asdf:system-source-file system)))
+          (ros:quit 1)))))
 ;;; vim: set ft=lisp lisp:
