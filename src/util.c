@@ -44,6 +44,10 @@ char* uname_m(void) {
       return q("armel");
     }
   }
+  if(strcmp(p2,"armv5tejl")==0) {
+    s(p2);
+    return q("armel");
+  }
   return substitute_char('-','_',p2);
 }
 
