@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #include "opt.h"
 
 extern char* extract_command_str(int flags,const char *filename,int do_extract,const char* outputpath,char* type);

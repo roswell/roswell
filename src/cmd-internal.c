@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #include "opt.h"
 #include "cmd-run.h"
 #include "gend.h"

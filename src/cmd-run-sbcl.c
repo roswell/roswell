@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #include "cmd-run.h"
 
 char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {

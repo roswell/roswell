@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #include "opt.h"
 #ifdef HAVE_WINDOWS_H
 extern int download_count;

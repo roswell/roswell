@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #include "util.h"
 
 char* qsprintf(int bufsize,char* format,...) {
