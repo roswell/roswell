@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #ifndef __CMD_RUN_H__
 #define __CMD_RUN_H__
 

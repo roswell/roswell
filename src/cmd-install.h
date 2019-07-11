@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #ifndef __INSTALL_H__
 #define __INSTALL_H__
 

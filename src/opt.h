@@ -1,4 +1,3 @@
-/* -*- tab-width : 2 -*- */
 #ifndef __OPT_H__
 #define __OPT_H__
 #include "util.h"
