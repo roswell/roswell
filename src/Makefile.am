@@ -28,6 +28,7 @@ ros_SOURCES = main.c opt.c download.c download_windows.c archive.c archive_windo
 	cmd-internal.c cmd-script.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clasp.c cmd-run-clisp.c cmd-run-ecl.c \
 	cmd-run-mkcl.c cmd-run-abcl.c cmd-run-cmu.c cmd-run-acl.c cmd-run-lispworks.c \
+	cmd-run-npt.c \
 	cmd-install.c install-sbcl-bin.c install-sbcl-bin_windows.c
 
 if WITH_WIN_ICON

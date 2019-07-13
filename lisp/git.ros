@@ -13,6 +13,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 
 (defun location (key)
   (let ((found (or (cdr (assoc key `(("sbcl" . ,(merge-pathnames "src/sbcl-git/" (homedir)))
+                                     ("npt" . ,(merge-pathnames "src/npt-git/" (homedir)))
                                      ("sly" . ,(merge-pathnames "lisp/sly/git/" (homedir))))
                                :test 'equal))
                    (ql:where-is-system key))))
