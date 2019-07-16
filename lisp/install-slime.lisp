@@ -62,6 +62,7 @@
                 do (download (second list) archive-file)))
       (uiop/filesystem:delete-directory-tree (ensure-directories-exist extract-path) :validate t)
       (expand archive-file (ensure-directories-exist extract-path))
+      (uiop/filesystem:delete-directory-tree (merge-pathnames (format nil "lisp/slime/~A/" name) (homedir)) :validate t :if-does-not-exist :ignore)
       (prog1
           (ql-impl-util:rename-directory
            (first (directory (make-pathname :defaults extract-path :name :wild :type :wild)))
