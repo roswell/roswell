@@ -69,7 +69,9 @@ have the latest asdf, and this file has a workaround for this.
                (or (read-from-string (getenv "ROS_OPTS"))
                    '()))))))
 
-(defun opt (param &key from-end)
+(defun opt (param &key from-end reload)
+  (when reload
+    (setf *ros-opts* nil))
   (second (assoc param
                  (funcall (if from-end #'reverse #'identity)
                           (ros-opts))
@@ -249,7 +251,7 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
 (defun asdf (&key no-download)
   (setf *downloaded-asdf-loaded*
         (or *downloaded-asdf-loaded*
-            (let* ((version-installed (opt "asdf.version"))
+            (let* ((version-installed (opt "asdf.version" :reload t))
                    (version (or version-installed
                                 (unless no-download
                                   (roswell '("install" "asdf"))
