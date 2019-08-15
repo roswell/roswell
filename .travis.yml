@@ -6,7 +6,6 @@ env:
     - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=$TRAVIS_BRANCH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
-    - ROSWELL_QUICKLISP_DIST_URI=https://github.com/roswell/quicklisp/releases/download/dist/quicklisp.txt
     - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
   matrix:
     - METHOD=ci LISP=alisp
