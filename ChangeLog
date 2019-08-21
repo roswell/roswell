@@ -1,8 +1,15 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.08.10.101-1) unstable; urgency=low
 
-  *
+  * New: support npt (new common lisp implementation !!)
+  * Change: 'ros which' return 1 when it is not found system
+  * Change: Updated clasp 2019-07-09. by gos-k
+  * Change: some sbcl option set via envvar (reported by Fukamachi)
+  * Fix: CircleCI's working directory in install-for-ci  (by Neil Lindquist)
+  * Fix: infinit loop when 'ros install asdf' (reported by @JotaPe)
+  * Fix: tried install on armv5tejl box
+  * Fix: failure installation slime on windows 10 64bit (by Akihide Nano)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Wed, 21 Aug 2019 16:01:41 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 21 Aug 2019 16:11:23 +0800
 
 roswell (19.06.10.100-1) unstable; urgency=low
 
