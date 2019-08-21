@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 21 Aug 2019 16:01:41 +0800
+
 roswell (19.06.10.100-1) unstable; urgency=low
 
   * Change: ros update github installed repo would force update (reported by Hamayama)
