@@ -14,8 +14,8 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
-  char* dynamic_space_size=get_opt("dynamic-space-size",0);
-  char* control_stack_size=get_opt("control-stack-size",0);
+  char* dynamic_space_size=get_opt("dynamic-space-size",1);
+  char* control_stack_size=get_opt("control-stack-size",1);
   char* withoutroswell=get_opt("without-roswell",0);
   char* enable_debugger=get_opt("enable-debugger",0);
 
