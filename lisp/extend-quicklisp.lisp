@@ -34,7 +34,7 @@
 (defun roswell-installed-system-name (system-name)
   ;;  should return repo part of system-name.
   ;; "user//repo" "user//repo/branch" "git://bra/bra/bra/repo.git" "github://user/repo"
-  (when (find "" (split-sequence #\/ system-name) :test 'equal)
+  (when (find "" (split-sequence #\/ system-name) :test 'equal) ;; found "//"
     (if (find #\: system-name)
         (values nil "not implemented yet") ;; TBD
         (second (remove "" (split-sequence #\/ system-name) :test 'equal)))))
@@ -44,7 +44,7 @@
         pname)
     (and
      name
-     (not (when (setf pname (read-call "asdf/find-system:primary-system-name" system-name))
+     (not (when (setf pname (read-call "asdf/find-system::primary-system-name" system-name))
             (asdf:find-system pname nil)))
      (prog1
          (or (quicklisp-client:local-projects-searcher name)
@@ -61,10 +61,14 @@
        (eval `(asdf:defsystem ,system-name :depends-on (,name))))
      (asdf:find-system system-name))))
 
+(defun local-projects-searcher (system-name)
+  )
+
 (unless (find 'roswell-installable-searcher (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))
   (set (read-from-string "asdf:*system-definition-search-functions*")
        (append (list 'roswell-installable-searcher)
-               (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))))
+               (symbol-value (read-from-string "asdf:*system-definition-search-functions*"))
+               (list 'local-projects-searcher))))
 
 (pushnew 'roswell-dist-enumeration-function ql-dist:*dist-enumeration-functions*)
 
