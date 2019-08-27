@@ -1,7 +1,7 @@
 (roswell:include () "util")
 (defpackage :roswell.util
   (:use :cl)
-  (:import-from :ros :opt :ensure-asdf)
+  (:import-from :ros :opt :ensure-asdf :*local-project-directory*)
   (:export
    :uname :uname-m :homedir :config :impl :which :config-env :checkoutdir
    :parse-version-spec :download :expand :sh :chdir :system :module

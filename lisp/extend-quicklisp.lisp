@@ -61,8 +61,38 @@
        (eval `(asdf:defsystem ,system-name :depends-on (,name))))
      (asdf:find-system system-name))))
 
+(defun local-project-enum (path)
+  (let ((sub (remove-if (lambda (x)
+                          (eql (aref x 0) #\.))
+                        (uiop:subdirectories path)
+                        :key (lambda (x) (first(last (pathname-directory x)))))))
+    (apply #'append 
+           (remove-if-not (lambda(x)
+                            (equal (pathname-type x) "asd"))
+                          (uiop:directory-files path))
+           (mapcar (lambda (x)
+                     (local-project-enum x))
+                   sub))))
+
+(defvar *local-project-cache* nil)
+(defun local-project-build-hash (&key rebuild)
+  (if (or (not *local-project-cache*)
+          rebuild)
+      (let ((hash (make-hash-table :test 'equal)))
+        (dolist (system-directory (reverse *local-project-directory*))
+          (dolist (asd (local-project-enum system-directory))
+            (setf (gethash (pathname-name asd) hash) asd)))
+        (setf *local-project-cache* hash))
+      *local-project-cache*))
+
 (defun local-projects-searcher (system-name)
-  )
+  (let ((path (gethash system-name (local-project-build-hash))))
+    (when path
+      (if (probe-file path)
+          path
+          (progn
+            (local-project-build-hash :rebuild t)
+            (local-projects-searcher system-name))))))
 
 (unless (find 'roswell-installable-searcher (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))
   (set (read-from-string "asdf:*system-definition-search-functions*")

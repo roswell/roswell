@@ -28,7 +28,8 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :*load* :*cmd* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf :revert-extension
-           :roswell :exec :setenv :unsetenv :version :swank :verbose :*init-hook*)
+           :roswell :exec :setenv :unsetenv :version :swank :verbose :*init-hook*
+           :*local-project-directory*)
   (:documentation "Roswell backend."))
 
 (in-package :roswell)
@@ -38,6 +39,7 @@ have the latest asdf, and this file has a workaround for this.
 (defparameter *main* nil)
 (defvar *cmd* nil)
 (defparameter *load* `((identity . cl:load)))
+(defvar *local-project-directory* nil)
 
 ;; small tools
 (defun getenv (x)
