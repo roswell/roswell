@@ -187,6 +187,13 @@ case "$LISP" in
         ;;
 esac
 
+# sbcl-bin/1.5.6 requires libc6-2.28 but its Ubuntu package is too old.
+# https://packages.ubuntu.com/ja/bionic/libc6
+if [ `uname` = "Linux" ]; then
+    # Install sbcl-bin/1.5.5 explicitly before the latest sbcl-bin will be installed.
+    ros install sbcl-bin/1.5.5
+fi
+
 echo "Installing $LISP..."
 case "$LISP" in
     clisp)
