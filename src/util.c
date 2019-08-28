@@ -6,6 +6,10 @@ char* uname_s(void) {
   char *p,*p2;
   p2=remove_char("\r\n",p=system_("uname"));
   s(p);
+  if(strcmp(p2,"SunOS")==0) {
+    s(p2);
+    return q("solaris");
+  }
   return downcase(p2);
 }
 
@@ -14,6 +18,10 @@ char* uname_m(void) {
   char *p2;
   p2=remove_char("\r\n",p);
   s(p);
+  if(strcmp(p2,"i86pc")==0) {
+    s(p2);
+    return q("x86-64");
+  }
   if(strcmp(p2,"i686")==0) {
     s(p2);
     return q("x86");
