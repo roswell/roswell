@@ -35,6 +35,8 @@ AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])
 AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
 
+AC_CHECK_MEMBERS([struct dirent.d_type],,,[#include <dirent.h>])
+
 # Git is optional, so fail gracefully, build from tar may not have .git/
 AC_CHECK_PROG(GIT_CHECK,git,yes)
 AS_IF([test "x$GIT_CHECK" = xyes],

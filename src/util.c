@@ -72,8 +72,17 @@ LVal directory(char* path) {
     if(!(strcmp(dirent->d_name,".")==0 ||
          strcmp(dirent->d_name,"..")==0)) {
       char* str=q(dirent->d_name);
+#ifdef HAVE_STRUCT_DIRENT_D_TYPE
       if(dirent->d_type & DT_DIR)
+#else
+      char* sub=s_cat2(q(path),q(str));
+      int r=directory_exist_p(sub);
+      s(sub);
+      if(r)
+#endif
+      {
         str=s_cat2(str,q("/"));
+      }
       ret=conss(str,ret);
     }
   }
