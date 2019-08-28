@@ -27,7 +27,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
     (roswell:exec
      (cond
        ((equal (first argv) "clone")
-        (uiop:chdir (first ql:*local-project-directories*))
+        (uiop:chdir (first roswell:*local-project-directories*))
         `(,name ,@argv))
        ((location (first argv))
         (let* ((path (location (first argv))))

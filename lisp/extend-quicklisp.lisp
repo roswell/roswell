@@ -79,7 +79,7 @@
   (if (or (not *local-project-cache*)
           rebuild)
       (let ((hash (make-hash-table :test 'equal)))
-        (dolist (system-directory (reverse *local-project-directory*))
+        (dolist (system-directory (reverse *local-project-directories*))
           (dolist (asd (local-project-enum system-directory))
             (setf (gethash (pathname-name asd) hash) asd)))
         (setf *local-project-cache* hash))

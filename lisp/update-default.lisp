@@ -5,7 +5,7 @@
 
 (defun default (param &rest args)
   (declare (ignore args))
-  (let* ((subpath (uiop:subpathp param (first ql:*local-project-directories*)))
+  (let* ((subpath (uiop:subpathp param (first roswell:*local-project-directories*)))
          (target (when subpath
                    (remove-if-not #'stringp (pathname-directory subpath)))))
     (format *error-output* "Target project would be ~A~%" target)

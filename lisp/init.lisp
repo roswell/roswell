@@ -29,7 +29,7 @@ have the latest asdf, and this file has a workaround for this.
   (:export :run :*argv* :*main* :*load* :*cmd* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf :revert-extension
            :roswell :exec :setenv :unsetenv :version :swank :verbose :*init-hook*
-           :*local-project-directory*)
+           :*local-project-directories*)
   (:documentation "Roswell backend."))
 
 (in-package :roswell)
@@ -39,7 +39,7 @@ have the latest asdf, and this file has a workaround for this.
 (defparameter *main* nil)
 (defvar *cmd* nil)
 (defparameter *load* `((identity . cl:load)))
-(defvar *local-project-directory* nil)
+(defvar *local-project-directories* nil)
 
 ;; small tools
 (defun getenv (x)
@@ -177,28 +177,31 @@ have the latest asdf, and this file has a workaround for this.
                                (and environment (getenv environment))
                                (opt "quicklisp"))))
           (local (ignore-errors
-                  (truename
-                   (merge-pathnames
-                    ".roswell/local-projects/"
-                    *default-pathname-defaults*)))))
+                   (truename
+                    (merge-pathnames
+                     ".roswell/local-projects/"
+                     *default-pathname-defaults*)))))
       (when (probe-file path)
         (cl:load path :verbose (verbose))
         (unless (getenv environment)
-          (loop with symbol = (read-from-string "ql:*local-project-directories*")
-                ;; ql:*local-project-directories* defaults to a list of a single pathname,
-                ;; which is <directory containing setup.lisp>/local-projects/ .
-                for path in `(;; Searches local-project/ in the current directory
-                              ,local
-                              ;; This is WHAAAAAT????
-                              ,(ignore-errors
-                                (truename (merge-pathnames "../../../local-projects/" (first (symbol-value symbol)))))
-                              ;; Searches local-project/ in e.g. ~/.roswell/
-                              ,(ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))))
-                for probe = (and path (or (ignore-errors (probe-file path))
-                                          #+clisp(ext:probe-directory path)))
-                when probe
-                do (set symbol (cons path (symbol-value symbol)))
-                until probe))
+          (loop
+            ;; *local-project-directories* defaults to a list of a single pathname,
+            ;; which is <directory containing setup.lisp>/local-projects/ .
+            for path in `(;; Searches local-project/ in the current directory
+                          ,local
+                          ;; Searches relative path from env path
+                          ,(ignore-errors
+                             (truename
+                              (merge-pathnames
+                               "../../../local-projects/"
+                               (first (symbol-value (read-from-string "ql:*local-project-directories*"))))))
+                          ;; Searches local-project/ in e.g. ~/.roswell/
+                          ,(ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))))
+            for probe = (and path (or (ignore-errors (probe-file path))
+                                      #+clisp(ext:probe-directory path)))
+            when probe
+            do (push path *local-project-directories*)
+            until probe))
         t))))
 
 (defvar *included-names* '("init"))

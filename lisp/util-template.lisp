@@ -72,7 +72,7 @@
   (let* ((* (loop for x in (append *template-base-directories*
                                    (mapcar (lambda (path)
                                              (merge-pathnames "templates/" path))
-                                           ql:*local-project-directories*))
+                                           roswell:*local-project-directories*))
                   append (directory (merge-pathnames "**/*.asd" x))))
          (* (remove-if-not (lambda (x) (ignore-errors (string-equal "roswell.init." (pathname-name x) :end2 13))) *))
          (* (cons (merge-pathnames "init-default.lisp" (ros:opt "lispdir")) *))
@@ -99,7 +99,8 @@
     (if found
         (make-pathname :type nil :name nil
                        :defaults (first found))
-        (merge-pathnames (format nil "templates/~A/" (sanitize name)) (first ql:*local-project-directories*)))))
+        (merge-pathnames (format nil "templates/~A/" (sanitize name))
+                         (first roswell:*local-project-directories*)))))
 
 (defun template-file-path (template-name path)
   (merge-pathnames (enc-string path)

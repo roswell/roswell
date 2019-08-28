@@ -1,7 +1,7 @@
 (roswell:include () "util")
 (defpackage :roswell.util
   (:use :cl)
-  (:import-from :ros :opt :ensure-asdf :*local-project-directory*)
+  (:import-from :ros :opt :ensure-asdf :*local-project-directories*)
   (:export
    :uname :uname-m :homedir :config :impl :which :config-env :checkoutdir
    :parse-version-spec :download :expand :sh :chdir :system :module
@@ -209,11 +209,10 @@ ccl-bin      -> (\"ccl-bin\" nil)
             `(,string nil)))))
 
 (defun checkoutdir ()
-  "Returns the parent directory of the first local project directory in ql:*local-project-directories*."
+  "Returns the parent directory of the first local project directory in *local-project-directories*."
   ;; see roswell:quicklisp for why.
   (roswell:quicklisp)
-  (let* ((* (read-from-string "ql:*local-project-directories*"))
-         (* (first (symbol-value *)))
+  (let* ((* (first *local-project-directories*))
          (* (merge-pathnames "../" *)))
     (truename *)))
 

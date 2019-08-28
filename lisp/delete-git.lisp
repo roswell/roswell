@@ -5,10 +5,14 @@
 (defun git (&rest argv)
   (if (rest argv)
       (dolist (x (rest argv) (roswell:quit 0))
-        (let* ((* (directory (merge-pathnames "**/.git/" (first ql:*local-project-directories*))))
-               (* (mapcar (lambda (x) (directory (merge-pathnames "../*.asd" x))) *))
-               (* (apply #'append *))
-               (* (remove x * :test (complement #'equal) :key #'pathname-name))
+        (let* ((* (loop for v being the hash-values in (roswell.util::local-project-build-hash)
+                        for .git/ = (merge-pathnames ".git/"
+                                                     (make-pathname :defaults v :name nil :type nil))
+                        when (and (equal (pathname-name v)
+                                         (first (last (pathname-directory v))))
+                                  (uiop:directory-exists-p .git/))
+                        collect v))
+               (* (sort * #'string< :key #'pathname-name))
                (* (mapcar (lambda (x) (truename (make-pathname :defaults x :type nil :name nil))) *)))
           (loop for x in *
                 with a = (namestring (truename (homedir)))
