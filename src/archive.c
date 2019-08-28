@@ -5,8 +5,11 @@ extern char* extract_command_str(int flags,const char *filename,int do_extract,c
 #ifndef HAVE_WINDOWS_H
 char* extract_command_str(int flags,const char *filename,int do_extract,const char* outputpath,char* type) {
   char* str;
+  char* bin=which("gtar");
+  char* arc=(strcmp(bin,"")==0)?"tar":"gtar";
+  s(bin);
   if(strcmp(type,"gzip")==0 || strcmp(type,"bzip2")==0 || strcmp(type,"xz")==0) {
-    str=cat(type," -dc ",filename," | tar -",do_extract?"x":"t",
+    str=cat(type," -dc ",filename," | ",arc," -",do_extract?"x":"t",
             flags?"p":"","f - -C ",outputpath,NULL);
   }else if(strcmp(type,"7za")==0) {
     ensure_directories_exist((char*)outputpath);

@@ -13,6 +13,8 @@ char* ccl_binname(char* bit) {
     ret=s_cat(ret,q("d"),NULL);
   }else if(strcmp(_uname,"freebsd")==0) {
     ret=s_cat(ret,q("f"),NULL);
+  }else if(strcmp(_uname,"solaris")==0) {
+    ret=s_cat(ret,q("s"),NULL);
   }
   if(strcmp(_uname_m,"x86-64")==0 ||
      strcmp(_uname_m,"x86")==0) {
