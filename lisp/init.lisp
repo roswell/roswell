@@ -143,7 +143,7 @@ have the latest asdf, and this file has a workaround for this.
 
 (defun run-program (args &key output)
   (if (ignore-errors #1=(read-from-string "uiop/run-program:run-program"))
-      (funcall #1# (format nil "~{~A~^ ~}" args)
+      (funcall #1# (mapcar #'princ-to-string args)
                :output output
                #+(and sbcl win32) :force-shell #+(and sbcl win32) nil
                :error-output :interactive)
