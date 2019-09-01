@@ -237,5 +237,7 @@ if [ "$TRAVIS" ]; then
     echo "(:tree \"$TRAVIS_BUILD_DIR/\")" > "$ASDF_SR_CONF_FILE"
 elif [ "$CIRCLECI" ]; then
     echo "(:tree \"$CIRCLE_WORKING_DIRECTORY/\")" > "$ASDF_SR_CONF_FILE"
+elif [ "$GITHUB_WORKSPACE" ]; then
+    echo "(:tree \"$GITHUB_WORKSPACE/\")" > "$ASDF_SR_CONF_FILE"
 fi
 echo "(:tree \"$LOCAL_LISP_TREE/\")" >> "$ASDF_SR_CONF_FILE"
