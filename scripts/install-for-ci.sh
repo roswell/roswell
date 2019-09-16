@@ -227,7 +227,11 @@ ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
                 #+asdf(asdf:asdf-version) #-asdf "not required")' || exit 1
 
 # Setup ASDF source regisry
-ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
+if [ "$LOCALAPPDATA" ]; then
+    ASDF_SR_CONF_DIR="$LOCALAPPDATA/config/common-lisp/source-registry.conf.d"
+else
+    ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
+fi
 ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/ci.conf"
 LOCAL_LISP_TREE="$HOME/lisp"
 
@@ -238,6 +242,12 @@ if [ "$TRAVIS" ]; then
 elif [ "$CIRCLECI" ]; then
     echo "(:tree \"$CIRCLE_WORKING_DIRECTORY/\")" > "$ASDF_SR_CONF_FILE"
 elif [ "$GITHUB_WORKSPACE" ]; then
-    echo "(:tree \"$GITHUB_WORKSPACE/\")" > "$ASDF_SR_CONF_FILE"
+    if uname -s | grep -E "MSYS_NT|MINGW" >/dev/null; then
+        GITHUB_WORKSPACE_LISP=`echo $GITHUB_WORKSPACE | sed -e 's/\\\\/\//g'`
+        echo "(:tree \"$GITHUB_WORKSPACE_LISP/\")" > "$ASDF_SR_CONF_FILE"
+    else
+        echo "(:tree \"$GITHUB_WORKSPACE/\")" > "$ASDF_SR_CONF_FILE"
+    fi
 fi
 echo "(:tree \"$LOCAL_LISP_TREE/\")" >> "$ASDF_SR_CONF_FILE"
+echo "ASDF source registry configurations at ${ASDF_SR_CONF_FILE}."
