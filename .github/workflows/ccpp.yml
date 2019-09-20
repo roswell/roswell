@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v1
     - name: apt
-      run: which apt-get >/dev/nul && apt-get -yq update &&apt-get -yq build-essential libcurl4-gnutls-dev automake autoconf
+      run: which apt-get >/dev/null && apt-get -yq update &&apt-get -yq build-essential libcurl4-gnutls-dev automake autoconf
     - name: bootstrap
       run: ./bootstrap
     - name: configure
