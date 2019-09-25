@@ -15,8 +15,9 @@ exec ros +A -Q -m roswell -N roswell -- $0 "$@"
 (defun main (&rest argv)
   #+quicklisp
   (ignore-errors
-    (ql:register-local-projects)
-    (ql:quickload '(:ql-checkout) :silent t)
+    (unless (find-package :ql-checkout/config)
+      (funcall 'roswell.util:local-project-build-hash :rebuild t)
+      (ql:quickload '(:ql-checkout) :silent t))
     (set (read-from-string "ql-checkout/config:*checkoutdir*")
          (first roswell:*local-project-directories*)))
   (cond ((not (find-package :ql-checkout))

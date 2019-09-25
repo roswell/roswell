@@ -121,7 +121,7 @@ To differentiate it from the system with the same name in quicklisp, the path sh
           ${roswell-home}/local-projects/some/repo
       
  "
-  (read-call "quicklisp-client:register-local-projects")
+  (read-call "roswell.util:local-project-build-hash" :rebuild t)
   (loop
     with *ros-path* = (make-pathname :defaults (opt "argv0"))
     with changed
@@ -147,7 +147,7 @@ To differentiate it from the system with the same name in quicklisp, the path sh
          ;;github registerd system like "fukamachi/sblint" checkout
          (version
           (funcall *checkout-default* impl version tag)
-          (read-call "quicklisp-client:register-local-projects")
+          (read-call "roswell.util:local-project-build-hash" :rebuild t)
           (or (let ((project (merge-pathnames (format nil "local-projects/~A/~A/project.lisp" impl version)
                                               (roswell.util:checkoutdir))))
                 (when (probe-file project)

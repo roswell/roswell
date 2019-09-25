@@ -6,7 +6,8 @@
    :uname :uname-m :homedir :config :impl :which :config-env :checkoutdir
    :parse-version-spec :download :expand :sh :chdir :system :module
    :core-extention :clone-github :opt :read-call :set-opt :copy-dir
-   :roswell-installable-searcher :setenv :unsetenv :ensure-asdf :split-sequence))
+   :roswell-installable-searcher :setenv :unsetenv :ensure-asdf :split-sequence
+   :local-project-build-hash))
 (in-package :roswell.util)
 
 (defun split-sequence (del seq &key end start (test #'eql) &allow-other-keys)
@@ -72,7 +73,7 @@ Returns NIL when the package in the symbol prefix is not available."
                  (let (*read-eval*)
                    (read-from-string (format nil "~A::~A" imp name))))
              (progn
-               (read-call "ql:register-local-projects")
+               (read-call "local-project-build-hash" :rebuild t)
                (or
                 (and (or (read-call "ql-dist:find-system" imp)
                          (read-call "ql:where-is-system" imp))
