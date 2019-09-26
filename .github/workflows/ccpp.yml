@@ -1,23 +1,27 @@
-name: C/C++ CI
+name: CI
 
 on: [push]
 
 jobs:
-  build:
+  test:
+    name: ${{ matrix.lisp }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        lisp: [sbcl-bin]
+        os: [ubuntu-latest, macOS-latest]
 
-    runs-on: ubuntu-18.04
-    
     steps:
-    - uses: actions/checkout@v1
-    - name: apt
-      run: which apt-get >/dev/null && sudo apt-get -yq update && sudo apt-get -yq install build-essential libcurl4-gnutls-dev automake autoconf
-    - name: bootstrap
-      run: ./bootstrap
-    - name: configure
-      run: ./configure
-    - name: make
-      run: make
-    - name: make check
-      run: make check
-    - name: make distcheck
-      run: make distcheck
+      - uses: actions/checkout@v1
+      - name: Install Roswell
+        env:
+          LISP: ${{ matrix.lisp }}
+          ROSWELL_INSTALL_DIR: /usr
+        run: |
+          curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+      - name: Install Rove
+        run: ros install rove
+      - name: Run tests
+        run: |
+          PATH="~/.roswell/bin:$PATH"
+          rove roswell.asd
