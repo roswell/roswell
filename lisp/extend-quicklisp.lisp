@@ -94,11 +94,15 @@
             (local-project-build-hash :rebuild t)
             (local-projects-searcher system-name))))))
 
-(unless (find 'roswell-installable-searcher (symbol-value (read-from-string "asdf:*system-definition-search-functions*")))
-  (set (read-from-string "asdf:*system-definition-search-functions*")
-       (append (list 'roswell-installable-searcher)
-               (symbol-value (read-from-string "asdf:*system-definition-search-functions*"))
-               (list 'local-projects-searcher))))
+(ignore-errors
+  (let* ((symbol (read-from-string "asdf:*system-definition-search-functions*"))
+         (list (symbol-value symbol)))
+    (unless (find 'roswell-installable-searcher list)
+      (let ((pos (position (read-from-string "quicklisp-client:local-projects-searcher") list)))
+        (set symbol `(roswell-installable-searcher
+                      ,@(subseq list 0 pos)
+                      local-projects-searcher
+                      ,@(subseq list pos)))))))
 
 (pushnew 'roswell-dist-enumeration-function ql-dist:*dist-enumeration-functions*)
 
