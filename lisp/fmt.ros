@@ -9,7 +9,7 @@ exec ros -Q -N roswell -- $0 "$@"
   (progn
     (unless (ql:where-is-system :lem)
       (roswell:roswell '("git" "clone" "https://github.com/cxxxr/lem.git"))
-      (read-call "roswell.util:local-project-build-hash" :rebuild t))
+      (roswell.util:read-call "roswell.util:local-project-build-hash" :rebuild t))
     (ql:quickload '("swank" "lem-base" "lem-lisp-syntax") :silent t)))
 
 (defpackage :ros.script.fmt.3707812168
