@@ -3,25 +3,29 @@ name: CI
 on: [push]
 
 jobs:
-  test:
-    name: ${{ matrix.lisp }} on ${{ matrix.os }}
+  build:
+
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         lisp: [sbcl-bin]
         os: [ubuntu-latest, macOS-latest]
-
+    
     steps:
-      - uses: actions/checkout@v1
-      - name: Install Roswell
-        env:
-          LISP: ${{ matrix.lisp }}
-          ROSWELL_INSTALL_DIR: /usr
-        run: |
-          curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
-      - name: Install Rove
-        run: ros install rove
-      - name: Run tests
-        run: |
-          PATH="~/.roswell/bin:$PATH"
-          rove roswell.asd
+    - uses: actions/checkout@v1
+    - name: apt
+      run: which apt-get >/dev/null && sudo apt-get -yq update && sudo apt-get -yq install build-essential libcurl4-gnutls-dev automake autoconf || true
+    - name: brew
+      run: which brew >/dev/null && brew install automake autoconf || true
+    - name: Install Roswell
+      env:
+       LISP: ${{ matrix.lisp }}
+       ROSWELL_BRANCH: master
+      run: |
+       curl -L https://raw.githubusercontent.com/roswell/roswell/master/scripts/install-for-ci.sh | sh
+    - name: Install Rove
+      run: ros install rove
+    - name: Run tests
+      run: |
+        PATH="~/.roswell/bin:$PATH"
+        rove roswell.asd
