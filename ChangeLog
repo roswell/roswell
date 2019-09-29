@@ -1,8 +1,10 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.09.12.102-1) unstable; urgency=low
 
-  *
+  * New: 'ros -v uri=http://prdownloads.sourceforge.net/sbcl/sbcl-1.5.5-x86-64-linux-binary.tar.bz2 install sbcl-bin' to install sbcl-bin from specified uri
+  * New: tested with openindiana
+  * New: roswell.util::local-projects-searcher implemented for remove directory start with "."
 
- -- SANO Masatoshi <snmsts@gmail.com>  Mon, 30 Sep 2019 01:08:45 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 30 Sep 2019 01:09:19 +0800
 
 roswell (19.08.10.101-1) unstable; urgency=low
 

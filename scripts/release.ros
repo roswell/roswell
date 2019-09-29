@@ -143,7 +143,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 (defun release (argv)
   (declare (ignore argv))
   (!"git checkout master")
-  (!"git add ChangeLog configure.ac roswell.asd install-for-ci.sh")
+  (!"git add ChangeLog configure.ac roswell.asd scripts/install-for-ci.sh")
   (!(format nil "git commit -m \"bump version to ~A\"" (find-version))))
 
 (defun release-push (argv)
