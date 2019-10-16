@@ -78,7 +78,7 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
   #+sbcl
   (do-all-symbols (s)
     (when (fboundp s)
-      (setf (sb-int:info :function :inlinep s) :notinline)
+      (setf (sb-int:info :function :inlinep s) 'notinline)
       (safe-clear-info :function :inline-expansion-designator s)
       ;; Does this have the same effect as proclaiming notinline?
       ;; --- seems like so. src/compiler/proclaim.lisp
@@ -91,7 +91,7 @@ IR1 (deftransform), IR2 (VOP) information in the infodb."
       (safe-clear-info :function :compiler-macro-function s))
     (let ((s `(setf ,s)))
       (when (fboundp s)
-        (setf (sb-int:info :function :inlinep s) :notinline)
+        (setf (sb-int:info :function :inlinep s) 'notinline)
         (safe-clear-info :function :inline-expansion-designator s)
         (safe-clear-info :function :source-transform s)
         (safe-clear-info :function :info s)
