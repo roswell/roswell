@@ -78,6 +78,7 @@ struct proc_opt* register_runtime_options(struct proc_opt* cmd) {
   opt=add_command(opt,"eval","-e",opt_program,1,0);
   opt=add_command(opt,"require",NULL,opt_program,1,0);
   opt=add_command(opt,"quit","-q",opt_program0,1,0);
+  opt=add_command(opt,"hook",NULL,opt_program0,0,0);
 
   opt=add_command(opt,"restart","-r",opt_restart,1,0);
   opt=add_command(opt,"entry","-E",opt_restart,1,0);

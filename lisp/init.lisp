@@ -28,12 +28,12 @@ have the latest asdf, and this file has a workaround for this.
   (:shadow :load :eval :package :restart :print :write)
   (:export :run :*argv* :*main* :*load* :*cmd* :quit :script :quicklisp :getenv :opt
            :ignore-shebang :asdf :include :ensure-asdf :revert-extension
-           :roswell :exec :setenv :unsetenv :version :swank :verbose :*init-hook*
+           :roswell :exec :setenv :unsetenv :version :swank :verbose
            :*local-project-directories*)
   (:documentation "Roswell backend."))
 
 (in-package :roswell)
-(defvar *init-hook* nil)
+(defvar *latest-system* nil)
 (defparameter *argv* nil)
 (defparameter *ros-opts* nil)
 (defparameter *main* nil)
@@ -327,7 +327,8 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
   (loop for ar = args then (subseq ar (1+ p))
         for p = (position #\, ar)
         for arg = (if p (subseq ar 0 p) ar)
-        do (if (find :quicklisp *features*)
+        do (setf *latest-system* arg)
+           (if (find :quicklisp *features*)
                (funcall (read-from-string "ql:quickload") arg :silent (not (verbose)))
                (funcall (read-from-string "asdf:operate") (read-from-string "asdf:load-op") arg))
         while p))
@@ -374,6 +375,19 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
   (declare (ignorable rest))
   (cl:write (cl:eval (read-from-string arg))))
 
+(defun hook (&rest argv)
+  (when *latest-system*
+    (let ((entry-point
+            (let (*read-eval*)
+              (ignore-errors (read-from-string (funcall (read-from-string "asdf/system:component-entry-point")
+                                                        (funcall (read-from-string "asdf:find-system")
+                                                                 *latest-system*)))))))
+      (when (verbose)
+        (format *error-output* "hook:~S ~S ~S~%" *latest-system* entry-point argv)
+        (finish-output))
+      (when entry-point
+        (funcall entry-point argv)))))
+
 (defun script (arg &rest rest)
   "load and evaluate the script"
   (setf *argv* rest)
@@ -402,12 +416,12 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
                                 "(roswell:quit (cl:apply 'main roswell:*argv*))"
                                 "(setf roswell:*main* 'main)"))))))
              (setf *features* (remove :ros.script *features*)))))
-    (if (streamp arg)
-        (body arg)
-        (if (probe-file arg)
-            (with-open-file (in arg)
-              (body in))
-            (format t "script ~S does not exist~%" arg)))))
+    (cond ((streamp arg) (body arg))
+          ((and arg (probe-file arg))
+           (with-open-file (in arg)
+             (body in)))
+          (*latest-system* (apply 'hook (cons arg *argv*)))
+          (t (format t "script ~S does not exist~%" arg)))))
 
 (defun stdin (arg &rest rest)
   (declare (ignorable arg rest))
@@ -424,9 +438,7 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
   "The true internal entry invoked by the C binary. All roswell commands are dispatched from this function"
   (loop for elt in list
         for *cmd* = (first elt)
-        do (apply (intern (string (first elt)) (find-package :ros)) (rest elt)))
-  (loop for f in (reverse *init-hook*)
-        do (ignore-errors (funcall f))))
+        do (apply (intern (string (first elt)) (find-package :ros)) (rest elt))))
 
 (when (opt "roswellenv")
   (pushnew :roswellenv *features*)
