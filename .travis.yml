@@ -73,16 +73,6 @@ before_install:
   - if [ $METHOD = brew ]; then brew update;brew doctor || true; fi
 
 install:
-  - if [ $TRAVIS_OS_NAME != windows ] && ![ -f "$HOME/.rosproxy/proxy" ]; then
-      curl -L https://github.com/snmsts/roswell-proxy/releases/download/v0.5/v0.5-$TRAVIS_OS_NAME.tgz |tar xzf -;
-      cp proxy $HOME/.rosproxy/proxy;
-    fi
-  - if [ $TRAVIS_OS_NAME != windows ]; then
-       $HOME/.rosproxy/proxy daemon;
-       mkdir ~/.roswell;
-       echo "ros.proxy	0	localhost:5000" > ~/.roswell/config;
-       echo "proxy.http.only	0	1" >> ~/.roswell/config;
-    fi
   - if [ $METHOD = documents ]; then pandoc -v; fi
   - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then brew install curl ; fi
@@ -153,6 +143,3 @@ after_success:
     fi
   - if [ "$METHOD" = "documents" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
        git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1; fi
-  - if [ $TRAVIS_OS_NAME != windows ]; then
-       pkill -9 proxy;
-    fi
