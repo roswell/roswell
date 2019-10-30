@@ -38,6 +38,10 @@ matrix:
       - sudo: required
         os: linux
         env: METHOD=valgrind XCFLAGS="-g -O0"
+        addons:
+          apt:
+            packages:
+              - valgrind
       - os: linux
         env: METHOD=documents
         addons:
@@ -57,16 +61,12 @@ addons:
     packages:
       - libc6-i386
 #      - gcc-multilib
-#      - gcc-mingw-w64-i686
-#      - binutils-mingw-w64-i686
-#      - wine
+
 
 before_install:
   - date
   - if [ $METHOD = documents ]; then find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c; fi
   - if [ $METHOD = documents ]; then find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c; fi
-  - if [ $METHOD = valgrind ]; then
-       sudo apt-get -qq update --force-yes > /dev/null; fi
   - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
        yes ""| sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"; fi
   - if [ $METHOD = brew ] || [ $TRAVIS_OS_NAME = osx ]; then brew update;brew --env;brew config; fi
@@ -74,11 +74,7 @@ before_install:
 
 install:
   - if [ $METHOD = documents ]; then pandoc -v; fi
-  - if [ $METHOD = valgrind ];  then sudo apt-get install -qq valgrind > /dev/null; fi
   - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then brew install curl ; fi
-  - if [ x$XCC = xi686-w64-mingw32-gcc ]; then sudo apt-get install -qq gcc-mingw-w64-i686 binutils-mingw-w64-i686; fi
-  - if [ x$WINE != x ]; then sudo apt-get install -qq wine > /dev/null; fi
-  - if [ x$APT_UNINSTALL != x ]; then sudo apt-get purge -qq $APT_UNINSTALL; fi
 
 script:
   - if [ "$METHOD" = "documents" ]; then
@@ -119,15 +115,8 @@ script:
        make -C t/tree-shaker ;
     fi
   - ros config
-  - if [ $TRAVIS_OS_NAME != windows ]; then
-       cat /tmp/proxy-log || true;
-       pkill -9 proxy;
-    fi
 
 after_success:
-  - if [ $TRAVIS_OS_NAME != windows ]; then
-       $HOME/.rosproxy/proxy daemon;
-    fi
   - if [ "$METHOD" = "documents" ] || [ $METHOD = brew ]; then
        git config user.email "auto@example.com";
        git config user.name "Travis-CI";
