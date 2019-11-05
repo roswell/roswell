@@ -30,6 +30,8 @@ if test "x$wwwlib" = xno; then
   AC_MSG_ERROR([libcurl development files required]);
 fi
 
+AC_CHECK_HEADERS(gnu/libc-version.h)
+
 AC_CHECK_HEADERS(windows.h,[with_windows=true])
 AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])

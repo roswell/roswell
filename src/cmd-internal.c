@@ -1,7 +1,9 @@
 #include "opt.h"
 #include "cmd-run.h"
 #include "gend.h"
-
+#ifdef HAVE_GNU_LIBC_VERSION_H
+#include <gnu/libc-version.h>
+#endif
 struct proc_opt internal;
 
 DEF_SUBCMD(cmd_download) {
@@ -94,6 +96,10 @@ DEF_SUBCMD(cmd_internal_version) {
       printf("%s\n",PLATFORM_HTML_URI);
     }else if(strcmp(arg1,"sbcl-bin-uri")==0) {
       printf("%s\n",SBCL_BIN_URI);
+    }if(strcmp(arg1,"glibc")==0) {
+#ifdef HAVE_GNU_LIBC_VERSION_H
+      printf("%s\n",gnu_get_libc_version());
+#endif
     }else
       return 1;
   }
