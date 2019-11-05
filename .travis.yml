@@ -30,6 +30,7 @@ matrix:
     - env: METHOD=brew
     - env: METHOD=ci LISP=sbcl/git
     - env: METHOD=ci LISP=mkcl
+    - env: METHOD=ci LISP=abcl
   include:
       - sudo: required
         os: linux
