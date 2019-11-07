@@ -96,7 +96,7 @@ DEF_SUBCMD(cmd_internal_version) {
       printf("%s\n",PLATFORM_HTML_URI);
     }else if(strcmp(arg1,"sbcl-bin-uri")==0) {
       printf("%s\n",SBCL_BIN_URI);
-    }if(strcmp(arg1,"glibc")==0) {
+    }else if(strcmp(arg1,"glibc")==0) {
 #ifdef HAVE_GNU_LIBC_VERSION_H
       printf("%s\n",gnu_get_libc_version());
 #endif
