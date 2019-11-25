@@ -1,7 +1,7 @@
 #include "opt.h"
 #ifdef HAVE_WINDOWS_H
 #include "cmd-install.h"
-
+#include "util.h"
 
 char* sbcl_bin_extention(struct install_options* param) {
   return ".msi";
@@ -19,6 +19,18 @@ int sbcl_bin_expand(struct install_options* param) {
   int pos=position_char("-",impl);
   impl=(pos!=-1)?subseq(impl,0,pos):q(impl);
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
+  
+  char* msiexec_path="msiexec.exe";
+  if(!file_exist_p(msiexec_path))
+  {
+	  msiexec_path="C:\\Windows\\System32\\msiexec.exe";
+	  if(!file_exist_p(msiexec_path))
+	  {
+		  printf("Msiexec.exe not found in the system path\n");
+		  return 0;
+	  }
+  }
+  
   printf("Extracting the msi archive. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
   delete_directory(dist_path,1);
@@ -27,7 +39,8 @@ int sbcl_bin_expand(struct install_options* param) {
   if(dist_path[strlen(dist_path)-1]=='\\')
     dist_path[strlen(dist_path)-1]='\0';
 
-  char* cmd=cat("msiexec.exe /a \"",
+  char* cmd=cat(msiexec_path,
+				" /a \"",
                 archive,
                 "\" targetdir=\"",
                 dist_path,
