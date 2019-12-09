@@ -85,4 +85,9 @@ int download_simple (char* uri,char* path,int opt) {
   s(path_partial);
   return ret?0:7;
 }
+
+int download_head (char* uri,int opt) {
+  // not supporeted yet.
+  return 0;
+}
 #endif

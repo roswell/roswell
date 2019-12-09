@@ -18,6 +18,14 @@ DEF_SUBCMD(cmd_download) {
                     opt>2?0:opt):0;
 }
 
+DEF_SUBCMD(cmd_head) {
+  int argc=length(arg_);
+  int opt=argc>2?atoi(firsts(nthcdr(3,arg_))):0;
+  if(argc==2)
+    return download_head(firsts(nthcdr(1,arg_)),opt>2?0:opt);
+  return 1;
+}
+
 DEF_SUBCMD(cmd_uname) {
   int argc=length(arg_);
 
@@ -131,6 +139,7 @@ struct proc_opt* register_cmd_internal(struct proc_opt* top_) {
   cmds=add_command(cmds,"man"     ,NULL,cmd_man,0,1);
   cmds=add_command(cmds,"tar"     ,NULL,cmd_tar,0,1);
   cmds=add_command(cmds,"download",NULL,cmd_download,0,1);
+  cmds=add_command(cmds,"head",NULL,cmd_head,0,1);
   cmds=add_command(cmds,"uname",NULL,cmd_uname,0,1);
   cmds=add_command(cmds,"which",NULL,cmd_which,0,1);
   cmds=add_command(cmds,"impl",NULL,cmd_impl,0,1);

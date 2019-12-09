@@ -48,6 +48,7 @@ extern int verbose;
 extern int testing;
 
 int download_simple (char* uri,char* path,int opt);
+int download_head (char* uri,int opt);
 
 typedef intptr_t LVal;
 struct Cons {
