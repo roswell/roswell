@@ -1,11 +1,73 @@
 #include "opt.h"
 #ifdef HAVE_WINDOWS_H
 #include "cmd-install.h"
-
+#include "util.h"
+#include <windows.h>
 
 char* sbcl_bin_extention(struct install_options* param) {
   return ".msi";
 }
+
+
+char* msi_exec_path_from_register(void)
+{
+  DWORD keyType = 0;
+  DWORD length = 0;
+  const DWORD flags = RRF_RT_REG_SZ; // Only read strings (REG_SZ)
+  LONG result = RegGetValueA(
+            HKEY_LOCAL_MACHINE, 
+            "SYSTEM\\CurrentControlSet\\Services\\msiserver",
+			"ImagePath", 
+			flags, 
+            &keyType, 
+            NULL, // pvData == nullptr ? Request buffer size
+            &length);
+  
+  if (result != ERROR_SUCCESS) 	
+  {
+		return NULL;
+  }
+  
+  char* textBuffer=(char*)alloc(length); 
+  
+
+  result= RegGetValueA(
+            HKEY_LOCAL_MACHINE, 
+            "SYSTEM\\CurrentControlSet\\Services\\msiserver",
+			"ImagePath", 
+			flags, 
+            NULL, 
+            textBuffer, // Write string in this destination buffer
+            &length);
+	
+	if (result != ERROR_SUCCESS) 	
+	{
+		return NULL;
+	}
+	
+	//Skip trailing blanks take the full path of the executable then cut at the first blank afterwards 
+	char* start=textBuffer;
+	
+	while(*start==' ' && *start!=0)
+		start++;
+	if(*start==0)
+		return NULL;
+	
+	char* end=start;
+	
+	while(*end!=0)
+	{
+		if(*end==' ')
+		{
+			*end=0;
+			break;
+		}
+		end++;
+	}
+	
+	return start;
+}
+
 
 int sbcl_bin_expand(struct install_options* param) {
   char* impl=param->impl;
@@ -19,6 +81,18 @@ int sbcl_bin_expand(struct install_options* param) {
   int pos=position_char("-",impl);
   impl=(pos!=-1)?subseq(impl,0,pos):q(impl);
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
+ 
+  char* msiexec_path=msi_exec_path_from_register(); 
+  if(!file_exist_p(msiexec_path))
+  {
+	  msiexec_path="msiexec.exe";
+	  if(!file_exist_p(msiexec_path))
+	  {
+		  printf("Msiexec.exe not found in the system path\n");
+		  return 0;
+	  }
+  }
+  
   printf("Extracting the msi archive. %s to %s\n",archive,dist_path);
   archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
   delete_directory(dist_path,1);
@@ -27,7 +101,8 @@ int sbcl_bin_expand(struct install_options* param) {
   if(dist_path[strlen(dist_path)-1]=='\\')
     dist_path[strlen(dist_path)-1]='\0';
 
-  char* cmd=cat("msiexec.exe /a \"",
+  char* cmd=cat(msiexec_path,
+				" /a \"",
                 archive,
                 "\" targetdir=\"",
                 dist_path,

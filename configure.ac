@@ -3,14 +3,15 @@
 
 AC_PREREQ([2.59])
 AC_INIT([roswell],[19.09.12.102],snmsts@gmail.com)
-
-
+${CFLAGS=""}
+${CXXFLAGS=""}
 
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_SRCDIR([Makefile.am])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE([enable])
+
 
 # Checks for programs.
 AC_PROG_CC
@@ -19,6 +20,32 @@ AM_PROG_CC_C_O
 
 # Checks for libraries.
 wwwlib=no
+
+test -z "$SED" && SED=sed
+
+AC_ARG_ENABLE([debug],
+  [AS_HELP_STRING([--enable-debug],
+                  [whether to include debug symbols (default is no)])],
+  [enable_debug=$enableval],
+  [enable_debug=no]
+)
+
+if test "x$enable_debug" = xyes; then
+  dnl Remove all optimization flags from CFLAGS
+  changequote({,})
+  CFLAGS=`echo "$CFLAGS" | $SED -e 's/-O[0-9s]*//g'`
+  CXXFLAGS=`echo "$CXXFLAGS" | $SED -e 's/-O[0-9s]*//g'`
+
+  CFLAGS=`echo "$CFLAGS" | $SED -e 's/-g[0-9]*//g'`
+  CXXFLAGS=`echo "$CXXFLAGS" | $SED -e 's/-g[0-9]*//g'`
+  changequote([,])
+
+  CFLAGS="$CFLAGS -g -O0"
+  CXXFLAGS="$CXXFLAGS -g -O0"
+fi
+
+
+
 
 AC_CHECK_LIB([wininet], [main],[LIBS="-lwininet $LIBS";wwwlib=yes],[])
 if test "x$wwwlib" = xno; then
@@ -106,5 +133,7 @@ AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
 AM_COND_IF([MANUAL_INSTALL],
            [AC_CONFIG_FILES([documents/Makefile])])
+
+
 
 AC_OUTPUT
