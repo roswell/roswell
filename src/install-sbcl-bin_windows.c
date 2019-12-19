@@ -83,7 +83,7 @@ int sbcl_bin_expand(struct install_options* param) {
   dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
  
   char* msiexec_path=msi_exec_path_from_register(); 
-  if(!file_exist_p(msiexec_path))
+  if(msiexec_path==NULL  || !file_exist_p(msiexec_path))
   {
 	  msiexec_path="msiexec.exe";
 	  if(!file_exist_p(msiexec_path))
