@@ -10,7 +10,7 @@
 
 (defvar *ros-path* nil)
 (defvar *env* "ROSINSTALL")
-(defvar *checkout-default* 'checkout-github)
+(defvar *checkout-default* '(checkout-github))
 
 (defun install-impl (impl version argv cmds)
   "See install-impl-if-probed."
@@ -146,7 +146,8 @@ To differentiate it from the system with the same name in quicklisp, the path sh
          ((install-localpath-if-probed impl/version/tag))
          ;;github registerd system like "fukamachi/sblint" checkout
          (version
-          (funcall *checkout-default* impl version tag)
+          (loop for f in *checkout-default*
+                until (funcall f impl version tag))
           (read-call "roswell.util:local-project-build-hash" :rebuild t)
           (or (let ((project (merge-pathnames (format nil "local-projects/~A/~A/project.lisp" impl version)
                                               (roswell.util:checkoutdir))))

@@ -4,7 +4,7 @@
   (:import-from :ros :opt :ensure-asdf :*local-project-directories*)
   (:export
    :uname :uname-m :homedir :config :impl :which :config-env :checkoutdir
-   :parse-version-spec :download :expand :sh :chdir :system :module
+   :parse-version-spec :head :download :expand :sh :chdir :system :module
    :core-extention :clone-github :opt :read-call :set-opt :copy-dir
    :roswell-installable-searcher :setenv :unsetenv :ensure-asdf :split-sequence
    :local-project-build-hash))
@@ -127,6 +127,15 @@ Example:
     when c collect it into r
     unless c collect i into r
     finally (return (coerce r 'string))))
+
+(defun head (uri &key proxy (verbose nil) (output :interactive))
+  (declare (ignorable proxy))
+  (values
+   (ignore-errors
+     (roswell:roswell `("roswell-internal-use" "head" ,(backslash-encode uri)
+                        ,@(when verbose (list verbose)))
+                      output nil)
+     t)))
 
 (defun download (uri file &key proxy (verbose nil) (output :interactive))
   "Interface to curl4 in the roswell C binary"
