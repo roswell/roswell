@@ -86,7 +86,9 @@ To differentiate it from the system with the same name in quicklisp, the path sh
 
 (defun checkout-github (impl version tag)
   "Install a system from github."
-  (clone-github impl version :path "local-projects" :branch tag))
+  (if (head (format nil "https://github.com/~A/~A" impl version))
+      (clone-github impl version :path "local-projects" :branch tag)
+      (format *error-output* "github: ~A/~A not exists~%" impl version)))
 
 (defun install (argv)
   "Install an implementation or a system.
