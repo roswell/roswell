@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 23 Dec 2019 13:00:25 +0800
+
 roswell (19.09.12.102-1) unstable; urgency=low
 
   * New: 'ros -v uri=http://prdownloads.sourceforge.net/sbcl/sbcl-1.5.5-x86-64-linux-binary.tar.bz2 install sbcl-bin' to install sbcl-bin from specified uri
