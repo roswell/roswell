@@ -1,8 +1,11 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (19.12.13.103-1) unstable; urgency=low
 
-  *
+  * New: invoke last system entry point if nothing provided. (try 'ros -s http.server' after ros install snmsts/http.server)
+  * Change: check glibc for supported environment. ('ros roswell-internal-use version glibc')
+  * Change: head for github repo exists or not.
+  * Fix: msiexec path problem (by luca regini)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Mon, 23 Dec 2019 13:00:25 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Mon, 23 Dec 2019 13:00:48 +0800
 
 roswell (19.09.12.102-1) unstable; urgency=low
 
