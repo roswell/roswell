@@ -142,7 +142,7 @@ DEF_SUBCMD(cmd_install) {
     }
     if(param.version)
       s(param.version);
-    s(param.impl),s(param.arch),s(param.os),s(param.suffix);
+    s(param.impl),s(param.arch),s(param.os),s(param.variant);
     s(param.expand_path);
   }
   return 0;
