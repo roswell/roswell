@@ -76,11 +76,14 @@ DEF_SUBCMD(cmd_install) {
   install_cmds *cmds=NULL;
   struct install_options param;
   int ret=1,k;
+  char* variant= get_opt("variant",0);
   param.os=uname_s();
   param.arch=uname_m();
+  param.variant=variant?cat("-",variant,NULL):q("");
   param.arch_in_archive_name=0;
   param.version_not_specified=1;
   param.expand_path=NULL;
+
   if(argc==1) {
     dispatch(stringlist("help","install",NULL),&top);
     exit(EXIT_SUCCESS);
@@ -139,7 +142,7 @@ DEF_SUBCMD(cmd_install) {
     }
     if(param.version)
       s(param.version);
-    s(param.impl),s(param.arch),s(param.os);
+    s(param.impl),s(param.arch),s(param.os),s(param.suffix);
     s(param.expand_path);
   }
   return 0;

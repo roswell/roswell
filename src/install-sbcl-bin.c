@@ -86,9 +86,9 @@ int sbcl_bin_download(struct install_options* param) {
   cond_printf(1,"sbcl_bin_download\n");
   int retry=10;
   do {
-    param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,SLASH,NULL);
+    param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,param->variant,SLASH,NULL);
     impls_sbcl_bin.uri=uri?q(uri):cat(SBCL_BIN_URI ,param->version,"/sbcl-",param->version,
-                                   "-",arch,"-binary",sbcl_bin_extention(param),NULL);
+                                   "-",arch,param->variant,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);
     if(!result && param->version_not_specified) {
       int len = strlen(param->version)-1;
