@@ -1,6 +1,6 @@
 (roswell:include '("util-install" "system") "util-install-quicklisp")
 (roswell:quicklisp :environment nil)
-(ql:quickload '("uiop" "simple-date-time" "split-sequence" "plump" "cl-ppcre" #+win32 :zip) :silent t)
+(ql:quickload '("uiop" "simple-date-time" "split-sequence" "plump" "cl-ppcre" :cl-fad #+win32 :zip) :silent t)
 (in-package :roswell.install)
 
 (defvar *build-hook* nil)
@@ -47,8 +47,13 @@
 ;;end here from util/opts.c
 
 (defun installedp (argv)
-  ;; TBD support library like msys2,externals-clasp
-  (and (probe-file (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir))) t))
+  (let ((implpath  (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir))))
+    (format t "Checking for installed implementation in ~A " implpath)
+    (if (cl-fad:directory-exists-p implpath)
+        (directory (merge-pathnames implpath "*")) ;if the provided path is a directory then check that it's not empty
+        (probe-file implpath)))) ;else check if the file exists
+;; TBD support library like msys2,externals-clasp
+;(let implefiledir )(merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir)))
 
 (defvar *version-func* nil)
 
