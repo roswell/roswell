@@ -10,6 +10,6 @@
              (alist (ql-dist:available-versions (ql-dist:dist name)))
              (found (cdr (assoc version alist :test 'equal))))
         (if found
-            (ql-dist:install-dist found :replace t)
+            (ql-dist:install-dist found :replace t :prompt nil)
             (format t "~A not found.~%" version)))
-      (format t "usage: ros dist dist-name version~%")))
+      (format t "usage: ros dist use dist-name version~%")))
