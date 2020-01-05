@@ -53,17 +53,25 @@
           (uiop/run-program:run-program
            `(,(uiop:native-namestring (merge-pathnames "usr/bin/bash" msys))
              "-lc" " ")
-           :output t)
+           :output t
+           :error-output t)
+
+          (dotimes (i 3)
+            (uiop/run-program:run-program
+             `(,(uiop:native-namestring (merge-pathnames "usr/bin/bash" msys))
+               "-lc"
+               ,(format nil "~@{~A~}"
+                        "pacman --noconfirm "
+                        "-Suy autoconf automake pkg-config "
+                        "mingw-w64-" *msys2-arch* "-gcc "
+                        "make zlib-devel"))
+             :output t
+             :error-output t))
+          
           (uiop/run-program:run-program
-           `(,(uiop:native-namestring (merge-pathnames "usr/bin/bash" msys))
-             "-lc"
-             ,(format nil "~@{~A~}"
-                      "for i in {1..3}; do pacman --noconfirm "
-                      "-Suy autoconf automake pkg-config "
-                      "mingw-w64-" *msys2-arch* "-gcc "
-                      "make zlib-devel && break || sleep 15; done")))
-          (uiop/run-program:run-program
-           `(,(uiop:native-namestring (merge-pathnames "autorebase.bat" msys))))
+           `(,(uiop:native-namestring (merge-pathnames "autorebase.bat" msys)))
+           :output t
+           :error-output t)
           (setf (config "msys2.version") (getf argv :version)))))
   (cons t argv))
 
