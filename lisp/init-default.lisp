@@ -28,8 +28,7 @@
                             "(progn ;;init forms"
                             "  (ros:ensure-asdf)"
                             (let ((lib (getf params :|lib|)))
-                              (format nil "  ~A#+quicklisp(ql:quickload '(~A) :silent t)"
-                                      (if lib "" ";;")
+                              (format nil "  #+quicklisp(ql:quickload '(~A) :silent t)"
                                       (or lib "")))
                             "  )"
                             ""
