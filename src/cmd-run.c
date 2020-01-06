@@ -1,5 +1,6 @@
 #include "opt.h"
 #include "cmd-run.h"
+#include "cmd-install.h"
 DEF_SUBCMD(cmd_script_frontend);
 
 struct run_impl_t impls_to_run[]={
@@ -47,12 +48,14 @@ int setup(char* target,char* env,char* impl) {
   lock_apply("setup",0);
   cond_printf(1,"verbose-option:'%s'\n",v);
   char* version=get_opt(DEFAULT_IMPL".version",0);
+  char* path=s_cat(configdir(),q("config"),NULL);
   if(!version) {
-    char* path=s_cat(configdir(),q("config"),NULL);
     SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
-    global_opt=load_opts(path),s(path);
-    version=get_opt(DEFAULT_IMPL".version",0);
+  }else if(strcmp(version,"system")==0) {
+    set_defaultlisp(DEFAULT_IMPL,"system");
   }
+  global_opt=load_opts(path),s(path);
+  version=get_opt(DEFAULT_IMPL".version",0);
   if(strcmp(env,"-")!=0) {
     char *cmd =cat(argv_orig[0]," init env ",env,NULL);
     System(cmd);
