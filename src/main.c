@@ -7,7 +7,7 @@ struct opts* local_opt=NULL;
 
 struct proc_opt top;
 
-#ifndef ROSWELL_HTML_TEST
+#ifndef ROSWELL_TSV_TEST
 int main(int argc,char **argv) {
   int i;
   char* path=s_cat(configdir(),q("config"),NULL);

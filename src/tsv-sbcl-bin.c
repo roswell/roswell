@@ -50,7 +50,7 @@ char* sbcl_bin(char* file,int nth) {
   return str;
 }
 
-#ifdef ROSWELL_HTML_TEST
+#ifdef ROSWELL_TSV_TEST
 char* lispdir(void) {
   return NULL;
 }
