@@ -3,7 +3,7 @@ ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_w
 	manual.c manual_windows.c
 
 check_PROGRAMS = tsv_sbcl
-tsv_sbcl_SOURCES =  tsv.c tsv-sbcl-bin.c main.c opt.c $(ros_utils)
+tsv_sbcl_SOURCES =  tsv-sbcl-bin.c main.c opt.c $(ros_utils)
 tsv_sbcl_CFLAGS = "-D ROSWELL_TSV_TEST"
 
 gend.h: FORCE
@@ -23,7 +23,7 @@ cmd-internal.o: gend.h
 
 bin_PROGRAMS = ros
 ros_SOURCES = main.c opt.c download.c download_windows.c archive.c archive_windows.c \
-	register-commands.c tsv.c tsv-sbcl-bin.c \
+	register-commands.c tsv-sbcl-bin.c \
 	$(ros_utils) \
 	cmd-internal.c cmd-script.c \
 	cmd-run.c cmd-run-sbcl.c cmd-run-ccl.c cmd-run-clasp.c cmd-run-clisp.c cmd-run-ecl.c \

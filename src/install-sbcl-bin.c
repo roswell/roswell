@@ -34,26 +34,22 @@ void sbcl_bin_check_file(char* file) {
 
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
-  char* platforms_html=cat(home,"tmp",SLASH,"sbcl-bin.html",NULL);
+  char* platforms_tsv=cat(home,"tmp",SLASH,"sbcl-bin_uri.tsv",NULL);
   char* uri=get_opt("uri",0);
   cond_printf(1,"sbcl_version_bin\n");
-  ensure_directories_exist(platforms_html);
+  ensure_directories_exist(platforms_tsv);
   param->version_not_specified=param->version||uri?0:1;
   if(param->version_not_specified) {
     int ret;
-    printf("No SBCL version specified. Downloading platform-table.html to see the available versions...\n");
+    printf("No SBCL version specified. Downloading sbcl-bin_uri.tsv to see the available versions...\n");
     char* uri=get_opt("sbcl-bin-version-uri",0);
-    ret=download_simple(uri?uri:PLATFORM_HTML_URI,platforms_html,0);
-    if(ret!=0) {
-      printf("Something wrong! Check the connection or sbcl.org is down. Download failed (Code=%d), tring the backup URL.\n",ret);
-      ret=download_simple(PLATFORM_HTML_BACKUP_URI,platforms_html,0);
-    }
+    ret=download_simple(uri?uri:PLATFORM_TSV_URI,platforms_tsv,0);
     if(ret!=0) {
       printf("Download failed (Code=%d)\n",ret);
       return 0;
     }
-    sbcl_bin_check_file(platforms_html);
-    param->version=sbcl_bin(platforms_html,param->version_not_specified++);
+    sbcl_bin_check_file(platforms_tsv);
+    param->version=sbcl_bin(platforms_tsv,param->version_not_specified++);
   }else {
     if(param->version)
       param->version=q(param->version);
@@ -74,7 +70,7 @@ int sbcl_version_bin(struct install_options* param) {
   printf("Installing sbcl-bin/%s...\n",param->version);
   param->arch_in_archive_name=1;
 
-  s(platforms_html),s(home);
+  s(platforms_tsv),s(home);
   return 1;
 }
 

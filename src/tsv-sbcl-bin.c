@@ -1,53 +1,55 @@
 #include "opt.h"
-LVal atag_list(char* filename);
 
-LVal filter_sbcl_uri(LVal v) {
-  char* str=subseq(firsts(v),-3,0);
-  if(strcmp(str,"bz2")==0 ||
-     strcmp(str,"msi")==0) {
-    char* u=uname_s();
-    char* m=uname_m();
-    char *third,*fourth;
-    char *m2;
-    int i;
-    char* tmp=file_namestring(q(firsts(v)));
-    LVal ret= split_string(tmp,"-");
-    s(tmp);
-    third=firsts(nthcdr(2,ret));
-    fourth=firsts(nthcdr(3,ret));
-    if(strcmp(third,"x86")==0 &&
-       strcmp(fourth,"64")==0) {
-      m2=q("x86-64");
-      i=4;
-    }else {
-      m2=q(third);
-      i=3;
-    }
-    i=(strcmp(m2,m)==0 && strncmp(firsts(nthcdr(i,ret)),u,strlen(u))==0);
-
-    s(m2),s(str),s(m),s(u),sL(ret);
-    return i?toNumber(1):0;
-  }
-  s(str);
-  return 0;
+LVal read_tsvline(FILE* fp) {
+  char buf[2000];
+  if(fgets(buf,2000,fp)==NULL)
+    return 0;
+  return split_string(buf,"\t\n");
 }
 
-char* sbcl_bin(char* file,int nth) {
-  char* str;
-  LVal ret3,ret2,ret;
-  cond_printf(1,"uname=%s uname-m=%s\n",uname_s(),uname_m());
-  ret=atag_list(file);
-  ret2=remove_if_not1(filter_sbcl_uri,ret);
-  if(ret2==(LVal)NULL) {
-    fprintf(stderr,"this architecture is not supported.stop\n");
-    exit(1);
+LVal tsv_eq(LVal v1,LVal v2) {
+  return strcmp((char*)v1,toString(v2))==0;
+}
+
+char* sbcl_bin(char* filename,int nth) {
+  FILE* fp;
+  char buf[2000];
+  int os=-1,arch=-1,version=-1,variant=-1,uri=-1;
+  char* uname=uname_s();
+  char* unamem=uname_m();
+  cond_printf(1,"uname=%s uname-m=%s\n",uname,unamem);
+  cond_printf(1,"open %s\n",filename);
+  if((fp=fp=fopen(filename,"r"))==NULL)
+    return NULL;
+  LVal l=read_tsvline(fp);
+  int l_count=0;
+  os=position((LVal)"os",l,tsv_eq);
+  arch=position((LVal)"arch",l,tsv_eq);
+  version=position((LVal)"version",l,tsv_eq);
+  variant=position((LVal)"variant",l,tsv_eq);
+  uri=position((LVal)"uri",l,tsv_eq);
+  cond_printf(1,"header os=%d,arch=%d,version=%d,variant=%d,uri=%d\n",
+              os,arch,version,variant,uri);
+  sL(l);
+  while(l=read_tsvline(fp)) {
+    ++l_count;
+    cond_printf(1,"%d os:%s ",l_count,firsts(nthcdr(os,l)));
+    cond_printf(1,"arch:%s ",firsts(nthcdr(arch,l)));
+    cond_printf(1,"variant:%s ",firsts(nthcdr(variant,l)));
+    cond_printf(1,"version:%s\n",firsts(nthcdr(version,l)));
+    if(strcmp(unamem,firsts(nthcdr(arch,l)))==0 &&
+       strcmp(uname,firsts(nthcdr(os,l)))==0) {
+      if(--nth==0) {
+        char* ret=q(firsts(nthcdr(version,l)));
+        sL(l);
+        fclose(fp);
+        return ret;
+      }
+    }
+    sL(l);
   }
-  if(verbose&2)
-    print_list(ret2);
-  ret3= split_string(firsts(ret2),"-");
-  str=q(firsts(nthcdr(nth,ret3)));
-  sL(ret),sL(ret2),sL(ret3);
-  return str;
+  fclose(fp);
+  return NULL;
 }
 
 #ifdef ROSWELL_TSV_TEST

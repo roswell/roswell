@@ -89,6 +89,7 @@ LVal mapcar1(Function1 f,LVal v);
 
 LVal string_equal(LVal v1,LVal v2);
 LVal find(LVal v,LVal l,Compare2 c);
+int position(LVal v,LVal l,Compare2 c);
 
 int firsti(LVal l);
 char* firsts(LVal l);
