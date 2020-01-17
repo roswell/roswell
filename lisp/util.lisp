@@ -146,7 +146,8 @@ Example:
                    output nil))
 
 (defun expand (archive dest &key verbose)
-  "Interface to the roswell C binary"
+  "extract archive via roswell. gz/bz/7z should be supported."
+  (ensure-directories-exist dest)
   #+win32
   (progn
     (roswell:include "install+7zip")

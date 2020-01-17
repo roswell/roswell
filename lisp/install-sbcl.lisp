@@ -122,7 +122,7 @@
       (t
        (format t "~%Extracting archive:~A~%" (opt "download.archive"))
        (expand (opt "download.archive")
-               (merge-pathnames "src/" h))
+               (ensure-directories-exist (merge-pathnames "src/" h)))
        (ignore-errors
         (ql-impl-util:rename-directory
          (merge-pathnames (format nil "src/sbcl-sbcl-~A" v) h)
