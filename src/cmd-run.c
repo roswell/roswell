@@ -83,7 +83,7 @@ char* determin_impl(char* impl) {
       impl=get_opt("default.lisp",1);
     if(impl) {
       char* opt=s_cat(q(impl),q("."),q("version"),NULL);
-      version=q(get_opt)(opt,1);
+      version=q(get_opt(opt,1));
       s(opt);
     }
     if(!impl)
