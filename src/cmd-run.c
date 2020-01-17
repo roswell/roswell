@@ -78,7 +78,7 @@ char* determin_impl(char* impl) {
       impl=get_opt("default.lisp",1);
     if(impl) {
       char* opt=s_cat(q(impl),q("."),q("version"),NULL);
-      version=get_opt(opt,1);
+      version=q(get_opt)(opt,1);
       s(opt);
     }
     if(!impl)
@@ -96,7 +96,7 @@ char* determin_impl(char* impl) {
     s(impl);
     impl=q(DEFAULT_IMPL);
     setup(PACKAGE,"-",impl);
-    version=get_opt(DEFAULT_IMPL".version",0);
+    version=q(get_opt(DEFAULT_IMPL".version",0));
   }
   return s_cat(impl,q("/"),version,NULL);
 }
