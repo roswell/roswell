@@ -50,7 +50,12 @@ int setup(char* target,char* env,char* impl) {
   char* version=get_opt(DEFAULT_IMPL".version",0);
   char* path=s_cat(configdir(),q("config"),NULL);
   if(!version) {
-    SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
+    char* sbcl_bin=which("sbcl");
+    if(strcmp(sbcl_bin,"")!=0) {
+      set_defaultlisp(DEFAULT_IMPL,"system");
+    }else {
+      SETUP_SYSTEM(cat(argv_orig[0]," ",v,"install "DEFAULT_IMPL,NULL),"Installing "DEFAULT_IMPL"...\n");
+    }
   }else if(strcmp(version,"system")==0) {
     set_defaultlisp(DEFAULT_IMPL,"system");
   }
