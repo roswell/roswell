@@ -11,6 +11,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 (in-package :ros.script.which.3708003709)
 
 (defun main (&rest argv)
+  (roswell.util:local-project-build-hash :rebuild t)
   (dolist (name argv)
     (let ((system (asdf:find-system name nil)))
       (if system
