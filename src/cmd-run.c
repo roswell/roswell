@@ -78,14 +78,14 @@ char* determin_impl(char* impl) {
       impl=get_opt("default.lisp",1);
     if(impl) {
       char* opt=s_cat(q(impl),q("."),q("version"),NULL);
-      version=q(get_opt(opt,1));
+      version=get_opt(opt,1);
+      if(version)
+        version=q(version);
       s(opt);
     }
     if(!impl)
       impl=DEFAULT_IMPL;
     impl=q(impl);
-    if(version)
-      version=q(version);
   }
   if(!version&&strcmp(impl,DEFAULT_IMPL)!=0) {
     cond_printf(1,"once!%s,%s\n",impl,version);

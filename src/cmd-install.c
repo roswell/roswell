@@ -26,6 +26,8 @@ int start(struct install_options* param) {
   s(localprojects);
   if(installed_p(param)) {
     printf("%s/%s is already installed.\n",param->impl,param->version?param->version:"");
+    if(param->version)
+      set_defaultlisp(param->impl,param->version);
     exit(EXIT_SUCCESS);
   }
   p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",SLASH,NULL);
