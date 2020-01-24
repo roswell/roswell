@@ -3,7 +3,7 @@ sudo: false
 dist: xenial
 env:
   global:
-    - PATH=~/.roswell/bin:~/.linuxbrew/bin:$PATH
+    - PATH=~/.roswell/bin:/home/linuxbrew/.linuxbrew/bin:$PATH
     - ROSWELL_BRANCH=$TRAVIS_BRANCH
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
