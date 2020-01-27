@@ -59,6 +59,15 @@ LVal find(LVal v,LVal l,Compare2 c) {
   return 0;
 }
 
+int position(LVal v,LVal l,Compare2 c) {
+  int pos = 0;
+  for(;l;l=Next(l),++pos) {
+    if(c(v,first(l)))
+      return pos;
+  }
+  return -1;
+}
+
 int firsti(LVal v) {
   struct Cons* l=(struct Cons*)v;
   return (l->val>>2);

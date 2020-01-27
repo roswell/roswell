@@ -93,15 +93,10 @@ AC_ARG_WITH([sbcl_bin_base],
   [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="https://github.com/roswell/sbcl_bin/releases/download/"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_URI],["${SBCL_BIN_URI}"],[uri for sbcl master])
 
-AC_ARG_WITH([platformhtml_base],
-  [AC_HELP_STRING([--with-platformhtml-base=URI],[set URI for platform.html [default=https://github.com/roswell/sbcl_bin/releases/download/files/build.html]])],
-  [PLATFORM_HTML_URI=$withval],[PLATFORM_HTML_URI=https://github.com/roswell/sbcl_bin/releases/download/files/build.html])
-AC_DEFINE_UNQUOTED([PLATFORM_HTML_URI],["${PLATFORM_HTML_URI}"],[uri for platform.html])
-
-AC_ARG_WITH([platformhtml_backup_base],
-  [AC_HELP_STRING([--with-platformhtml-backup-base=URI],[set backup URI for platform.html [default=http://www.sbcl.org/]])],
-  [PLATFORM_HTML_BACKUP_URI=$withval],[PLATFORM_HTML_BACKUP_URI="http://www.sbcl.org/platform-table.html"])
-AC_DEFINE_UNQUOTED([PLATFORM_HTML_BACKUP_URI],["${PLATFORM_HTML_BACKUP_URI}"],[backup uri for platform.html])
+AC_ARG_WITH([platformtsvl_base],
+  [AC_HELP_STRING([--with-platformtsv-base=URI],[set URI for sbcl-bin_uri.tsv [default=https://github.com/roswell/sbcl_bin/releases/download/files/sbcl-bin_uri.tsv]])],
+  [PLATFORM_TSV_URI=$withval],[PLATFORM_TSV_URI=https://github.com/roswell/sbcl_bin/releases/download/files/sbcl-bin_uri.tsv])
+AC_DEFINE_UNQUOTED([PLATFORM_TSV_URI],["${PLATFORM_TSV_URI}"],[uri for sbcl-bin_uri.tsv])
 
 # man file (ros.1) generation switch
 AC_ARG_ENABLE([manual_generation],
