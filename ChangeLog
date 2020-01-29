@@ -1,8 +1,12 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (20.01.14.104-1) unstable; urgency=low
 
-  *
+  * New: 'ros variant=glibc2.10 install sbcl-bin' supported for old system like centos 6.
+  * New: 'ros sbcl-bin.version=system setup' to setup using system installed sbcl.
+  * Change: read tsv table to get current version of sbcl-bin instead of parsing html.
+  * Change: generatedd template by 'ros init' might include "(ql:quickload '())" supported from quicklisp client  2020-01-04.
+  * Fix: Memory leak related to fail on setup.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Wed, 29 Jan 2020 14:45:24 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 29 Jan 2020 14:46:37 +0800
 
 roswell (19.12.13.103-1) unstable; urgency=low
 
