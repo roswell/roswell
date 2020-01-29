@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 29 Jan 2020 14:45:24 +0800
+
 roswell (19.12.13.103-1) unstable; urgency=low
 
   * New: invoke last system entry point if nothing provided. (try 'ros -s http.server' after ros install snmsts/http.server)
