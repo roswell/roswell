@@ -111,11 +111,21 @@ if which sudo >/dev/null; then
 fi
 
 install_roswell_bin () {
-    if uname -s | grep -E "MSYS_NT|MINGW" >/dev/null; then
+    if uname -s | grep -E "MSYS_NT|MINGW64" >/dev/null; then
         if [ $ROSWELL_BRANCH = release ]; then
             fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_amd64.zip" /tmp/roswell.zip
         else
             fetch "https://ci.appveyor.com/api/projects/snmsts/roswell-en89n/artifacts/Roswell-x86_64.zip?branch=master&job=Environment%3A%20MSYS2_ARCH%3Dx86_64,%20MSYS2_BITS%3D64,%20MSYSTEM%3DMINGW64,%20METHOD%3Dcross" /tmp/roswell.zip
+        fi
+        unzip /tmp/roswell.zip -d /tmp/ >/dev/null
+        mkdir -p $ROSWELL_INSTALL_DIR/bin
+        cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
+        cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
+    elif uname -s | grep -E "MINGW32" >/dev/null; then
+        if [ $ROSWELL_BRANCH = release ]; then
+            fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_i686.zip" /tmp/roswell.zip
+        else
+            fetch "https://ci.appveyor.com/api/projects/snmsts/roswell-en89n/artifacts/Roswell-i686.zip?branch=master&job=Environment%3A%20MSYS2_ARCH%3Di686,%20MSYS2_BITS%3D32,%20MSYSTEM%3DMINGW32,%20METHOD%3Dcross" /tmp/roswell.zip
         fi
         unzip /tmp/roswell.zip -d /tmp/ >/dev/null
         mkdir -p $ROSWELL_INSTALL_DIR/bin
