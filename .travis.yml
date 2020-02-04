@@ -8,28 +8,26 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
   matrix:
-    - METHOD=ci LISP=alisp
-    - METHOD=ci LISP=cmu-bin/2019-06
-    - METHOD=ci LISP=sbcl
-    - METHOD=ci LISP=ecl
-    - METHOD=ci LISP=mkcl
-    - METHOD=ci LISP=clisp
-    - METHOD=ci LISP=abcl
-    - METHOD=ci LISP=ccl-bin
-    - METHOD=brew
-    - METHOD=ci LISP=sbcl/1.1.14
-    - METHOD=ci LISP=ccl32
-    - METHOD=ci LISP=sbcl/git
-
+    - LISP=alisp
+    - LISP=cmu-bin/2019-06
+    - LISP=sbcl
+    - LISP=ecl
+    - LISP=mkcl
+    - LISP=clisp
+    - LISP=abcl
+    - LISP=ccl-bin
+    - LISP=sbcl/1.1.14
+    - LISP=ccl32
+    - LISP=sbcl/git
 os:
   - osx
   - linux
 
 jobs:
   allow_failures:
-    - env: METHOD=ci LISP=sbcl/git
-    - env: METHOD=ci LISP=mkcl
-    - env: METHOD=ci LISP=abcl
+    - env: LISP=sbcl/git
+    - env: LISP=mkcl
+    - env: LISP=abcl
   include:
       - sudo: required
         name: "valgrind"
@@ -51,7 +49,7 @@ jobs:
       - os: linux
         name: "update documents"
         if: branch = master
-        before_install:
+        install:
           - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
           - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
           - pandoc -v
@@ -76,14 +74,39 @@ jobs:
               - pandoc
               - ruby-sass
       - os: windows
-        env: METHOD=ci LISP=sbcl-bin
+        env: LISP=sbcl-bin
       - os: linux
         arch: arm64
-        env: METHOD=ci LISP=sbcl-bin
+        env: LISP=sbcl-bin
         addons:
           apt:
             packages:
               - libcurl4-openssl-dev
+      - os: linux
+        name: "linuxbrew"
+        install:
+          - yes ""| sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
+          - brew update
+          - brew --env
+          - brew config
+          - brew doctor || true
+          - brew install curl
+          - brew install roswell --HEAD
+        script:
+          - ros version;
+          - ros version=t run;
+          - ros install prove;
+          - run-prove roswell-test.asd 2>&1;
+      - os: osx
+        name: "homebrew"
+        install:
+          - brew doctor || true
+          - brew install roswell --HEAD
+        script:
+          - ros version;
+          - ros version=t run;
+          - ros install prove;
+          - run-prove roswell-test.asd 2>&1;
 
 #branches:
 #  except:
@@ -95,28 +118,38 @@ addons:
       - libc6-i386
 #      - gcc-multilib
 
-
 before_install:
   - date
-  - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then
-       yes ""| sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"; fi
-  - if [ $METHOD = brew ] || [ $TRAVIS_OS_NAME = osx ]; then brew update;brew --env;brew config; fi
-  - if [ $METHOD = brew ]; then brew doctor || true; fi
-
+  - |-
+    case $TRAVIS_OS_NAME in
+      windows)
+        [[ ! -f C:/tools/msys64/msys2_shell.cmd ]] && rm -rf C:/tools/msys64
+        choco uninstall -y mingw
+        choco upgrade --no-progress -y msys2
+        RefreshEnv.cmd
+        export msys2='set MSYS=winsymlinks:nativestrict '
+        export msys2+='& C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start'
+        export mingw64="$msys2 -mingw64 -full-path -here -c "\"\$@"\" --"
+        export msys2+=" -msys2 -c "\"\$@"\" --"
+        $msys2 pacman --sync --noconfirm --needed autoconf automake make zlib-devel mingw-w64-x86_64-gcc mingw-w64-i686-gcc
+        taskkill //IM gpg-agent.exe //F  # https://travis-ci.community/t/4967
+        export PATH=/C/tools/msys64/mingw64/bin:$PATH
+        export MAKE=mingw32-make  # so that Autotools can find it
+        ;;
+      osx)
+        brew update
+        brew --env
+        brew config
+        ;;
+    esac
 install:
-  - if [ $METHOD = brew ] && [ $TRAVIS_OS_NAME = linux ]; then brew install curl; fi
-  - if [ $METHOD = brew ]; then brew install roswell --HEAD; fi
-  - if [ "$METHOD" = "ci" ]; then sh ./scripts/install-for-ci.sh; fi
+  - sh ./scripts/install-for-ci.sh
 script:
-  - if [ "$METHOD" = "brew" ] || [ "$METHOD" = "ci" ]; then
-       ros version;
-       ros version=t run;
-       ros install prove;
-       run-prove roswell-test.asd 2>&1;
-    fi
-  - if [ "$METHOD" = "ci" ]; then
-       ros -q run && [`ros -q run 2>&1` == ""];
-    fi
+  - ros version
+  - ros version=t run
+  - ros install prove
+  - run-prove roswell-test.asd 2>&1
+  - ros -q run && [`ros -q run 2>&1` == ""]
   - if [ "$LISP" = "sbcl-bin" ] && [ x$ALLOW_FAILURES != x ]; then
        if [ $TRAVIS_OS_NAME = osx ]; then
           sudo ros -e '(ignore-errors (with-open-file (o (format nil "/~A" (code-char 12354)) :direction :output)))';
@@ -130,3 +163,11 @@ script:
        make -C t/tree-shaker ;
     fi
   - ros config
+before_cache:
+- |-
+    case $TRAVIS_OS_NAME in
+      windows)
+        # https://unix.stackexchange.com/a/137322/107554
+        $msys2 pacman --sync --clean --noconfirm
+        ;;
+    esac
