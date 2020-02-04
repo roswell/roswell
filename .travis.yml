@@ -29,6 +29,15 @@ jobs:
     - env: LISP=mkcl
     - env: LISP=abcl
   include:
+      - os: windows
+        env: LISP=sbcl-bin
+      - os: linux
+        arch: arm64
+        env: LISP=sbcl-bin
+        addons:
+          apt:
+            packages:
+              - libcurl4-openssl-dev
       - sudo: required
         name: "valgrind"
         os: linux
@@ -73,15 +82,6 @@ jobs:
             packages:
               - pandoc
               - ruby-sass
-      - os: windows
-        env: LISP=sbcl-bin
-      - os: linux
-        arch: arm64
-        env: LISP=sbcl-bin
-        addons:
-          apt:
-            packages:
-              - libcurl4-openssl-dev
       - os: linux
         name: "linuxbrew"
         install:
