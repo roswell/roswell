@@ -31,6 +31,10 @@ jobs:
   include:
       - os: windows
         env: LISP=sbcl-bin
+        install:
+          - echo $mingw64
+          - export SETARCH=$mingw64
+          - $SETARCH sh ./scripts/install-for-ci.sh
       - os: linux
         arch: arm64
         env: LISP=sbcl-bin
@@ -143,13 +147,13 @@ before_install:
         ;;
     esac
 install:
-  - sh ./scripts/install-for-ci.sh
+  - $SETARCH sh ./scripts/install-for-ci.sh
 script:
-  - ros version
-  - ros version=t run
-  - ros install prove
-  - run-prove roswell-test.asd 2>&1
-  - ros -q run && [`ros -q run 2>&1` == ""]
+  - $SETARCH ros version
+  - $SETARCH ros version=t run
+  - $SETARCH ros install prove
+  - $SETARCH run-prove roswell-test.asd 2>&1
+  - $SETARCH ros -q run && [`ros -q run 2>&1` == ""]
   - if [ "$LISP" = "sbcl-bin" ] && [ x$ALLOW_FAILURES != x ]; then
        if [ $TRAVIS_OS_NAME = osx ]; then
           sudo ros -e '(ignore-errors (with-open-file (o (format nil "/~A" (code-char 12354)) :direction :output)))';
@@ -162,7 +166,7 @@ script:
        fi;
        make -C t/tree-shaker ;
     fi
-  - ros config
+  - $SETARCH ros config
 before_cache:
 - |-
     case $TRAVIS_OS_NAME in
