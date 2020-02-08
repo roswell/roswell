@@ -32,8 +32,7 @@ jobs:
       - os: windows
         env: LISP=sbcl-bin
         install:
-          - echo $mingw64
-          - export SETARCH=$mingw64
+          - export SETARCH="set MSYS=winsymlinks:nativestrict & C:\\tools\\msys64\\msys2_shell.cmd -defterm -no-start -mingw64 -full-path -here -c  "\"\$@"\" --"
           - $SETARCH sh ./scripts/install-for-ci.sh
       - os: linux
         arch: arm64
