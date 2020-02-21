@@ -1,11 +1,10 @@
 #include "util.h"
+#include "gend.h"
 
 #ifndef HAVE_WINDOWS_H
 
 char* uname_s(void) {
-  char *p,*p2;
-  p2=remove_char("\r\n",p=system_("uname"));
-  s(p);
+  char *p2=q(UNAME_S);
   if(strcmp(p2,"SunOS")==0) {
     s(p2);
     return q("solaris");
@@ -14,10 +13,7 @@ char* uname_s(void) {
 }
 
 char* uname_m(void) {
-  char *p=system_("uname -m");
-  char *p2;
-  p2=remove_char("\r\n",p);
-  s(p);
+  char *p2=q(UNAME_M);
   if(strcmp(p2,"i86pc")==0) {
     s(p2);
     return q("x86-64");

@@ -9,6 +9,8 @@ tsv_sbcl_CFLAGS = "-D ROSWELL_TSV_TEST"
 gend.h: FORCE
 	printf '#define ROS_COMPILE_ENVIRONMENT "%s"\n' "`$(CC) --version|head -n 1`" > $@.tmp
 	printf '#define ROS_REVISION "@git_version@"\n' >> $@.tmp
+	printf '#define UNAME_M "@uname_m@"\n' >> $@.tmp
+	printf '#define UNAME_S "@uname_s@"\n' >> $@.tmp
 	printf '#define PATCH_PATH "@roslisppatchdir@"\n' >> $@.tmp
 if WITH_WINDOWS
 	printf '#define LISP_PATH "%s"\n' "`mkdir -p @roslispdir@;cd @roslispdir@; pwd -W 2>/dev/null`" >> $@.tmp
@@ -20,6 +22,7 @@ endif
 	rm -f $@.tmp
 
 cmd-internal.o: gend.h
+util.o: gend.h
 
 bin_PROGRAMS = ros
 ros_SOURCES = main.c opt.c download.c download_windows.c archive.c archive_windows.c \

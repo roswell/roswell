@@ -77,6 +77,14 @@ AS_IF([test "x$GIT_CHECK" = xyes],
       [AC_SUBST([git_version_long], `set -e | git describe --abbrev=7 --dirty 2>/dev/null || echo 'NO-GIT-REVISION'`, [long version for git source])],
       [AC_SUBST([git_version_long], [NO-GIT-REVISION])])
 
+AC_CHECK_PROG(UNAME_CHECK,uname,yes)
+AS_IF([test "x$UNAME_CHECK" = xyes],
+      [AC_SUBST([uname_m], `set -e | uname -m`, [uname -m])],
+      [AC_MSG_ERROR([uname -m errored?])])
+
+AS_IF([test "x$UNAME_CHECK" = xyes],
+      [AC_SUBST([uname_s], `set -e | uname -s`, [uname -s])],
+      [AC_MSG_ERROR([uname -s errored?])])
 
 # Define rosdir and rospatchdir
 # TODO: Make these ./configure line options.
