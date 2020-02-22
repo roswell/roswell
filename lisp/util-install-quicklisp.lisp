@@ -216,6 +216,7 @@
 (system "install-mkcl")
 (system "install-sbcl-bin")
 (system "install-sbcl")
+(system "install-sbcl-source")
 (system "install+7zip"(:depends-on (:zip)))
 (system "install+ffcall")
 (system "install+msys2")
