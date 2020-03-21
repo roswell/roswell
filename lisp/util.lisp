@@ -242,9 +242,9 @@ ccl-bin      -> (\"ccl-bin\" nil)
         (if (funcall (intern (string :probe-file*) :uiop) dir)
             ()
             (funcall (intern (string :run-program) :uiop)
-                     (format nil "git clone ~A https://github.com/~A.git ~A"
+                     (format nil "git clone ~A https://github.com/~A/~A.git ~A"
                              branch
-                             alias
+                             owner name
                              (namestring (ensure-directories-exist dir))))))
       (let* ((path/ (merge-pathnames (format nil "~A/~A.tgz" path alias) home))
              (dir (merge-pathnames ".expand/" (make-pathname :defaults path/ :name nil :type nil)))
@@ -262,7 +262,7 @@ ccl-bin      -> (\"ccl-bin\" nil)
              (return-from clone-github t))))
         (funcall dtree dir :if-does-not-exist :ignore :validate t)
         (setq branch (or branch "master"))
-        (download (format nil "https://github.com/~A/archive/~A.tar.gz" alias branch) path/)
+        (download (format nil "https://github.com/~A/~A/archive/~A.tar.gz" owner name branch) path/)
         (expand path/ (ensure-directories-exist dir))
         (when clean-dest
           (funcall dtree dest :validate t))
