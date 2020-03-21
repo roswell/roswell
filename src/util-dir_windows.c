@@ -41,6 +41,7 @@ int directory_exist_p (char* path) {
 
 
 int change_directory(const char* path) {
+  cond_printf(1,"change_directory:%s\n",path);
   return _chdir(path);
 }
 
