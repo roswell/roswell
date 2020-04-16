@@ -1,8 +1,9 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (20.04.14.105-1) unstable; urgency=low
 
-  *
+  * Change: fix uname result at compiletime.
+  * New: prepare 'ros install sbcl-source' for install source.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Thu, 16 Apr 2020 14:22:51 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 16 Apr 2020 14:27:15 +0800
 
 roswell (20.01.14.104-1) unstable; urgency=low
 
