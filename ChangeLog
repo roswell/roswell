@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 16 Apr 2020 14:22:51 +0800
+
 roswell (20.01.14.104-1) unstable; urgency=low
 
   * New: 'ros variant=glibc2.10 install sbcl-bin' supported for old system like centos 6.
