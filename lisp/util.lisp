@@ -237,12 +237,14 @@ ccl-bin      -> (\"ccl-bin\" nil)
   (if (or force-git
           (and git
                (which "git")))
-      (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home)))
+      (let ((dir (merge-pathnames (format nil "~A/~A/" path alias) home))
+            (recursive (opt "follow-dependency")))
         (setq branch (if branch (format nil "-b ~A" branch) ""))
         (if (funcall (intern (string :probe-file*) :uiop) dir)
             ()
             (funcall (intern (string :run-program) :uiop)
-                     (format nil "git clone ~A https://github.com/~A/~A.git ~A"
+                     (format nil "git clone ~A ~A https://github.com/~A/~A.git ~A"
+                             (if recursive "--recursive" "")
                              branch
                              owner name
                              (namestring (ensure-directories-exist dir))))))
