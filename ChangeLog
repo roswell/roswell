@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 21 May 2020 16:51:54 +0800
+
 roswell (20.04.14.105-1) unstable; urgency=low
 
   * Change: fix uname result at compiletime.
