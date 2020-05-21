@@ -1,8 +1,8 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (20.05.14.106-1) unstable; urgency=low
 
-  *
+  * New: 'ros follow-dependency=t install foo/bar' to recursive install submodules. (Requested by Bo Yao and cxxxr)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Thu, 21 May 2020 16:51:54 +0800
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 21 May 2020 17:01:53 +0800
 
 roswell (20.04.14.105-1) unstable; urgency=low
 
