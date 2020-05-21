@@ -31,6 +31,7 @@ LISPS = helper.el \
 	config.ros \
 	compile-file.ros \
 	util-config.lisp \
+	ecl-config.ros \
 	emacs.ros \
 	exec.ros \
 	dist.ros \
