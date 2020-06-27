@@ -15,10 +15,10 @@ jobs:
         arch: [x86_64, i686]
         include:
         - arch: x86_64
-          arch2: x86_64
+          arch2: amd64
           bit: 64
         - arch: i686
-          arch2: x86
+          arch2: i686
           bit: 32
     env:
       MSYSTEM: MINGW${{ matrix.bit }}
@@ -27,9 +27,8 @@ jobs:
       MSYS2_TARBALL_URL1: https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.tar.xz
       MSYS2_TARBALL_URL2: http://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20190524.tar.xz
       MSYS2_TARBALL_URL3: https://sourceforge.net/projects/msys2/files/Base/x86_64/msys2-base-x86_64-20190524.tar.xz
-      RESULT_NAME: result-windows-${{ matrix.arch }}
-      RESULT_PATH: result-windows-${{ matrix.arch }}
-      RESULT_PATH_SUB: result-async/static
+      RESULT_NAME: windows-${{ matrix.arch2 }}
+      RESULT_PATH: windows-${{ matrix.arch2 }}
     steps:
     - run: git config --global core.autocrlf false
     - uses: actions/checkout@v2
@@ -94,6 +93,9 @@ jobs:
         bash -lc @'
           cd $GITHUB_WORKSPACE
           cp *.zip $RESULT_PATH
+          cd $RESULT_PATH
+          unzip *.zip
+          rm *.zip
         '@
     - name: Upload Result
       if: always()
