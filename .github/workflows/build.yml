@@ -92,6 +92,7 @@ jobs:
       run: |
         bash -lc @'
           cd $GITHUB_WORKSPACE
+          mkdir -p $RESULT_PATH
           cp *.zip $RESULT_PATH
           cd $RESULT_PATH
           unzip *.zip
