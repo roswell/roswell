@@ -93,9 +93,9 @@ jobs:
       run: |
         bash -lc @'
           cd $GITHUB_WORKSPACE
-          mkdir -p $RESULT_PATH/$RESULT_PATH_SUB/
-          cp *.zip $RESULT_PATH/$RESULT_PATH_SUB/tmp.zip
-          cd $RESULT_PATH/$RESULT_PATH_SUB
+          mkdir -p $RESULT_PATH
+          cp *.zip $RESULT_PATH/tmp.zip
+          cd $RESULT_PATH
           7z x tmp.zip
           rm tmp.zip
         '@
