@@ -29,6 +29,7 @@ jobs:
       MSYS2_TARBALL_URL3: https://sourceforge.net/projects/msys2/files/Base/x86_64/msys2-base-x86_64-20190524.tar.xz
       RESULT_NAME: windows-${{ matrix.arch2 }}
       RESULT_PATH: windows-${{ matrix.arch2 }}
+      RESULT_PATH_SUB: roswell
     steps:
     - run: git config --global core.autocrlf false
     - uses: actions/checkout@v2
@@ -92,11 +93,11 @@ jobs:
       run: |
         bash -lc @'
           cd $GITHUB_WORKSPACE
-          mkdir -p $RESULT_PATH
-          cp *.zip $RESULT_PATH
-          cd $RESULT_PATH
-          unzip *.zip
-          rm *.zip
+          mkdir -p $RESULT_PATH/$RESULT_PATH_SUB/
+          cp *.zip $RESULT_PATH/$RESULT_PATH_SUB/tmp.zip
+          cd $RESULT_PATH/$RESULT_PATH_SUB
+          7z x tmp.zip
+          rm tmp.zip
         '@
     - name: Upload Result
       if: always()
