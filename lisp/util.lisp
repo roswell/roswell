@@ -76,7 +76,7 @@ Returns NIL when the package in the symbol prefix is not available."
                (read-call "local-project-build-hash" :rebuild t)
                (or
                 (and (or (read-call "ql-dist:find-system" imp)
-                         (read-call "ql:where-is-system" imp))
+                         #+nil(read-call "ql:where-is-system" imp))
                      (read-call "ql:quickload" imp :silent t))
                 (roswell:include (format nil "~A-~A" prefix name)))
                #1#)))))
