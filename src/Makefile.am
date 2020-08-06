@@ -2,6 +2,7 @@ ros_utils= util.c util_windows.c util-list.c util-string.c util-dir.c util-dir_w
 	util-file.c util-file_windows.c util-system.c util-system_windows.c util-cmdline.c proc-opt.c \
 	manual.c manual_windows.c
 
+ros_LDADD =
 check_PROGRAMS = tsv_sbcl
 tsv_sbcl_SOURCES =  tsv-sbcl-bin.c main.c opt.c $(ros_utils)
 tsv_sbcl_CFLAGS = "-D ROSWELL_TSV_TEST"
@@ -35,7 +36,7 @@ ros_SOURCES = main.c opt.c download.c download_windows.c archive.c archive_windo
 	cmd-install.c install-sbcl-bin.c install-sbcl-bin_windows.c
 
 if WITH_WIN_ICON
-#ros_LDADD += resources.o
+ros_LDADD += resources.o
 resources.o: resources.rc
 	@WINDRES@ $^ -o $@
 endif
