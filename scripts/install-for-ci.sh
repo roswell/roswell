@@ -11,6 +11,9 @@ ROSWELL_PLATFORMHTML_BASE=${ROSWELL_PLATFORMHTML_BASE:-https://github.com/roswel
 ROSWELL_SBCL_BIN_URI=${ROSWELL_SBCL_BIN_URI:-https://github.com/roswell/sbcl_bin/releases/download/}
 ROSWELL_QUICKLISP_DIST_URI=${ROSWELL_QUICKLISP_DIST_URI:-http://beta.quicklisp.org/dist/quicklisp.txt}
 
+USE_LISP=$LISP
+unset LISP
+
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
 
@@ -59,7 +62,9 @@ install_script () {
 }
 
 apt_installed_p () {
-    if [ `uname` = "Darwin" ]; then
+    if uname -s | grep -E "MSYS|MINGW" >/dev/null; then
+        true
+    elif [ `uname` = "Darwin" ]; then
         if brew info "$1" |grep installed;then
             false
         else
@@ -169,38 +174,38 @@ else
     echo "Detected Roswell."
 fi
 
-case "$LISP" in
+case "$USE_LISP" in
     alisp|allegro)
 	apt_unless_installed libc6-i386
-        LISP=allegro
+        USE_LISP=allegro
         ;;
     cmu|cmucl|cmu-bin)
         apt_unless_installed libc6-i386
-        LISP=cmu-bin
+        USE_LISP=cmu-bin
         ;;
     # 'ccl' is an alias for 'ccl-bin'
     ccl)
-        LISP=ccl-bin
+        USE_LISP=ccl-bin
         ;;
     ccl32)
-        LISP=ccl-bin
+        USE_LISP=ccl-bin
         apt_unless_installed libc6-i386
         ros config set ccl.bit 32
         ;;
     # 'sbcl-bin' is the default
     "")
-        LISP=sbcl-bin
+        USE_LISP=sbcl-bin
         ;;
 esac
 
-echo "Installing $LISP..."
-case "$LISP" in
+echo "Installing $USE_LISP..."
+case "$USE_LISP" in
     clisp)
         if [ `uname` = "Darwin" ]; then
             apt_unless_installed clisp;
             ros use clisp/system;
         else
-            ros install $LISP;
+            ros install $USE_LISP;
         fi
         ros install asdf;
         ;;
@@ -211,11 +216,11 @@ case "$LISP" in
         install_ecl
         ;;
     sbcl-bin)
-        ros use $LISP
+        ros use $USE_LISP
         ;;
     *)
-        ros install $LISP;
-        ros use $LISP
+        ros install $USE_LISP;
+        ros use $USE_LISP
         ;;
 esac
 
