@@ -177,10 +177,12 @@ fi
 case "$USE_LISP" in
     alisp|allegro)
 	apt_unless_installed libc6-i386
+        apt_unless_installed gcc-multilib
         USE_LISP=allegro
         ;;
     cmu|cmucl|cmu-bin)
         apt_unless_installed libc6-i386
+        apt_unless_installed gcc-multilib
         USE_LISP=cmu-bin
         ;;
     # 'ccl' is an alias for 'ccl-bin'
@@ -190,6 +192,7 @@ case "$USE_LISP" in
     ccl32)
         USE_LISP=ccl-bin
         apt_unless_installed libc6-i386
+        apt_unless_installed gcc-multilib
         ros config set ccl.bit 32
         ;;
     # 'sbcl-bin' is the default
