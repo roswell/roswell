@@ -8,13 +8,13 @@ ros-config - get and set options
 
 Without any arguments, it shows all variables and it's value.
 
-show VAR
- 
-  : set the VALUE to the TARGET.
+show TARGET
+
+  : show TARGET.
 
 
-set VAR VALUE
- 
+set TARGET VALUE
+
   : set the VALUE to the TARGET.
 
 <!-- # options -->
