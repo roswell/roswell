@@ -6,12 +6,20 @@ exec ros -Q -- $0 "$@"
 (progn ;;init forms
   (ros:ensure-asdf)
   #+quicklisp(ql:quickload '() :silent t)
+  (roswell:include '("util-main" "system"))
   )
 
 (defpackage :ros.script.serve.3806416041
-  (:use :cl))
+  (:use :cl :roswell.util  :roswell.util.main))
 (in-package :ros.script.serve.3806416041)
 
+(defmacro preload-serve-subsystems ()
+  `(progn ,@(loop for s in (directory (merge-pathnames "serve-*.lisp" (ros:opt "lispdir")))
+               collect `(system ,(pathname-name s)))))
+(preload-serve-subsystems)
+
 (defun main (&rest argv)
-  (declare (ignorable argv)))
+  (module-main argv
+               :default "default"
+               :usage "default"))
 ;;; vim: set ft=lisp lisp:

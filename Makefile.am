@@ -74,6 +74,8 @@ LISPS = helper.el \
 	install+externals-clasp.lisp install+ffcall.lisp \
 	install+msys2.lisp install+sigsegv.lisp install-asdf.lisp \
 	\
+	serve.ros \
+	serve-default.lisp serve-swank.lisp \
 	update.ros \
 	update-git.lisp update-hg.lisp update-quicklisp.lisp update-default.lisp \
 	\
