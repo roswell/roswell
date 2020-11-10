@@ -19,7 +19,7 @@ char* sbcl_bin(char* filename,int nth) {
   char* unamem=uname_m();
   cond_printf(1,"uname=%s uname-m=%s\n",uname,unamem);
   cond_printf(1,"open %s\n",filename);
-  if((fp=fp=fopen(filename,"r"))==NULL)
+  if((fp=fopen(filename,"r"))==NULL)
     return NULL;
   LVal l=read_tsvline(fp);
   int l_count=0;
@@ -31,7 +31,7 @@ char* sbcl_bin(char* filename,int nth) {
   cond_printf(1,"header os=%d,arch=%d,version=%d,variant=%d,uri=%d\n",
               os,arch,version,variant,uri);
   sL(l);
-  while(l=read_tsvline(fp)) {
+  while((l=read_tsvline(fp))) {
     ++l_count;
     cond_printf(1,"%d os:%s ",l_count,firsts(nthcdr(os,l)));
     cond_printf(1,"arch:%s ",firsts(nthcdr(arch,l)));
