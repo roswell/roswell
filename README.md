@@ -91,6 +91,8 @@ To use an implementation that was not installed by roswell, use i.e. `ros use sb
 
 The list of supported implementations continues to grow!
 
+By default roswell downloads the default stable lisp implementation (sbcl-bin). To use system implementation from the start run `ros lisp=sbcl-bin/system setup` before anything else.
+
 ### Installing scripts
 
 It is also possible to install scripts using `ros install`:
