@@ -167,42 +167,54 @@ have the latest asdf, and this file has a workaround for this.
    (ccl:with-string-vector (argv args) (ccl::%execvp argv)))
   (quit (run-program args :output :interactive)))
 
-(defun quicklisp (&key path (environment "QUICKLISP_HOME"))
+(defun quicklisp (&key path (environment "QUICKLISP_HOME")
+                  &aux (is-quicklisp-already-available
+                        (find :quicklisp *features*)))
   "Corresponds to -Q command. Finds and loads setup.lisp for quicklisp, and adds appropriate local-project paths."
-  (unless (find :quicklisp *features*)
-    (let ((path (make-pathname
-                 :name "setup"
-                 :type "lisp"
-                 :defaults (or path
-                               (and environment (getenv environment))
-                               (opt "quicklisp"))))
-          (local (ignore-errors
+
+  (cond
+    (is-quicklisp-already-available
+     (setf
+      *local-project-directories*
+      (copy-list
+       (symbol-value (read-from-string "ql:*local-project-directories*"))))
+     ;; In this case we have to return nil
+     (values nil))
+    
+    (t ;; If quicklisp is not loaded yet:
+     (let ((path (make-pathname
+                  :name "setup"
+                  :type "lisp"
+                  :defaults (or path
+                                (and environment (getenv environment))
+                                (opt "quicklisp"))))
+           (local (ignore-errors
                    (truename
                     (merge-pathnames
                      ".roswell/local-projects/"
                      *default-pathname-defaults*)))))
-      (when (probe-file path)
-        (cl:load path :verbose (verbose))
-        (unless (getenv environment)
-          (loop
-            ;; *local-project-directories* defaults to a list of a single pathname,
-            ;; which is <directory containing setup.lisp>/local-projects/ .
-            for path in `(;; Searches local-project/ in the current directory
-                          ,local
-                          ;; Searches relative path from env path
-                          ,(ignore-errors
+       (when (probe-file path)
+         (cl:load path :verbose (verbose))
+         (unless (getenv environment)
+           (loop
+             ;; *local-project-directories* defaults to a list of a single pathname,
+             ;; which is <directory containing setup.lisp>/local-projects/ .
+             for path in `(;; Searches local-project/ in the current directory
+                           ,local
+                           ;; Searches relative path from env path
+                           ,(ignore-errors
                              (truename
                               (merge-pathnames
                                "../../../local-projects/"
                                (first (symbol-value (read-from-string "ql:*local-project-directories*"))))))
-                          ;; Searches local-project/ in e.g. ~/.roswell/
-                          ,(ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))))
-            for probe = (and path (or (ignore-errors (probe-file path))
-                                      #+clisp(ext:probe-directory path)))
-            when probe
-            do (push path *local-project-directories*)
-            until probe))
-        t))))
+                           ;; Searches local-project/ in e.g. ~/.roswell/
+                           ,(ensure-directories-exist (merge-pathnames "local-projects/" (opt "homedir"))))
+             for probe = (and path (or (ignore-errors (probe-file path))
+                                       #+clisp(ext:probe-directory path)))
+             when probe
+               do (push path *local-project-directories*)
+             until probe))
+         t)))))
 
 (defvar *included-names* '("init"))
 (defparameter *include-path* (or #.*compile-file-pathname* *load-pathname*))
