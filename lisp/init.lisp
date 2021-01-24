@@ -173,16 +173,14 @@ have the latest asdf, and this file has a workaround for this.
   "Corresponds to -Q command. Finds and loads setup.lisp for quicklisp, and adds appropriate local-project paths."
 
   (cond
-    ((and is-quicklisp-already-available
-          (not (equal (opt "quicklisp")
-                      (namestring (symbol-value (read-from-string "ql:*quicklisp-home*"))))))
-     (setf
-      *local-project-directories*
-      (copy-list
-       (symbol-value (read-from-string "ql:*local-project-directories*"))))
+    (is-quicklisp-already-available
+     (unless (equal (opt "quicklisp")
+                    (namestring (symbol-value (read-from-string "ql:*quicklisp-home*"))))
+       (setf *local-project-directories*
+             (copy-list
+              (symbol-value (read-from-string "ql:*local-project-directories*")))))
      ;; In this case we have to return nil
      (values nil))
-    
     (t ;; If quicklisp is not loaded yet:
      (let ((path (make-pathname
                   :name "setup"
