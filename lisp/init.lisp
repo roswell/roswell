@@ -173,7 +173,9 @@ have the latest asdf, and this file has a workaround for this.
   "Corresponds to -Q command. Finds and loads setup.lisp for quicklisp, and adds appropriate local-project paths."
 
   (cond
-    (is-quicklisp-already-available
+    ((and is-quicklisp-already-available
+          (not (equal (opt "quicklisp")
+                      (namestring (symbol-value (read-from-string "ql:*quicklisp-home*"))))))
      (setf
       *local-project-directories*
       (copy-list
