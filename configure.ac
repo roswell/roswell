@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([roswell],[20.06.14.107],snmsts@gmail.com)
+AC_INIT([roswell],[21.01.14.108],snmsts@gmail.com)
 ${CFLAGS=""}
 ${CXXFLAGS=""}
 

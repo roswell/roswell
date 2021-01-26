@@ -1,8 +1,8 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (21.01.14.108-1) unstable; urgency=low
 
-  *
+  * New: 'ros serve swank' to launch swank server.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Tue, 26 Jan 2021 00:55:42 +0000
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 26 Jan 2021 01:05:07 +0000
 
 roswell (20.06.14.107-1) unstable; urgency=low
 
