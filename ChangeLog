@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 26 Jan 2021 00:55:42 +0000
+
 roswell (20.06.14.107-1) unstable; urgency=low
 
   * New: 'ros ecl-config' to lunch ecl-config.
