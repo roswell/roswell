@@ -105,7 +105,7 @@ release-commit:
 release-push:
 	ros scripts/release.ros release-push
 release-changelog:
-	ros scripts/release.ros changelog
+	grep not-yet-released ChangeLog 2>&1 > /dev/null || ros scripts/release.ros changelog
 winrelease:
 	mkdir -p roswell/lisp
 	mkdir -p roswell/documents
