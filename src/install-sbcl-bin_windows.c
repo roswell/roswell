@@ -3,6 +3,8 @@
 #include "cmd-install.h"
 #include "util.h"
 
+char* arch_(struct install_options* param);
+
 char* sbcl_bin_extention(struct install_options* param) {
   return ".msi";
 }

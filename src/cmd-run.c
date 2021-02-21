@@ -96,7 +96,9 @@ char* determin_impl(char* impl) {
     s(impl);
     impl=q(DEFAULT_IMPL);
     setup(PACKAGE,"-",impl);
-    version=q(get_opt(DEFAULT_IMPL".version",0));
+    version=get_opt(DEFAULT_IMPL".version",0);
+    if(version)
+      version=q(version);
   }
   return s_cat(impl,q("/"),version,NULL);
 }
