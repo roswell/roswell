@@ -73,6 +73,7 @@ char* currentdir(void) {
 
 #else
 char* homedir(void);
+char* currentdir(void);
 #endif
 
 char* configdir(void) {

@@ -2,8 +2,9 @@ name: CI
 
 on:
   push:
-  pull_request:
-
+  #pull_request:
+  #schedule:
+  #  - cron: '0 */2 * * *'
 
 jobs:
   build-windows:
@@ -21,87 +22,48 @@ jobs:
           arch2: i686
           bit: 32
     env:
-      MSYSTEM: MINGW${{ matrix.bit }}
-      MSYS2_PATH_TYPE: inherit
-      MSYS2_PATH_LIST: D:\msys64\mingw${{ matrix.bit }}\bin;D:\msys64\usr\local\bin;D:\msys64\usr\bin;D:\msys64\bin
-      MSYS2_TARBALL_URL1: https://github.com/msys2/msys2-installer/releases/download/nightly-x86_64/msys2-base-x86_64-latest.tar.xz
-      MSYS2_TARBALL_URL2: http://repo.msys2.org/distrib/x86_64/msys2-base-x86_64-20190524.tar.xz
-      MSYS2_TARBALL_URL3: https://sourceforge.net/projects/msys2/files/Base/x86_64/msys2-base-x86_64-20190524.tar.xz
       RESULT_NAME: windows-${{ matrix.arch2 }}
       RESULT_PATH: windows-${{ matrix.arch2 }}
       RESULT_PATH_SUB: roswell
     steps:
     - run: git config --global core.autocrlf false
     - uses: actions/checkout@v2
-    - name: Install MSYS2
-      run: |
-        bash -lc @'
-          pwd
-          curl -f -L -o msys2.tar.xz $MSYS2_TARBALL_URL1 ||
-          curl -f    -o msys2.tar.xz $MSYS2_TARBALL_URL2 ||
-          curl -f -L -o msys2.tar.xz $MSYS2_TARBALL_URL3
-          err1=$?
-          #tar xf msys2.tar.xz -C /d/
-          7z x msys2.tar.xz -so | 7z x -aoa -si -ttar -oD:
-          ls -l /d/
-          exit $err1
-        '@
-    - name: Add MSYS2 path
-      run: |
-        echo "::set-env name=PATH::$env:MSYS2_PATH_LIST;$env:PATH"
+    - uses: msys2/setup-msys2@v2
+      with:
+        msystem: MINGW${{ matrix.bit }}
+        path-type: inherit
+        release: true
+        update: true
+        install: 'base-devel mingw-w64-${{ matrix.arch }}-toolchain'
     - name: Run MSYS2 once
+      shell: msys2 {0}
       run: |
-        bash -lc @'
-          pwd
-          cd $GITHUB_WORKSPACE
-          pwd
-          echo $PATH
-        '@
-    - name: Update MSYS2
-      run: |
-        bash -lc @'
-          pacman --version
-          pacman -Syyuu --noconfirm
-        '@
-    - name: Install MinGW-w64
-      run: |
-        bash -lc @'
-          pacman --version
-          pacman -S --noconfirm base-devel &&
-          pacman -S --noconfirm mingw${{ matrix.bit }}/mingw-w64-${{ matrix.arch }}-toolchain
-        '@
-    - name: Set environment variables
-      run: |
-        bash -lc @'
-          pwd
-          uname
-          uname -m
-        '@
+        pwd
+        echo $MSYSTEM
+        echo $MSYS2_PATH_TYPE
+        echo $PATH
     - name: Build
+      shell: msys2 {0}
       run: |
-        bash -lc @'
-          cd $GITHUB_WORKSPACE
-          gcc -v
-          ./bootstrap
-          ./configure
-          make
-          make install
-          make winrelease
-        '@
-    - name: Copy Result
+        gcc -v
+        ./bootstrap
+        ./configure
+        make
+        make install
+        make winrelease
+    - name: Copy result
       if: always()
+      shell: msys2 {0}
       run: |
-        bash -lc @'
-          cd $GITHUB_WORKSPACE
-          mkdir -p $RESULT_PATH
-          cp *.zip $RESULT_PATH/tmp.zip
-          cd $RESULT_PATH
-          7z x tmp.zip
-          rm tmp.zip
-        '@
+        mkdir -p $RESULT_PATH
+        cp *.zip $RESULT_PATH/tmp.zip
+        cd $RESULT_PATH
+        7z x tmp.zip
+        rm tmp.zip
     - name: Upload Result
       if: always()
       uses: actions/upload-artifact@v1
       with:
         name: ${{ env.RESULT_NAME }}
         path: ${{ env.RESULT_PATH }}
+
