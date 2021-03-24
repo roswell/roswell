@@ -3,8 +3,8 @@
 
 AC_PREREQ([2.59])
 AC_INIT([roswell],[21.01.14.108],snmsts@gmail.com)
-${CFLAGS=""}
-${CXXFLAGS=""}
+CFLAGS=${CFLAGS=""}
+CXXFLAGS=${CXXFLAGS=""}
 
 AM_CONFIG_HEADER(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])
