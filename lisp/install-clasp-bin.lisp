@@ -39,7 +39,7 @@
          (uiop/filesystem:delete-directory-tree
           path :validate t))
     (ql-impl-util:rename-directory
-     (merge-pathnames (format nil "~@{~A~}" "clasp-" version "-x86-64-" uname "/build") impls)
+     (merge-pathnames (format nil "~@{~A~}" "clasp-" version "-x86-64-" uname "/") impls)
      (merge-pathnames (opt "as") impls)))
   (cons t argv))
 
