@@ -65,7 +65,8 @@ LISPS = helper.el \
 	install.ros \
 	util-install.lisp util-install-quicklisp.lisp \
 	install+7zip.lisp install-abcl-bin.lisp install-allegro.lisp \
-	install-ccl-bin.lisp install-clasp.lisp install-clisp.lisp \
+	install-ccl-bin.lisp install-clasp-bin.lisp install-clasp.lisp \
+	install-clisp.lisp \
 	install-cmu-bin.lisp install-ecl.lisp install-quicklisp.lisp \
 	install-sbcl-bin.lisp install-sbcl.lisp install-sbcl-source.lisp \
 	install-slime.lisp install-sly.lisp \

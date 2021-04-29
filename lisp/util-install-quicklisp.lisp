@@ -209,6 +209,7 @@
 (system "install-abcl-bin")
 (system "install-allegro")
 (system "install-ccl-bin")
+(system "install-clasp-bin")
 (system "install-clasp")
 (system "install-clisp")
 (system "install-cmu-bin")
