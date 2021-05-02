@@ -145,7 +145,7 @@ install_roswell_bin () {
                 $SUDO dpkg -i /tmp/roswell.deb
             fi
         fi
-    elif [ `uname` = "FreeBSD"]; then
+    elif [ `uname` = "FreeBSD" ]; then
         apt_unless_installed gmake
         apt_unless_installed roswell
     elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
