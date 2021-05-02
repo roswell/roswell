@@ -82,6 +82,7 @@ apt_unless_installed () {
             brew install "$1"
         elif [ `uname` = "FreeBSD" ]; then
             $SUDO pkg install -y "$1"
+            hash -r
         else
             $SUDO -E apt-get -yq update
             $SUDO -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install "$1"
@@ -147,6 +148,7 @@ install_roswell_bin () {
         fi
     elif [ `uname` = "FreeBSD" ]; then
         apt_unless_installed gmake
+        GNUMAKE=/usr/local/bin/gmake
         apt_unless_installed roswell
     elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
         apt_unless_installed roswell
