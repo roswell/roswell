@@ -70,6 +70,8 @@ apt_installed_p () {
         else
             true
         fi
+    elif [ `uname` = "FreeBSD" ]; then
+        $(pkg info | grep ^$1- >/dev/null 2>&1)
     else
         $(dpkg -s "$1" >/dev/null 2>&1)
     fi
@@ -78,6 +80,8 @@ apt_unless_installed () {
     if ! apt_installed_p "$1"; then
         if [ `uname` = "Darwin" ]; then
             brew install "$1"
+        elif [ `uname` = "FreeBSD" ]; then
+            $SUDO pkg install -y "$1"
         else
             $SUDO -E apt-get -yq update
             $SUDO -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install "$1"
@@ -141,6 +145,9 @@ install_roswell_bin () {
                 $SUDO dpkg -i /tmp/roswell.deb
             fi
         fi
+    elif [ `uname` = "FreeBSD"]; then
+        apt_unless_installed gmake
+        apt_unless_installed roswell
     elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
         apt_unless_installed roswell
     fi
