@@ -81,7 +81,7 @@ DEF_SUBCMD(cmd_install) {
   char* variant= get_opt("variant",0);
   param.os=uname_s();
   param.arch=uname_m();
-  param.variant=variant?cat("-",variant,NULL):q("");
+  param.variant=variant?cat("-",variant,NULL):q(SBCL_BIN_VARIANT);
   param.arch_in_archive_name=0;
   param.version_not_specified=1;
   param.expand_path=NULL;

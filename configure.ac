@@ -106,6 +106,11 @@ AC_ARG_WITH([platformtsvl_base],
   [PLATFORM_TSV_URI=$withval],[PLATFORM_TSV_URI=https://github.com/roswell/sbcl_bin/releases/download/files/sbcl-bin_uri.tsv])
 AC_DEFINE_UNQUOTED([PLATFORM_TSV_URI],["${PLATFORM_TSV_URI}"],[uri for sbcl-bin_uri.tsv])
 
+AC_ARG_WITH([sbcl_bin_variant],
+  [AC_HELP_STRING([--with-sbcl-bin-variant=string],[set which variant for sbcl-bin [default=''] possible choices are '-glibc2.10', '-musl'.])],
+  [SBCL_BIN_VARIANT=$withval],[SBCL_BIN_VARIANT=""])
+AC_DEFINE_UNQUOTED([SBCL_BIN_VARIANT],["${SBCL_BIN_VARIANT}"],[variant for sbcl-bin])
+
 # man file (ros.1) generation switch
 AC_ARG_ENABLE([manual_generation],
   [AC_HELP_STRING([--enable-manual-generation],[generate manual if enabled])],
