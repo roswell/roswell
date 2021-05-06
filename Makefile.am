@@ -123,5 +123,24 @@ brewpr:
 	git pull
 	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
+pack:
+	cd src;make ros
+	rm -rf pack/lisp pack/man pack/patch
+	$(MKDIR_P) pack/bin
+	cp src/ros pack/bin
+	$(MKDIR_P) pack/lisp
+	cp $(LISPS:%=lisp/%) pack/lisp
+	$(MKDIR_P) pack/patch
+	cp $(roslisppatch_DATA) pack/patch
+	$(MKDIR_P) pack/man
+	cp $(MDS:%.md=documents/man/%.1) pack/man
+	echo "roslispdir = @""roslispdir@" > pack/Makefile.am
+	echo "roslisppatchdir = @""roslisppatchdir@" >> pack/Makefile.am
+	echo "dist_bin_SCRIPTS = bin/ros" >> pack/Makefile.am
+	echo "dist_roslisp_DATA = $(LISPS:%=lisp/%)" >> pack/Makefile.am
+	echo "dist_roslisppatch_DATA = $(roslisppatch_DATA)" >> pack/Makefile.am
+	echo "dist_man_MANS = $(MDS:%.md=man/%.1)" >> pack/Makefile.am
+	cat pack/configure.ac |sed -e "s/^AC_INIT.*$$/AC_INIT([@PACKAGE_NAME@],[@PACKAGE_VERSION@],@PACKAGE_BUGREPORT@)/g" > pack/configure.ac
+
 FORCE:
-.PHONY: release-prepare release release-push test winrelease debian FORCE
+.PHONY: release-prepare release release-push test winrelease debian pack FORCE
