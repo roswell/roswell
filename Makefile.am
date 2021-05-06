@@ -136,6 +136,7 @@ pack:
 	cp $(MDS:%.md=documents/man/%.1) pack/man
 	echo "roslispdir = @""roslispdir@" > pack/Makefile.am
 	echo "roslisppatchdir = @""roslisppatchdir@" >> pack/Makefile.am
+	echo "distdir = $(PACKAGE)_bin-$(VERSION)-"`uname`-`uname -m`$(SBCL_BIN_VARIANT) >> pack/Makefile.am
 	echo "dist_bin_SCRIPTS = bin/ros" >> pack/Makefile.am
 	echo "dist_roslisp_DATA = $(LISPS:%=lisp/%)" >> pack/Makefile.am
 	echo "dist_roslisppatch_DATA = $(roslisppatch_DATA)" >> pack/Makefile.am
