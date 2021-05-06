@@ -123,25 +123,28 @@ brewpr:
 	git pull
 	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
+PACK = $(PACKAGE)_static-$(VERSION)-`uname`-`uname -m`$(SBCL_BIN_VARIANT)
+
 pack:
 	cd src;make ros
-	rm -rf pack/lisp pack/man pack/patch
-	$(MKDIR_P) pack/bin
-	cp src/ros pack/bin
-	$(MKDIR_P) pack/lisp
-	cp $(LISPS:%=lisp/%) pack/lisp
-	$(MKDIR_P) pack/patch
-	cp $(roslisppatch_DATA) pack/patch
-	$(MKDIR_P) pack/man
-	cp $(MDS:%.md=documents/man/%.1) pack/man
-	echo "roslispdir = @""roslispdir@" > pack/Makefile.am
-	echo "roslisppatchdir = @""roslisppatchdir@" >> pack/Makefile.am
-	echo "distdir = $(PACKAGE)_bin-$(VERSION)-"`uname`-`uname -m`$(SBCL_BIN_VARIANT) >> pack/Makefile.am
-	echo "dist_bin_SCRIPTS = bin/ros" >> pack/Makefile.am
-	echo "dist_roslisp_DATA = $(LISPS:%=lisp/%)" >> pack/Makefile.am
-	echo "dist_roslisppatch_DATA = $(roslisppatch_DATA)" >> pack/Makefile.am
-	echo "dist_man_MANS = $(MDS:%.md=man/%.1)" >> pack/Makefile.am
-	cat pack/configure.ac |sed -e "s/^AC_INIT.*$$/AC_INIT([@PACKAGE_NAME@],[@PACKAGE_VERSION@],@PACKAGE_BUGREPORT@)/g" > pack/configure.ac
+	rm -rf $(PACK)/lisp $(PACKPATH)/man $(PACKPATH)/patch
+	$(MKDIR_P) $(PACK)/bin
+	cp src/ros $(PACK)/bin
+	$(MKDIR_P) $(PACK)/lisp
+	cp $(LISPS:%=lisp/%) $(PACK)/lisp
+	$(MKDIR_P) $(PACK)/patch
+	cp $(roslisppatch_DATA) $(PACK)/patch
+	$(MKDIR_P) $(PACK)/man
+	cp $(MDS:%.md=documents/man/%.1) $(PACK)/man
+	echo "prefix = /usr/local" > $(PACK)/Makefile
+	echo "all: bin/ros" >> $(PACK)/Makefile
+	echo "install:" >> $(PACK)/Makefile
+	echo "	$(MKDIR_P) $$""(prefix)/bin" >> $(PACK)/Makefile
+	echo "	$(MKDIR_P) $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
+	echo "	install -c bin/ros $$""(prefix)/bin" >> $(PACK)/Makefile
+	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $(PACK)/Makefile
+	echo "	install -c -m 644 $(roslisppatch_DATA) $$""(prefix)/etc/rowell/patch" >> $(PACK)/Makefile
+	tar jcvf $(PACK).tar.bz2 $(PACK)
 
 FORCE:
 .PHONY: release-prepare release release-push test winrelease debian pack FORCE
