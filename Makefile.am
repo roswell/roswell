@@ -139,11 +139,11 @@ pack:
 	echo "prefix = /usr/local" > $(PACK)/Makefile
 	echo "all: bin/ros" >> $(PACK)/Makefile
 	echo "install:" >> $(PACK)/Makefile
-	echo "	$(MKDIR_P) $$""(prefix)/bin" >> $(PACK)/Makefile
-	echo "	$(MKDIR_P) $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
+	echo "	mkdir -p $$""(prefix)/bin" >> $(PACK)/Makefile
+	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
 	echo "	install -c bin/ros $$""(prefix)/bin" >> $(PACK)/Makefile
 	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $(PACK)/Makefile
-	echo "	install -c -m 644 $(roslisppatch_DATA) $$""(prefix)/etc/rowell/patch" >> $(PACK)/Makefile
+	echo "	install -c -m 644 $(roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
 	tar jcvf $(PACK).tar.bz2 $(PACK)
 
 FORCE:
