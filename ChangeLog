@@ -1,8 +1,11 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (21.05.14.109-1) unstable; urgency=low
 
-  *
+  * New: 'ros install clasp-bin' implemented only tested on ubuntu 20.04
+  * New: './configure --with-sbcl-bin-variant=string' implemented for variants '-glibc2.10', '-musl' is prepared now.
+  * Fix: support for msi structure change?(reported by Aratrik Pal)
+  * Change: read tsv table to get current version of sbcl-bin instead of parsing html.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Wed, 12 May 2021 12:58:33 +0000
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 12 May 2021 13:01:28 +0000
 
 roswell (21.01.14.108-1) unstable; urgency=low
 
