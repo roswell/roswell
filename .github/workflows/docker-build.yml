@@ -1,0 +1,27 @@
+name: docker-build
+
+on:
+  workflow_dispatch:
+
+env:
+  DOCKER_BUILDKIT: 1
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    environment: DOCKER_IMAGE
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Login GitHub Registry
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login docker.pkg.github.com -u snmsts --password-stdin
+      - name: Build image
+        env:
+          IMAGE: ${{ secrets.IMAGE }}
+        run: |
+          echo building $(cat ./scripts/Docker/$IMAGE/Name) ...
+          docker build -t docker.pkg.github.com/${{ github.repository }}/$(cat ./scripts/Docker/$IMAGE/Name) ./scripts/Docker/${IMAGE}
+      - name: Push image to GitHub Registry
+        env:
+          IMAGE: ${{ secrets.IMAGE }}
+        run: docker push docker.pkg.github.com/${{ github.repository }}/$(cat ./scripts/Docker/$IMAGE_DIR/Name)
