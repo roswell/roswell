@@ -12,7 +12,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [macos-latest, ubuntu-18.04]
-        lisp: ['alisp', 'cmu-bin/2019-06']
+        lisp: ['alisp', 'cmu-bin/2019-06', 'sbcl', 'ecl', 'clisp', 'ccl-bin', 'sbcl/1.1.14', 'ccl32']
     env:
       LISP: ${{ matrix.lisp }}
       ROSWELL_REPO: https://github.com/${{ github.repository }}

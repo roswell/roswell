@@ -8,16 +8,8 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
   matrix:
-    - LISP=alisp
-    - LISP=cmu-bin/2019-06
-    - LISP=sbcl
-    - LISP=ecl
     - LISP=mkcl
-    - LISP=clisp
     - LISP=abcl
-    - LISP=ccl-bin
-    - LISP=sbcl/1.1.14
-    - LISP=ccl32
     - LISP=sbcl/git
 os:
   - osx
