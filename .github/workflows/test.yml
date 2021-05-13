@@ -7,12 +7,42 @@ on:
 jobs:
   build:
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental }}
     timeout-minutes: 90
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-latest, ubuntu-18.04]
-        lisp: ['alisp', 'cmu-bin/2019-06', 'sbcl', 'ecl', 'clisp', 'ccl-bin', 'sbcl/1.1.14', 'ccl32']
+        os: [macos-10.15, ubuntu-18.04]
+        lisp: 
+         - alisp
+         - cmu-bin/2019-06
+         - sbcl
+         - ecl
+         - clisp
+         - ccl-bin
+         - sbcl/1.4.0
+         - ccl32
+        experimental: [false]
+        include:
+          - lisp: mkcl
+            os: macos-10.15
+            experimental: true
+          - lisp: mkcl
+            os: ubuntu-18.04
+            experimental: true
+          - lisp: sbcl/git
+            os: macos-10.15
+            experimental: true
+          - lisp: sbcl/git
+            os: ubuntu-18.04
+            experimental: true
+          - lisp: abcl
+            os: macos-10.15
+            experimental: true
+          - lisp: abcl
+            os: ubuntu-18.04
+            experimental: true
+
     env:
       LISP: ${{ matrix.lisp }}
       ROSWELL_REPO: https://github.com/${{ github.repository }}
