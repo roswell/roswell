@@ -8,7 +8,6 @@ env:
     - ROSWELL_INSTALL_DIR=$HOME/.roswell
     - ROSWELL_REPO=https://github.com/${TRAVIS_REPO_SLUG}
 os:
-  - osx
   - linux
 
 jobs:
@@ -64,31 +63,6 @@ jobs:
             packages:
               - pandoc
               - ruby-sass
-      - os: linux
-        name: "linuxbrew"
-        install:
-          - yes ""| sh -c "$(curl -fsSL https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh)"
-          - brew update
-          - brew --env
-          - brew config
-          - brew doctor || true
-          - brew install curl
-          - brew install roswell --HEAD
-        script:
-          - ros version;
-          - ros version=t run;
-          - ros install prove;
-          - run-prove roswell-test.asd 2>&1;
-      - os: osx
-        name: "homebrew"
-        install:
-          - brew doctor || true
-          - brew install roswell --HEAD
-        script:
-          - ros version;
-          - ros version=t run;
-          - ros install prove;
-          - run-prove roswell-test.asd 2>&1;
 
 #branches:
 #  except:
@@ -102,14 +76,6 @@ addons:
 
 before_install:
   - date
-  - |-
-    case $TRAVIS_OS_NAME in
-      osx)
-        brew update
-        brew --env
-        brew config
-        ;;
-    esac
 install:
   - $SETARCH sh ./scripts/install-for-ci.sh
 script:
@@ -119,9 +85,6 @@ script:
   - $SETARCH run-prove roswell-test.asd 2>&1
   - $SETARCH ros -q run && [`ros -q run 2>&1` == ""]
   - if [ "$LISP" = "sbcl-bin" ] && [ x$ALLOW_FAILURES != x ]; then
-       if [ $TRAVIS_OS_NAME = osx ]; then
-          sudo ros -e '(ignore-errors (with-open-file (o (format nil "/~A" (code-char 12354)) :direction :output)))';
-       fi;
        if [ $ALLOW_FAILURES = YES ]; then
          ros sbcl.patchless=t install sbcl;
        else
@@ -131,7 +94,3 @@ script:
        make -C t/tree-shaker ;
     fi
   - $SETARCH ros config
-before_cache:
-- |-
-    case $TRAVIS_OS_NAME in
-    esac
