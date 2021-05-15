@@ -144,7 +144,7 @@ install_roswell_bin () {
                 fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
             fi
             if [ -f /tmp/$FILE.tar.bz2 ]; then
-                extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;make -C /tmp/roswell install
+                extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;$SUDO make -C /tmp/roswell install
                 rm -rf /tmp/$FILE.tar.bz2
                 rm -rf /tmp/roswell
             fi
