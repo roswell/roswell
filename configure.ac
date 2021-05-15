@@ -109,6 +109,7 @@ AC_DEFINE_UNQUOTED([PLATFORM_TSV_URI],["${PLATFORM_TSV_URI}"],[uri for sbcl-bin_
 AC_ARG_WITH([sbcl_bin_variant],
   [AC_HELP_STRING([--with-sbcl-bin-variant=string],[set which variant for sbcl-bin [default=''] possible choices are '-glibc2.10', '-musl'.])],
   [SBCL_BIN_VARIANT=$withval],[SBCL_BIN_VARIANT=""])
+AC_SUBST([SBCL_BIN_VARIANT], ["${SBCL_BIN_VARIANT}"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_VARIANT],["${SBCL_BIN_VARIANT}"],[variant for sbcl-bin])
 
 # man file (ros.1) generation switch
