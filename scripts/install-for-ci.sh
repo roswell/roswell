@@ -137,13 +137,16 @@ install_roswell_bin () {
             cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
             cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
         fi
-    elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null && which dpkg >/dev/null; then
-        if ! [ -w "$ROSWELL_INSTALL_DIR" ]; then
-            if [ $ROSWELL_BRANCH = release ]; then
-                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_$ROSWELL_RELEASE_VERSION-1_amd64.deb" /tmp/roswell.deb
+    elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
+    if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
+        FILE=roswell_static-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
+        if [ $ROSWELL_BRANCH = release ]; then
+                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
             fi
-            if [ -f /tmp/roswell.deb ]; then
-                $SUDO dpkg -i /tmp/roswell.deb
+            if [ -f /tmp/$FILE.tar.bz2 ]; then
+                extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;make -C /tmp/roswell install
+                rm -rf /tmp/$FILE.tar.bz2
+                rm -rf /tmp/roswell
             fi
         fi
     elif [ `uname` = "FreeBSD" ]; then

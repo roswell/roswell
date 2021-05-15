@@ -133,7 +133,7 @@ pack:
 	$(MKDIR_P) $(PACK)/lisp
 	cp $(LISPS:%=lisp/%) $(PACK)/lisp
 	$(MKDIR_P) $(PACK)/patch
-	cp $(roslisppatch_DATA) $(PACK)/patch
+	cp $(dist_roslisppatch_DATA) $(PACK)/patch
 	$(MKDIR_P) $(PACK)/man
 	cp $(MDS:%.md=documents/man/%.1) $(PACK)/man
 	echo "prefix = /usr/local" > $(PACK)/Makefile
@@ -143,7 +143,7 @@ pack:
 	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
 	echo "	install -c bin/ros$(EXEEXT) $$""(prefix)/bin" >> $(PACK)/Makefile
 	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $(PACK)/Makefile
-	echo "	install -c -m 644 $(roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
+	echo "	install -c -m 644 $(dist_roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
 	echo "" >> $(PACK)/Makefile
 	echo "uninstall:" >> $(PACK)/Makefile
 	echo "	rm -rf $$""(prefix)/etc/roswell" >> $(PACK)/Makefile
