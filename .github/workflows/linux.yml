@@ -14,6 +14,11 @@ jobs:
           target: x86-64
           image: musl64
           makeopts: musl
+        - lisp: sbcl-bin/2.0.0
+          target: x86-64
+          image: musl64
+          makeopts: musl
+          variant: -musl
     environment: SET_VERSION
 
     steps:
@@ -48,6 +53,7 @@ jobs:
           LINKFLAGS: ${{ matrix.linkflags }}
           IMAGE: ${{ matrix.image }}
           MAKEOPTS: ${{ matrix.makeopts }}
+          VARIANT: ${{ matrix.variant }}
         run: |
           if [ "$VERSION" = "" ]; then
             make -f scripts/Makefile latest-version docker
@@ -60,10 +66,9 @@ jobs:
           VERSION: ${{ secrets.VERSION }}
           ARCH: ${{ matrix.target }}
           SUFFIX: ${{ matrix.suffix }}
-          MAKEOPTS: ${{ matrix.makeopts }}
         run: |
           if [ "$VERSION" = "" ]; then
-            make -f scripts/Makefile latest-version $(MAKEOPTS)-upload
+            make -f scripts/Makefile latest-version ${{ matrix.makeopts }}-upload
           else
-            make -f scripts/Makefile $(MAKEOPTS)-upload
+            make -f scripts/Makefile ${{ matrix.makeopts }}-upload
           fi
