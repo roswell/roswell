@@ -46,6 +46,6 @@ musl:
 	make pack
 
 musl-upload:
-	env FILE=`echo roswell-*.tar.bz2` $(MAKE) -f $(realpath $(firstword $(MAKEFILE_LIST))) upload
+	env FILE=`echo roswell*.tar.bz2` $(MAKE) -f $(realpath $(firstword $(MAKEFILE_LIST))) upload
 
 .PHONY: all latest-version checkout show build-docker pull-docker docker upload musl
