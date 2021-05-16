@@ -3,12 +3,15 @@
 *.AppImage
 *.fasl
 .deps
+.env
 src/ros
 src/ros.exe
 src/html_sbcl
 src/html_sbcl.exe
 src/gend.h
-Makefile
+/Makefile
+/src/Makefile
+/documents/Makefile
 Makefile.in
 configure
 config.status
