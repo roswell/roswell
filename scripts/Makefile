@@ -35,7 +35,7 @@ docker:
 upload:
 	echo upload!!! $(FILE)
 	ros install roswell/sbcl_bin
-	ros -s roswell.github.utils -e "(roswell.github.utils:github \"$(FILE)\" \"v$(VERSION)\" \"roswell\" \"roswell\")"
+	ros -s roswell.github.utils -e "(mapc (lambda (x) (print x) (roswell.github.utils:github x \"v$(VERSION)\" \"roswell\" \"roswell\")) (directory \"$(FILE)\"))"
 
 musl:
 	./bootstrap
