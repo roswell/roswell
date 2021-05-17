@@ -18,6 +18,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
         (curl (version "curl"))
         (asdf (version "asdf"))
         (conf (version "confdir"))
+        (variant (version "sbcl-bin-variant"))
         (home (roswell.util:homedir)))
     (unless (zerop (length revision))
       (setf revision (format nil "(~A)" revision)))
@@ -34,5 +35,6 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
     (format *error-output* "lispdir='~A'~%" (opt "lispdir"))
     (format *error-output* "homedir='~A'~%" home)
     (unless (or (zerop (length conf)) (equal home conf))
-      (format *error-output* "configdir='~A'~%" conf))))
+      (format *error-output* "configdir='~A'~%" conf))
+    (format *error-output* "sbcl-bin-variant='~A'~%" variant)))
 ;;; vim: set ft=lisp lisp:

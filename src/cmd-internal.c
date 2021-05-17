@@ -102,6 +102,8 @@ DEF_SUBCMD(cmd_internal_version) {
       printf("%s\n",ROS_REVISION);
     }else if(strcmp(arg1,"sbcl-bin-version-uri")==0) {
       printf("%s\n",PLATFORM_TSV_URI);
+    }else if (strcmp(arg1,"sbcl-bin-variant")==0) {
+      printf("%s\n",SBCL_BIN_VARIANT);
     }else if(strcmp(arg1,"sbcl-bin-uri")==0) {
       printf("%s\n",SBCL_BIN_URI);
     }else if(strcmp(arg1,"glibc")==0) {
