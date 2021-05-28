@@ -162,6 +162,7 @@ install_roswell_src () {
     if ! which ros >/dev/null; then
         fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
         extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
+        apt_unless_installed libcurl4-openssl-dev
         cd $ROSWELL_DIR
         sh bootstrap
         mkdir -p ~/.roswell
