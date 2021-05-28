@@ -139,7 +139,7 @@ install_roswell_bin () {
         fi
     elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
     if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
-        FILE=roswell_static-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
+        FILE=roswell-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
         if [ $ROSWELL_BRANCH = release ]; then
                 fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
             fi
