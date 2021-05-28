@@ -123,32 +123,43 @@ brewpr:
 	git pull
 	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
-PACK = $(PACKAGE)_static-$(VERSION)-`uname`-`uname -m`$(SBCL_BIN_VARIANT)
+PACK = $(PACKAGE)-$(VERSION)-`uname`-`uname -m`$(SBCL_BIN_VARIANT)
 
-pack:
-	cd src;make ros
-	rm -rf $(PACK)/lisp $(PACKPATH)/man $(PACKPATH)/patch
-	$(MKDIR_P) $(PACK)/bin
-	cp src/ros$(EXEEXT) $(PACK)/bin
-	$(MKDIR_P) $(PACK)/lisp
-	cp $(LISPS:%=lisp/%) $(PACK)/lisp
-	$(MKDIR_P) $(PACK)/patch
-	cp $(dist_roslisppatch_DATA) $(PACK)/patch
-	$(MKDIR_P) $(PACK)/man
-	cp $(MDS:%.md=documents/man/%.1) $(PACK)/man
-	echo "prefix = /usr/local" > $(PACK)/Makefile
-	echo "all: bin/ros$(EXEEXT)" >> $(PACK)/Makefile
-	echo "install:" >> $(PACK)/Makefile
-	echo "	mkdir -p $$""(prefix)/bin" >> $(PACK)/Makefile
-	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
-	echo "	install -c bin/ros$(EXEEXT) $$""(prefix)/bin" >> $(PACK)/Makefile
-	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $(PACK)/Makefile
-	echo "	install -c -m 644 $(dist_roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $(PACK)/Makefile
-	echo "" >> $(PACK)/Makefile
-	echo "uninstall:" >> $(PACK)/Makefile
-	echo "	rm -rf $$""(prefix)/etc/roswell" >> $(PACK)/Makefile
-	echo "	rm -f $$""(prefix)/bin/ros$(EXEEXT)" >> $(PACK)/Makefile
-	tar jcvf $(PACK).tar.bz2 $(PACK)
+roswell/Makefile:
+	rm -rf roswell
+	$(MKDIR_P) roswell
+	echo "prefix = /usr/local" > $@
+	echo "mandir = ${prefix}/share/man" >> $@
+	echo "all: ros$(EXEEXT)" >> $@
+	echo "install:" >> $@
+	echo "	mkdir -p $$""(prefix)/bin" >> $@
+	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $@
+	echo "	install -c ros$(EXEEXT) $$""(prefix)/bin" >> $@
+	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $@
+	echo "	install -c -m 644 $(dist_roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $@
+	if [ 'x$(MDS)' != 'x' ]; then \
+		echo "	install -c $(MDS:%.md=man/%.1) $$""(mandir)" >> $@; \
+	fi
+	echo "" >> $@
+	echo "uninstall:" >> $@
+	echo "	rm -rf $$""(prefix)/etc/roswell" >> $@
+	echo "	rm -f $$""(prefix)/bin/ros$(EXEEXT)" >> $@
+	echo "	cd $$""(mandir);rm -f $(MDS:%.md=%.1)" >> $@
+
+$(PACK).tar.bz2: roswell/Makefile
+	$(MKDIR_P) roswell/patch
+	cd src;make ros$(EXEEXT)
+	cp src/ros$(EXEEXT) roswell
+	$(MKDIR_P) roswell/lisp
+	cp $(LISPS:%=lisp/%) roswell/lisp
+	cp $(dist_roslisppatch_DATA) roswell/patch
+	if [ 'x$(MDS)' != x ]; then \
+		$(MKDIR_P) roswell/man; \
+		cp $(MDS:%.md=documents/man/%.1) roswell/man; \
+	fi
+	tar jcvf $(PACK).tar.bz2 roswell
+
+pack: $(PACK).tar.bz2
 
 FORCE:
-.PHONY: release-prepare release release-push test winrelease debian pack FORCE
+.PHONY: release-prepare release release-push test winrelease debian pack roswell/Makefile FORCE
