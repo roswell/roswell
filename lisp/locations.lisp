@@ -16,7 +16,7 @@
 
 (defuri clisp-version-uri "http://ftp.gnu.org/pub/gnu/clisp/release/")
 (defuri 7za-uri       "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
-(defuri allegro-uri   "http://www.franz.com/")
+(defuri allegro-uri   "ftp://ftp.franz.com/")
 (defuri abcl-bin-uri  "https://common-lisp.net/project/armedbear/releases/")
 (defuri ccl-bin-uri   "https://github.com/roswell/ccl_bin/releases/download/")
 (defuri clasp-bin-uri "https://github.com/roswell/clasp_bin/releases/download/")

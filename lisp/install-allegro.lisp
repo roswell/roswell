@@ -15,13 +15,14 @@
         (machine (intern uname-m :keyword)))
     (cond ((find version '("10.1express" "100express") :test 'equal)
            (format nil "~@{~A~}"
-                   (allegro-uri) "ftp/pub/acl" version "/"
+                   (allegro-uri) "pub/acl" version "/"
                    (case os (:|darwin| "macosx") (t os))
                    (if (eql os :|windows|) ""
                        (case machine (:|x86| 86) (:|x86-64| 86)))
                    "/acl" version
                    (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
-                   "-" (case machine (:|x86-64| "x86") (t machine))
+                   "-" (if (eql os :|darwin|) "x64"
+                           (case machine (:|x86-64| "x86") (t machine)))
                    (case os
                      (:|linux| (cond ((equal "10.1express" version) ".tbz2")
                                      ((equal "100express" version) ".bz2")))
