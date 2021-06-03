@@ -55,7 +55,7 @@
                          (uiop:run-program
                           (format nil "hdiutil attach ~A | awk -F '\t' 'END{print $NF}'" (opt "download.archive"))
                           :output :string))))
-         (uiop:run-program (format nil "cp -r \"~A/AllegroCLexpress64.app/Contents/Resources/\" \"~A\""
+         (uiop:run-program (format nil "cp -r \"~A/AllegroCL64express.app/Contents/Resources/\" \"~A\""
                                    mount-dir
                                    (ensure-directories-exist (merge-pathnames (format nil "~A/" (opt "as")) impls))))
          (uiop:run-program (format nil "hdiutil detach \"~A\"" mount-dir))))
