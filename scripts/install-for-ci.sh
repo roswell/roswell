@@ -17,6 +17,15 @@ unset LISP
 LISP_IMPLS_BIN="$ROSWELL_INSTALL_DIR/bin"
 LISP_IMPLS_DIR="$ROSWELL_DIR/impls/system"
 
+
+usage () {
+  cat <<"EOF"
+Usage:
+    install-for-ci.sh
+
+EOF
+}
+
 log () {
     echo "$ $1"
     echo `$1`
@@ -72,10 +81,13 @@ apt_installed_p () {
         fi
     elif [ `uname` = "FreeBSD" ]; then
         $(pkg info | grep ^$1- >/dev/null 2>&1)
-    else
+    elif which dpkg >/dev/null; then
         $(dpkg -s "$1" >/dev/null 2>&1)
+    else
+        $(apk info |grep ^$1 >/dev/null 2>&1)
     fi
 }
+
 apt_unless_installed () {
     if ! apt_installed_p "$1"; then
         if [ `uname` = "Darwin" ]; then
@@ -83,9 +95,11 @@ apt_unless_installed () {
         elif [ `uname` = "FreeBSD" ]; then
             $SUDO pkg install -y "$1"
             hash -r
-        else
+        elif which apt-get >/dev/null; then
             $SUDO -E apt-get -yq update
             $SUDO -E apt-get -yq --no-install-suggests --no-install-recommends --force-yes install "$1"
+        elif which apk >/dev/null; then
+            $SUDO apk add $1
         fi
     fi
 }
@@ -116,10 +130,6 @@ install_ecl () {
     fi
 }
 
-if which sudo 2>&1 >/dev/null; then
-    SUDO=sudo
-fi
-
 install_roswell_bin () {
     if uname -s | grep -E "MSYS_NT|MINGW64" >/dev/null; then
         if [ $ROSWELL_BRANCH = release ]; then
@@ -138,9 +148,11 @@ install_roswell_bin () {
             cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
         fi
     elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
-    if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
-        FILE=roswell-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
-        if [ $ROSWELL_BRANCH = release ]; then
+        if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
+            apt_unless_installed curl
+            apt_unless_installed make
+            FILE=roswell-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
+            if [ $ROSWELL_BRANCH = release ]; then
                 fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
             fi
             if [ -f /tmp/$FILE.tar.bz2 ]; then
@@ -178,103 +190,165 @@ install_roswell_src () {
     fi
 }
 
-if ! which ros >/dev/null; then
-    echo "Installing Roswell..."
-    install_roswell_bin
-    install_roswell_src
-    echo "Roswell has been installed."
-else
-    echo "Detected Roswell."
-fi
-
-case "$USE_LISP" in
-    alisp|allegro)
-	apt_unless_installed libc6-i386
-        apt_unless_installed gcc-multilib
-        USE_LISP=allegro
-        ;;
-    cmu|cmucl|cmu-bin)
-        apt_unless_installed libc6-i386
-        apt_unless_installed gcc-multilib
-        USE_LISP=cmu-bin
-        ;;
-    # 'ccl' is an alias for 'ccl-bin'
-    ccl)
-        USE_LISP=ccl-bin
-        ;;
-    ccl32)
-        USE_LISP=ccl-bin
-        apt_unless_installed libc6-i386
-        apt_unless_installed gcc-multilib
-        ros config set ccl.bit 32
-        ;;
-    # 'sbcl-bin' is the default
-    "")
-        USE_LISP=sbcl-bin
-        ;;
-esac
-
-echo "Installing $USE_LISP..."
-case "$USE_LISP" in
-    clisp)
-        if [ `uname` = "Darwin" ]; then
-            apt_unless_installed clisp;
-            ros use clisp/system;
-        else
-            ros install $USE_LISP;
-        fi
-        ros install asdf;
-        ;;
-    abcl)
-        install_abcl
-        ;;
-    ecl)
-        install_ecl
-        ;;
-    sbcl-bin)
-        ros use $USE_LISP
-        ;;
-    *)
-        ros install $USE_LISP;
-        ros use $USE_LISP
-        ;;
-esac
-
-log "ros version"
-log "ros quicklisp.dist=$ROSWELL_QUICKLISP_DIST_URI setup"
-
-if [ "$ROSWELL_LATEST_ASDF" ]; then
-    echo "Installing the latest ASDF..."
-    ros install asdf
-fi
-
-ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
-                (lisp-implementation-type)
-                (lisp-implementation-version)
-                #+asdf(asdf:asdf-version) #-asdf "not required")' || exit 1
-
-# Setup ASDF source regisry
-if [ "$LOCALAPPDATA" ]; then
-    ASDF_SR_CONF_DIR="$LOCALAPPDATA/config/common-lisp/source-registry.conf.d"
-else
-    ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
-fi
-ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/ci.conf"
-LOCAL_LISP_TREE="$HOME/lisp"
-
-mkdir -p "$ASDF_SR_CONF_DIR"
-mkdir -p "$LOCAL_LISP_TREE"
-if [ "$TRAVIS" ]; then
-    echo "(:tree \"$TRAVIS_BUILD_DIR/\")" > "$ASDF_SR_CONF_FILE"
-elif [ "$CIRCLECI" ]; then
-    echo "(:tree \"$CIRCLE_WORKING_DIRECTORY/\")" > "$ASDF_SR_CONF_FILE"
-elif [ "$GITHUB_WORKSPACE" ]; then
-    if uname -s | grep -E "MSYS_NT|MINGW" >/dev/null; then
-        GITHUB_WORKSPACE_LISP=`echo $GITHUB_WORKSPACE | sed -e 's/\\\\/\//g'`
-        echo "(:tree \"$GITHUB_WORKSPACE_LISP/\")" > "$ASDF_SR_CONF_FILE"
+install_roswell () {
+    if ! which ros >/dev/null; then
+        echo "Installing Roswell..."
+        install_roswell_bin
+        install_roswell_src
+        echo "Roswell has been installed."
     else
-        echo "(:tree \"$GITHUB_WORKSPACE/\")" > "$ASDF_SR_CONF_FILE"
+        echo "Detected Roswell."
     fi
+}
+
+install_lisp_dependency () {
+    case "$USE_LISP" in
+        alisp|allegro)
+	      apt_unless_installed libc6-i386
+          apt_unless_installed gcc-multilib
+          USE_LISP=allegro
+          ;;
+        cmu|cmucl|cmu-bin)
+          apt_unless_installed libc6-i386
+          apt_unless_installed gcc-multilib
+          USE_LISP=cmu-bin
+          ;;
+        # 'ccl' is an alias for 'ccl-bin'
+        ccl)
+          USE_LISP=ccl-bin
+          ;;
+        ccl32)
+          USE_LISP=ccl-bin
+          apt_unless_installed libc6-i386
+          apt_unless_installed gcc-multilib
+          ros config set ccl.bit 32
+          ;;
+        # 'sbcl-bin' is the default
+        "")
+          USE_LISP=sbcl-bin
+          ;;
+    esac
+}
+
+install_lisp () {
+    echo "Installing $USE_LISP..."
+    case "$USE_LISP" in
+        clisp)
+            if [ `uname` = "Darwin" ]; then
+                apt_unless_installed clisp;
+                ros use clisp/system;
+            else
+                ros install $USE_LISP;
+            fi
+            ros install asdf;
+            ;;
+        abcl)
+            install_abcl
+            ;;
+        ecl)
+            install_ecl
+            ;;
+        sbcl-bin)
+            ros use $USE_LISP
+            ;;
+        *)
+            ros install $USE_LISP;
+            ros use $USE_LISP
+            ;;
+    esac
+}
+
+install_asdf () {
+   log "ros quicklisp.dist=$ROSWELL_QUICKLISP_DIST_URI setup"
+   if [ "$ROSWELL_LATEST_ASDF" ]; then
+       echo "Installing the latest ASDF..."
+       ros install asdf
+   fi
+}
+
+show_setup () {
+    log "ros version"
+    ros -e '(format t "~&~A ~A up and running! (ASDF ~A)~2%"
+                    (lisp-implementation-type)
+                    (lisp-implementation-version)
+                    #+asdf(asdf:asdf-version) #-asdf "not required")' || exit 1
+}
+
+setup_source_regisry () {
+   # Setup ASDF source regisry
+   if [ "$LOCALAPPDATA" ]; then
+       ASDF_SR_CONF_DIR="$LOCALAPPDATA/config/common-lisp/source-registry.conf.d"
+   else
+       ASDF_SR_CONF_DIR="$HOME/.config/common-lisp/source-registry.conf.d"
+   fi
+   ASDF_SR_CONF_FILE="$ASDF_SR_CONF_DIR/ci.conf"
+   LOCAL_LISP_TREE="$HOME/lisp"
+
+   mkdir -p "$ASDF_SR_CONF_DIR"
+   mkdir -p "$LOCAL_LISP_TREE"
+   if [ "$TRAVIS" ]; then
+       echo "(:tree \"$TRAVIS_BUILD_DIR/\")" > "$ASDF_SR_CONF_FILE"
+   elif [ "$CIRCLECI" ]; then
+       echo "(:tree \"$CIRCLE_WORKING_DIRECTORY/\")" > "$ASDF_SR_CONF_FILE"
+   elif [ "$GITHUB_WORKSPACE" ]; then
+       if uname -s | grep -E "MSYS_NT|MINGW" >/dev/null; then
+           GITHUB_WORKSPACE_LISP=`echo $GITHUB_WORKSPACE | sed -e 's/\\\\/\//g'`
+           echo "(:tree \"$GITHUB_WORKSPACE_LISP/\")" > "$ASDF_SR_CONF_FILE"
+       else
+           echo "(:tree \"$GITHUB_WORKSPACE/\")" > "$ASDF_SR_CONF_FILE"
+       fi
+   fi
+   echo "(:tree \"$LOCAL_LISP_TREE/\")" >> "$ASDF_SR_CONF_FILE"
+   echo "ASDF source registry configurations at ${ASDF_SR_CONF_FILE}."
+}
+
+
+install_all () {
+   install_roswell
+   install_lisp_dependency
+   install_lisp
+   install_asdf
+   show_setup
+   setup_source_regisry
+   exit 0
+}
+
+
+if [ x$CI = "xtrue" ]; then
+   if which sudo 2>&1 >/dev/null; then
+       SUDO=sudo
+   fi
+   install_all
 fi
-echo "(:tree \"$LOCAL_LISP_TREE/\")" >> "$ASDF_SR_CONF_FILE"
-echo "ASDF source registry configurations at ${ASDF_SR_CONF_FILE}."
+
+configure_args=
+
+while test $# != 0
+do
+    case $1 in
+        --*=?*)
+            option=`expr "X$1" : 'X\([^=]*\)='`
+            optarg=`expr "X$1" : 'X[^=]*=\(.*\)'`
+            extra_shift=:
+            ;;
+        --*=)
+            option=`expr "X$1" : 'X\([^=]*\)='`
+            optarg=
+            extra_shift=:
+            ;;
+        *)
+            option=$1
+            optarg=$2
+            extra_shift=shift
+            ;;
+    esac
+
+    case $option in
+        --configure-args) configure_args=$optarg; $extra_shift ;;
+
+        --sudo)       SUDO=sudo ;;
+
+        *) usage; exit 1;;
+    esac
+    shift
+done
