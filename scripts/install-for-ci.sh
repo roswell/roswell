@@ -131,42 +131,44 @@ install_ecl () {
 }
 
 install_roswell_bin () {
-    if uname -s | grep -E "MSYS_NT|MINGW64" >/dev/null; then
-        if [ $ROSWELL_BRANCH = release ]; then
-            fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_amd64.zip" /tmp/roswell.zip
-            unzip /tmp/roswell.zip -d /tmp/ >/dev/null
-            mkdir -p $ROSWELL_INSTALL_DIR/bin
-            cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
-            cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
-        fi
-    elif uname -s | grep -E "MINGW32" >/dev/null; then
-        if [ $ROSWELL_BRANCH = release ]; then
-            fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_i686.zip" /tmp/roswell.zip
-            unzip /tmp/roswell.zip -d /tmp/ >/dev/null
-            mkdir -p $ROSWELL_INSTALL_DIR/bin
-            cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
-            cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
-        fi
-    elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
-        if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
-            apt_unless_installed curl
-            apt_unless_installed make
-            FILE=roswell-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
+    if ! which ros >/dev/null; then
+        if uname -s | grep -E "MSYS_NT|MINGW64" >/dev/null; then
             if [ $ROSWELL_BRANCH = release ]; then
-                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
+                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_amd64.zip" /tmp/roswell.zip
+                unzip /tmp/roswell.zip -d /tmp/ >/dev/null
+                mkdir -p $ROSWELL_INSTALL_DIR/bin
+                cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
+                cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
             fi
-            if [ -f /tmp/$FILE.tar.bz2 ]; then
-                extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;$SUDO make -C /tmp/roswell install
-                rm -rf /tmp/$FILE.tar.bz2
-                rm -rf /tmp/roswell
+        elif uname -s | grep -E "MINGW32" >/dev/null; then
+            if [ $ROSWELL_BRANCH = release ]; then
+                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_i686.zip" /tmp/roswell.zip
+                unzip /tmp/roswell.zip -d /tmp/ >/dev/null
+                mkdir -p $ROSWELL_INSTALL_DIR/bin
+                cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
+                cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
             fi
+        elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
+            if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
+                apt_unless_installed curl
+                apt_unless_installed make
+                FILE=roswell-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
+                if [ $ROSWELL_BRANCH = release ]; then
+                    fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
+                fi
+                if [ -f /tmp/$FILE.tar.bz2 ]; then
+                    extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;$SUDO make -C /tmp/roswell install
+                    rm -rf /tmp/$FILE.tar.bz2
+                    rm -rf /tmp/roswell
+                fi
+            fi
+        elif [ `uname` = "FreeBSD" ]; then
+            apt_unless_installed gmake
+            GNUMAKE=/usr/local/bin/gmake
+            apt_unless_installed roswell
+        elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
+            apt_unless_installed roswell
         fi
-    elif [ `uname` = "FreeBSD" ]; then
-        apt_unless_installed gmake
-        GNUMAKE=/usr/local/bin/gmake
-        apt_unless_installed roswell
-    elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
-        apt_unless_installed roswell
     fi
 }
 
@@ -305,6 +307,7 @@ setup_source_regisry () {
 
 install_all () {
    install_roswell
+   install_sbcl_bin
    install_lisp_dependency
    install_lisp
    install_asdf
