@@ -203,9 +203,7 @@ install_roswell () {
     fi
 }
 
-install_sbcl_bin () {
-
-}
+install_sbcl_bin () {}
 
 install_lisp_dependency () {
     case "$USE_LISP" in
