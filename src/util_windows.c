@@ -18,6 +18,11 @@ char* uname_s(void) {
 }
 
 char* uname_m(void) {
+  char* carch=getenv("MSYSTEM_CARCH");
+  if(carch && strcmp(carch,"x86_64")==0)
+    return q("x86-64");
+  if(carch && strcmp(carch,"i686")==0)
+    return q("x86");
   char* msystem=getenv("MSYSTEM");
   if(msystem && strcmp(msystem,"MINGW64")==0)
     return q("x86-64");
