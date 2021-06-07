@@ -107,7 +107,7 @@ release-push:
 	ros scripts/release.ros release-push
 release-changelog:
 	grep not-yet-released ChangeLog 2>&1 > /dev/null || ros scripts/release.ros changelog
-winrelease:
+winrelease: roswell/Makefile
 	mkdir -p roswell/lisp
 	mkdir -p roswell/documents
 	cp src/ros.exe roswell
