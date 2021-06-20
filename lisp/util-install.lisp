@@ -74,9 +74,7 @@ To differentiate it from the system with the same name in quicklisp, the path sh
 (defun github-version (uri project filter)
   (let ((elts
           (let ((file (merge-pathnames (format nil "tmp/~A.html" project) (homedir))))
-            (unless (and (probe-file file)
-                         (< (get-universal-time) (+ (* 60 60) (file-write-date file))))
-              (download uri file))
+            (download uri file :interval (* 60 60))
             (read-call "plump:parse" file))))
     (nreverse
      (loop for link in (read-call "plump:get-elements-by-tag-name" elts "link")

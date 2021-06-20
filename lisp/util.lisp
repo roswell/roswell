@@ -137,13 +137,16 @@ Example:
                       output nil)
      t)))
 
-(defun download (uri file &key proxy (verbose nil) (output :interactive))
+(defun download (uri file &key proxy (verbose nil) (output :interactive) interval)
   "Interface to curl4 in the roswell C binary"
   (declare (ignorable proxy))
-  (ensure-directories-exist file)
-  (roswell:roswell `("roswell-internal-use" "download" ,(backslash-encode uri)
-                     ,file ,@(when verbose (list verbose)))
-                   output nil))
+  (unless (and interval
+               (probe-file file)
+               (< (get-universal-time) (+ interval (file-write-date file))))
+    (ensure-directories-exist file)
+    (roswell:roswell `("roswell-internal-use" "download" ,(backslash-encode uri)
+                       ,file ,@(when verbose (list verbose)))
+                     output nil)))
 
 (defun expand (archive dest &key verbose)
   "extract archive via roswell. gz/bz/7z should be supported."
