@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 24 Jun 2021 14:21:50 +0900
+
 roswell (21.05.14.109-1) unstable; urgency=low
 
   * New: 'ros install clasp-bin' implemented only tested on ubuntu 20.04
