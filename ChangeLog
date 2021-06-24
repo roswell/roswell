@@ -1,8 +1,10 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (21.06.14.110-1) unstable; urgency=low
 
-  *
+  * Change: 'ros version' to show sbcl-bin-variant.
+  * Fix: support Allegro again it was broken because of uri change (by TANIGUCHI Masaya)
+  * Fix: install asdf at FreeBSD (Reported by C-Entropy)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Thu, 24 Jun 2021 14:21:50 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Thu, 24 Jun 2021 17:15:59 +0900
 
 roswell (21.05.14.109-1) unstable; urgency=low
 
