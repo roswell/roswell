@@ -107,6 +107,9 @@ release-push:
 	ros scripts/release.ros release-push
 release-changelog:
 	grep not-yet-released ChangeLog 2>&1 > /dev/null || ros scripts/release.ros changelog
+release-ci:
+	ros scripts/release.ros release-ci
+
 winrelease: roswell/Makefile
 	mkdir -p roswell/lisp
 	mkdir -p roswell/documents
@@ -123,7 +126,7 @@ brewpr:
 	git pull
 	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
-PACK = $(PACKAGE)-$(VERSION)-`ros roswell-internal-use uname`-`uname -m`$(SBCL_BIN_VARIANT)
+PACK = $(PACKAGE)-$(VERSION)-`uname | tr '[A-Z]' '[a-z]'`-`uname -m`$(SBCL_BIN_VARIANT)
 
 roswell/Makefile:
 	rm -rf roswell
