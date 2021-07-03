@@ -55,4 +55,5 @@ jobs:
       - name: Upload
         shell: msys2 {0}
         run: |
+          ros install snmsts/sn.github
           make -f scripts/Makefile musl-upload
