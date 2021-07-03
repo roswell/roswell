@@ -53,6 +53,8 @@ jobs:
           make install
           make pack
       - name: Upload
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: msys2 {0}
         run: |
           ros install snmsts/sn.github
