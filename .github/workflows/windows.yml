@@ -1,0 +1,58 @@
+name: windows
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x86_64, i686]
+        include:
+        - arch: x86_64
+          arch2: amd64
+          bit: 64
+        - arch: i686
+          arch2: i686
+          bit: 32
+    env:
+      RESULT_NAME: windows-${{ matrix.arch2 }}
+      RESULT_PATH: windows-${{ matrix.arch2 }}
+      RESULT_PATH_SUB: roswell
+
+    environment: SET_VERSION
+
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: MINGW${{ matrix.bit }}
+          path-type: inherit
+          release: true
+          update: true
+          install: 'base-devel mingw-w64-${{ matrix.arch }}-toolchain'
+      - name: Run MSYS2 once
+        shell: msys2 {0}
+        run: |
+          pwd
+          echo $MSYSTEM
+          echo $MSYS2_PATH_TYPE
+          echo $PATH
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          gcc -v
+          ./bootstrap
+          ./configure
+          make
+          make install
+          make pack
+      - name: Upload
+        shell: msys2 {0}
+        run: |
+          make -f scripts/Makefile musl-upload
