@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-ROSWELL_RELEASE_VERSION=21.05.14.109
+ROSWELL_RELEASE_VERSION=21.06.14.110
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
@@ -132,27 +132,23 @@ install_ecl () {
 
 install_roswell_bin () {
     if ! which ros >/dev/null; then
-        if uname -s | grep -E "MSYS_NT|MINGW64" >/dev/null; then
+        if uname -s | grep -E "MSYS_NT|MINGW64|MINGW32" >/dev/null; then
             if [ $ROSWELL_BRANCH = release ]; then
-                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_amd64.zip" /tmp/roswell.zip
-                unzip /tmp/roswell.zip -d /tmp/ >/dev/null
-                mkdir -p $ROSWELL_INSTALL_DIR/bin
-                cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
-                cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
-            fi
-        elif uname -s | grep -E "MINGW32" >/dev/null; then
-            if [ $ROSWELL_BRANCH = release ]; then
-                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/roswell_${ROSWELL_RELEASE_VERSION}_i686.zip" /tmp/roswell.zip
-                unzip /tmp/roswell.zip -d /tmp/ >/dev/null
-                mkdir -p $ROSWELL_INSTALL_DIR/bin
-                cp /tmp/roswell/ros.exe $ROSWELL_INSTALL_DIR/bin
-                cp -r /tmp/roswell/lisp $ROSWELL_INSTALL_DIR/bin/lisp
+                if [ "$ROSWELL_FORCE32" = "true" ];then
+                     FILE=roswell-${ROSWELL_RELEASE_VERSION}-mingw32_nt-x86_64
+                else
+                     FILE=roswell-${ROSWELL_RELEASE_VERSION}-mingw64_nt-x86_64
+                fi
+                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
+                extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;make -C /tmp/roswell install
+                rm -rf /tmp/$FILE.tar.bz2
+                rm -rf /tmp/roswell
             fi
         elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
             if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
                 apt_unless_installed curl
                 apt_unless_installed make
-                FILE=roswell-$ROSWELL_RELEASE_VERSION-`uname -s`-`uname -m`
+                FILE=roswell-$ROSWELL_RELEASE_VERSION-linux-`uname -m`
                 if [ $ROSWELL_BRANCH = release ]; then
                     fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
                 fi

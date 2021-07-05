@@ -137,29 +137,23 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (ros:quit))
   (edit-configure-ac)
   (edit-roswell-asd)
-  (edit-install-for-ci-sh)
   (show-how-to-release))
 
 (defun release (argv)
   (declare (ignore argv))
   (!"git checkout master")
-  (!"git add ChangeLog configure.ac roswell.asd scripts/install-for-ci.sh")
+  (!"git add ChangeLog configure.ac roswell.asd")
   (!(format nil "git commit -m \"bump version to ~A\"" (find-version))))
 
 (defun release-push (argv)
   (declare (ignore argv))
-  ;; TBD check commit message to ensure just released.
-  (!"git checkout release")
-  (!"git merge master")
   (let ((version (find-version)))
     (! (format nil "git tag -a \"v~A\" -m \"v~A\""  version version)))
   (!"git checkout master")
   (format *error-output* "~{~A~%~}~%"
           '("Type"
-            "git push origin release:release"
             "git push --tags"
             "git push origin master:master")))
-
 
 (defun changelog (argv)
   "prepare changelog lines for newrelease"
@@ -168,9 +162,24 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (! "git add ChangeLog")
   (! (format nil "git commit -m \"[ci skip] prepare ChangeLog entry next to v~A\"" (find-version))))
 
+(defun release-ci (argv)
+  (declare (ignore argv))
+  (!"git checkout master")
+  (let ((*new-version* (find-version)))
+    (edit-install-for-ci-sh)
+    (!"git add scripts/install-for-ci.sh")
+    (!(format nil "git commit -m \"bump install-for-ci.sh version to ~A\"" *new-version*)))
+  (!"git checkout release")
+  (!"git merge master")
+  (!"git checkout master")
+  (format *error-output* "~{~A~%~}~%"
+          '("Type"
+            "git push origin release:release"
+            )))
+
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(prepare release release-push changelog)
+  (let ((subcmd (find subcmd '(prepare release release-push changelog release-ci)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))
