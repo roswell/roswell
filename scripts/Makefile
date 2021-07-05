@@ -48,4 +48,11 @@ musl:
 musl-upload:
 	env FILE=`echo roswell*.tar.bz2` VERSION=$(VERSION) $(MAKE) -f $(realpath $(firstword $(MAKEFILE_LIST))) upload
 
+upload.exe:
+	curl --no-progress-bar --retry 10 -o upload.tar.bz2 -L https://github.com/roswell/roswell/releases/download/v21.06.14.110/upload-mingw64_nt-x86_64.tar.bz2
+	tar xvf upload.tar.bz2
+
+win-upload: upload.exe
+	env FILE=`echo roswell*.tar.bz2` VERSION=v$(VERSION) OWNER=roswell REPO=roswell ./upload.exe
+
 .PHONY: all latest-version checkout show build-docker pull-docker docker upload musl

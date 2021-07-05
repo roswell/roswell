@@ -57,5 +57,4 @@ jobs:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: msys2 {0}
         run: |
-          ros install snmsts/sn.github
-          make -f scripts/Makefile latest-version musl-upload
+          make -f scripts/Makefile latest-version win-upload
