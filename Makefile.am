@@ -132,11 +132,12 @@ roswell/Makefile:
 	rm -rf roswell
 	$(MKDIR_P) roswell
 	echo "prefix = /usr/local" > $@
-	echo "mandir = ${prefix}/share/man" >> $@
+	echo "mandir = $$""(prefix)/share/man" >> $@
 	echo "all: ros$(EXEEXT)" >> $@
 	echo "install:" >> $@
 	echo "	mkdir -p $$""(prefix)/bin" >> $@
 	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $@
+	echo "	mkdir -p $$""(mandir)" >> $@
 	echo "	install -c ros$(EXEEXT) $$""(prefix)/bin" >> $@
 	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $@
 	echo "	install -c -m 644 $(dist_roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $@
