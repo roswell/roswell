@@ -28,6 +28,7 @@ jobs:
           make
           make install
           make pack
+          ros install snmsts/sn.github
       - name: Upload
         env:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
