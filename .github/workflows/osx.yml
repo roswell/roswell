@@ -20,7 +20,6 @@ jobs:
           uname -s
           uname -m
           brew install autoconf automake
-          brew install gnu-sed --with-default-names
       - name: Build
         run: |
           gcc -v
