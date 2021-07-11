@@ -1,0 +1,34 @@
+name: osx
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: macos-10.15
+    strategy:
+      matrix:
+        lisp: [sbcl-bin/2.0.0]
+        target: [x86-64]
+    environment: SET_VERSION
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: checkenv
+        run: |
+          uname -s
+          uname -m
+      - name: Build
+        run: |
+          gcc -v
+          ./bootstrap
+          ./configure
+          make
+          make install
+          make pack
+      - name: Upload
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          make -f scripts/Makefile latest-version musl-upload
