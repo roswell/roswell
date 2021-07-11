@@ -19,6 +19,7 @@ jobs:
         run: |
           uname -s
           uname -m
+          brew install autoconf automake
       - name: Build
         run: |
           gcc -v
