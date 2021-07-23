@@ -34,6 +34,7 @@
 (defuri asdf-git-version-uri "https://github.com/roswell/asdf/releases.atom")
 (defuri ecl-git-version-uri  "https://github.com/roswell/ecl/releases.atom")
 (defuri sbcl-git-version-uri "https://github.com/sbcl/sbcl/releases.atom")
+(defuri sbcl-head-version-uri "https://github.com/roswell/sbcl_head/releases/download/files/sbcl-bin_uri.tsv")
 (defuri ccl-git-version-uri  "https://github.com/roswell/ccl_bin/releases.atom")
 (defuri clasp-git-version-uri  "https://github.com/roswell/clasp_bin/releases.atom")
 (defuri slime-git-version-uri"https://github.com/slime/slime/releases.atom")
@@ -43,6 +44,7 @@
 (defuri asdf-uri "https://github.com/roswell/asdf/archive/")
 (defuri ecl-uri  "https://github.com/roswell/ecl/archive/")
 (defuri sbcl-uri "https://github.com/sbcl/sbcl/archive/")
+(defuri sbcl-head-uri "https://github.com/roswell/sbcl_head/releases/download/")
 (defuri npt-uri  "https://github.com/nptcl/npt/archive/")
 
 (defuri sbcl-bin-version-uri)

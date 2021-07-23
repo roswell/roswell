@@ -69,6 +69,7 @@ LISPS = helper.el \
 	install-clisp.lisp \
 	install-cmu-bin.lisp install-ecl.lisp install-quicklisp.lisp \
 	install-sbcl-bin.lisp install-sbcl.lisp install-sbcl-source.lisp \
+	install-sbcl-head.lisp \
 	install-slime.lisp install-sly.lisp \
 	install-lispworks.lisp install-mkcl.lisp \
 	install-npt.lisp \
