@@ -167,5 +167,8 @@ $(PACK).tar.bz2: roswell/Makefile
 
 pack: $(PACK).tar.bz2
 
+pack.zip: $(PACK).tar.bz2
+	7z a $(PACK).zip roswell
+
 FORCE:
 .PHONY: release-prepare release release-push test winrelease debian pack roswell/Makefile FORCE

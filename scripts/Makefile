@@ -53,6 +53,6 @@ upload.exe:
 	tar xvf upload.tar.bz2
 
 win-upload: upload.exe
-	env FILE=`echo roswell*.tar.bz2` VERSION=v$(VERSION) OWNER=roswell REPO=roswell ./upload.exe
+	env FILE=`echo roswell*.zip` VERSION=v$(VERSION) OWNER=roswell REPO=roswell ./upload.exe
 
 .PHONY: all latest-version checkout show build-docker pull-docker docker upload musl
