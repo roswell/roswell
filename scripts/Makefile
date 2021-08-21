@@ -54,5 +54,6 @@ upload.exe:
 
 win-upload: upload.exe
 	env FILE=`echo roswell*.zip` VERSION=v$(VERSION) OWNER=roswell REPO=roswell ./upload.exe
+	env FILE=`echo roswell*.hash` VERSION=v$(VERSION) OWNER=roswell REPO=roswell ./upload.exe
 
 .PHONY: all latest-version checkout show build-docker pull-docker docker upload musl

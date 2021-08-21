@@ -167,8 +167,17 @@ $(PACK).tar.bz2: roswell/Makefile
 
 pack: $(PACK).tar.bz2
 
+WINPACK = roswell_$(VERSION)_$(shell if [ $$MSYSTEM = 'MINGW64' ];then echo amd64 ;else echo i686; fi)
+
 pack.zip: $(PACK).tar.bz2
-	7z a $(PACK).zip roswell
+	7z a $(WINPACK).zip roswell
+	make $(WINPACK).zip.hash
+
+$(WINPACK).zip.hash:
+	echo "md5sum	"`md5sum -t $(WINPACK).zip` > $(WINPACK).zip.hash
+	echo "sha1sum	"`sha1sum -t $(WINPACK).zip` >> $(WINPACK).zip.hash
+	echo "sha256sum	"`sha256sum -t $(WINPACK).zip` >> $(WINPACK).zip.hash
+	echo "sha512sum 	"`sha512sum -t $(WINPACK).zip` >> $(WINPACK).zip.hash
 
 FORCE:
 .PHONY: release-prepare release release-push test winrelease debian pack roswell/Makefile FORCE
