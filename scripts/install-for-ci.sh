@@ -135,14 +135,10 @@ install_roswell_bin () {
         if uname -s | grep -E "MSYS_NT|MINGW64|MINGW32" >/dev/null; then
             if [ $ROSWELL_BRANCH = release ]; then
                 if [ "$ROSWELL_FORCE32" = "true" ];then
-                     FILE=roswell-${ROSWELL_RELEASE_VERSION}-mingw32_nt-x86_64
+                     pacman -S mingw-w64-i686-roswell
                 else
-                     FILE=roswell-${ROSWELL_RELEASE_VERSION}-mingw64_nt-x86_64
+                     pacman -S $MINGW_PACKAGE_PREFIX-roswell
                 fi
-                fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
-                extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;make -C /tmp/roswell install
-                rm -rf /tmp/$FILE.tar.bz2
-                rm -rf /tmp/roswell
             fi
         elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
             if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
