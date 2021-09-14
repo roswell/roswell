@@ -19,6 +19,10 @@ jobs:
           image: musl64
           makeopts: musl
           variant: -musl
+        - lisp: sbcl-bin/2.0.0
+          target: x86-64
+          image: deb
+          makeopts: deb
     environment: SET_VERSION
 
     steps:
