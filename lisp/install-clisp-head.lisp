@@ -4,10 +4,12 @@
 (in-package :roswell.install.clisp-head)
 
 (defun clisp-head-variant ()
-  (let ((uname (uname)))
-    (if (and (equal uname "linux"))
-        "glibc2.19"
-        ""))) ;; TBD
+  (let ((uname (uname))
+        (variant (opt "variant")))
+    (cond (variant variant)
+          ((and (equal uname "linux"))
+           "glibc2.19")
+          (t "")))) ;; TBD
 
 (defun clisp-head-get-version ()
   (format *error-output* "Checking version to install....~%")
