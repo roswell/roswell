@@ -6,7 +6,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char* os=uname_s();
   char* impl=(char*)cmd->name;
   char* version=(char*)cmd->short_name;
-  /*[binpath for clisp] -q -q -M param -repl init.lisp
+  /*[binpath for clisp] -q -q -M param -N locale-path [-L lang] -repl init.lisp
     [terminating NULL] that total 8 are default. */
   int i;
   char* impl_path=impldir(arch,os,impl,version);
@@ -14,6 +14,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   char* script=get_opt("script",0);
   char* image=get_opt("image",0);
   char* program=get_opt("program",0);
+  char* lang=get_opt("lang",0);
   int simple=0;
   LVal ret=0;
 
@@ -45,6 +46,18 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
       ret=conss(path,ret);
     }
   }
+  {
+    char* path=cat(basedir(),impl_path,SLASH,"share",SLASH,"locale",SLASH,NULL);
+    cond_printf(1,"localedir=%s\n",path);
+    ret=conss(q("-N"),ret);
+    ret=conss(path,ret);
+  }
+  if(lang) {
+    cond_printf(1,"lang=%s\n",lang);
+    ret=conss(q("-L"),ret);
+    ret=conss(q(lang),ret);
+  }
+
   if(image) {
     char *path=cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
     if(file_exist_p(path)) {

@@ -15,6 +15,7 @@
        (push ',name *locations*))))
 
 (defuri clisp-version-uri "http://ftp.gnu.org/pub/gnu/clisp/release/")
+(defuri clisp-head-version-uri "https://github.com/roswell/clisp_head/releases/download/files/clisp_head.tsv")
 (defuri 7za-uri       "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
 (defuri allegro-uri   "ftp://ftp.franz.com/")
 (defuri abcl-bin-uri  "https://common-lisp.net/project/armedbear/releases/")
@@ -45,6 +46,7 @@
 (defuri ecl-uri  "https://github.com/roswell/ecl/archive/")
 (defuri sbcl-uri "https://github.com/sbcl/sbcl/archive/")
 (defuri sbcl-head-uri "https://github.com/roswell/sbcl_head/releases/download/")
+(defuri clisp-head-uri "https://github.com/roswell/clisp_head/releases/download/")
 (defuri npt-uri  "https://github.com/nptcl/npt/archive/")
 
 (defuri sbcl-bin-version-uri)
