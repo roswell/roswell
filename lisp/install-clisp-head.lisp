@@ -27,8 +27,7 @@
                                   elts))))
 
 (defun clisp-head-argv-parse (argv)
-  (let ((pos (position "--as" (getf argv :argv) :test 'equal))
-        (uname (uname))
+  (let ((uname (uname))
         (uname-m (uname-m)))
     (set-opt "as" (getf argv :version))
     (set-opt "prefix" (merge-pathnames (format nil "impls/~A/~A/~A/~A/" (uname-m) (uname) (getf argv :target) (opt "as")) (homedir)))
