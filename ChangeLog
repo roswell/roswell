@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 13 Oct 2021 03:29:51 +0900
+
 roswell (21.06.14.110-1) unstable; urgency=low
 
   * Change: 'ros version' to show sbcl-bin-variant.
