@@ -5,16 +5,16 @@
 (in-package :roswell.util.main)
 
 (defun module-main (args &key default usage
-                           (mod-name #'identity)
-                           (error-output *error-output*))
+                              (mod-name #'identity)
+                              (error-output *error-output*))
   (let* ((name (first args))
          (packagename (package-name *package*))
-         (pos (loop repeat 3
-                 with pos = 0
-                 for p = (position #\. packagename :start pos)
-                 while p
-                 collect p
-                 do (setf pos (1+ p))))
+         (pos (loop with pos = 0
+                    for p = (position #\. packagename :start pos)
+                    repeat 3
+                    while p
+                    collect p
+                    do (setf pos (1+ p))))
          (module-name (string-downcase
                        (subseq packagename (1+ (second pos)) (third pos)))))
     (cond
