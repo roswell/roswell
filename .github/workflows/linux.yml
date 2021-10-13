@@ -8,6 +8,7 @@ jobs:
   build:
     runs-on: ubuntu-18.04
     strategy:
+      fail-fast: false
       matrix:
         include:
         - lisp: sbcl-bin/2.0.0
