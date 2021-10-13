@@ -23,6 +23,10 @@ jobs:
           target: x86-64
           image: deb
           makeopts: deb
+        - lisp: sbcl-bin/2.0.0
+          target: x86-64
+          image: pandoc
+          makeopts: docs
     environment: SET_VERSION
 
     steps:
