@@ -62,6 +62,7 @@ deb-upload:
 
 docs:
 	rm -f documents/man/* documents/html/*
+	./bootstrap
 	./configure --enable-manual-generation --enable-html-generation
 	make
 
