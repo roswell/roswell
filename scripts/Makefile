@@ -73,8 +73,7 @@ docs-upload:
 	git status
 	git add -u
 	git add documents/man/* documents/html/*
-	git commit -m "[ci skip] documents update"
-	git push origin master
+	(git commit -m "[ci skip] documents update" && git push origin $$(git rev-parse --abbrev-ref HEAD)) || true
 
 upload.exe:
 	curl --no-progress-bar --retry 10 -o upload.tar.bz2 -L https://github.com/roswell/roswell/releases/download/v21.06.14.110/upload-mingw64_nt-x86_64.tar.bz2
