@@ -36,33 +36,6 @@ jobs:
           apt:
             packages:
               - valgrind
-      - os: linux
-        name: "update documents"
-        if: branch = master
-        install:
-          - find . \( -name \*.lisp -o -name \*.ros \) -type f|xargs wc -l -c
-          - find . \( -name \*.c -o -name \*.h \) -type f|xargs wc -l -c
-          - pandoc -v
-        script:
-          - rm documents/man/* documents/html/*
-          - sh bootstrap
-          - ./configure --enable-manual-generation --enable-html-generation
-          - make
-          - sudo make install
-          - ros config
-        after_success:
-          - git config user.email "auto@example.com"; git config user.name "Travis-CI";
-          - if [ "$TRAVIS_BRANCH" = "master" ]; then
-              git branch;git status;
-              git checkout $TRAVIS_BRANCH;git add -u;git add documents/man/* documents/html/*;
-              git commit -m "[ci skip] documents update";
-              git push --force --quiet "https://${GITHUB_OAUTH_TOKEN}:x-oauth-basic@github.com/roswell/roswell.git" $TRAVIS_BRANCH > /dev/null 2>&1;
-            fi
-        addons:
-          apt:
-            packages:
-              - pandoc
-              - ruby-sass
 
 #branches:
 #  except:
