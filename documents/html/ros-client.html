@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="generator" content="pandoc">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-  <title>ros-serve(1)</title>
+  <title>ros-client(1)</title>
   <style type="text/css">code{white-space: pre;}</style>
   <link rel="stylesheet" href="../ros.css">
   <!--[if lt IE 9]>
@@ -13,32 +13,35 @@
 </head>
 <body>
 <header>
-<h1 class="title">ros-serve(1)</h1>
+<h1 class="title">ros-client(1)</h1>
 <ul>
 <li class="author">Roswell Project Team</li>
 </ul>
 </header>
-<p>ros-serve - start lisp server</p>
-<h1 id="synopsis">Synopsis</h1>
-<p><strong>ros [options for roswell ... ] serve</strong> protocol [options for the protocol ...] ...</p>
+<p>ros-client - one-shot connect to remote repl.</p>
+<h1 id="synopsis">synopsis</h1>
+<p><strong>ros [options for roswell ...] client</strong> protocol [options for the protocol ...] ...</p>
 <!-- # subcommands -->
 <!-- somecommand -->
 <!--   : description. end with a period. -->
 <h1 id="description">description</h1>
-<p><code>ros-serve</code> start lisp and wait for clients to connect to the lisp.</p>
+<p><code>ros-client</code> send message to lisp server and wait for message sent back.</p>
 <h1 id="swank-protocol-options">swank protocol options</h1>
 <dl>
 <dt><code>--port port</code></dt>
-<dd><p>Listen port would be <code>port</code> instead of the default port 4005.</p>
+<dd><p>set server <code>port</code> to connect. default port 4005.</p>
 </dd>
 <dt><code>--interface interface</code></dt>
-<dd><p>limit interface for listen. default is <code>localhost</code> so there would be no limitation.</p>
+<dd><p>interface for connect. default is <code>localhost</code>.</p>
+</dd>
+<dt>-e FORM --eval FORM</dt>
+<dd><p>Evaluate FORM while building</p>
 </dd>
 </dl>
 <!-- # options -->
 <!--  -->
 <!-- # Environmental Variables -->
 <h1 id="see-also">SEE ALSO</h1>
-<p><em><a href="ros.html">ros</a></em>(1) <em><a href="ros-client.html">ros-client</a></em>(1) _</p>
+<p><em><a href="ros.html">ros</a></em>(1) <em><a href="ros-serve.html">ros-serve</a></em>(1) _</p>
 </body>
 </html>
