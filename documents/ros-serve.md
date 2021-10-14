@@ -29,4 +29,3 @@ ros-serve - start lisp server
 
 # SEE ALSO
 _ros_(1) _ros-client_(1)
-
