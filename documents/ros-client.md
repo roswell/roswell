@@ -2,7 +2,7 @@ ros-client - one-shot connect to remote repl.
 
 # synopsis
 
-**ros [options for roswell ...] client** protocol [options for the protocol ...] ...
+**ros client** protocol [options for the protocol ...] ...
 
 <!-- # subcommands -->
 <!-- somecommand -->
