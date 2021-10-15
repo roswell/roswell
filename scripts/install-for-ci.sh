@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-ROSWELL_RELEASE_VERSION=21.06.14.110
+ROSWELL_RELEASE_VERSION=21.10.14.111
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
