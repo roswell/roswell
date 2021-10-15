@@ -1,8 +1,10 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (21.10.14.111-1) unstable; urgency=low
 
-  *
+  * New: 'ros client' to send oneshot message to lisp server. only support swank for now.
+  * New: 'ros install clisp-head' to install binary clisp.
+  * Changes: a lot related to ci.
 
- -- SANO Masatoshi <snmsts@gmail.com>  Wed, 13 Oct 2021 03:29:51 +0900
+ -- SANO Masatoshi <snmsts@gmail.com>  Fri, 15 Oct 2021 15:38:51 +0900
 
 roswell (21.06.14.110-1) unstable; urgency=low
 
