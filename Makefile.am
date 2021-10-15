@@ -5,7 +5,7 @@ SUBDIRS = src
 if MANUAL_INSTALL
 MDS = ros.md ros-checkout.md ros-dump.md ros-init.md ros-install.md ros-list.md ros-setup.md ros-template.md \
 	ros-config.md ros-delete.md ros-emacs.md ros-run.md ros-use.md ros-wait.md ros-asdf.md ros-build.md ros-update.md \
-	ros-help.md
+	ros-help.md ros-client.md ros-serve.md
 dist_man1_MANS = $(MDS:%.md=documents/man/%.1)
 endif
 
