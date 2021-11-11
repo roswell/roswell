@@ -82,19 +82,19 @@ char* configdir(void) {
 
   if (env) /* note: env can be a NULL */
   {
-      if (env[0] != SLASH[0])
+      if (env[0] != SLASH[0])   /* note: SLASH == \\ on windows, / on unix */
       {
           cond_printf(0,"Error: %s must be absolute. Got: %s \n",c,env);
       }
-      s(c);                     /* note : this deallocates c. */
+      s(c);                     /* note : this frees c. */
       return append_trail_slash(q(env));
   }
   {
-      s(c);                     /* note : this deallocates c. */
-      c = homedir();
-      if (c)                    /* c is not null */
+      s(c);                     /* note : this frees c. */
+      env = homedir();          /* use homedir instead of ROSWELL_DIR */
+      if (env)                  /* env is not null */
       {
-          return s_cat2(append_trail_slash(c),q("."PACKAGE SLASH));
+          return s_cat2(append_trail_slash(env),q("."PACKAGE SLASH));
       }
       {
           return NULL;
