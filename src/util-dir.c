@@ -77,11 +77,29 @@ char* currentdir(void);
 #endif
 
 char* configdir(void) {
-  char *c=upcase(q_(PACKAGE"_HOME"));
+  char *c=upcase(q_(PACKAGE"_HOME")); /* e.g. ROSWELL_HOME */
   char *env=getenv(c);
-  s(c);
-  return env?append_trail_slash(q(env)):
-    ((c=homedir())?s_cat2(append_trail_slash(c),q("."PACKAGE SLASH)):NULL);
+
+  if (env) /* note: env can be a NULL */
+  {
+      if (env[0] != SLASH[0])
+      {
+          cond_printf(0,"Error: %s must be absolute. Got: %s \n",c,env);
+      }
+      s(c);                     /* note : this deallocates c. */
+      return append_trail_slash(q(env));
+  }
+  {
+      s(c);                     /* note : this deallocates c. */
+      c = homedir();
+      if (c)                    /* c is not null */
+      {
+          return s_cat2(append_trail_slash(c),q("."PACKAGE SLASH));
+      }
+      {
+          return NULL;
+      }
+  }
 }
 
 char* subcmddir(void) {
