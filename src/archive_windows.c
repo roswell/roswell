@@ -18,6 +18,9 @@ char* extract_command_str(int flags,const char *filename,int do_extract,const ch
   }else if(strcmp(type,"7za")==0) {
     ensure_directories_exist(outputpath2);
     str=cat(exe," ",do_extract?"x":"t"," -y -o",outputpath2," ",filename2,NULL);
+  }else if(strcmp(type,"cab")==0) {
+    if(do_extract)
+      str=cat("expand.exe /r \"-F:*\" ",filename2," ",outputpath2,NULL);
   }
   s(outputpath2),s(filename2),s(_confdir),s(_uname),s(_uname_m);
   return str;

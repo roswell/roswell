@@ -25,17 +25,17 @@ int extract(const char *filename, int do_extract, int flags,const char* outputpa
   char* type="gzip"; /*for gz*/
   if(len>4) {
     int i,c;
-    for(c=0,i=len;filename[i]!='.' && c<5;--i,++c) {
-      if(filename[i]=='b'||filename[i]=='B') {
-        type="bzip2";
-        break;
-      }else if(filename[i]=='x'||filename[i]=='X') {
-        type="xz";
-        break;
-      }else if(filename[i]=='7') {
-        type="7za";
-        break;
-      }
+    const char* ext;
+    for(c=0,i=len;filename[i]!='.' && len>c;--i,++c);
+    ext=filename+i;
+    if(strcmp(".tbz2",ext)==0 || strcmp(".bz2",ext)==0) {
+      type="bzip2";
+    }else if(strcmp(".xz",ext)==0) {
+      type="xz";
+    }else if(strcmp(".7z",ext)==0) {
+      type="7za";
+    }else if(strcmp(".cab",ext)==0) {
+      type="cab";
     }
   }
   cond_printf(1,"extracttype=%s\n",type);
