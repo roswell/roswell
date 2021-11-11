@@ -75,7 +75,7 @@ LVal directory(char* path) {
          strcmp(fd.cFileName,"..")==0)) {
       char* str=q(fd.cFileName);
       if(fd.dwFileAttributes&FILE_ATTRIBUTE_DIRECTORY)
-        str=s_cat2(str,q(SLASH));
+        str=s_cat2(str,q(DIRSEP));
       ret=conss(str,ret);
     }
   }while(FindNextFile(dir,&fd)!=0);

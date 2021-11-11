@@ -151,7 +151,7 @@ char* downcase(char* orig) {
 }
 
 char* append_trail_slash(char* str) {
-  return str[strlen(str)-1]!=SLASH[0]?cat2(str,SLASH):q(str);
+  return str[strlen(str)-1]!=DIRSEP[0]?cat2(str,DIRSEP):q(str);
 }
 
 char* escape_string(char* str) {

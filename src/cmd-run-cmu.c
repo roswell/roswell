@@ -17,7 +17,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
   char* control_stack_size=get_opt("control-stack-size",0);
-  char* cmucllib=cat(home,impl_path,SLASH"lib"SLASH"cmucl"SLASH"lib",NULL);
+  char* cmucllib=cat(home,impl_path,DIRSEP"lib"DIRSEP"cmucl"DIRSEP"lib",NULL);
   char* cmu_version=get_opt("version",0);
   char *bin;
   LVal ret=0;
@@ -31,7 +31,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
       s(bin),bin=which("cmucl");
     bin=truename(bin);
   }else
-    bin=cat(home,impl_path,SLASH,"bin",SLASH,"lisp",EXE_EXTENTION,NULL);
+    bin=cat(home,impl_path,DIRSEP,"bin",DIRSEP,"lisp",EXE_EXTENTION,NULL);
   setenv("CMUCLLIB",cmucllib,1);
 
   ret=conss(bin,ret);
@@ -39,7 +39,7 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss(q("-quiet"),ret);
   if(image) {
-    char *path=cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(basedir(),impl_path,DIRSEP,"dump",DIRSEP,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-core"),ret);
       ret=conss(q(path),ret);

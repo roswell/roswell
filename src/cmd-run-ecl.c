@@ -23,7 +23,7 @@ char** cmd_run_ecl(int argc,char** argv,struct sub_command* cmd) {
     setenv("DYLD_FALLBACK_LIBRARY_PATH",path,1);
     s(path);
   }
-  ret=conss((strcmp("system",version)==0)?truename(which("ecl")):cat(home,impl_path,SLASH,"bin",SLASH,"ecl",EXE_EXTENTION,NULL),ret);
+  ret=conss((strcmp("system",version)==0)?truename(which("ecl")):cat(home,impl_path,DIRSEP,"bin",DIRSEP,"ecl",EXE_EXTENTION,NULL),ret);
   s(arch),s(os),s(impl_path);
   if(get_opt("version",0))
     ret=conss(q("--version"),ret);

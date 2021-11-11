@@ -62,11 +62,11 @@ int sbcl_bin_expand(struct install_options* param) {
   char* home=configdir();
   char* arch= arch_(param);
   char* archive=cat(impl,"-",version,"-",arch,".msi",NULL);
-  char* log_path=cat(home,"impls",SLASH,"log",SLASH,impl,"-",version,"-",arch,SLASH,"install.log",NULL);
+  char* log_path=cat(home,"impls",DIRSEP,"log",DIRSEP,impl,"-",version,"-",arch,DIRSEP,"install.log",NULL);
   char* dist_path;
   int pos=position_char("-",impl);
   impl=(pos!=-1)?subseq(impl,0,pos):q(impl);
-  dist_path=cat(home,"src",SLASH,impl,"-",version,"-",arch,SLASH,NULL);
+  dist_path=cat(home,"src",DIRSEP,impl,"-",version,"-",arch,DIRSEP,NULL);
  
   char* msiexec_path=msi_exec_path_from_register(); 
   if(msiexec_path==NULL  || !file_exist_p(msiexec_path)) {
@@ -78,7 +78,7 @@ int sbcl_bin_expand(struct install_options* param) {
   }
   
   printf("Extracting the msi archive. %s to %s\n",archive,dist_path);
-  archive=s_cat(q(home),q("archives"),q(SLASH),archive,NULL);
+  archive=s_cat(q(home),q("archives"),q(DIRSEP),archive,NULL);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
   ensure_directories_exist(log_path);

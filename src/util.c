@@ -150,10 +150,10 @@ int mklockdir(char* path) {
 #endif
 
 int lock_apply(char* symbol,int remove) {
-  char *p=s_cat(configdir(),q("tmp"),q(SLASH),NULL);
+  char *p=s_cat(configdir(),q("tmp"),q(DIRSEP),NULL);
   int ret=0;
   ensure_directories_exist(p),s(p);
-  p=s_cat(configdir(),q("tmp"SLASH"lock."PACKAGE"."),q(symbol),NULL);
+  p=s_cat(configdir(),q("tmp"DIRSEP"lock."PACKAGE"."),q(symbol),NULL);
   if(remove<2) {
     cond_printf(1,"%slock!:%s\n",remove?"un":"",symbol);
     while(remove?rmdir(p):mklockdir(p));

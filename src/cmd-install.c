@@ -10,8 +10,8 @@ extern int extract(const char *filename, int do_extract, int flags,const char* o
 int installed_p(struct install_options* param) {
   int ret;
   char *i,*impl=q(param->impl);
-  i=s_cat(configdir(),q("impls"),q(SLASH),q(param->arch),q(SLASH),q(param->os),q(SLASH),
-          q(impl),q(param->version?SLASH:""),q(param->version?param->version:""),q(SLASH),NULL);
+  i=s_cat(configdir(),q("impls"),q(DIRSEP),q(param->arch),q(DIRSEP),q(param->os),q(DIRSEP),
+          q(impl),q(param->version?DIRSEP:""),q(param->version?param->version:""),q(DIRSEP),NULL);
   ret=directory_exist_p(i);
   cond_printf(1,"directory_exist_p(%s)=%d\n",i,ret);
   s(i),s(impl);
@@ -30,11 +30,11 @@ int start(struct install_options* param) {
       set_defaultlisp(param->impl,param->version);
     exit(EXIT_SUCCESS);
   }
-  p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",SLASH,NULL);
+  p=cat(home,"tmp",DIRSEP,param->impl,param->version?"-":"",param->version?param->version:"",DIRSEP,NULL);
   ensure_directories_exist(p);
   s(p);
 
-  p=cat(home,"tmp",SLASH,param->impl,param->version?"-":"",param->version?param->version:"",".lock",NULL);
+  p=cat(home,"tmp",DIRSEP,param->impl,param->version?"-":"",param->version?param->version:"",".lock",NULL);
   delete_at_exit(p);
   touch(p);
 
@@ -53,7 +53,7 @@ int download(struct install_options* param) {
   char* home=configdir();
   char* url=install_impl->uri;
   char* archive_name=download_archive_name(param);
-  char* impl_archive=cat(home,"archives",SLASH,archive_name,NULL);
+  char* impl_archive=cat(home,"archives",DIRSEP,archive_name,NULL);
   if(!file_exist_p(impl_archive)
      || get_opt("download.force",1)) {
     printf("Downloading %s\n",url);

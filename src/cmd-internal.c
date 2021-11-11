@@ -177,15 +177,15 @@ char* lispdir(void) {
   s(w);
 
   /* $(bindir)/lisp/ */
-  LISPDIR_CANDIDATE(cat(ros_bin,"lisp",SLASH,NULL));
+  LISPDIR_CANDIDATE(cat(ros_bin,"lisp",DIRSEP,NULL));
 
   ros_bin[strlen(ros_bin)-1]='\0';
   ros_bin=pathname_directory(ros_bin);
 
   /* $(bindir)/../etc/roswell/ */
-  LISPDIR_CANDIDATE(cat(ros_bin,"etc"SLASH PACKAGE_NAME SLASH,NULL));
+  LISPDIR_CANDIDATE(cat(ros_bin,"etc"DIRSEP PACKAGE_NAME DIRSEP,NULL));
   /* $(bindir)/../lisp/ */
-  LISPDIR_CANDIDATE(cat(ros_bin,"lisp",SLASH,NULL));
+  LISPDIR_CANDIDATE(cat(ros_bin,"lisp",DIRSEP,NULL));
   s(ros_bin);
   result=append_trail_slash(LISP_PATH);
   return q(result);

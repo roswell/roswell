@@ -23,7 +23,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss((strcmp("system",version)==0)?
             truename(which(lisp)):
-            cat(home,impl_path,SLASH,lisp,EXE_EXTENTION,NULL),ret);
+            cat(home,impl_path,DIRSEP,lisp,EXE_EXTENTION,NULL),ret);
   /* runtime options from here */
   ret=conss(q("-qq"),ret);
   if(acl_version) {
@@ -33,7 +33,7 @@ char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd) {
   }
 
   if(image) {
-    char *path=cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(basedir(),impl_path,DIRSEP,"dump",DIRSEP,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-I"),ret);
       ret=conss(path,ret);

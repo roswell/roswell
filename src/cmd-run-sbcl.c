@@ -24,12 +24,12 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
   int issystem=(strcmp("system",version)==0);
   char *bin=issystem?
     strcmp(impl,"sbcl32")==0?truename(which("sbcl32")):truename(which("sbcl")):
-    cat(home,impl_path,SLASH,"bin",SLASH,"sbcl",EXE_EXTENTION,NULL);
+    cat(home,impl_path,DIRSEP,"bin",DIRSEP,"sbcl",EXE_EXTENTION,NULL);
 
   s(arch),s(os);
 
   if (!issystem) {
-    char* sbcl_home=cat(home,impl_path,SLASH,"lib",SLASH,"sbcl",NULL);
+    char* sbcl_home=cat(home,impl_path,DIRSEP,"lib",DIRSEP,"sbcl",NULL);
     setenv("SBCL_HOME",sbcl_home,1);
     s(sbcl_home);
   }
@@ -41,11 +41,11 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     char* core=NULL;
     char* ld=lispdir();
     char* base=basedir();
-    char* bindir=cat(base,"bin"SLASH,NULL);
-    char* bindir2=cat(home,"bin"SLASH,NULL);
+    char* bindir=cat(base,"bin"DIRSEP,NULL);
+    char* bindir2=cat(home,"bin"DIRSEP,NULL);
     char* script2=q(script?script+1:"");
     int pos= position_char("\"",script2);
-    core=cat(base,impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    core=cat(base,impl_path,DIRSEP,"dump",DIRSEP,image,".core",NULL);
     if(pos!=-1)
       script2[pos]='\0';
     if(script &&
@@ -66,7 +66,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     }else
       cond_printf(1,"core not found:%s\n",core);
   }else if(!issystem)
-    ret=conss(cat(home,impl_path,SLASH,"lib",SLASH,"sbcl",SLASH,"sbcl.core",NULL),
+    ret=conss(cat(home,impl_path,DIRSEP,"lib",DIRSEP,"sbcl",DIRSEP,"sbcl.core",NULL),
               conss(q("--core"),ret));
   if(help)
     ret=conss(q("--help"),ret);
@@ -92,7 +92,7 @@ char** cmd_run_sbcl(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--no-userinit"),ret);
     if(script && !enable_debugger)
       ret=conss(q("--disable-debugger"),ret);
-    char* initlisp=cat(home,impl_path,SLASH,"fasl",SLASH,"init.lisp",NULL);
+    char* initlisp=cat(home,impl_path,DIRSEP,"fasl",DIRSEP,"init.lisp",NULL);
     char* asdf=get_opt("asdf.version",0);
     if(asdf)
       initlisp=s_cat(initlisp,q("_"),substitute_char('_','.',q(asdf)),NULL);

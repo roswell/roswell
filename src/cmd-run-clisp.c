@@ -22,7 +22,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
 
   ret=conss((strcmp("system",version)==0)?
             truename(which((strcmp(impl,"clisp32")==0)?"clisp32":"clisp")):
-            cat(home,impl_path,SLASH,"bin",SLASH,"clisp",EXE_EXTENTION,NULL),ret);
+            cat(home,impl_path,DIRSEP,"bin",DIRSEP,"clisp",EXE_EXTENTION,NULL),ret);
   if(get_opt("version",0)) {
     ret=conss(q("--version"),ret);
     simple=1;
@@ -37,7 +37,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     ret=conss(q("--help"),ret);
 
   {
-    char* path=cat(basedir(),impl_path,SLASH,"lib",SLASH,NULL);
+    char* path=cat(basedir(),impl_path,DIRSEP,"lib",DIRSEP,NULL);
     LVal d=directory(path);
     if(d) {
       path=s_cat(path,q(firsts(d)),NULL);
@@ -47,7 +47,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
     }
   }
   {
-    char* path=cat(basedir(),impl_path,SLASH,"share",SLASH,"locale",SLASH,NULL);
+    char* path=cat(basedir(),impl_path,DIRSEP,"share",DIRSEP,"locale",DIRSEP,NULL);
     cond_printf(1,"localedir=%s\n",path);
     ret=conss(q("-N"),ret);
     ret=conss(path,ret);
@@ -59,7 +59,7 @@ char** cmd_run_clisp(int argc,char** argv,struct sub_command* cmd) {
   }
 
   if(image) {
-    char *path=cat(basedir(),impl_path,SLASH,"dump",SLASH,image,".core",NULL);
+    char *path=cat(basedir(),impl_path,DIRSEP,"dump",DIRSEP,image,".core",NULL);
     if(file_exist_p(path)) {
       ret=conss(q("-M"),ret);
       ret=conss(path,ret);

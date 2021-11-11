@@ -34,7 +34,7 @@ void sbcl_bin_check_file(char* file) {
 
 int sbcl_version_bin(struct install_options* param) {
   char* home=configdir();
-  char* platforms_tsv=cat(home,"tmp",SLASH,"sbcl-bin_uri.tsv",NULL);
+  char* platforms_tsv=cat(home,"tmp",DIRSEP,"sbcl-bin_uri.tsv",NULL);
   char* uri=get_opt("uri",0);
   cond_printf(1,"sbcl_version_bin\n");
   ensure_directories_exist(platforms_tsv);
@@ -82,7 +82,7 @@ int sbcl_bin_download(struct install_options* param) {
   cond_printf(1,"sbcl_bin_download\n");
   int retry=10;
   do {
-    param->expand_path=cat(home,"src",SLASH,"sbcl","-",param->version,"-",arch,param->variant,SLASH,NULL);
+    param->expand_path=cat(home,"src",DIRSEP,"sbcl","-",param->version,"-",arch,param->variant,DIRSEP,NULL);
     impls_sbcl_bin.uri=uri?q(uri):cat(SBCL_BIN_URI ,param->version,"/sbcl-",param->version,
                                    "-",arch,param->variant,"-binary",sbcl_bin_extention(param),NULL);
     result = download(param);
@@ -123,8 +123,8 @@ int sbcl_bin_expand(struct install_options* param) {
   printf("Extracting %s to %s\n",archive,dist_path);
   delete_directory(dist_path,1);
   ensure_directories_exist(dist_path);
-  argv[2]=cat(home,"archives",SLASH,archive,NULL);
-  argv[4]=cat(home,"src",SLASH,NULL);
+  argv[2]=cat(home,"archives",DIRSEP,archive,NULL);
+  argv[4]=cat(home,"src",DIRSEP,NULL);
   return !cmd_tar(array_stringlist(5,argv),NULL);
 }
 
