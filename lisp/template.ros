@@ -17,6 +17,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
                          ("add" . template-add)
                          ("cat" . template-cat)
                          ("edit" . template-edit)
+                         ("path" . template-native-path)
                          ("rm" . template-rm)
                          ("delete" . template-rm)
                          ("type" . template-type)
@@ -28,12 +29,15 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
 
 (defun template-init (names)
   "Create new template"
-  (let* ((name (first names))
-         (path (template-asd-path name)))
-    (when (probe-file path)
-      (format *error-output* "already exist ~A~%" path)
-      (ros:quit 0))
-    (template-create name)))
+  (if names
+      (let* ((name (first names))
+             (path (template-asd-path name)))
+        (when (probe-file path)
+          (format *error-output* "already exist ~A~%" path)
+          (ros:quit 1))
+        (template-create name)
+        (format *error-output* "template written ~A~%" path))
+      (format *error-output* "template init need template name.~%")))
 
 (defun template-deinit (names)
   "Remove a template"
@@ -76,7 +80,7 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
       (format *error-output* "current default is ~S~%~%candidates:~%~{~A~%~}"
               (template-default)
               (templates-list :name t))
-      (ros:quit 1))
+      (ros:quit 0))
     (let ((path (templates-list :filter name)))
       (unless path
         (format *error-output* "template: ~S not found.~%" name)
@@ -120,6 +124,18 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
     (roswell:exec `("/usr/bin/editor"
                     ,@(loop for i in _
                             collect (uiop:native-namestring (template-file-path name i)))))))
+
+(defun template-native-path (_)
+  "show native path in the template"
+  (let ((name (template-default)))
+    (when (equal name "default")
+      (setf name (pop _)))
+    (unless (and (templates-list :filter name)
+                 (not (equal name "default")))
+      (format *error-output* "template ~S does not contain files.~%" name)
+      (ros:quit 1))
+    (loop for i in _
+          do (format t "~A~%" (uiop:native-namestring (template-file-path name i))))))
 
 (defun template-rm (_)
   "Remove (delete) files from template."

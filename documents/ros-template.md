@@ -34,6 +34,10 @@ edit [template-name] [files ...]
 
   : Edit content of files in template using `/usr/bin/editor`.
 
+path [template-name] [files ...]
+
+  : Show native path of files in template.
+
 rm [template-name] [files ...]
 
   : Remove file form current template.
