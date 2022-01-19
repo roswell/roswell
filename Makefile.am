@@ -77,7 +77,7 @@ LISPS = helper.el \
 	install+7zip.lisp install-abcl-bin.lisp install-allegro.lisp \
 	install-ccl-bin.lisp install-clasp-bin.lisp install-clasp.lisp \
 	install-clisp.lisp install-clisp-head.lisp \
-	install-cmu-bin.lisp install-ecl.lisp install-quicklisp.lisp install-ql.lisp \
+	install-cmu-bin.lisp install-ecl.lisp install-quicklisp.lisp \
 	install-sbcl-bin.lisp install-sbcl.lisp install-sbcl-source.lisp \
 	install-sbcl-head.lisp \
 	install-slime.lisp install-sly.lisp \
