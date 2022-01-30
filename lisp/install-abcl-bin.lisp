@@ -14,7 +14,7 @@
               (loop for a in (plump:get-elements-by-tag-name
                               (plump:parse file) "a")
                     for x = (string-right-trim "/" (plump:get-attribute a "href"))
-                    when (digit-char-p (aref x 0))
+                    when (ignore-errors (digit-char-p (aref x 0)))
                     collect x)))))
 
 (defun abcl-bin-impl ()
