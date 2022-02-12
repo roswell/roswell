@@ -6,7 +6,7 @@ AC_INIT([roswell],[21.10.14.111],snmsts@gmail.com)
 CFLAGS=${CFLAGS=""}
 CXXFLAGS=${CXXFLAGS=""}
 
-AM_CONFIG_HEADER(config.h)
+AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_FILES([Makefile src/Makefile])
 AC_CONFIG_SRCDIR([Makefile.am])
 AM_INIT_AUTOMAKE([foreign])
