@@ -12,7 +12,6 @@ AC_CONFIG_SRCDIR([Makefile.am])
 AM_INIT_AUTOMAKE([foreign])
 AM_MAINTAINER_MODE([enable])
 
-
 # Checks for programs.
 AC_PROG_CC
 AM_PROG_CC_C_O
@@ -43,9 +42,6 @@ if test "x$enable_debug" = xyes; then
   CFLAGS="$CFLAGS -g -O0"
   CXXFLAGS="$CXXFLAGS -g -O0"
 fi
-
-
-
 
 AC_CHECK_LIB([wininet], [main],[LIBS="-lwininet $LIBS";wwwlib=yes],[])
 if test "x$wwwlib" = xno; then
@@ -142,7 +138,5 @@ AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
 AM_COND_IF([MANUAL_INSTALL],
            [AC_CONFIG_FILES([documents/Makefile])])
-
-
 
 AC_OUTPUT
