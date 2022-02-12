@@ -97,24 +97,24 @@ AC_SUBST(roslisppatchdir)
 
 # Change master uri for sbcl-bin
 AC_ARG_WITH([sbcl_bin_base],
-  [AC_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://github.com/roswell/sbcl_bin/releases/download/]])],
+  [AS_HELP_STRING([--with-sbcl-bin-base=URI],[set URI for sbcl-bin [default=https://github.com/roswell/sbcl_bin/releases/download/]])],
   [SBCL_BIN_URI=$withval],[SBCL_BIN_URI="https://github.com/roswell/sbcl_bin/releases/download/"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_URI],["${SBCL_BIN_URI}"],[uri for sbcl master])
 
 AC_ARG_WITH([platformtsvl_base],
-  [AC_HELP_STRING([--with-platformtsv-base=URI],[set URI for sbcl-bin_uri.tsv [default=https://github.com/roswell/sbcl_bin/releases/download/files/sbcl-bin_uri.tsv]])],
+  [AS_HELP_STRING([--with-platformtsv-base=URI],[set URI for sbcl-bin_uri.tsv [default=https://github.com/roswell/sbcl_bin/releases/download/files/sbcl-bin_uri.tsv]])],
   [PLATFORM_TSV_URI=$withval],[PLATFORM_TSV_URI=https://github.com/roswell/sbcl_bin/releases/download/files/sbcl-bin_uri.tsv])
 AC_DEFINE_UNQUOTED([PLATFORM_TSV_URI],["${PLATFORM_TSV_URI}"],[uri for sbcl-bin_uri.tsv])
 
 AC_ARG_WITH([sbcl_bin_variant],
-  [AC_HELP_STRING([--with-sbcl-bin-variant=string],[set which variant for sbcl-bin [default=''] possible choices are '-glibc2.10', '-musl'.])],
+  [AS_HELP_STRING([--with-sbcl-bin-variant=string],[set which variant for sbcl-bin [default=''] possible choices are '-glibc2.10', '-musl'.])],
   [SBCL_BIN_VARIANT=$withval],[SBCL_BIN_VARIANT=""])
 AC_SUBST([SBCL_BIN_VARIANT], ["${SBCL_BIN_VARIANT}"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_VARIANT],["${SBCL_BIN_VARIANT}"],[variant for sbcl-bin])
 
 # man file (ros.1) generation switch
 AC_ARG_ENABLE([manual_generation],
-  [AC_HELP_STRING([--enable-manual-generation],[generate manual if enabled])],
+  [AS_HELP_STRING([--enable-manual-generation],[generate manual if enabled])],
   [case "${enableval}" in
     yes) manual_generate=true ;;
     no)  manual_generate=false ;;
@@ -123,7 +123,7 @@ AC_ARG_ENABLE([manual_generation],
 AM_CONDITIONAL(MANUAL_GENERATE,[test x$manual_generate = x"true"])
 
 AC_ARG_ENABLE([manual_install],
-  [AC_HELP_STRING([--disable-manual-install],[install manual if enabled])],
+  [AS_HELP_STRING([--disable-manual-install],[install manual if enabled])],
   [case "${enableval}" in
     yes) manual_install=true ;;
     no)  manual_install=false ;;
@@ -132,7 +132,7 @@ AC_ARG_ENABLE([manual_install],
 AM_CONDITIONAL(MANUAL_INSTALL,[test x$manual_install != x"false"])
 
 AC_ARG_ENABLE([html_generation],
-  [AC_HELP_STRING([--enable-html-generation],[generate html if enabled])],
+  [AS_HELP_STRING([--enable-html-generation],[generate html if enabled])],
   [case "${enableval}" in
     yes) html_generate=true ;;
     no)  html_generate=false ;;
