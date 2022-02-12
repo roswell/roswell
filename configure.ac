@@ -72,8 +72,8 @@ AS_IF([test "x$GIT_CHECK" = xyes],
       [AC_SUBST([git_version], `set -o pipefail ; { git describe  | sed -n -e 's/^.*-g//p' ; } 2>/dev/null || echo 'NO-GIT-REVISION'
 `,[git SHA1 for HEAD.])],
       [AC_SUBST([git_version],[NO-GIT-REVISION])])
-      
-AS_IF([test "x$GIT_CHECK" = xyes],      
+
+AS_IF([test "x$GIT_CHECK" = xyes],
       [AC_SUBST([git_version_long], `set -e | git describe --abbrev=7 --dirty 2>/dev/null || echo 'NO-GIT-REVISION'`, [long version for git source])],
       [AC_SUBST([git_version_long], [NO-GIT-REVISION])])
 
