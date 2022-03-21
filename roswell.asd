@@ -36,7 +36,7 @@
                         :components
                         ((:file "ros"))))
   :perform (test-op :after (op c)
-                    #+quickisp(ql:quickload :prove-asdf)
+                    #+quicklisp(ql:quickload :prove-asdf)
                     #-asdf(asdf:load-system :prove-asdf)
                     (uiop:symbol-call :prove-asdf :run-test-system c)
                     (asdf:clear-system c)))
