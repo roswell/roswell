@@ -10,7 +10,7 @@ Roswell started out as a command-line tool with the aim to make installing and m
 Roswell has now evolved into a full-stack environment for Common Lisp development, and has many features that makes it easy to test, share, and distribute your Lisp applications.
 With Roswell, we aim to push the Common Lisp community to a whole new level of productivity.
 
-Roswell is still in beta. Despite this, the basic interfaces are stable and not likely to change. Roswell currently works well on Unix-like platforms such as Linux, Mac OS X and FreeBSD.
+Roswell is still in beta. Despite this, the basic interfaces are stable and not likely to change. Roswell currently works well on Unix-like platforms such as Linux, macOS and FreeBSD.
 Roswell also works on other operating systems, but currently some parts or features might be missing or unstable.
 
 Checkout [issues list](https://github.com/roswell/roswell/issues) if you are interested in what's lacking.
@@ -18,10 +18,10 @@ Checkout [issues list](https://github.com/roswell/roswell/issues) if you are int
 ## Installation, Dependency & Usage
 
 See our [github wiki](https://github.com/roswell/roswell/wiki).
-We provide prebuilt binaries for homebrew on OSX, various Linux distributions and **also on Windows**.
+We provide prebuilt binaries for homebrew on macOS, various Linux distributions and **also on Windows**.
 * [Linux](https://github.com/roswell/roswell/wiki/Installation#linux)
 * [FreeBSD](https://github.com/roswell/roswell/wiki/Installation#freebsd)
-* [Mac OS X (brew)](https://github.com/roswell/roswell/wiki/Installation#mac-os-x--homebrew)
+* [macOS (via Homebrew)](https://github.com/roswell/roswell/wiki/Installation#mac-os-x--homebrew)
 * [Windows](https://github.com/roswell/roswell/wiki/Installation#windows)
 * [Building from Source](https://github.com/roswell/roswell/wiki/Installation#building-from-source)
 
