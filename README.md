@@ -18,8 +18,8 @@ Checkout [issues list](https://github.com/roswell/roswell/issues) if you are int
 ## Installation, Dependency & Usage
 
 See our [github wiki](https://github.com/roswell/roswell/wiki).
-We provide prebuilt binaries for homebrew on OSX, AUR on Arch and **also on Windows**.
-* [Linux (arch)](https://github.com/roswell/roswell/wiki/Installation#linux)
+We provide prebuilt binaries for homebrew on OSX, various Linux distributions and **also on Windows**.
+* [Linux](https://github.com/roswell/roswell/wiki/Installation#linux)
 * [FreeBSD](https://github.com/roswell/roswell/wiki/Installation#freebsd)
 * [Mac OS X (brew)](https://github.com/roswell/roswell/wiki/Installation#mac-os-x--homebrew)
 * [Windows](https://github.com/roswell/roswell/wiki/Installation#windows)
