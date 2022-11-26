@@ -5,7 +5,8 @@
            :install-system-script :install-impl-if-probed :install-script-if-probed
            :install-system-if-probed :mingw-namestring :install-github :*checkout-default*
            :install :decide-version :decide-download :require-system-package
-           :start :setup :date :github-version :version :install-script :count-line-stream))
+           :start :setup :date :github-version :version :install-script :count-line-stream
+           :get-elements-by-tag-name))
 (in-package :roswell.install)
 
 (defvar *ros-path* nil)
@@ -77,7 +78,7 @@ To differentiate it from the system with the same name in quicklisp, the path sh
             (download uri file :interval (* 60 60))
             (read-call "plump:parse" file))))
     (nreverse
-     (loop for link in (read-call "plump:get-elements-by-tag-name" elts "link")
+     (loop for link in (read-call "roswell.install:get-elements-by-tag-name" elts "link")
            for href = (read-call "plump:get-attribute" link "href")
            when (funcall filter href)
            collect it))))

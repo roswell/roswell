@@ -11,7 +11,7 @@
             (let ((file (merge-pathnames "tmp/abcl-bin.html" (homedir))))
               (format *error-output* "Checking version to install....~%")
               (download (abcl-bin-uri) file)
-              (loop for a in (plump:get-elements-by-tag-name
+              (loop for a in (get-elements-by-tag-name
                               (plump:parse file) "a")
                     for x = (string-right-trim "/" (plump:get-attribute a "href"))
                     when (ignore-errors (digit-char-p (aref x 0)))
