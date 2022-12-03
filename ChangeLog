@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 03 Dec 2022 21:49:56 +0900
+
 roswell (21.10.14.111-1) unstable; urgency=low
 
   * New: 'ros client' to send oneshot message to lisp server. only support swank for now.
