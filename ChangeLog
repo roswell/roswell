@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 10 Dec 2022 23:10:30 +0800
+
 roswell (22.12.14.112-1) unstable; urgency=low
 
   * New: Support cab extract on windows.
