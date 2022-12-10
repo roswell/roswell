@@ -1,3 +1,19 @@
+roswell (22.12.14.113-1) unstable; urgency=low
+
+  * Fix: release CI for debian package.
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Sat, 10 Dec 2022 23:14:05 +0800
+
+roswell (22.12.14.112-1) unstable; urgency=low
+
+  * New: Support cab extract on windows.
+  * New: `ros template path template-name files` to show native for template file.
+  * Fix: crush when download file smaller than 74bytes.
+  * Fix: `dynamic-space-size` parameter accepted by `ros build`.
+  * Fix: install old implementation when new quicklisp dist used. (reported by Alexander Artemenko)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 06 Dec 2022 21:59:43 +0900
+
 roswell (21.10.14.111-1) unstable; urgency=low
 
   * New: 'ros client' to send oneshot message to lisp server. only support swank for now.

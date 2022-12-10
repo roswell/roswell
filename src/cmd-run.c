@@ -124,7 +124,7 @@ void set_env_opt(char* path) {
         case 2:
           value=subseq(buf,last,i);
           if(strcmp("quicklisp",name)==0) {
-            set_opt(&local_opt,"quicklisp",s_escape_string(cat(configdir(),"env"SLASH,value,SLASH,"lisp",SLASH,"quicklisp",SLASH,NULL)));
+            set_opt(&local_opt,"quicklisp",s_escape_string(cat(configdir(),"env"DIRSEP,value,DIRSEP,"lisp",DIRSEP,"quicklisp",DIRSEP,NULL)));
           }else if(strcmp("default.lisp",name)==0) {
             set_opt(&local_opt,q("lisp"),q(value));
           }else if(strcmp("dists",name)==0) {
@@ -147,13 +147,13 @@ void star_set_opt(void) {
   if(!get_opt(PACKAGE_NAME"env",0))
     set_env_opt("."PACKAGE_NAME"env");
   /*If 'roswellenv' not set the below would endup fail to open cause it will be taken as a directory.*/
-  set_env_opt(s_escape_string(cat(configdir(),"env",SLASH,get_opt(PACKAGE_NAME"env",1),SLASH,"config",NULL)));
+  set_env_opt(s_escape_string(cat(configdir(),"env",DIRSEP,get_opt(PACKAGE_NAME"env",1),DIRSEP,"config",NULL)));
   lisp= get_opt("lisp",1); /*-L in fourth line of ros script or default.lisp in env file.*/
   if(!lisp) lisp= get_opt("*lisp",0); /*-L via command line.*/
   if(!lisp) lisp= get_opt("default.lisp",0);/*default.lisp via default config file.*/
   set_opt(&local_opt,"impl",determin_impl(lisp));
   if(!get_opt("quicklisp",0))
-    set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"lisp",SLASH,"quicklisp",SLASH,NULL)));
+    set_opt(&local_opt,"quicklisp",s_escape_string(cat(config,"lisp",DIRSEP,"quicklisp",DIRSEP,NULL)));
   set_opt(&local_opt,"argv0",argv_orig[0]);
   set_opt(&local_opt,"wargv0",which(argv_orig[0]));
   set_opt(&local_opt,"homedir",q(config));

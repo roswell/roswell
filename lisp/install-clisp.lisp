@@ -11,7 +11,7 @@
   (let ((file (merge-pathnames "tmp/clisp.html" (homedir))))
     (format *error-output* "Checking version to install....~%")
     (download (clisp-version-uri) file :interval (* 60 60))
-    (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
+    (loop for link in (get-elements-by-tag-name (plump:parse file) "a")
           for href = (plump:get-attribute link "href") for len = (1- (length href))
           when (and (eql (aref href len) #\/)
                     (not (eql (aref href 0) #\/))

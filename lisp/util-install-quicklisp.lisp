@@ -5,6 +5,18 @@
 
 (defvar *build-hook* nil)
 
+(defun get-elements-by-tag-name (node tag)
+  (let* ((current-version
+          (ignore-errors
+            (let* ((* "plump")
+                   (* (ql-dist:find-system *))
+                   (* (ql-dist:dist *))
+                   (* (ql-dist:version *)))
+              *)))
+        (new (string< "2022-07-08" current-version)))
+    (funcall (if new #'nreverse #'identity)
+             (plump:get-elements-by-tag-name node tag))))
+
 #+sbcl
 (defclass count-line-stream (sb-gray:fundamental-character-output-stream)
   ((base :initarg :base

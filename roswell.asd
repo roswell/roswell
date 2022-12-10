@@ -1,5 +1,5 @@
 (defsystem "roswell"
-  :version "21.10.14.111"
+  :version "22.12.14.113"
   :author "SANO Masatoshi"
   :license "MIT"
   :depends-on ("simple-date-time" "split-sequence" "plump" "zip")
@@ -36,7 +36,7 @@
                         :components
                         ((:file "ros"))))
   :perform (test-op :after (op c)
-                    #+quickisp(ql:quickload :prove-asdf)
+                    #+quicklisp(ql:quickload :prove-asdf)
                     #-asdf(asdf:load-system :prove-asdf)
                     (uiop:symbol-call :prove-asdf :run-test-system c)
                     (asdf:clear-system c)))

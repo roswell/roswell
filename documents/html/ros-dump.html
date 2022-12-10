@@ -20,11 +20,11 @@
 </header>
 <p>ros-dump - make a dumped image of a roswell script</p>
 <h1 id="synopsis">Synopsis</h1>
-<p><strong>ros [OPTIONS1...] dump [OPTIONS2...] MODE</strong> args...</p>
+<p><strong>ros [OPTIONS1…] dump [OPTIONS2…] MODE</strong> args…</p>
 <p><code>OPTIONS1</code> specify the standard roswell options such as <code>-L</code> or <code>-m LISP</code>. <code>OPTIONS2</code> specify the image reduction options we describe later. <code>MODE</code> is either <code>output</code> or <code>executable</code>.</p>
 <h1 id="description">Description</h1>
 <p><code>ros-dump</code> creates a dumped lisp image of the state after processing all options <code>OPTIONS1</code>.</p>
-<p>It has two modes <code>output</code> and <code>executable</code>. In both modes, the global environment (e.g. global binding to special variables such as <code>*package*</code>) of the state just after the restart is the environment which was effective when the script was dumped.</p>
+<p>It has two modes <code>output</code> and <code>executable</code>. In both modes, the global environment (e.g. global binding to special variables such as <code>*package*</code>) of the state just after the restart is the environment which was effective when the script was dumped.</p>
 <!-- Fixme: what kind of? this is unnecessarily retracting the users from using this feature -->
 <!-- There might be a limitation regarding this feature depending on the lisp -->
 <!-- implementation used by roswell at the time of building.   -->
@@ -52,37 +52,37 @@
 <p>Care should be taken to ensure the resulting program works as expected, as some of these operation may destroy the common assumptions of the conforming programs. For example, package-related reduction options may inhibit the runtime calls to <code>READ</code> after the restart.</p>
 <p>Reduction options are processed in the left-to-right manner.</p>
 <dl>
-<dt>--disable-compression, --enable-compression, -c</dt>
+<dt>–disable-compression, –enable-compression, -c</dt>
 <dd><p>These options disable/enable/enable the core compression feature in SBCL. Thus this option is meaningful only on SBCL. Compression is enabled by default.</p>
 </dd>
-<dt>--remove-docstrings</dt>
+<dt>–remove-docstrings</dt>
 <dd><p>This option removes all docstrings from all symbols in the entire lisp image.</p>
 </dd>
-<dt>--delete-package PKG</dt>
-<dd><p>This option can be specified multiple times. It uninterns the symbols in PACKAGE, calls <code>makeunbound</code> and <code>fmakeunbound</code> on each symbol and deletes the package. Package names are automatically string-upcase'd.</p>
+<dt>–delete-package PKG</dt>
+<dd><p>This option can be specified multiple times. It uninterns the symbols in PACKAGE, calls <code>makeunbound</code> and <code>fmakeunbound</code> on each symbol and deletes the package. Package names are automatically string-upcase’d.</p>
 </dd>
-<dt>--delete-all-packages</dt>
-<dd><p>This option applies --delete-package PKG on all packages, except some blacklisted packages (keyword, roswell, ROS.SCRIPT.DUMP, and the package of the main function symbol).</p>
+<dt>–delete-all-packages</dt>
+<dd><p>This option applies –delete-package PKG on all packages, except some blacklisted packages (keyword, roswell, ROS.SCRIPT.DUMP, and the package of the main function symbol).</p>
 </dd>
-<dt>--delete-packages-except PACKAGE</dt>
-<dd><p>This option can be specified multiple times. It is identical to --delete-all-packages except that it adds PACKAGE to the blacklist. Package names are automatically string-upcase'd.</p>
+<dt>–delete-packages-except PACKAGE</dt>
+<dd><p>This option can be specified multiple times. It is identical to –delete-all-packages except that it adds PACKAGE to the blacklist. Package names are automatically string-upcase’d.</p>
 </dd>
-<dt>--destroy-packages-sbcl</dt>
-<dd><p>This is an sbcl-specific option which is even more aggressive than the above methods (&gt;10MB reduction). It destroys the package system by modifying the internal tables for packages, cleaning up the caches for package-use-list etc. The blacklist is shared among --delete-all-packages and --destroy-packages-sbcl. However, this method does not call fmakunbound/makunbound, so combining the two methods can result in a more aggressive image size reduction. Due to the nature of this option, it is desirable to specify it as the last method (i.e. rightmost).</p>
+<dt>–destroy-packages-sbcl</dt>
+<dd><p>This is an sbcl-specific option which is even more aggressive than the above methods (&gt;10MB reduction). It destroys the package system by modifying the internal tables for packages, cleaning up the caches for package-use-list etc. The blacklist is shared among –delete-all-packages and –destroy-packages-sbcl. However, this method does not call fmakunbound/makunbound, so combining the two methods can result in a more aggressive image size reduction. Due to the nature of this option, it is desirable to specify it as the last method (i.e. rightmost).</p>
 </dd>
-<dt>--purify, --no-purify</dt>
+<dt>–purify, –no-purify</dt>
 <dd><p>This is common to CCL, SBCL, CMUCL. Moves all objects to the static space where GC does not scan, for the later performance of GC. Purification is enabled by default.</p>
 </dd>
-<dt>--impurify, --no-impurify</dt>
-<dd><p>This is an CCL-specific option (enabled by default). It moves all objects to the dynamic space before saving the image. This allows the static-space objects to be GC'ed. When purification is enabled, it impurifies all objects before running the purifying GC.</p>
+<dt>–impurify, –no-impurify</dt>
+<dd><p>This is an CCL-specific option (enabled by default). It moves all objects to the dynamic space before saving the image. This allows the static-space objects to be GC’ed. When purification is enabled, it impurifies all objects before running the purifying GC.</p>
 </dd>
-<dt>--delete-debug-info</dt>
+<dt>–delete-debug-info</dt>
 <dd><p>This removes the debug infomation of functions (used to show the stack frame etc), as well as the source locations and the deprecation information of various symbols. SBCL only. This option has a large effect (+10MB reduction).</p>
 </dd>
-<dt>--delete-macro-definitions, --delete-compiler-macro-definitions</dt>
+<dt>–delete-macro-definitions, –delete-compiler-macro-definitions</dt>
 <dd><p>This removes all definitions of macros and compiler-macros, assuming that no runtime compilation/interpretation of code will be performed. This option should be portable across implementations. It has ~2MB reduction on SBCL.</p>
 </dd>
-<dt>--delete-compiler-information-sbcl</dt>
+<dt>–delete-compiler-information-sbcl</dt>
 <dd><p>This is an SBCL-specific option which is more aggressive than the above methods (~4MB reduction). In addition to the macro and the compiler-macro definitions, it destroys the internal compiler systems of SBCL by also removing the inlining information, IR1 transformer and IR2 (VOP).</p>
 </dd>
 </dl>

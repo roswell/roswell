@@ -33,7 +33,7 @@
 <p>In an order of utility/frequency.</p>
 <dl>
 <dt>install</dt>
-<dd><p>Install a given implementation (e.g. sbcl, ccl) or a system (e.g. alexandria) for roswell environment. See <em><a href="ros-install.html">ros-install</a></em>(1).</p>
+<dd><p>Install a given implementation (e.g. sbcl, ccl) or a system (e.g. alexandria) for roswell environment. See <em><a href="ros-install.html">ros-install</a></em>(1).</p>
 </dd>
 <dt>init [name[.ros]]</dt>
 <dd><p>Create a new ros script. <code>.ros</code> is optional, and is added automaticaly. See <em><a href="ros-init.html">ros-init</a></em>.</p>
@@ -78,79 +78,79 @@
 <h1 id="options">Options</h1>
 <p>Options are processed in left-to-right order.</p>
 <dl>
-<dt>-w CODE --wrap CODE</dt>
-<dd><p>Run the script with a shell wrapper CODE, e.g. rlwrap</p>
+<dt>-w CODE –wrap CODE</dt>
+<dd><p>Run the script with a shell wrapper CODE, e.g. rlwrap</p>
 </dd>
-<dt>-m IMAGE --image IMAGE</dt>
+<dt>-m IMAGE –image IMAGE</dt>
 <dd><p>Continue from Lisp image IMAGE</p>
 </dd>
-<dt>-L NAME --lisp NAME</dt>
-<dd><p>Run the script with a lisp impl NAME[/VERSION] if present, e.g. sbcl-bin, sbcl/1.2.16. Fails otherwise.</p>
+<dt>-L NAME –lisp NAME</dt>
+<dd><p>Run the script with a lisp impl NAME[/VERSION] if present, e.g. sbcl-bin, sbcl/1.2.16. Fails otherwise.</p>
 </dd>
-<dt>-l FILE --load FILE</dt>
+<dt>-l FILE –load FILE</dt>
 <dd><p>Load a lisp file FILE while building</p>
 </dd>
-<dt>-S X --source-registry X</dt>
+<dt>-S X –source-registry X</dt>
 <dd><p>Override the source registry of asdf systems.</p>
 </dd>
-<dt>-s SYSTEM --system SYSTEM</dt>
+<dt>-s SYSTEM –system SYSTEM</dt>
 <dd><p>Load the asdf SYSTEM while building.</p>
 </dd>
-<dt>--load-system SYSTEM</dt>
+<dt>–load-system SYSTEM</dt>
 <dd><p>Same as above (buildapp compatibility)</p>
 </dd>
-<dt>-p PACKAGE --package PACKAGE</dt>
+<dt>-p PACKAGE –package PACKAGE</dt>
 <dd><p>Change the current package to PACKAGE</p>
 </dd>
-<dt>-sp SP --system-package SP</dt>
+<dt>-sp SP –system-package SP</dt>
 <dd><p>Combination of -s SP and -p SP</p>
 </dd>
-<dt>-e FORM --eval FORM</dt>
+<dt>-e FORM –eval FORM</dt>
 <dd><p>Evaluate FORM while building</p>
 </dd>
-<dt>--require MODULE</dt>
+<dt>–require MODULE</dt>
 <dd><p>require MODULE while building</p>
 </dd>
-<dt>-q --quit</dt>
+<dt>-q –quit</dt>
 <dd><p>quit lisp here</p>
 </dd>
-<dt>-r FUNC --restart FUNC</dt>
+<dt>-r FUNC –restart FUNC</dt>
 <dd><p>the build image restarts from calling FUNC</p>
 </dd>
-<dt>-E FUNC --entry FUNC</dt>
+<dt>-E FUNC –entry FUNC</dt>
 <dd><p>the build image restarts from calling (FUNC argv).</p>
 </dd>
-<dt>-i FORM --init FORM</dt>
+<dt>-i FORM –init FORM</dt>
 <dd><p>evaluate FORM after the restart.</p>
 </dd>
-<dt>-ip FORM --print FORM</dt>
+<dt>-ip FORM –print FORM</dt>
 <dd><p>evaluate and princ FORM after the restart</p>
 </dd>
-<dt>-iw FORM --write FORM</dt>
+<dt>-iw FORM –write FORM</dt>
 <dd><p>evaluate and write FORM after the restart</p>
 </dd>
-<dt>-F FORM --final FORM</dt>
+<dt>-F FORM –final FORM</dt>
 <dd><p>evaluate FORM before dumping the IMAGE</p>
 </dd>
-<dt>-R --rc</dt>
+<dt>-R –rc</dt>
 <dd><p>try to read /etc/rosrc, ~/.roswell/init.lisp</p>
 </dd>
-<dt>+R --no-rc</dt>
+<dt>+R –no-rc</dt>
 <dd><p>skip /etc/rosrc, ~/.roswell/init.lisp</p>
 </dd>
-<dt>-Q --quicklisp</dt>
+<dt>-Q –quicklisp</dt>
 <dd><p>load quicklisp (default)</p>
 </dd>
-<dt>+Q --no-quicklisp</dt>
+<dt>+Q –no-quicklisp</dt>
 <dd><p>do not load quicklisp</p>
 </dd>
-<dt>-v --verbose</dt>
+<dt>-v –verbose</dt>
 <dd><p>be quite verbose while building</p>
 </dd>
-<dt>--quiet</dt>
+<dt>–quiet</dt>
 <dd><p>suppress output while building (default)</p>
 </dd>
-<dt>--test</dt>
+<dt>–test</dt>
 <dd><p>for test purpose</p>
 </dd>
 <dt>dynamic-space-size=[size in MB]</dt>

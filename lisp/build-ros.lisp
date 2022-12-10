@@ -27,10 +27,16 @@
       (loop repeat 4
             for line = (read-line in)
             when (ignore-errors (string= line "exec" :end1 4))
-              do (setf opts (parse-argv line))))
-    (roswell:roswell `(,@(when (roswell:verbose) '("-v"))
-                       ,@impl-argv
-                         ,opts "-L" ,(or (ros:opt "*lisp")
-                                         (ros:opt "default.lisp"))
+            do (setf opts (parse-argv line))))
+    (let ((impl (or (ros:opt "*lisp")
+                    (ros:opt "default.lisp"))))
+      (roswell:roswell `(,@(when (roswell:verbose) '("-v"))
+                         ,@impl-argv
+                         ,@(cond ((find impl '("sbcl" "sbcl-bin" "sbcl32" "sbcl-head") :test 'equal)
+                                  (append (if (ros:opt "dynamic-space-size")
+                                              (list (format nil "dynamic-space-size=~A" (ros:opt "dynamic-space-size"))))
+                                          (if (ros:opt "control-stack-size")
+                                              (list (format nil "control-stack-size=~A" (ros:opt "control-stack-size")))))))
+                         ,opts "-L" ,impl
                          "dump" ,@dump-argv "executable" ,(first argv))
-                     :interactive nil)))
+                       :interactive nil))))

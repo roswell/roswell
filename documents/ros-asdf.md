@@ -1,6 +1,12 @@
+% ros-asdf(1)
+% Roswell Project Team
+% January 2022
+
+# NAME
 
 ros-asdf - 
-# synopsis
+
+# SYNOPSIS
 
 **ros [options] asdf [subcommand]**
 
@@ -10,9 +16,9 @@ ros-asdf -
  
 <!--   : description. end with a period. -->
 
-# description
+# DESCRIPTION
 
-**ros asdf** install and manage ASDF(https://common-lisp.net/project/asdf/)
+**ros asdf** install and manage ASDF(https://common-lisp.net/project/asdf/).
 
 <!-- # options -->
 <!--  -->

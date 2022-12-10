@@ -7,7 +7,7 @@
   (let ((file (merge-pathnames "tmp/cmu-bin.html" (homedir))))
     (format *error-output* "Checking version to install...~%")
     (download (format nil "~Arelease/" (cmu-bin-uri)) file :interval (* 60 60))
-    (loop for link in (plump:get-elements-by-tag-name (plump:parse file) "a")
+    (loop for link in (get-elements-by-tag-name (plump:parse file) "a")
           for href = (plump:get-attribute link "href")
           for len = (length href)
           when (and (digit-char-p (aref href 0))

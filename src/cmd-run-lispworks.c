@@ -12,7 +12,7 @@ char** cmd_run_lispworks(int argc,char** argv,struct sub_command* cmd) {
   char* lw_version=get_opt("version",0);
 
   LVal ret=0;
-  ret=conss(cat(home,"impls",SLASH,arch,SLASH,os,SLASH,"LispWorks",SLASH,"lw-console",NULL), ret);
+  ret=conss(cat(home,"impls",DIRSEP,arch,DIRSEP,os,DIRSEP,"LispWorks",DIRSEP,"lw-console",NULL), ret);
 
   if(lw_version) {
     ret=conss(q("-eval"),ret);

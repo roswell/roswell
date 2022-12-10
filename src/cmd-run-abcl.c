@@ -19,7 +19,7 @@ char** cmd_run_abcl(int argc,char** argv,struct sub_command* cmd) {
 
   s(arch),s(os);
 
-  ret=conss((strcmp("system",version)==0)?truename(which("abcl")):cat(home,impl_path,SLASH,"abcl",EXE_EXTENTION,NULL),ret);
+  ret=conss((strcmp("system",version)==0)?truename(which("abcl")):cat(home,impl_path,DIRSEP,"abcl",EXE_EXTENTION,NULL),ret);
   /* runtime options from here */
   ret=conss(q("--noinform"),ret);
   ret=conss(q("--noinit"),ret);

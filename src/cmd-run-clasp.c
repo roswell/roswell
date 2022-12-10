@@ -15,7 +15,7 @@ char** cmd_run_clasp(int argc,char** argv,struct sub_command* cmd) {
 
   LVal ret=0;
 
-  char *bin=cat(home,impl_path,SLASH,"build/boehm/iclasp-boehm",EXE_EXTENTION,NULL);
+  char *bin=cat(home,impl_path,DIRSEP,"build/boehm/iclasp-boehm",EXE_EXTENTION,NULL);
   s(arch),s(os);
   ret=conss(bin,ret);
   s(impl_path);

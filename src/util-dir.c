@@ -18,7 +18,7 @@ int ensure_directories_exist(char* path) {
   int len = strlen(path);
   cond_printf(1,"ensure_directories_exist:%s\n",path);
   if(len) {
-    for(--len;(path[len]!=SLASH[0]||len==-1);--len);
+    for(--len;(path[len]!=DIRSEP[0]||len==-1);--len);
     path=subseq(path,0,len+1);
   }else
     path=q(path);
@@ -77,11 +77,29 @@ char* currentdir(void);
 #endif
 
 char* configdir(void) {
-  char *c=upcase(q_(PACKAGE"_HOME"));
+  char *c=upcase(q_(PACKAGE"_HOME")); /* e.g. ROSWELL_HOME */
   char *env=getenv(c);
-  s(c);
-  return env?append_trail_slash(q(env)):
-    ((c=homedir())?s_cat2(append_trail_slash(c),q("."PACKAGE SLASH)):NULL);
+
+  if (env) /* note: env can be a NULL */
+  {
+      if (env[0] != DIRSEP[0])   /* note: DIRSEP == \\ on windows, / on unix */
+      {
+          cond_printf(0,"Error: %s must be absolute. Got: %s \n",c,env);
+      }
+      s(c);                     /* note : this frees c. */
+      return append_trail_slash(q(env));
+  }
+  {
+      s(c);                     /* note : this frees c. */
+      env = homedir();          /* use homedir instead of ROSWELL_DIR */
+      if (env)                  /* env is not null */
+      {
+          return s_cat2(append_trail_slash(env),q("."PACKAGE DIRSEP));
+      }
+      {
+          return NULL;
+      }
+  }
 }
 
 char* subcmddir(void) {
@@ -91,7 +109,7 @@ char* subcmddir(void) {
 char* pathname_directory(char* path) {
   int i;
   char* ret;
-  for(i=strlen(path)-1;i>=0&&path[i]!=SLASH[0];--i);
+  for(i=strlen(path)-1;i>=0&&path[i]!=DIRSEP[0];--i);
   ret=(i>=0)?subseq(path,0,i+1):append_trail_slash(".");
   s(path);
   return ret;
@@ -107,19 +125,19 @@ char* file_namestring(char* path) {
 }
 
 char* impldir(char* arch,char* os,char* impl,char* version) {
-  return cat("impls",SLASH,arch,SLASH,os,SLASH,impl,SLASH,version,NULL);
+  return cat("impls",DIRSEP,arch,DIRSEP,os,DIRSEP,impl,DIRSEP,version,NULL);
 }
 
 char* basedir(void) {
   char* cd_;
   cond_printf(1,"roswellenv=%s\n",get_opt(PACKAGE_NAME"env",1));
   if(get_opt(PACKAGE_NAME"env",1)) {
-    cd_ = cat(configdir(),"env",SLASH,get_opt(PACKAGE_NAME"env",1),SLASH,NULL);
+    cd_ = cat(configdir(),"env",DIRSEP,get_opt(PACKAGE_NAME"env",1),DIRSEP,NULL);
     if(directory_exist_p(cd_))
       return cd_;
     s(cd_);
   }
-  cd_ = s_cat2(currentdir(),q("."PACKAGE SLASH));
+  cd_ = s_cat2(currentdir(),q("."PACKAGE DIRSEP));
   if(directory_exist_p(cd_))
     return cd_;
   s(cd_);

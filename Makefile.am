@@ -13,6 +13,38 @@ if MANUAL_GENERATE
 SUBDIRS += documents
 endif
 
+ROSS = 	balus.ros \
+	build.ros \
+	checkout.ros \
+	client.ros \
+	config.ros \
+	compile-file.ros \
+	ecl-config.ros \
+	emacs.ros \
+	exec.ros \
+	dist.ros \
+	fmt.ros \
+	get.ros \
+	git.ros \
+	hg.ros \
+	run.ros \
+	setup.ros \
+	shell.ros \
+	version.ros \
+	wait.ros \
+	delete.ros \
+	dump.ros \
+	help.ros \
+	init.ros \
+	install.ros \
+	serve.ros \
+	update.ros \
+	list.ros \
+	make-depends.ros \
+	template.ros \
+	use.ros \
+	which.ros
+
 LISPS = helper.el \
 	init.lisp \
 	util.lisp util-main.lisp \
@@ -23,47 +55,24 @@ LISPS = helper.el \
 	extend-quicklisp-system.lisp \
 	system.lisp \
 	\
-	balus.ros \
-	build.ros \
 	build-ros.lisp build-asd.lisp \
 	\
-	checkout.ros \
-	client.ros client-swank.lisp \
-	config.ros \
-	compile-file.ros \
+	client-swank.lisp \
 	util-config.lisp \
-	ecl-config.ros \
-	emacs.ros \
-	exec.ros \
-	dist.ros \
 	dist-list.lisp dist-clean.lisp dist-enable.lisp dist-disable.lisp dist-add.lisp \
 	dist-delete.lisp dist-use.lisp dist-versions.lisp dist-preference.lisp dist-default.lisp \
-	fmt.ros \
-	get.ros \
-	git.ros \
-	hg.ros \
-	run.ros \
-	setup.ros \
-	shell.ros \
-	version.ros \
-	wait.ros \
 	\
-	delete.ros \
 	delete-default.lisp delete-dump.lisp delete-git.lisp delete-asdf.lisp \
 	delete-env.lisp \
 	\
-	dump.ros \
 	util-dump.lisp \
 	dump-ccl.lisp dump-clisp.lisp \
 	dump-cmucl.lisp dump-ecl.lisp dump-sbcl.lisp \
 	\
-	help.ros \
 	help-install.lisp help-options.lisp help-run.lisp \
 	\
-	init.ros \
 	init-default.lisp init-env.lisp init-dist.lisp \
 	\
-	install.ros \
 	util-install.lisp util-install-quicklisp.lisp \
 	install+7zip.lisp install-abcl-bin.lisp install-allegro.lisp \
 	install-ccl-bin.lisp install-clasp-bin.lisp install-clasp.lisp \
@@ -77,26 +86,20 @@ LISPS = helper.el \
 	install+externals-clasp.lisp install+ffcall.lisp \
 	install+msys2.lisp install+sigsegv.lisp install-asdf.lisp \
 	\
-	serve.ros \
 	serve-default.lisp serve-swank.lisp \
-	update.ros \
 	update-git.lisp update-hg.lisp update-quicklisp.lisp update-default.lisp \
 	\
-	list.ros \
 	list-default.lisp \
 	list-dump.lisp list-git.lisp list-installed.lisp list-versions.lisp \
 	list-asdf.lisp list-env.lisp \
 	\
-	make-depends.ros \
-	template.ros \
 	util-template.lisp \
 	\
-	use.ros \
 	util-use.lisp \
-	use-asdf.lisp use-env.lisp \
-	\
-	which.ros
+	use-asdf.lisp use-env.lisp
+
 dist_roslisp_DATA = $(LISPS:%=lisp/%)
+dist_roslisp_SCRIPTS = $(ROSS:%=lisp/%)
 
 dist_roslisppatch_DATA = patch/sbcl-1.3.11.patch patch/sbcl-posix-tests.patch
 
