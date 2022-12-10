@@ -5,7 +5,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp (ql:quickload '(:cl-html-parse :uiop :dexador) :silent t))
+  #+quicklisp (ql:quickload '(:jonathan :uiop :dexador) :silent t))
 
 (defpackage :ros.script.debian.3703769507
   (:use :cl))
@@ -20,24 +20,16 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
     (if branch
         (format nil "https://github.com/~A/archive/~A.tar.gz" base branch)
         (multiple-value-bind (body res)
-            (dex:get (format nil "https://github.com/~A/releases/" base))
+            (dex:get (format nil "https://api.github.com/repos/~A/releases" base)
+                     :headers '(("X-GitHub-Api-Version" . "2022-11-28")))
           (when (= res 200)
-            (net.html.parser:parse-html
-             body
-             :callbacks
-             (list (cons :a (lambda (arg)
-                              (let ((href (getf (cdr (car arg)) :href)))
-                                (when (and (> (length href) 6)
-                                           (equal (subseq href (-(length href) 6))
-                                                  "tar.gz")
-                                           ;; href which include "archive" not "release"
-                                           (eql (aref href (1+ (position #\a href))) #\r))
-                                  (return-from get-newest-url (format nil "https://github.com~A" href)))))))
-             :callback-only t))))))
+            (getf  (first (jojo:parse body)) :|tarball_url|))))))
 
 (defun fetch-upstream (&optional (output *pwd*))
   (let* ((url (get-newest-url "roswell/roswell"))
-         (path (merge-pathnames (subseq url (1+ (position #\/ url :from-end t))) output)))
+         (path (make-pathname :name (format nil "roswell_~A.tar" (subseq url (1+ (position #\/ url :from-end t))))
+                              :defaults output
+                              :type "gz")))
     (roswell.util:download url path)
     path))
 
