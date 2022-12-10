@@ -47,6 +47,7 @@ jobs:
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMAGE: ${{ matrix.image }}
         run: |
+          sudo apt-get -y install automake libcurl4-openssl-dev
           sh scripts/install-for-ci.sh
           ros install snmsts/sn.github
           if [ -n "$IMAGE" ]; then
