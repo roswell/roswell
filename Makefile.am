@@ -144,7 +144,7 @@ roswell/Makefile:
 	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $@
 	echo "	mkdir -p $$""(mandir)" >> $@
 	echo "	install -c ros$(EXEEXT) $$""(prefix)/bin" >> $@
-	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $@
+	echo "	install -c -m 644 $(ROSS:%=lisp/%) $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $@
 	echo "	install -c -m 644 $(dist_roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $@
 	if [ 'x$(MDS)' != 'x' ]; then \
 		echo "	install -c $(MDS:%.md=man/%.1) $$""(mandir)" >> $@; \
@@ -161,6 +161,7 @@ $(PACK).tar.bz2: roswell/Makefile
 	cp src/ros$(EXEEXT) roswell
 	$(MKDIR_P) roswell/lisp
 	cp $(LISPS:%=lisp/%) roswell/lisp
+	cp $(ROSS:%=lisp/%) roswell/lisp
 	cp $(dist_roslisppatch_DATA) roswell/patch
 	if [ 'x$(MDS)' != x ]; then \
 		$(MKDIR_P) roswell/man; \
