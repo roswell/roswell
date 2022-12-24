@@ -90,7 +90,7 @@
                                          (homedir)))
                        :direction :output :if-exists :append :if-does-not-exist :create)
     (format out "~&--~&~A~%" (date))
-    (let* ((cmd (format nil "make"))
+    (let* ((cmd (make))
            (*standard-output* (make-broadcast-stream out #+sbcl(make-instance 'count-line-stream))))
       (ecl-chdir argv)
       (uiop/run-program:run-program cmd :output t :ignore-error-status t)))
@@ -108,7 +108,7 @@
       (format out "~&--~&~A~%" (date))
       (let ((*standard-output* (make-broadcast-stream
                                 out #+sbcl(make-instance 'count-line-stream))))
-        (uiop/run-program:run-program "make install" :output t)))
+        (uiop/run-program:run-program (format nil "~A install" (make)) :output t)))
     (format *error-output* "done.~%"))
   (cons t argv))
 
@@ -119,7 +119,7 @@
          (*standard-output* (make-broadcast-stream
                              out #+sbcl(make-instance 'count-line-stream))))
     (uiop/run-program:run-program
-     (list (sh) "-lc" (format nil "cd ~S;make clean" (namestring (uiop:getcwd))))
+     (list (sh) "-lc" (format nil "cd ~S;~A clean" (namestring (uiop:getcwd)) (make)))
      :output t))
   (format t "done.~%")
   (cons t argv))

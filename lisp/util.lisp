@@ -4,7 +4,7 @@
   (:import-from :ros :opt :ensure-asdf :*local-project-directories*)
   (:export
    :uname :uname-m :homedir :config :impl :which :config-env :checkoutdir
-   :parse-version-spec :head :download :expand :sh :chdir :system :module
+   :parse-version-spec :head :download :expand :sh :make :chdir :system :module
    :core-extention :clone-github :opt :read-call :set-opt :copy-dir
    :roswell-installable-searcher :setenv :unsetenv :ensure-asdf :split-sequence
    :local-project-build-hash))
@@ -195,6 +195,9 @@ Example:
                                                    (config "msys2.version")) (homedir)))))
       (which "bash")
       "sh"))
+
+(defun make ()
+  (or #+freebsd "gmake" "make"))
 
 (defvar *version*
   `(:roswell ,(or (ignore-errors (roswell:version))
