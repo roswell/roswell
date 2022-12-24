@@ -107,7 +107,7 @@ dist_roslisppatch_DATA = patch/sbcl-1.3.11.patch patch/sbcl-posix-tests.patch
 release-prepare:
 	ros scripts/release.ros prepare
 release-commit:
-	ros scripts/release.ros release
+	ros scripts/release.ros release-commit
 release-push:
 	ros scripts/release.ros release-push
 release-changelog:

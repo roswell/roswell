@@ -119,7 +119,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
           `("To release"
             "1. Review changes and complete ChangeLog"
             "2. Type"
-            "make release")))
+            "make release-commit")))
 
 (defun prepare (argv)
   (declare (ignore argv))
@@ -139,7 +139,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
   (edit-roswell-asd)
   (show-how-to-release))
 
-(defun release (argv)
+(defun release-commit (argv)
   (declare (ignore argv))
   (!"git checkout master")
   (!"git add ChangeLog configure.ac roswell.asd")
