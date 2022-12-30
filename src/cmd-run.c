@@ -193,6 +193,10 @@ char** determin_args(int argc,char **argv) {
   int i=position_char("/",_);
   cmd.name=subseq(_,0,i);
   cmd.short_name=subseq(_,i+1,0);
+  if(cmd.short_name==NULL) {
+      cond_printf(0,"%s does not exist.stop.\n", _);
+      exit(EXIT_FAILURE);
+  }
   for(i=0;i<sizeof(impls_to_run)/sizeof(struct run_impl_t);++i)
     if(strcmp(impls_to_run[i].name,cmd.name)==0) {
       arg=impls_to_run[i].impl(argc,argv,&cmd);
