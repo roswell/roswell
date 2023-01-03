@@ -17,7 +17,7 @@
           (mapcar #'usage
                   '("Usage:"
                     ""
-                    "To install a new Lisp implementaion:"
+                    "To install a new Lisp implementation:"
                     "   ~A install impl [options]"
                     "or a system from the GitHub:"
                     "   ~A install fukamachi/prove/v2.0.0 [repository... ]"
@@ -30,6 +30,7 @@
                     ""
                     "For more details on impl specific options, type:"
                     "   ~A help install impl"
+                    "e.g.: ~A help install sbcl"
                     ""
                     ""
                     "Candidates impls for installation are:")))
