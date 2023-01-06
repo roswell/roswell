@@ -15,8 +15,17 @@ char* uname_s(void) {
 char* uname_m(void) {
   char *p2=q(UNAME_M);
   if(strcmp(p2,"i86pc")==0) {
+    /* solaris */
     s(p2);
-    return q("x86-64");
+    char* result=system_("isainfo -k");
+    char* result2=remove_char("\r\n",result);
+    s(result);
+    if(strcmp(result2,"amd64")==0) {
+      s(result2);
+      return q("x86-64");
+    }
+    s(result2);
+    return q("x86");
   }
   if(strcmp(p2,"i686")==0) {
     s(p2);
