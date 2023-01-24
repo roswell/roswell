@@ -9,6 +9,17 @@ char* uname_s(void) {
     s(p2);
     return q("solaris");
   }
+  if(strcmp(p2,"Linux")==0 &&
+     strcmp(UNAME_M,"aarch64") ==0) {
+    char* result=system_("uname -o");
+    char* result2=remove_char("\r\n",result);
+    s(result);
+    if(strcmp(result2,"Android")==0) {
+      s(result2),s(p2);
+      /* termux? */
+      return q("android");
+    }
+  }
   return downcase(p2);
 }
 
