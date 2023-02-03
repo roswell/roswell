@@ -20,6 +20,10 @@ char* uname_s(void) {
       return q("android");
     }
   }
+  if(strcmp(p2,"DragonFly")==0) {
+    s(p2);
+    return q("DFlyBSD");
+  }
   return downcase(p2);
 }
 
