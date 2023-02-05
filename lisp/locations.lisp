@@ -32,7 +32,7 @@
 
 (defuri clisp-patch1-uri "https://raw.githubusercontent.com/Homebrew/homebrew/2fb8cb1a2279f80dc89900b3ebaca9e5afc90494/Library/Formula/clisp.rb")
 
-(defuri asdf-git-version-uri "https://github.com/roswell/asdf/releases.atom")
+(defuri asdf-git-version-uri "https://gitlab.common-lisp.net/asdf/asdf/-/tags?format=atom")
 (defuri ecl-git-version-uri  "https://github.com/roswell/ecl/releases.atom")
 (defuri sbcl-git-version-uri "https://github.com/sbcl/sbcl/releases.atom")
 (defuri sbcl-head-version-uri "https://github.com/roswell/sbcl_head/releases/download/files/sbcl-bin_uri.tsv")
@@ -42,7 +42,7 @@
 (defuri sly-git-version-uri  "https://github.com/joaotavora/sly/releases.atom")
 (defuri npt-git-version-uri "https://github.com/nptcl/npt/releases.atom")
 
-(defuri asdf-uri "https://github.com/roswell/asdf/archive/")
+(defuri asdf-uri "https://gitlab.common-lisp.net/asdf/asdf/-/archive/")
 (defuri ecl-uri  "https://github.com/roswell/ecl/archive/")
 (defuri sbcl-uri "https://github.com/sbcl/sbcl/archive/")
 (defuri sbcl-head-uri "https://github.com/roswell/sbcl_head/releases/download/")

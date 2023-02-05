@@ -9,7 +9,7 @@
 
 (defun asdf-install (argv)
   (let* ((version (getf argv :version))
-         (url (format nil "~A~A.tar.gz" (asdf-uri) version))
+         (url (format nil "~A~A/asdf-~A.tar.gz" (asdf-uri) version version))
          (file (merge-pathnames (format nil "archives/asdf-~A.tar.gz" version) (homedir)))
          (src (merge-pathnames "src/" (homedir))))
     (if (= (length version) 40)
