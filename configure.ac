@@ -108,6 +108,12 @@ AC_ARG_WITH([sbcl_bin_variant],
 AC_SUBST([SBCL_BIN_VARIANT], ["${SBCL_BIN_VARIANT}"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_VARIANT],["${SBCL_BIN_VARIANT}"],[variant for sbcl-bin])
 
+AC_ARG_WITH([fixed_arch],
+  [AS_HELP_STRING([--with-fixed-arch=string],[set arch instead of on the fly detecting [default=''] possible choices are 'armhf', 'arm64'.])],
+  [FIXED_ARCH=$withval],[FIXED_ARCH=""])
+AC_SUBST([FIXED_ARCH], ["${FIXED_ARCH}"])
+AC_DEFINE_UNQUOTED([FIXED_ARCH],["${FIXED_ARCH}"],[arch to decide binary])
+
 # man file (ros.1) generation switch
 AC_ARG_ENABLE([manual_generation],
   [AS_HELP_STRING([--enable-manual-generation],[generate manual if enabled])],

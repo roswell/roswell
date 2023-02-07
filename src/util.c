@@ -29,6 +29,10 @@ char* uname_s(void) {
 
 char* uname_m(void) {
   char *p2=q(UNAME_M);
+  if(strlen(FIXED_ARCH) !=0) {
+    s(p2);
+    return q(FIXED_ARCH);
+  }
   if(strcmp(p2,"i86pc")==0) {
     /* solaris */
     s(p2);
