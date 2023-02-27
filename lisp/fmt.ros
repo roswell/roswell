@@ -58,7 +58,7 @@ exec ros -Q -N roswell -- $0 "$@"
                 lem-lisp-syntax:*syntax-table*)
           (setf (lem-base:variable-value 'lem-base:calc-indent-function :buffer buffer)
                 'lem-lisp-syntax:calc-indent)
-          (lem-base:indent-region (lem-base:buffer-start-point buffer)
+          (lem-base:indent-points (lem-base:buffer-start-point buffer)
                                   (lem-base:buffer-end-point buffer))
           (loop with regexp = "[ 	]+$" ;; remove trailing spaces.
                 for start = (lem-base:search-forward-regexp (lem-base:copy-point (lem-base:buffer-start-point buffer)) regexp)
