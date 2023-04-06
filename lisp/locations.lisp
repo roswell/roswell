@@ -17,7 +17,7 @@
 (defuri clisp-version-uri "http://ftp.gnu.org/pub/gnu/clisp/release/")
 (defuri clisp-head-version-uri "https://github.com/roswell/clisp_head/releases/download/files/clisp_head.tsv")
 (defuri 7za-uri       "http://sourceforge.net/projects/sevenzip/files/7-Zip/9.20/7za920.zip/download#")
-(defuri allegro-uri   "ftp://ftp.franz.com/")
+(defuri allegro-uri   "https://franz.com/")
 (defuri abcl-bin-uri  "https://common-lisp.net/project/armedbear/releases/")
 (defuri ccl-bin-uri   "https://github.com/roswell/ccl_bin/releases/download/")
 (defuri clasp-bin-uri "https://github.com/roswell/clasp_bin/releases/download/")
@@ -54,6 +54,7 @@
 
 (export
  (defvar *allegro-agreement-uri*
-   '(("10.1express" . #1="http://franz.com/ftp/pub/legal/ACL-Express-20150812.pdf")
+   '(#+darwin ("11.0bexpress" . "https://franz.com/ftp/pub/legal/ACL-Express-20170301.pdf")
+     ("10.1express" . #1="https://franz.com/ftp/pub/legal/ACL-Express-20170301.pdf")
      ("100express"  . #1#)
      ("101b"        . "http://franz.com/products/licensing/FSLA10.1.beta.pdf"))))

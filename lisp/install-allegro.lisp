@@ -8,27 +8,50 @@
   (mapcar #'car *allegro-agreement-uri*))
 
 (defun make-allegro-uri (argv &key
-                                   (uname (uname))
-                                   (uname-m (uname-m))
-                                   (version (getf argv :version)))
+                              (uname (uname))
+                              (uname-m (uname-m))
+                              (version (getf argv :version)))
   (let ((os (intern uname :keyword))
         (machine (intern uname-m :keyword)))
-    (cond ((find version '("10.1express" "100express") :test 'equal)
+    (cond ((find version '("11.0bexpress"
+                           "10.1express")
+                 :test 'equal)
            (format nil "~@{~A~}"
-                   (allegro-uri) "pub/acl" version "/"
-                   (case os (:|darwin| "macosx") (t os))
-                   (if (eql os :|windows|) ""
-                       (case machine (:|x86| 86) (:|x86-64| 86)))
+                   (allegro-uri) "ftp/pub/acl" version "/"
+                   (ecase os
+                     (:|linux| (ecase machine
+                                 (:|x86-64| "linuxamd64.64")
+                                 (:|arm64| "linuxarm64")
+                                 (:|x86| "linux86")))
+                     (:|darwin| (case machine
+                                  (:|arm64| "macarm64.64")
+                                  (:|x86-64| "macosx86-64.64")))
+                     (:|windows| os)  ;; 32bit only
+                     (:|freebsd| os)) ;; 32bit only
                    "/acl" version
-                   (case os (:|linux| "-linux") (:|darwin| "-macosx") (:|windows| "") (t os))
-                   "-" (if (eql os :|darwin|) "x64"
-                           (case machine (:|x86-64| "x86") (t machine)))
-                   (case os
-                     (:|linux| (cond ((equal "10.1express" version) ".tbz2")
-                                     ((equal "100express" version) ".bz2")))
-                     (:|darwin|  ".dmg")
-                     (:|windows| ".exe"))))
-          ((equal "101b" version)))))
+                   (ecase os
+                     (:|linux| (format nil "~@{~A~}"
+                                       "-linux-"
+                                       (ecase machine
+                                         (:|x86-64| "x64")
+                                         (:|arm64| "aarch64")
+                                         (:|x86| "x86"))
+                                       (cond
+                                         ((equal "100express" version) ".bz2")
+                                         (t ".tbz2"))))
+                     (:|darwin| (format nil "~@{~A~}"
+                                        (if (equal version "10.1express")
+                                            "-macosx-"
+                                            "-macos-")
+                                        (ecase machine
+                                          (:|x86-64| "x64.dmg")
+                                          (:|arm64| "arm64.dmg"))))
+                     (:|windows| "-x86.exe")
+                     (:|freebsd| (format nil "~@{~A~}"
+                                         "-freebsd-"
+                                         (ecase machine
+                                           (:|x86-64| "x86.tbz2")
+                                           (:|x86| "x86.tbz2"))))))))))
 
 (defun allegro-argv-parse (argv)
   (format *error-output* "~&Installing allegro/~A...~%" (getf argv :version))
@@ -65,7 +88,9 @@
             (uiop/filesystem:delete-directory-tree
              path :validate t))
        (ql-impl-util:rename-directory
-        (merge-pathnames (format nil "acl~A/" (getf argv :version)) impls)
+        (first (loop for file in  (directory (merge-pathnames (format nil "acl~A*/" (getf argv :version)) impls))
+                     when (probe-file file)
+                     collect it))
         (merge-pathnames (format nil "~A/" (opt "as")) impls))))
     (cons t argv)))
 
