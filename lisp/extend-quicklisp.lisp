@@ -33,33 +33,44 @@
 
 (defun roswell-installed-system-name (system-name)
   ;;  should return repo part of system-name.
-  ;; "user//repo" "user//repo/branch" "git://bra/bra/bra/repo.git" "github://user/repo"
-  (when (find "" (split-sequence #\/ system-name) :test 'equal) ;; found "//"
-    (if (find #\: system-name)
-        (values nil "not implemented yet") ;; TBD
-        (second (remove "" (split-sequence #\/ system-name) :test 'equal)))))
+  ;; "user:repo[:branch or tag][/subsystem/name]" "git://bra/bra/bra/repo.git" "github://user/repo"
+  (let ((split (split-sequence #\: system-name)))
+    (when (rest split) ;; found ":"
+      (if (ignore-errors (and (eql (aref  (second split) 0) #\/)
+                              (eql (aref  (second split) 1) #\/)))
+          (values nil "not implemented yet") ;; TBD
+          (let* ((str (first (last split)))
+                 (pos (position #\/ str))
+                 (subsystem (if pos
+                                (prog1
+                                    (subseq str pos)
+                                  (setf (first (last split)) (subseq str 0 pos)))
+                                "")))
+            (values (and (second split)
+                         (not (zerop (length (second split))))
+                         (format nil "~A~A" (second split) subsystem))
+                    (lambda (system-name)
+                      (roswell:roswell `("install" (format nil "~{~A~^/~}" split)
+                                         )))))))))
 
 (defun roswell-installable-searcher (system-name)
-  (let ((name (roswell-installed-system-name system-name))
-        pname)
+  (multiple-value-bind (name func)
+      (roswell-installed-system-name system-name)
     (and
      name
-     (not (when (setf pname (read-call "asdf/find-system::primary-system-name" system-name))
-            (asdf:find-system pname nil)))
-     (prog1
-         (or (quicklisp-client:local-projects-searcher name)
-             (unless (find system-name (loop for ar = (ros:getenv "ROSINSTALL") then (subseq ar (1+ p))
-                                             for p = (position #\, ar)
-                                             for arg = (if p (subseq ar 0 p) ar)
-                                             collect arg
-                                             while p)
-                           :test 'equal)
-               (roswell:roswell `("install" ,system-name))
-               (quicklisp-client:register-local-projects)
-               (quicklisp-client:local-projects-searcher name))
-             (return-from roswell-installable-searcher)) ;;can't find.
-       (eval `(asdf:defsystem ,system-name :depends-on (,name))))
-     (asdf:find-system system-name))))
+     (not (equal name system-name))
+     (let ((result
+             (or (asdf:find-system name)
+                 (progn
+                   (funcall func system-name)
+                   (local-project-build-hash :rebuild t)
+                   (asdf:find-system name))
+                 (return-from roswell-installable-searcher)))) ;;can't find.
+       (when result
+         (let ((*load-pathname* nil))
+           (eval `(asdf:defsystem ,system-name
+                    :depends-on (,name)))))
+       result))))
 
 (defun local-project-enum (path)
   (let ((sub (remove-if (lambda (x)
