@@ -28,7 +28,7 @@
 (defuri ffcall-uri    "https://github.com/roswell/libffcall/archive/")
 
 (defuri sigsegv-uri   "http://ftpmirror.gnu.org/libsigsegv/")
-(defuri msys2-uri     "http://kent.dl.sourceforge.net/project/")
+(defuri msys2-uri     "https://github.com/msys2/msys2-installer/releases/download/")
 
 (defuri clisp-patch1-uri "https://raw.githubusercontent.com/Homebrew/homebrew/2fb8cb1a2279f80dc89900b3ebaca9e5afc90494/Library/Formula/clisp.rb")
 
