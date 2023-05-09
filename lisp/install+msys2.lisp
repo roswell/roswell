@@ -86,7 +86,7 @@
           (uiop/run-program:run-program
             `(,(uiop:native-namestring (merge-pathnames "autorebase.bat" msys)))
             :output t
-            :error-output t) 
+            :error-output t)
           (setf (config "msys2.version") (getf argv :version)))))
   (cons t argv))
 
