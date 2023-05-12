@@ -50,7 +50,7 @@
                          (not (zerop (length (second split))))
                          (format nil "~A~A" (second split) subsystem))
                     (lambda (system-name)
-                      (roswell:roswell `("install" (format nil "~{~A~^/~}" split)
+                      (roswell:roswell `("install" ,(format nil "~{~A~^/~}" split)
                                          )))))))))
 
 (defun roswell-installable-searcher (system-name)
@@ -60,7 +60,7 @@
      name
      (not (equal name system-name))
      (let ((result
-             (or (asdf:find-system name)
+             (or (ignore-errors (asdf:find-system name))
                  (progn
                    (funcall func system-name)
                    (local-project-build-hash :rebuild t)
