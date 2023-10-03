@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 03 Oct 2023 12:56:28 +0000
+
 roswell (22.12.14.113-1) unstable; urgency=low
 
   * Fix: release CI for debian package.
