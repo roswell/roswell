@@ -82,7 +82,7 @@ char* configdir(void) {
 
   if (env) /* note: env can be a NULL */
   {
-      if (env[0] != DIRSEP[0])   /* note: DIRSEP == \\ on windows, / on unix */
+      if (env[0] != DIRSEP[0] || env[1] != ':')   /* note: DIRSEP == \\ on windows, / on unix */
       {
           cond_printf(0,"Error: %s must be absolute. Got: %s \n",c,env);
       }
