@@ -60,8 +60,9 @@ char* uname_m(void) {
   }
   if(strcmp(p2,"evbarm")==0 ) {
     /*netbsd arm*/
+    char* result=system_("uname -p");
     s(p2);
-    p2=system_("uname -p");
+    p2=remove_char("\r\n",result);
   }
   if(strcmp(p2,"aarch64")==0) {
     s(p2);
