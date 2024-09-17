@@ -58,6 +58,11 @@ char* uname_m(void) {
     s(p2);
     return q("x86-64");
   }
+  if(strcmp(p2,"evbarm")==0 ) {
+    /*netbsd arm*/
+    s(p2);
+    p2=system_("uname -p");
+  }
   if(strcmp(p2,"aarch64")==0) {
     s(p2);
     return q("arm64");
