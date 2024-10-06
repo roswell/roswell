@@ -64,4 +64,21 @@ char* currentdir(void) {
   char buf[2048];
   return append_trail_slash(q_(_getcwd(buf,2048)));
 }
+
+int is_valid_path(const char *path) {
+  //
+  // On Windows, an absolute path can technically
+  // start with a drive letter (i.e. c:\roswell),
+  // but could also be a UNC path (i.e. \\OTHERMACHINE\roswell).
+  //
+  // But, if invoked inside an msys2 shell we could get a UNIX-style path.
+  //
+  // It appears however that the latter two scenarios are not supported
+  // by other parts of the codebase, so we shall enforce here that only
+  // regular Windows-style paths are allowed.
+  //
+
+  return (isalpha(path[0]) && path[1] == ':'  && (path[2] == '\\' || path[2] == '/'));
+}
+
 #endif

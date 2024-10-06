@@ -71,9 +71,15 @@ char* currentdir(void) {
   return append_trail_slash(q_(getcwd(buf,2048)));
 }
 
+int is_valid_path(const char *path) {
+  return path[0] == '/';
+}
+
 #else
+
 char* homedir(void);
 char* currentdir(void);
+int is_valid_path(const char *);
 #endif
 
 char* configdir(void) {
@@ -82,9 +88,10 @@ char* configdir(void) {
 
   if (env) /* note: env can be a NULL */
   {
-      if (env[0] != DIRSEP[0])   /* note: DIRSEP == \\ on windows, / on unix */
+      if (!is_valid_path(env))
       {
           cond_printf(0,"Error: %s must be absolute. Got: %s \n",c,env);
+	  abort();
       }
       s(c);                     /* note : this frees c. */
       return append_trail_slash(q(env));
@@ -143,3 +150,4 @@ char* basedir(void) {
   s(cd_);
   return configdir();
 }
+

@@ -13,6 +13,7 @@
 #include <string.h>
 #include <stdarg.h>
 #ifndef HAVE_WINDOWS_H
+#include <ctype.h>
 #include <pwd.h>
 #include <unistd.h>
 #include <grp.h>
@@ -142,6 +143,7 @@ int directory_exist_p (char* path);
 int change_directory(const char* path);
 int delete_directory(char* pathspec,int recursive);
 char* impldir(char* arch,char* os,char* impl,char* version);
+int is_valid_path(const char *path);
 /*util_file.c */
 int delete_file(char* pathspec);
 int rename_file(char* file,char* new_name);
