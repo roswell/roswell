@@ -58,7 +58,7 @@ AC_CHECK_HEADERS(gnu/libc-version.h)
 AC_CHECK_HEADERS(windows.h,[with_windows=true])
 AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])
-AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
+AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != "" -a "$with_windows" != ""])
 
 AC_CHECK_MEMBERS([struct dirent.d_type],,,[#include <dirent.h>])
 
