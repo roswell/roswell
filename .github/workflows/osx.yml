@@ -6,21 +6,24 @@ on:
 
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: ${{ matrix.target == 'arm64' && 'macos-14' || 'macOS-12' }}
     strategy:
       matrix:
-        lisp: [sbcl-bin/2.0.0]
-        target: [x86-64]
+        lisp: [sbcl-bin/2.4.0]
+        target: [arm64, x86-64]
     environment: SET_VERSION
 
     steps:
       - uses: actions/checkout@v2
       - name: checkenv
         run: |
-          uname -s
-          uname -m
+          uname -s -m
           brew install autoconf automake
       - name: Build
+        env:
+          CFLAGS: -mmacosx-version-min=10.9
+          CXXFLAGS: -mmacosx-version-min=10.9
+          LDFLAGS: -mmacosx-version-min=10.9
         run: |
           gcc -v
           ./bootstrap
