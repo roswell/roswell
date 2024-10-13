@@ -10,19 +10,16 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        image: [musl64, deb, pandoc]
+        image: [musl64]
+        variant: ['', '-musl', '-glibc2.3.1']
+        target: ['x86-64', 'arm64']
         include:
-        - lisp: sbcl-bin/2.4.0
-        - target: x86-64
-        - {image: musl64, makeopts: musl }
-        - {image: deb,    makeopts: deb  }
-        - {image: pandoc, makeopts: docs }
-        - image: musl64
-          makeopts: musl
-          variant: -musl
-          lisp: sbcl-bin/2.4.0
-          target: x86-64
-          
+          # set default docker platform and image suffix.
+          - {docker-platform: linux/amd64  ,docker-image-suffix: ''}
+          - {target: arm64  ,docker-platform: linux/arm64  ,docker-image-suffix: 'aarch64'}
+          - {image: deb,    makeopts: deb,  target: x86-64 }
+          - {image: pandoc, makeopts: docs, target: x86-64 }
+
     environment: SET_VERSION
 
     steps:
@@ -36,7 +33,7 @@ jobs:
           uname -s -m
       - name: Install Roswell
         env:
-          LISP: ${{ matrix.lisp }}
+          LISP: sbcl-bin/2.4.0
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMAGE: ${{ matrix.image }}
         run: |
