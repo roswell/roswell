@@ -15,8 +15,8 @@ jobs:
         target: ['x86-64', 'arm64']
         include:
           # set default docker platform and image suffix.
-          - {docker-platform: linux/amd64  ,docker-image-suffix: ''}
-          - {target: arm64  ,docker-platform: linux/arm64  ,docker-image-suffix: 'aarch64'}
+          - {docker-platform: linux/amd64  ,docker-image-suffix: '', makeopts: musl }
+          - {target: arm64  ,docker-platform: linux/arm64  ,docker-image-suffix: 'aarch64' }
           - {image: deb,    makeopts: deb,  target: x86-64 }
           - {image: pandoc, makeopts: docs, target: x86-64 }
 
