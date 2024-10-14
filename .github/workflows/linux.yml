@@ -24,6 +24,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: setenv
         run: |
           echo "$HOME/.roswell/bin" >> $GITHUB_PATH
