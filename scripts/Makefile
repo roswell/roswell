@@ -24,7 +24,7 @@ show:
 build-docker:
 	docker build \
 		--platform $(DOCKER_PLATFORM) \
-		-t $(DOCKER_REPO)$$(cat ./scripts/Docker/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
+		-t $(DOCKER_REPO)/$$(cat ./scripts/Docker/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
 		$(DOCKER_BUILD_OPTIONS) \
 		./scripts/Docker/$(IMAGE)
 push-docker:
