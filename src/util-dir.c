@@ -10,8 +10,12 @@ char* homedir(void) {
 }
 
 char* truename(const char* path) {
-  char* ret=realpath(path,NULL);
-  return ret?ret:which((char*)path);
+  char* buf=alloc(PATH_MAX);
+  char* ret=realpath(path,buf);
+  if(ret)
+    return buf;
+  s(buf);
+  return which((char*)path);
 }
 
 int ensure_directories_exist(char* path) {

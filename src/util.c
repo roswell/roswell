@@ -86,6 +86,10 @@ char* uname_m(void) {
     s(p2);
     return q("armel");
   }
+  if(strcmp(p2,"Power Macintosh")==0) {
+    s(p2);
+    return q("ppc");
+  }
   return substitute_char('-','_',p2);
 }
 
