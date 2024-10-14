@@ -75,6 +75,7 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *opt)
 int download_simple (char* uri,char* path,int opt) {
   FILE *bodyfile;
   char* path_partial=cat(path,".partial",NULL);
+  cond_printf(1,"download_simple(\"%s\",\"%s\",%d)\n",uri,path,opt);
   bodyfile = fopen(path_partial,"wb");
   if(bodyfile == NULL) {
     s(path_partial);
@@ -121,7 +122,9 @@ int download_simple (char* uri,char* path,int opt) {
     curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
-    curl_easy_setopt(curl,CURLOPT_WRITEDATA,bodyfile);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA,bodyfile);
+    if((verbose & 2) != 0)
+      curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     if(ignoressl) {
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0); 
         curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0);
