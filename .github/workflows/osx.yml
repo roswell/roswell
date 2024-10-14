@@ -29,6 +29,7 @@ jobs:
           CFLAGS: -mmacosx-version-min=10.9
           CXXFLAGS: -mmacosx-version-min=10.9
           LDFLAGS: -mmacosx-version-min=10.9
+          ARCH: ${{ matrix.target }}
         run: |
           gcc -v
           ./bootstrap

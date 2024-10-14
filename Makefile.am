@@ -131,7 +131,7 @@ brewpr:
 	git pull
 	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
-PACK = $(PACKAGE)-$(VERSION)-$(shell uname -s | tr '[A-Z]' '[a-z]' | sed -E 's/([^-]*).*/\1/')-$(shell uname -m)$(SBCL_BIN_VARIANT)
+PACK = $(PACKAGE)-$(VERSION)-$(shell uname -s | tr '[A-Z]' '[a-z]' | sed -E 's/([^-]*).*/\1/')-$(ARCH)$(SBCL_BIN_VARIANT)
 
 roswell/Makefile:
 	rm -rf roswell
