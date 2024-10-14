@@ -66,6 +66,9 @@ jobs:
           DOCKER: ${{ matrix.docker }}
           SUFFIX: ${{ matrix.suffix }}
           LINKFLAGS: ${{ matrix.linkflags }}
+          DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+          DOCKER_BUILD_OPTIONS: ${{ matrix.docker-build-options }}
+          DOCKER_IMAGE_SUFFIX: ${{ matrix.docker-image-suffix }}
           IMAGE: ${{ matrix.image }}
           MAKEOPTS: ${{ matrix.makeopts }}
           VARIANT: ${{ matrix.variant }}
