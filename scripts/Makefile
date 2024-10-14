@@ -54,7 +54,7 @@ musl:
 	./bootstrap
 	./configure --enable-maintainer-mode --with-sbcl-bin-variant=$(VARIANT) \
 	LDFLAGS="--static -static-libgcc -static-libstdc++ -static" \
-	LIBS="-lcurl -lnghttp2 -lssl -lcrypto -lz"
+	LIBS="-lcurl -lbrotlidec -lbrotlicommon -lnghttp2 -lssl -lcrypto -lz -lzstd -lcares -lidn2 -lunistring -lpsl"
 	make
 	make pack
 
