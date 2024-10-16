@@ -1,3 +1,22 @@
+roswell (24.10.115-1) unstable; urgency=low
+
+  * New: tested on darwin/ppc environment.
+  * New: tested on netbsd/aarch64 environment.
+  * Fix: absolute path error on Windows (by Ashton Fagg)
+  * Fix: build error on non Windows environment with windres (reported by Richard DW Redcroft)
+  * Fix: error message in build (by Rongsong Shen)
+
+ -- snmsts <snmsts@gmail.com>  Wed, 16 Oct 2024 15:06:42 +0900
+
+roswell (23.10.14.114-1) unstable; urgency=low
+
+  * New: use patchelf to support for distributions like guix/nix.
+  * Fix: 'ros.installing' feature not work. (reported by Fukamachi)
+  * Fix: fix windows build script (by Jeongsoo, Park)
+  * Fix: ros fmt  (by Daniel Jay Haskin)
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Tue, 03 Oct 2023 12:57:11 +0000
+
 roswell (22.12.14.113-1) unstable; urgency=low
 
   * Fix: release CI for debian package.

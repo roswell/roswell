@@ -158,12 +158,50 @@ int sbcl_bin_install(struct install_options* param) {
 }
 #endif
 
+#ifdef __linux__
+int sbcl_bin_patchelf(struct install_options* param) {
+  char* home=configdir();
+  char* src=param->expand_path;
+  char* roswell_path=which(argv_orig[0]); /* which ros */
+  int patchelf_available;
+  int ret;
+  char* impl=param->impl;
+  char* version=param->version;
+  char* impl_path= cat(home,impldir(param->arch,param->os,impl,version),NULL);
+  char* patchelf_cmd=which("patchelf");
+  char* result;
+  char* ros;
+  patchelf_available=strlen(patchelf_cmd)?1:0;
+  s(patchelf_cmd);
+  if(!patchelf_available) {
+    fprintf(stderr,"'patchelf' not detected.no patching for sbcl\n");
+    return 1;
+  }
+  patchelf_cmd=cat("patchelf --print-interpreter ",roswell_path,NULL);
+  result=system_(patchelf_cmd);
+  ros=remove_char("\r\n",result);
+  s(patchelf_cmd),s(result),s(roswell_path);
+  cond_printf(1,"roswell's interpreter is '%s'...\n",ros);
+  patchelf_cmd=cat("patchelf --set-interpreter ",ros," ",impl_path,"/bin/sbcl ",NULL);
+  ret=System(patchelf_cmd);
+  s(patchelf_cmd),s(impl_path),s(home),s(ros);
+  if(ret!=0) {
+    fprintf(stderr,"'patchelf' for sbcl failed.\n");
+  }
+  cond_printf(0,"patchelf sbcl Done.");
+  return 1;
+}
+#endif
+
 install_cmds install_sbcl_bin_full[]={
   sbcl_version_bin,
   start,
   sbcl_bin_download,
   sbcl_bin_expand,
   sbcl_bin_install,
+#ifdef __linux__
+  sbcl_bin_patchelf,
+#endif
   NULL
 };
 

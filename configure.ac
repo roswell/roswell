@@ -2,7 +2,7 @@
 # Process this file with autoconf to produce a configure script.
 
 AC_PREREQ([2.59])
-AC_INIT([roswell],[22.12.14.113],snmsts@gmail.com)
+AC_INIT([roswell],[24.10.115],snmsts@gmail.com)
 CFLAGS=${CFLAGS=""}
 CXXFLAGS=${CXXFLAGS=""}
 
@@ -58,7 +58,7 @@ AC_CHECK_HEADERS(gnu/libc-version.h)
 AC_CHECK_HEADERS(windows.h,[with_windows=true])
 AM_CONDITIONAL([WITH_WINDOWS], [test "$with_windows" != ""])
 AC_CHECK_TOOL([WINDRES], [windres], [])
-AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != ""])
+AM_CONDITIONAL([WITH_WIN_ICON], [test "$WINDRES" != "" -a "$with_windows" != ""])
 
 AC_CHECK_MEMBERS([struct dirent.d_type],,,[#include <dirent.h>])
 
@@ -107,6 +107,12 @@ AC_ARG_WITH([sbcl_bin_variant],
   [SBCL_BIN_VARIANT=$withval],[SBCL_BIN_VARIANT=""])
 AC_SUBST([SBCL_BIN_VARIANT], ["${SBCL_BIN_VARIANT}"])
 AC_DEFINE_UNQUOTED([SBCL_BIN_VARIANT],["${SBCL_BIN_VARIANT}"],[variant for sbcl-bin])
+
+AC_ARG_WITH([fixed_arch],
+  [AS_HELP_STRING([--with-fixed-arch=string],[set arch instead of on the fly detecting [default=''] possible choices are 'armhf', 'arm64'.])],
+  [FIXED_ARCH=$withval],[FIXED_ARCH=""])
+AC_SUBST([FIXED_ARCH], ["${FIXED_ARCH}"])
+AC_DEFINE_UNQUOTED([FIXED_ARCH],["${FIXED_ARCH}"],[arch to decide binary])
 
 # man file (ros.1) generation switch
 AC_ARG_ENABLE([manual_generation],

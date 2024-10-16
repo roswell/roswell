@@ -32,7 +32,7 @@
     (let* ((src (merge-pathnames (format nil "asdf-~A/" version) src))
            (cmd (list (sh) "-lc" (format nil "cd ~S;~A"
                                          (#+win32 mingw-namestring #-win32 princ-to-string src)
-                                         (or #+freebsd "gmake" "make")))))
+                                         (make)))))
       (uiop/os:chdir src)
       (format t "~&chdir ~A~%" src)
       (uiop/run-program:run-program cmd :output t :ignore-error-status nil)

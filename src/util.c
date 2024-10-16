@@ -9,14 +9,42 @@ char* uname_s(void) {
     s(p2);
     return q("solaris");
   }
+  if(strcmp(p2,"Linux")==0 &&
+     strcmp(UNAME_M,"aarch64") ==0) {
+    char* result=system_("uname -o");
+    char* result2=remove_char("\r\n",result);
+    s(result);
+    if(strcmp(result2,"Android")==0) {
+      s(result2),s(p2);
+      /* termux? */
+      return q("android");
+    }
+  }
+  if(strcmp(p2,"DragonFly")==0) {
+    s(p2);
+    return q("DFlyBSD");
+  }
   return downcase(p2);
 }
 
 char* uname_m(void) {
   char *p2=q(UNAME_M);
-  if(strcmp(p2,"i86pc")==0) {
+  if(strlen(FIXED_ARCH) !=0) {
     s(p2);
-    return q("x86-64");
+    return q(FIXED_ARCH);
+  }
+  if(strcmp(p2,"i86pc")==0) {
+    /* solaris */
+    s(p2);
+    char* result=system_("isainfo -k");
+    char* result2=remove_char("\r\n",result);
+    s(result);
+    if(strcmp(result2,"amd64")==0) {
+      s(result2);
+      return q("x86-64");
+    }
+    s(result2);
+    return q("x86");
   }
   if(strcmp(p2,"i686")==0) {
     s(p2);
@@ -30,12 +58,19 @@ char* uname_m(void) {
     s(p2);
     return q("x86-64");
   }
+  if(strcmp(p2,"evbarm")==0 ) {
+    /*netbsd arm*/
+    char* result=system_("uname -p");
+    s(p2);
+    p2=remove_char("\r\n",result);
+  }
   if(strcmp(p2,"aarch64")==0) {
     s(p2);
     return q("arm64");
   }
   if(strcmp(p2,"armv6l")==0 ||
-     strcmp(p2,"armv7l")==0) {
+     strcmp(p2,"armv7l")==0 ||
+     strcmp(p2,"armv8l")==0) {
     char* result=system_("readelf -A /proc/self/exe |grep Tag_ABI_VFP_args|wc -l");
     char* result2=remove_char("\r\n",result);
     s(result);
@@ -50,6 +85,10 @@ char* uname_m(void) {
   if(strcmp(p2,"armv5tejl")==0) {
     s(p2);
     return q("armel");
+  }
+  if(strcmp(p2,"Power Macintosh")==0) {
+    s(p2);
+    return q("ppc");
   }
   return substitute_char('-','_',p2);
 }

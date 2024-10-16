@@ -1,7 +1,8 @@
 name: test
 
 on:
-  push:
+  schedule:
+    - cron:  '0 1 * * *'
   workflow_dispatch:
 
 jobs:
@@ -12,7 +13,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-10.15, ubuntu-18.04]
+        os: [macos-latest, ubuntu-latest]
         lisp: 
          - alisp
          - cmu-bin/2019-06
@@ -25,22 +26,22 @@ jobs:
         experimental: [false]
         include:
           - lisp: mkcl
-            os: macos-10.15
+            os: macos-latest
             experimental: true
           - lisp: mkcl
-            os: ubuntu-18.04
+            os: ubuntu-latest
             experimental: true
           - lisp: sbcl/git
-            os: macos-10.15
+            os: macos-latest
             experimental: true
           - lisp: sbcl/git
-            os: ubuntu-18.04
+            os: ubuntu-latest
             experimental: true
           - lisp: abcl
-            os: macos-10.15
+            os: macos-latest
             experimental: true
           - lisp: abcl
-            os: ubuntu-18.04
+            os: ubuntu-latest
             experimental: true
 
     env:

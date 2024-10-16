@@ -107,7 +107,7 @@ dist_roslisppatch_DATA = patch/sbcl-1.3.11.patch patch/sbcl-posix-tests.patch
 release-prepare:
 	ros scripts/release.ros prepare
 release-commit:
-	ros scripts/release.ros release
+	ros scripts/release.ros release-commit
 release-push:
 	ros scripts/release.ros release-push
 release-changelog:
@@ -131,7 +131,7 @@ brewpr:
 	git pull
 	if [ `uname` = 'Darwin' ];then brew bump-formula-pr -v --url=https://github.com/roswell/roswell/archive/`git describe --abbrev=0 --tags`.tar.gz roswell; fi
 
-PACK = $(PACKAGE)-$(VERSION)-$(shell uname -s | tr '[A-Z]' '[a-z]' | sed -E 's/([^-]*).*/\1/')-$(shell uname -m)$(SBCL_BIN_VARIANT)
+PACK = $(PACKAGE)-$(VERSION)-$(shell uname -s | tr '[A-Z]' '[a-z]' | sed -E 's/([^-]*).*/\1/')-$(ARCH)$(SBCL_BIN_VARIANT)
 
 roswell/Makefile:
 	rm -rf roswell
@@ -144,7 +144,7 @@ roswell/Makefile:
 	echo "	mkdir -p $$""(prefix)/etc/roswell/patch" >> $@
 	echo "	mkdir -p $$""(mandir)" >> $@
 	echo "	install -c ros$(EXEEXT) $$""(prefix)/bin" >> $@
-	echo "	install -c -m 644 $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $@
+	echo "	install -c -m 644 $(ROSS:%=lisp/%) $(LISPS:%=lisp/%) $$""(prefix)/etc/roswell" >> $@
 	echo "	install -c -m 644 $(dist_roslisppatch_DATA) $$""(prefix)/etc/roswell/patch" >> $@
 	if [ 'x$(MDS)' != 'x' ]; then \
 		echo "	install -c $(MDS:%.md=man/%.1) $$""(mandir)" >> $@; \
@@ -161,6 +161,7 @@ $(PACK).tar.bz2: roswell/Makefile
 	cp src/ros$(EXEEXT) roswell
 	$(MKDIR_P) roswell/lisp
 	cp $(LISPS:%=lisp/%) roswell/lisp
+	cp $(ROSS:%=lisp/%) roswell/lisp
 	cp $(dist_roslisppatch_DATA) roswell/patch
 	if [ 'x$(MDS)' != x ]; then \
 		$(MKDIR_P) roswell/man; \

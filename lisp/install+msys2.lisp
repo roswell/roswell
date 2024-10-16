@@ -9,8 +9,21 @@
 (defvar *msys2-arch*)
 (defvar *msys2-bits*)
 
+(defun msys2-get-release (version)
+  "
+  In the new GitHub releases, the release name is a date with dashes
+  and the version is a date without.
+  "
+  (if (equal (length version) 8)
+    (format nil "~A-~A-~A"
+            (subseq version 0 4)
+            (subseq version 4 6)
+            (subseq version 6 8))
+    version))
+
 (defun msys2-get-version ()
-  '("20180531"))
+  '("20230127"))
+
 ;;sha1 "309f604a165179d50fbe4131cf87bd160769f974"
 ;;(ironclad:byte-array-to-hex-string (ironclad:digest-file :sha1 path))
 
@@ -33,9 +46,12 @@
           (when (or (not (probe-file path))
                     (opt "download.force"))
             (download
-             (format nil "~Amsys2/Base/~A/msys2-base-~A-~A.tar.xz"
+             (format nil "~A~A/msys2-base-~A-~A.tar.xz"
                      (msys2-uri)
-                     *msys2-arch* *msys2-arch* (getf argv :version))
+                     (msys2-get-release
+                       (getf argv :version))
+                     *msys2-arch*
+                     (getf argv :version))
              path))
           (format t " done.~%")
           (expand path
@@ -67,11 +83,10 @@
                         "make zlib-devel"))
              :output t
              :error-output t))
-          
           (uiop/run-program:run-program
-           `(,(uiop:native-namestring (merge-pathnames "autorebase.bat" msys)))
-           :output t
-           :error-output t)
+            `(,(uiop:native-namestring (merge-pathnames "autorebase.bat" msys)))
+            :output t
+            :error-output t)
           (setf (config "msys2.version") (getf argv :version)))))
   (cons t argv))
 

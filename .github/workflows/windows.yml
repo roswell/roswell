@@ -35,7 +35,12 @@ jobs:
           path-type: inherit
           release: true
           update: true
-          install: 'base-devel mingw-w64-${{ matrix.arch }}-toolchain p7zip'
+          install: >-
+            base-devel
+            p7zip
+            autotools
+            mingw-w64-${{ matrix.arch }}-toolchain
+            mingw-w64-${{ matrix.arch }}-autotools
       - name: Run MSYS2 once
         shell: msys2 {0}
         run: |

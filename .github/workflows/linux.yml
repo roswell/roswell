@@ -1,4 +1,4 @@
-name: linux
+name: Linux
 
 on:
   push:
@@ -6,51 +6,58 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
+        image: [musl64]
+        variant: ['', '-musl', '-glibc2.31']
+        target: ['x86-64', 'arm64', 'riscv64']
         include:
-        - lisp: sbcl-bin/2.0.0
-          target: x86-64
-          image: musl64
-          makeopts: musl
-        - lisp: sbcl-bin/2.0.0
-          target: x86-64
-          image: musl64
-          makeopts: musl
-          variant: -musl
-        - lisp: sbcl-bin/2.0.0
-          target: x86-64
-          image: deb
-          makeopts: deb
-        - lisp: sbcl-bin/2.0.0
-          target: x86-64
-          image: pandoc
-          makeopts: docs
+          # set default docker platform and image suffix.
+          - {docker-platform: linux/amd64  ,docker-image-suffix: '', makeopts: musl }
+          - {target: arm64   ,docker-platform: linux/arm64   ,docker-image-suffix: 'aarch64' }
+          - {target: riscv64 ,docker-platform: linux/riscv64 ,docker-image-suffix: 'riscv64' }
+          - {image: deb,    makeopts: deb,  target: x86-64 ,docker-platform: linux/amd64}
+          - {image: pandoc, makeopts: docs, target: x86-64 ,docker-platform: linux/amd64}
+
     environment: SET_VERSION
 
     steps:
-      - uses: actions/checkout@v2
-
+      - uses: actions/checkout@v4
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+        with:
+          image: tonistiigi/binfmt:qemu-v8.1.5
       - name: setenv
         run: |
           echo "$HOME/.roswell/bin" >> $GITHUB_PATH
           echo "ROSWELL_BRANCH=release" >> $GITHUB_ENV
       - name: checkenv
         run: |
-          uname -s
-          uname -m
+          uname -s -m
       - name: Install Roswell
         env:
-          LISP: ${{ matrix.lisp }}
+          LISP: sbcl-bin/2.4.0
           GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           IMAGE: ${{ matrix.image }}
         run: |
           sh scripts/install-for-ci.sh
           ros install snmsts/sn.github
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: docker.pkg.github.com
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: pull or build&push docker image
+        env:
+          DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+          DOCKER_BUILD_OPTIONS: ${{ matrix.docker-build-options }}
+          DOCKER_IMAGE_SUFFIX: ${{ matrix.docker-image-suffix }}
+          IMAGE: ${{ matrix.image }}
+        run: |
           if [ -n "$IMAGE" ]; then
-             docker login docker.pkg.github.com -u snmsts -p $GITHUB_OAUTH_TOKEN;
              make -f scripts/Makefile pull-docker || make -f scripts/Makefile build-docker push-docker
           fi
       - name: build
@@ -60,6 +67,9 @@ jobs:
           DOCKER: ${{ matrix.docker }}
           SUFFIX: ${{ matrix.suffix }}
           LINKFLAGS: ${{ matrix.linkflags }}
+          DOCKER_PLATFORM: ${{ matrix.docker-platform }}
+          DOCKER_BUILD_OPTIONS: ${{ matrix.docker-build-options }}
+          DOCKER_IMAGE_SUFFIX: ${{ matrix.docker-image-suffix }}
           IMAGE: ${{ matrix.image }}
           MAKEOPTS: ${{ matrix.makeopts }}
           VARIANT: ${{ matrix.variant }}

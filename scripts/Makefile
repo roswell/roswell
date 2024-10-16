@@ -1,6 +1,12 @@
 -include .env
 export $(shell sed 's/=.*//' .env)
 
+DOCKER_REPO ?= docker.pkg.github.com/roswell/roswell
+DOCKER_PLATFORM ?= linux/amd64
+DOCKER_BUILD_OPTIONS ?=
+DOCKER_IMAGE_SUFFIX ?=
+IMAGE ?=
+
 all:
 	echo all
 
@@ -16,20 +22,27 @@ show:
 	@echo VERSION=$(VERSION) VARIANT=$(VARIANT)
 
 build-docker:
-	docker build -t docker.pkg.github.com/roswell/roswell/$$(cat ./scripts/Docker/$(IMAGE)/Name) ./scripts/Docker/$(IMAGE)
+	docker build \
+		--platform $(DOCKER_PLATFORM) \
+		-t $(DOCKER_REPO)/$$(cat ./scripts/Docker/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
+		$(DOCKER_BUILD_OPTIONS) \
+		./scripts/Docker/$(IMAGE)
 push-docker:
-	docker push docker.pkg.github.com/roswell/roswell/$$(cat ./scripts/Docker/$(IMAGE)/Name);
+	docker push $(DOCKER_REPO)/$$(cat ./scripts/Docker/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX);
 pull-docker:
-	docker pull docker.pkg.github.com/roswell/roswell/$$(cat ./scripts/Docker/$(IMAGE)/Name);
+	docker pull $(DOCKER_REPO)/$$(cat ./scripts/Docker/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX);
 docker:
 	docker run \
+		--rm \
+		--platform $(DOCKER_PLATFORM) \
 		-v `pwd`:/tmp2 \
 		-e ARCH=$(ARCH) \
 		-e VERSION=$(VERSION) \
+		-e SUFFIX=$(SUFFIX) \
 		-e CFLAGS=$(CFLAGS) \
 		-e LINKFLAGS=$(LINKFLAGS) \
 		-e VARIANT=$(VARIANT) \
-		docker.pkg.github.com/roswell/roswell/$$(cat ./scripts/Docker/$(IMAGE)/Name) \
+		$(DOCKER_REPO)/$$(cat ./scripts/Docker/$(IMAGE)/Name)$(DOCKER_IMAGE_SUFFIX) \
 		bash \
 		-c "cd /tmp2;make -f scripts/Makefile $(MAKEOPTS)"
 upload:
@@ -41,7 +54,7 @@ musl:
 	./bootstrap
 	./configure --enable-maintainer-mode --with-sbcl-bin-variant=$(VARIANT) \
 	LDFLAGS="--static -static-libgcc -static-libstdc++ -static" \
-	LIBS="-lcurl -lbrotlidec-static -lbrotlicommon-static -lnghttp2 -lssl -lcrypto -lz"
+	LIBS="-lcurl -lbrotlidec -lbrotlicommon -lnghttp2 -lssl -lcrypto -lz -lzstd -lcares -lidn2 -lunistring -lpsl"
 	make
 	make pack
 
