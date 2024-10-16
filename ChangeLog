@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO Masatoshi <snmsts@gmail.com>  Wed, 16 Oct 2024 14:55:33 +0900
+
 roswell (23.10.14.114-1) unstable; urgency=low
 
   * New: use patchelf to support for distributions like guix/nix.
