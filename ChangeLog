@@ -1,8 +1,12 @@
-roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+roswell (24.10.115-1) unstable; urgency=low
 
-  *
+  * New: tested on darwin/ppc environment.
+  * New: tested on netbsd/aarch64 environment.
+  * Fix: absolute path error on Windows (by Ashton Fagg)
+  * Fix: build error on non Windows environment with windres (reported by Richard DW Redcroft)
+  * Fix: error message in build (by Rongsong Shen)
 
- -- SANO Masatoshi <snmsts@gmail.com>  Wed, 16 Oct 2024 14:55:33 +0900
+ -- snmsts <snmsts@gmail.com>  Wed, 16 Oct 2024 15:06:42 +0900
 
 roswell (23.10.14.114-1) unstable; urgency=low
 
