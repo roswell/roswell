@@ -13,7 +13,7 @@
                               (version (getf argv :version)))
   (let ((os (intern uname :keyword))
         (machine (intern uname-m :keyword)))
-    (cond ((find version '("11.0bexpress"
+    (cond ((find version '("11.0express"
                            "10.1express")
                  :test 'equal)
            (format nil "~@{~A~}"
