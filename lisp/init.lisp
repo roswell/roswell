@@ -308,13 +308,25 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
       (or *version-cache*
           (setf *version-cache* (roswell '("roswell-internal-use" "version") :string t)))))
 
+(defun implementation-version ()
+  "cut off after third? dot from lisp-implementation-version"
+  (let ((version (lisp-implementation-version)))
+    (loop with j = 0
+          for i from 0 to (1- (length version))
+          when (eql (aref version i) #\.)
+          do (incf j)
+             (when (= j 3)
+               (return-from implementation-version (subseq version 0 i))))
+    version))
+
+
 #+sbcl
 (when (ignore-errors (string-equal (opt "impl") "sbcl-bin" :end1 8))
   (flet ((source (version)
            (let ((path (merge-pathnames (format nil "src/sbcl-~A/" version) (opt "homedir"))))
              (when (probe-file path)
                (sb-ext:set-sbcl-source-location path)))))
-    (or (source (lisp-implementation-version))
+    (or (source (implementation-version))
         (source "git"))))
 
 (defun source-registry (arg &rest rest)
