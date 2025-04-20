@@ -30,4 +30,8 @@ long file_mtime(char* path) {
 int file_newer_p(char * a,char* b) {
   return 0;
 }
+
+int file_write_data(char* path, char* data, unsigned int size) {
+    // unimplemented on windows and unused
+}
 #endif

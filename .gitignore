@@ -9,6 +9,8 @@ src/ros.exe
 src/html_sbcl
 src/html_sbcl.exe
 src/gend.h
+src/standalone-lisp.c
+src/standalone-patch.c
 /Makefile
 /src/Makefile
 /documents/Makefile

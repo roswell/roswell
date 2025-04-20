@@ -151,6 +151,7 @@ void touch(char* path);
 int file_exist_p (char* path);
 long file_mtime(char* path);
 int file_newer_p(char * a,char* b);
+int file_write_data(char* path, char* data, unsigned int size);
 /*util_system.c */
 char* system_(char* cmd);
 int system_redirect(const char* cmd,char* filename);
