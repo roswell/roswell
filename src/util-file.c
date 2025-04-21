@@ -44,7 +44,7 @@ int file_newer_p(char* a,char* b) {
   return bt==0?1:(at!=0&& at>=bt);
 }
 
-int file_write_data(char* path, char* data, unsigned int size) {
+int file_write_data(char* path, char* data, size_t size) {
   int fd=open(path, O_CREAT | O_WRONLY, S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH);
   if (fd > 0) {
       write(fd, data, size);
