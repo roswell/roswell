@@ -35,20 +35,18 @@ endif
 	cat $@
 	rm -f $@.tmp
 if STANDALONE_EXECUTABLE
-	echo "#include \"util.h\"" > standalone-lisp.c && \
-	echo "#include \"gend.h\"" >> standalone-lisp.c && \
-	ls ../lisp | awk '{ s=$$1; gsub(/[-.+]/, "_", s); print "extern char _binary_"s"_start[];extern char _binary_"s"_end[];"; }' >> ../src/standalone-lisp.c && \
-	echo "void init_standalone_lisp_files() {" >> standalone-lisp.c && \
-	ls ../lisp | awk '{ s=$$1; gsub(/[-.+]/, "_", s); print "  write_standalone_file(LISP_PATH, \""$$1"\", _binary_"s"_start, _binary_"s"_end - _binary_"s"_start);"; }' >> ../src/standalone-lisp.c && \
+	echo "#include \"util.h\"" > standalone-lisp.c
+	echo "#include \"gend.h\"" >> standalone-lisp.c
+	cd ../lisp && for file in *; do xxd -i $$file >> ../src/standalone-lisp.c; done
+	echo "void init_standalone_lisp_files() {" >> standalone-lisp.c
+	ls ../lisp | awk '{ s=$$1; gsub(/[-.+]/, "_", s); print "  write_standalone_file(LISP_PATH, \""$$1"\", "s", "s"_len);"; }' >> ../src/standalone-lisp.c
 	echo "}" >> standalone-lisp.c
-	cd ../lisp && ld -r -z noexecstack -b binary -o ../src/lisp.o *
-	echo "#include \"util.h\"" > standalone-patch.c && \
-	echo "#include \"gend.h\"" >> standalone-patch.c && \
-	ls ../patch | awk '{ s=$$1; gsub(/[-.+]/, "_", s); print "extern char _binary_"s"_start[];extern char _binary_"s"_end[];"; }' >> ../src/standalone-patch.c && \
-	echo "void init_standalone_patch_files() {" >> standalone-patch.c && \
-	ls ../patch | awk '{ s=$$1; gsub(/[-.+]/, "_", s); print "  write_standalone_file(PATCH_PATH, \""$$1"\", _binary_"s"_start, _binary_"s"_end - _binary_"s"_start);"; }' >> ../src/standalone-patch.c && \
+	echo "#include \"util.h\"" > standalone-patch.c
+	echo "#include \"gend.h\"" >> standalone-patch.c
+	cd ../patch && for file in *; do xxd -i $$file >> ../src/standalone-patch.c; done
+	echo "void init_standalone_patch_files() {" >> standalone-patch.c
+	ls ../patch | awk '{ s=$$1; gsub(/[-.+]/, "_", s); print "  write_standalone_file(PATCH_PATH, \""$$1"\", "s", "s"_len);"; }' >> ../src/standalone-patch.c
 	echo "}" >> standalone-patch.c
-	cd ../patch && ld -r -z noexecstack -b binary -o ../src/patch.o *
 endif
 
 cmd-internal.o: gend.h
@@ -71,7 +69,6 @@ resources.o: resources.rc
 endif
 
 if STANDALONE_EXECUTABLE
-ros_LDADD += lisp.o patch.o
 ros_SOURCES += util-standalone.c standalone-lisp.c standalone-patch.c
 endif
 
