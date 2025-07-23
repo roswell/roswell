@@ -445,7 +445,8 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
            (with-open-file (in arg)
              (body in)))
           (*latest-system* (apply 'hook (cons arg *argv*)))
-          (t (format t "script ~S does not exist~%" arg)))))
+          (t (format t "script ~S does not exist~%" arg)
+             (quit 1)))))
 
 (defun stdin (arg &rest rest)
   (declare (ignorable arg rest))
