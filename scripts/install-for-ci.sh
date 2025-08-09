@@ -31,12 +31,17 @@ log () {
     echo `$1`
 }
 
-fetch () {
+fetch() {
     echo "Downloading $1..."
-    if curl --no-progress-bar --retry 10 -o $2 -L $1; then
-        return 0;
+    if curl --no-progress-bar --retry 10 --connect-timeout 30 \
+           --max-time 300 -o "$2" -L "$1" 2>&1; then
+        echo "✓ Successfully downloaded $1"
+        return 0
     else
-        echo "Failed to download $1."
+        echo "✗ Failed to download $1"
+        echo "  URL: $1"
+        echo "  Destination: $2" 
+        echo "  Curl exit code: $?"
         exit 1
     fi
 }
