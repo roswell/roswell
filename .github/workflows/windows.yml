@@ -63,3 +63,51 @@ jobs:
         shell: msys2 {0}
         run: |
           make -f scripts/Makefile latest-version win-upload
+
+  build-windows-arm64:
+    runs-on: windows-11-arm
+    timeout-minutes: 90
+    env:
+      RESULT_NAME: windows-aarch64
+      RESULT_PATH: windows-aarch64
+      RESULT_PATH_SUB: roswell
+
+    environment: SET_VERSION
+
+    steps:
+      - run: git config --global core.autocrlf false
+      - uses: actions/checkout@v2
+      - uses: msys2/setup-msys2@v2
+        with:
+          msystem: CLANGARM64
+          path-type: inherit
+          release: true
+          update: true
+          install: >-
+            base-devel
+            p7zip
+            autotools
+            mingw-w64-clang-aarch64-toolchain
+            mingw-w64-clang-aarch64-autotools
+      - name: Run MSYS2 once
+        shell: msys2 {0}
+        run: |
+          pwd
+          echo $MSYSTEM
+          echo $MSYSTEM_CARCH
+          echo $PATH
+      - name: Build
+        shell: msys2 {0}
+        run: |
+          clang -v
+          ./bootstrap
+          CC=clang ./configure
+          make
+          make install
+          make pack.zip
+      - name: Upload
+        env:
+          GITHUB_OAUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: msys2 {0}
+        run: |
+          make -f scripts/Makefile latest-version win-upload
