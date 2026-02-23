@@ -5,16 +5,29 @@ exec ros -Q -N roswell -- $0 "$@"
 |#
 (progn ;;init forms
   (ros:ensure-asdf)
-  #+quicklisp
-  (progn
-    (unless (ql:where-is-system :lem)
-      (roswell:roswell '("git" "clone" "https://github.com/cxxxr/lem.git"))
-      (roswell.util:read-call "roswell.util:local-project-build-hash" :rebuild t))
-    (ql:quickload '("swank" "lem" "lem-lisp-syntax") :silent t)))
+  #+sbcl (require "sb-introspect")
+  #+quicklisp (ql:quickload '("cl-indentify") :silent t))
 
 (defpackage :ros.script.fmt.3707812168
   (:use :cl))
 (in-package :ros.script.fmt.3707812168)
+
+(defun function-lambda-list (fn)
+  "Portably retrieve a function's lambda list."
+  (ignore-errors
+    #+sbcl
+    (funcall (find-symbol "FUNCTION-LAMBDA-LIST" "SB-INTROSPECT") fn)
+    #-sbcl nil))
+
+(defun register-macro-templates ()
+  "Auto-detect macros with &body and register cl-indentify templates."
+  (do-all-symbols (sym)
+    (when (macro-function sym)
+      (let* ((arglist (function-lambda-list (macro-function sym)))
+             (body-pos (position '&body arglist)))
+        (when body-pos
+          (setf (indentify:indent-template sym)
+                `(:style :call :count ,body-pos)))))))
 
 (defun system (path)
   (let ((* (when (and (probe-file path)
@@ -37,15 +50,39 @@ exec ros -Q -N roswell -- $0 "$@"
                   (list c)))))
       (when *
         (ql:quickload * :silent (not (ros:verbose)))
-        (lem-lisp-syntax.indent:indentation-update)
+        (register-macro-templates)
         (r (asdf:find-system *))))))
+
+(defun register-standard-templates ()
+  "Override templates to match Lem/Emacs/SLIME indentation."
+  ;; if: (&rest nil) in Lem - all args aligned with first arg
+  (setf (indentify:indent-template 'if) '(:count 3))
+  ;; case/typecase: (4 &rest (&whole 2 &rest 1)) - clause body at paren+1
+  (dolist (sym '(case ccase ecase typecase ctypecase etypecase))
+    (setf (indentify:indent-template sym)
+          '(:count 1 :sub (nil nil (:style :list)))))
+  ;; cond: (&rest (&whole 2 &rest 1)) - clause body at paren+1
+  (setf (indentify:indent-template 'cond)
+        '(:count 0 :sub (nil (:style :list)))))
+
+(defun format-file (file)
+  (let ((result (with-output-to-string (out)
+                  (with-open-file (in file)
+                    (indentify:indentify in out)))))
+    (with-open-file (out file :direction :output :if-exists :supersede)
+      (with-input-from-string (in result)
+        (loop for line = (read-line in nil)
+              while line
+              do (write-string (string-right-trim '(#\Space #\Tab) line) out)
+                 (terpri out))))))
 
 (defun main (&rest argv)
   "go fmt like something"
+  (indentify:load-default-templates)
+  (register-standard-templates)
   (dolist (arg (if argv
-                   (prog1 (loop for arg in argv
-                                append (or (system arg) (list arg)))
-                     (lem-lisp-syntax:indentation-update))
+                   (loop for arg in argv
+                         append (or (system arg) (list arg)))
                    (ignore-errors
                     (let* ((name (first (last (pathname-directory *default-pathname-defaults*))))
                            (path (probe-file (make-pathname :name name :type "asd"))))
@@ -53,18 +90,6 @@ exec ros -Q -N roswell -- $0 "$@"
                           (append (directory "*.lisp")
                                   (directory "*.ros")))))))
     (if (probe-file arg)
-        (let ((buffer (lem-base:find-file-buffer arg)))
-          (setf (lem-base:buffer-syntax-table buffer)
-                lem-lisp-syntax:*syntax-table*)
-          (setf (lem-base:variable-value 'lem-base:calc-indent-function :buffer buffer)
-                'lem-lisp-syntax:calc-indent)
-          (lem-base:indent-points (lem-base:buffer-start-point buffer)
-                                  (lem-base:buffer-end-point buffer))
-          (loop with regexp = "[ 	]+$" ;; remove trailing spaces.
-                for start = (lem-base:search-forward-regexp (lem-base:copy-point (lem-base:buffer-start-point buffer)) regexp)
-                while start
-                for end = (lem-base:search-backward-regexp (lem-base:copy-point start) regexp)
-                do (lem-base:delete-between-points start end))
-          (lem-base:write-to-file buffer (lem-base:buffer-filename buffer)))
+        (format-file arg)
         (format *error-output* "~A does not exist" arg))))
 ;;; vim: set ft=lisp lisp:
