@@ -30,7 +30,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
         (d (multiple-value-list(decode-universal-time (get-universal-time)))))
     (setf (first version) (- (nth 5 d) 2000)
           (second version) (nth 4 d)
-          (fourth version) (1+ (fourth version)))
+          (first (last version)) (1+ (first (last version))))
     (format nil "~{~2,'0d~^.~}" version)))
 
 (defun edit-file (path match replace version &key test)
@@ -179,7 +179,7 @@ exec ros -Q -L sbcl-bin -- $0 "$@"
 
 (defun main (subcmd &rest argv)
   (declare (ignorable argv))
-  (let ((subcmd (find subcmd '(prepare release release-push changelog release-ci)
+  (let ((subcmd (find subcmd '(prepare release-commit release-push changelog release-ci)
                       :test 'equal :key 'string-downcase)))
     (when subcmd
       (funcall subcmd argv))))
