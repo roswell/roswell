@@ -1,5 +1,5 @@
 (defsystem "roswell"
-  :version "24.10.115"
+  :version "26.2.116"
   :author "SANO Masatoshi"
   :license "MIT"
   :depends-on ("simple-date-time" "split-sequence" "plump" "zip")
