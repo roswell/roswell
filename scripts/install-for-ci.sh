@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-ROSWELL_RELEASE_VERSION=24.10.115
+ROSWELL_RELEASE_VERSION=26.02.116
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
@@ -33,10 +33,16 @@ log () {
 
 fetch () {
     echo "Downloading $1..."
-    if curl --no-progress-bar --retry 10 -o $2 -L $1; then
-        return 0;
+    if curl --no-progress-bar --retry 10 --connect-timeout 30 \
+            --max-time 300 -o "$2" -L "$1" 2>&1; then
+        echo "✓ Successfully downloaded $1"
+        return 0
     else
-        echo "Failed to download $1."
+        code=$?  # capture curl's exit code immediately
+        echo "✗ Failed to download $1"
+        echo "  URL: $1"
+        echo "  Destination: $2" 
+        echo "  Curl exit code: $code"
         exit 1
     fi
 }

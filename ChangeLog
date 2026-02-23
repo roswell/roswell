@@ -1,3 +1,14 @@
+roswell (26.02.116-1) unstable; urgency=low
+
+  * Fix: failure to load djula on sbcl 2.5.11 environment.
+  * Fix: declaration-definition disagreement in src/cmd-run.h. (reported by ItsMeForLua and fixed by Trichiurus-lepturus)
+  * Fix: support sbcl lisp-implementation-version returning '2.4.10.roswell'.
+  * Change: Allegro CL upgraded to release 11.0express. (by Xiaming Chen)
+  * Change: ros command return 1 when script file not found.
+  * Change: ros fmt rewritten to use cl-indentify.
+
+ -- SANO,Masatoshi <snmsts@gmail.com>  Tue, 24 Feb 2026 06:39:51 +0900
+
 roswell (24.10.115-1) unstable; urgency=low
 
   * New: tested on darwin/ppc environment.

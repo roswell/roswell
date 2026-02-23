@@ -23,12 +23,18 @@ char* uname_m(void) {
     return q("x86-64");
   if(carch && strcmp(carch,"i686")==0)
     return q("x86");
+  if(carch && strcmp(carch,"aarch64")==0)
+    return q("arm64");
   char* msystem=getenv("MSYSTEM");
   if(msystem && strcmp(msystem,"MINGW64")==0)
     return q("x86-64");
   if(msystem && strcmp(msystem,"MINGW32")==0)
     return q("x86");
-#if defined(_WIN64)
+  if(msystem && strcmp(msystem,"CLANGARM64")==0)
+    return q("arm64");
+#if defined(__aarch64__)
+  return q("arm64");
+#elif defined(_WIN64)
   return q("x86-64");
 #elif defined(_WIN32)
   BOOL isWow64 = FALSE;

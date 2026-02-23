@@ -54,7 +54,7 @@
 
 (export
  (defvar *allegro-agreement-uri*
-   '(#+darwin ("11.0bexpress" . "https://franz.com/ftp/pub/legal/ACL-Express-20170301.pdf")
+   '(#+darwin ("11.0express" . "https://franz.com/ftp/pub/legal/ACL-Express-20170301.pdf")
      ("10.1express" . #1="https://franz.com/ftp/pub/legal/ACL-Express-20170301.pdf")
      ("100express"  . #1#)
      ("101b"        . "http://franz.com/products/licensing/FSLA10.1.beta.pdf"))))

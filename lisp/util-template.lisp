@@ -1,7 +1,7 @@
 #+ros.init
 (roswell:include '("util" "system") "util-template")
 #+quicklisp
-(ql:quickload '("uiop" "djula") :silent t)
+(ignore-errors (ql:quickload '("uiop" "djula") :silent t))
 (defpackage :roswell.util.template
   (:use :cl)
   (:export
@@ -113,7 +113,8 @@
                  :name (format nil "roswell.init.~A" template-name)))
 
 (defun apply-djula (template-string stream params)
-  (apply 'djula::render-template* (djula::compile-string template-string) stream
+  (apply (read-from-string "djula::render-template*")
+         (read-call "djula::compile-string" template-string) stream
          `(,@params
            :author ,(author)
            :email ,(email)

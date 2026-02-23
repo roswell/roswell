@@ -12,7 +12,7 @@ jobs:
       matrix:
         image: [musl64]
         variant: ['', '-musl', '-glibc2.31']
-        target: ['x86-64', 'arm64', 'riscv64']
+        target: ['x86_64', 'arm64', 'riscv64']
         include:
           # set default docker platform and image suffix.
           - {docker-platform: linux/amd64  ,docker-image-suffix: '', makeopts: musl }
