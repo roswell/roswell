@@ -208,8 +208,6 @@ install_sbcl_bin () {
 install_lisp_dependency () {
     case "$USE_LISP" in
         alisp|allegro)
-	      apt_unless_installed libc6-i386
-          apt_unless_installed gcc-multilib
           USE_LISP=allegro
           ;;
         cmu|cmucl|cmu-bin)
