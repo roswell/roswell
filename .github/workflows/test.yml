@@ -21,7 +21,7 @@ jobs:
          - ecl
          - clisp
          - ccl-bin
-         - sbcl/1.4.0
+         - sbcl/2.4.0
          - ccl32
         experimental: [false]
         exclude:

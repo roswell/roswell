@@ -227,6 +227,9 @@ install_lisp_dependency () {
           apt_unless_installed gcc-multilib
           ros config set ccl.bit 32
           ;;
+        sbcl/*)
+          apt_unless_installed libzstd-dev
+          ;;
         # 'sbcl-bin' is the default
         "")
           USE_LISP=sbcl-bin
