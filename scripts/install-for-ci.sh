@@ -165,7 +165,7 @@ install_roswell_bin () {
             GNUMAKE=/usr/local/bin/gmake
             apt_unless_installed roswell
         elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
-            apt_unless_installed roswell
+            brew upgrade roswell 2>/dev/null || brew install roswell
         fi
     fi
 }

@@ -24,6 +24,13 @@ jobs:
          - sbcl/1.4.0
          - ccl32
         experimental: [false]
+        exclude:
+          - lisp: ccl-bin
+            os: macos-latest
+          - lisp: ccl32
+            os: macos-latest
+          - lisp: cmu-bin/2019-06
+            os: macos-latest
         include:
           - lisp: mkcl
             os: macos-latest
@@ -64,5 +71,5 @@ jobs:
           ros version=t run
           ros install prove
           run-prove roswell-test.asd 2>&1
-          ros -q run && [`ros -q run 2>&1` == ""]
+          ros -q run && [ "$(ros -q run 2>&1)" = "" ]
           ros config
