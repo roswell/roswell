@@ -226,7 +226,11 @@ install_lisp_dependency () {
           ros config set ccl.bit 32
           ;;
         sbcl/*)
-          apt_unless_installed libzstd-dev
+          if [ "$(uname)" = "Darwin" ]; then
+              brew install zstd 2>/dev/null || true
+          else
+              apt_unless_installed libzstd-dev
+          fi
           ;;
         # 'sbcl-bin' is the default
         "")
