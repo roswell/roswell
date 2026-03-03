@@ -160,7 +160,8 @@ have the latest asdf, and this file has a workaround for this.
                    (ext:run-shell-command (format nil "~{~A~^ ~}" args))))))
 
 (defun exec (args)
-  #+(and unix sbcl)
+  #+(and unix sbcl
+         (not haiku))
   (execvp (first args) args)
   #+(and unix ccl)
   (ignore-errors
