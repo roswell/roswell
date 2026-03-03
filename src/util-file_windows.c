@@ -1,4 +1,6 @@
 #include "util.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 #ifdef HAVE_WINDOWS_H
 
@@ -29,5 +31,15 @@ long file_mtime(char* path) {
 
 int file_newer_p(char * a,char* b) {
   return 0;
+}
+
+int file_write_data(char* path, char* data, size_t size) {
+  FILE* file = fopen(path, "wb");
+  if (file == NULL) {
+    return -1;
+  }
+  size_t out = fwrite(data, sizeof(char), size, file);
+  fclose(file);
+  return out!=size?-1:0;
 }
 #endif
