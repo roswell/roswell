@@ -175,8 +175,8 @@ have the latest asdf, and this file has a workaround for this.
 
   (cond
     (is-quicklisp-already-available
-     (unless (equal (opt "quicklisp")
-                    (namestring (symbol-value (read-from-string "ql:*quicklisp-home*"))))
+     (unless (equal (ignore-errors (truename (pathname (opt "quicklisp"))))
+                    (ignore-errors (truename (symbol-value (read-from-string "ql:*quicklisp-home*")))))
        (setf *local-project-directories*
              (copy-list
               (symbol-value (read-from-string "ql:*local-project-directories*")))))
