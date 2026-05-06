@@ -26,6 +26,8 @@ struct run_impl_t impls_to_run[]={
   {"lispworks",&cmd_run_lispworks},
   {"mkcl",&cmd_run_mkcl},
   {"npt",&cmd_run_npt},
+  {"dotcl",&cmd_run_dotcl},
+  {"dotcl-bin",&cmd_run_dotcl},
 };
 
 struct proc_opt run;

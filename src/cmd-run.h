@@ -24,6 +24,7 @@ extern char** cmd_run_acl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_lispworks(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_mkcl(int argc,char** argv,struct sub_command* cmd);
 extern char** cmd_run_npt(int argc,char** argv,struct sub_command* cmd);
+extern char** cmd_run_dotcl(int argc,char** argv,struct sub_command* cmd);
 extern struct proc_opt* register_runtime_options(struct proc_opt* cmd);
 int setup(char* target,char* env,char* impl);
 #define SETUP_SYSTEM(sys,msg) {\
