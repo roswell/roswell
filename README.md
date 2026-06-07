@@ -75,7 +75,7 @@ Use "ros help [topic]" for more information about the topic.
 
 ### Managing/Installing Several Lisp Installations
 
-    $ ros install               # displays a list of all installable implementations
+    $ ros list versions         # displays a list of all installable implementations
     
     $ ros install sbcl-bin      # default sbcl
     $ ros install sbcl          # The newest released version of sbcl
