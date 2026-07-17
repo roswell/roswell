@@ -26,10 +26,17 @@ exec ros -Q -m roswell -N roswell -- $0 "$@"
        ;; update systems
        (dolist (alias argv)
          (loop
-            with path = (ignore-errors
-                          (make-pathname
-                           :type nil :name nil
-                           :defaults (asdf:system-source-file (asdf:find-system alias))))
+            with path = (or
+                         (and (find #\/ alias)
+                              (let ((dir (merge-pathnames
+                                          (format nil "local-projects/~A/" alias)
+                                          (roswell.util:homedir))))
+                                (when (probe-file (merge-pathnames ".git/" dir))
+                                  dir)))
+                         (ignore-errors
+                           (make-pathname
+                            :type nil :name nil
+                            :defaults (asdf:system-source-file (asdf:find-system alias)))))
             for f in *update-functions*
             for r = (and path (funcall f path))
             when r do (roswell:roswell `("install" ,alias))
