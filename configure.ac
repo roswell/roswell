@@ -142,6 +142,24 @@ AC_ARG_ENABLE([html_generation],
    esac],[])
 AM_CONDITIONAL(HTML_GENERATE,[test x$html_generate = x"true"])
 
+AC_ARG_ENABLE([standalone_executable],
+  [AS_HELP_STRING([--enable-standalone-executable],[generate standalone executable if enabled])],
+  [case "${enableval}" in
+    yes) standalone_executable=true ;;
+    no)  standalone_executable=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-standalone-executable]) ;;
+   esac],[])
+AM_CONDITIONAL(STANDALONE_EXECUTABLE,[test x$standalone_executable = x"true"])
+
+AC_ARG_ENABLE([optimize_executable],
+  [AS_HELP_STRING([--enable-optimize-executable],[optimize executable if enabled])],
+  [case "${enableval}" in
+    yes) optimize_executable=true ;;
+    no)  optimize_executable=false ;;
+    *) AC_MSG_ERROR([bad value ${enableval} for --enable-optimize-executable]) ;;
+   esac],[])
+AM_CONDITIONAL(OPTIMIZE_EXECUTABLE,[test x$optimize_executable = x"true"])
+
 AM_COND_IF([MANUAL_INSTALL],
            [AC_CONFIG_FILES([documents/Makefile])])
 
