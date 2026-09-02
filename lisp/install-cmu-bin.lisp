@@ -21,11 +21,31 @@
   (or (cdr (assoc (uname-m) *cmu-uname-m-alist* :test 'equal))
       (uname-m)))
 
+(defun cmu-bin-directory-uri (version)
+  (format nil "~@{~A~}" (cmu-bin-uri) (if (find #\- version) "snapshots/" "release/")
+          (substitute #\/ #\- version) "/"))
+
+(defun cmu-bin-archive-name (version extra)
+  (format nil "~@{~A~}" "cmucl-" version "-" (cmu-uname-m) "-" (uname) (if extra ".extra" "")))
+
+(defun cmu-bin-archive-type (version)
+  "CMUCL was published as .tar.bz2 up to 21e and as .tar.xz from 21f on,
+so ask the download directory which one it has for VERSION."
+  (let ((file (merge-pathnames (format nil "tmp/cmu-bin-~A.html" version) (homedir)))
+        (name (cmu-bin-archive-name version nil)))
+    (or (ignore-errors
+         (download (cmu-bin-directory-uri version) file :interval (* 60 60))
+         (loop for link in (get-elements-by-tag-name (plump:parse file) "a")
+               for href = (plump:get-attribute link "href")
+               thereis (and href
+                            (find-if (lambda (type)
+                                       (equal href (format nil "~A~A" name type)))
+                                     '(".tar.xz" ".tar.bz2")))))
+        ".tar.bz2")))
+
 (defun cmu-bin-archive-uri (version extra)
-  (let ((uname (uname))
-        (cmu-uname-m (cmu-uname-m)))
-    (format nil "~@{~A~}" (cmu-bin-uri) (if (find #\- version) "snapshots/" "release/")
-            (substitute #\/ #\- version) "/cmucl-" version "-" cmu-uname-m "-" uname (if extra ".extra" "") ".tar.bz2")))
+  (format nil "~@{~A~}" (cmu-bin-directory-uri version)
+          (cmu-bin-archive-name version extra) (cmu-bin-archive-type version)))
 
 (defun cmu-bin-argv-parse (argv)
   (format *error-output* "~&Installing cmu-bin/~A...~%" (getf argv :version))
