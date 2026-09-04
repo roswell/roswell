@@ -1,3 +1,4 @@
+;; -*- lexical-binding: nil; -*-
 (defun roswell-configdir ()
   (substring (shell-command-to-string "ros roswell-internal-use version confdir") 0 -1))
 
