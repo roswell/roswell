@@ -45,6 +45,8 @@ have the latest asdf, and this file has a workaround for this.
 (defun getenv (x)
   #+abcl(extensions:getenv x)
   #+ccl(ccl:getenv x)
+  #+cl-amiga(ext:getenv x)
+  #+dotcl(dotcl:getenv x)
   #+clasp(ext:getenv x)
   #+clisp(ext:getenv x)
   #+cmucl
@@ -57,7 +59,7 @@ have the latest asdf, and this file has a workaround for this.
   #+sbcl(sb-posix:getenv x)
   #+allegro(sys:getenv x)
   #+lispworks(hcl:getenv x)
-  #-(or abcl ecl ccl clisp sbcl cmucl allegro clasp lispworks mkcl)
+  #-(or abcl ecl ccl clisp sbcl cmucl allegro clasp lispworks mkcl cl-amiga dotcl)
   (when (find :asdf *features*)
     (funcall (read-from-string "asdf::getenv") x)))
 
@@ -133,6 +135,8 @@ have the latest asdf, and this file has a workaround for this.
     #+clasp (core:quit ret)
     #+clisp (ext:exit ret)
     #+ccl (ccl:quit ret)
+    #+cl-amiga (cl-user::quit ret)
+    #+dotcl (dotcl:quit ret)
     #+mkcl (mkcl:quit :exit-code ret)
     #+cmucl (progn (finish-output) (finish-output *error-output*) (unix:unix-exit ret))
     #+lispworks (lw:quit :status ret)
@@ -160,7 +164,8 @@ have the latest asdf, and this file has a workaround for this.
                    (ext:run-shell-command (format nil "~{~A~^ ~}" args))))))
 
 (defun exec (args)
-  #+(and unix sbcl)
+  #+(and unix sbcl
+         (not haiku))
   (execvp (first args) args)
   #+(and unix ccl)
   (ignore-errors
@@ -174,8 +179,8 @@ have the latest asdf, and this file has a workaround for this.
 
   (cond
     (is-quicklisp-already-available
-     (unless (equal (opt "quicklisp")
-                    (namestring (symbol-value (read-from-string "ql:*quicklisp-home*"))))
+     (unless (equal (ignore-errors (truename (pathname (opt "quicklisp"))))
+                    (ignore-errors (truename (symbol-value (read-from-string "ql:*quicklisp-home*")))))
        (setf *local-project-directories*
              (copy-list
               (symbol-value (read-from-string "ql:*local-project-directories*")))))
@@ -268,6 +273,7 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
 (defun asdf (&key no-download)
   (setf *downloaded-asdf-loaded*
         (or *downloaded-asdf-loaded*
+            #+dotcl t
             (let* ((version-installed (opt "asdf.version" :reload t))
                    (version (or version-installed
                                 (unless no-download

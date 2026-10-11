@@ -124,6 +124,29 @@
   (loop for file in (directory (merge-pathnames "dists/*/distinfo.txt" (roswell.util:homedir)))
      collect (ql-dist::make-dist-from-file file 'roswell-dist)))
 
+#+dotcl
+(progn
+  (defmethod ql-impl-util::%directory-entries (implementation directory)
+    (directory (merge-pathnames ql-impl-util::*wild-entry* directory)))
+  (defclass dotcl-dist (ql-dist:dist)
+    ())
+  (defmethod ql-dist:enabledp ((dist dotcl-dist))
+    t)
+  (defmethod ql-dist:preference ((dist dotcl-dist))
+    most-positive-fixnum)
+  (defun dotcl-dist-directory ()
+    (merge-pathnames "impls/ALL/ALL/dotcl/dists/dotcl/" (roswell.util:homedir)))
+  (defun dotcl-dist-enumeration-function ()
+    (let ((file (merge-pathnames "distinfo.txt" (dotcl-dist-directory))))
+      (when (probe-file file)
+        (let ((dist (ql-dist::make-dist-from-file file :class 'dotcl-dist)))
+          (setf (ql-dist:base-directory dist) (dotcl-dist-directory))
+          (list dist)))))
+  (let ((file (merge-pathnames "distinfo.txt" (dotcl-dist-directory))))
+    (unless (probe-file file)
+      (ignore-errors
+       (ql-http:fetch "https://dotcl.github.io/dist/dotcl.txt" (ensure-directories-exist file) :quietly t)))))
+
 (in-package #:ql-dist)
 (defvar *install-use-roswell* t)
 (let ((*error-output* (make-broadcast-stream)))

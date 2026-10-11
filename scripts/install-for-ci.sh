@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-ROSWELL_RELEASE_VERSION=26.02.116
+ROSWELL_RELEASE_VERSION=26.10.117
 ROSWELL_TARBALL_PATH=$HOME/roswell.tar.gz
 ROSWELL_DIR=$HOME/.roswell
 ROSWELL_REPO=${ROSWELL_REPO:-https://github.com/roswell/roswell}
@@ -165,7 +165,7 @@ install_roswell_bin () {
             GNUMAKE=/usr/local/bin/gmake
             apt_unless_installed roswell
         elif [ `uname` = "Darwin" ] && [ $ROSWELL_BRANCH = release ]; then
-            apt_unless_installed roswell
+            brew upgrade roswell 2>/dev/null || brew install roswell
         fi
     fi
 }
@@ -174,7 +174,11 @@ install_roswell_src () {
     if ! which ros >/dev/null; then
         fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
         extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
-        apt_unless_installed libcurl4-openssl-dev
+        if [ `uname` = "Darwin" ]; then
+            brew install autoconf automake
+        else
+            apt_unless_installed libcurl4-openssl-dev
+        fi
         cd $ROSWELL_DIR
         sh bootstrap
         mkdir -p ~/.roswell
@@ -208,8 +212,6 @@ install_sbcl_bin () {
 install_lisp_dependency () {
     case "$USE_LISP" in
         alisp|allegro)
-	      apt_unless_installed libc6-i386
-          apt_unless_installed gcc-multilib
           USE_LISP=allegro
           ;;
         cmu|cmucl|cmu-bin)
@@ -226,6 +228,13 @@ install_lisp_dependency () {
           apt_unless_installed libc6-i386
           apt_unless_installed gcc-multilib
           ros config set ccl.bit 32
+          ;;
+        sbcl/*)
+          if [ "$(uname)" = "Darwin" ]; then
+              brew install zstd 2>/dev/null || true
+          else
+              apt_unless_installed libzstd-dev
+          fi
           ;;
         # 'sbcl-bin' is the default
         "")

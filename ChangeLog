@@ -1,3 +1,18 @@
+roswell (26.10.117-1) unstable; urgency=low
+
+  * New: support dotcl (dotcl-bin).
+  * New: support cl-amiga (clamiga).
+  * Fix: 'ros install sbcl' failed to detect the latest version.
+  * Fix: ros dump with --destroy-packages-sbcl. (#608 reported by Alexander Artemenko)
+  * Fix: ros update for github installed system named owner/repo. (#578)
+  * Fix: ros script installation directory on windows.
+  * Fix: source build on windows arm64 msys2.
+  * Fix: source build on macOS in install-for-ci.sh.
+  * Fix: install-cmu-bin archive type detection. (by Luís Oliveira)
+  * Fix: add lexical binding cookie to lisp/helper.el. (by madosuki)
+
+ -- SANO,Masatoshi <snmsts@gmail.com>  Mon, 12 Oct 2026 00:18:23 +0900
+
 roswell (26.02.116-1) unstable; urgency=low
 
   * Fix: failure to load djula on sbcl 2.5.11 environment.

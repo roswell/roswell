@@ -32,6 +32,7 @@
   #+ecl(ext:setenv name value)
   #+lispworks (hcl:setenv name name value)
   #+mkcl(mkcl:setenv name value)
+  #+dotcl(dotcl:setenv name value)
   value)
 
 (defun unsetenv (name)
@@ -43,6 +44,7 @@
            (when f (funcall f name)))
   #+lispworks(hcl:setenv name nil)
   #+mkcl(mkcl:setenv name nil)
+  #+dotcl(dotcl:unsetenv name)
   nil)
 
 (defun read-call (func &rest params)
@@ -189,7 +191,7 @@ Example:
 
 (defun sh ()
   (or #+win32
-      (unless (roswell:getenv "MSYSCON")
+      (unless (or (roswell:getenv "MSYSCON") (roswell:getenv "MSYSTEM"))
         (format nil "~A" (#+sbcl sb-ext:native-namestring #-sbcl namestring
                           (merge-pathnames (format nil "impls/~A/~A/msys2/~A/usr/bin/bash" (uname-m) (uname)
                                                    (config "msys2.version")) (homedir)))))
@@ -291,8 +293,8 @@ ccl-bin      -> (\"ccl-bin\" nil)
                 (and (roswell:opt "32") 32)
                 (and (roswell:opt "64") 64)
                 (cond
-                  ((equal uname-m "x86-64") 64)
-                  ((equal uname-m "x86") 32)))))
+                  ((equal uname-m "x86") 32)
+                  (t 64)))))
     (unless (roswell:getenv "MSYSTEM")
       (setenv "PATH" (format nil "~{~A;~}~A"
                              (mapcar (lambda (x)
@@ -304,8 +306,8 @@ ccl-bin      -> (\"ccl-bin\" nil)
                                      `(,(format nil "mingw~A/bin" bits)
                                        "usr/local/bin"
                                        "usr/bin"))
-                             (roswell:getenv "PATH"))))
-    (setenv "MSYSTEM" (if (= bits 32) "MINGW32" "MINGW64"))
+                             (roswell:getenv "PATH")))
+      (setenv "MSYSTEM" (if (= bits 32) "MINGW32" "MINGW64")))
     (setenv "MSYS2_PATH_TYPE" "inherit")
     (setenv "PATH" (format nil "~A;~A\\.roswell\\bin;~A"
                            (subseq path 0 (1- (length path)))

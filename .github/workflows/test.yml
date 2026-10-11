@@ -21,9 +21,16 @@ jobs:
          - ecl
          - clisp
          - ccl-bin
-         - sbcl/1.4.0
+         - sbcl/2.6.0
          - ccl32
         experimental: [false]
+        exclude:
+          - lisp: ccl-bin
+            os: macos-latest
+          - lisp: ccl32
+            os: macos-latest
+          - lisp: cmu-bin/2019-06
+            os: macos-latest
         include:
           - lisp: mkcl
             os: macos-latest
@@ -43,11 +50,23 @@ jobs:
           - lisp: abcl
             os: ubuntu-latest
             experimental: true
+          - lisp: dotcl-bin
+            os: macos-latest
+            experimental: true
+          - lisp: dotcl-bin
+            os: ubuntu-latest
+            experimental: true
+          - lisp: clamiga
+            os: macos-latest
+            experimental: true
+          - lisp: clamiga
+            os: ubuntu-latest
+            experimental: true
 
     env:
       LISP: ${{ matrix.lisp }}
       ROSWELL_REPO: https://github.com/${{ github.repository }}
-      ROSWELL_BRANCH: ${{ github.head_ref }}
+      ROSWELL_BRANCH: ${{ github.head_ref || (github.event_name == 'workflow_dispatch' && github.ref_name) || '' }}
 
     steps:
       - uses: actions/checkout@v2
@@ -64,5 +83,5 @@ jobs:
           ros version=t run
           ros install prove
           run-prove roswell-test.asd 2>&1
-          ros -q run && [`ros -q run 2>&1` == ""]
+          ros -q run && [ "$(ros -q run 2>/dev/null)" = "" ]
           ros config

@@ -39,7 +39,7 @@
 
 (defun sbcl-get-version ()
   (format *error-output* "Checking version to install....~%")
-  (github-version (sbcl-git-version-uri) "sbcl" (lambda (href) (ignore-errors (subseq href (1+ (position #\- href :from-end t)))))))
+  (github-version (sbcl-git-version-uri) "sbcl" (lambda (href) (let ((pos (search "/sbcl-" href :from-end t))) (and pos (subseq href (+ pos 6)))))))
 
 (defun sbcl-msys (argv)
   (unless (or (roswell:getenv "MSYSCON")

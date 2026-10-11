@@ -86,7 +86,7 @@
 (! "ros list")
 (! "ros list installed")
 (! "ros list dump")
-(! "ros swank install")
+(! "ros install slime")
 (! (format nil "ros help install ~A" (ros:opt "default.lisp")))
 
 #+sbcl
