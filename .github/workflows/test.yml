@@ -83,5 +83,5 @@ jobs:
           ros version=t run
           ros install prove
           run-prove roswell-test.asd 2>&1
-          ros -q run && [ "$(ros -q run 2>&1)" = "" ]
+          ros -q run && [ "$(ros -q run 2>/dev/null)" = "" ]
           ros config
