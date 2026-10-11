@@ -81,7 +81,7 @@
       (roswell:quit 1))
     (install-script
      (merge-pathnames "dotcl" dir)
-     (format nil "exec \"~Aruntime\" \"$@\"" dir))
+     (format nil "exec dotnet \"~Aruntime.dll\" \"$@\"" dir))
     (cons t argv)))
 
 (defun dotcl-bin (type)

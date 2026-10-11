@@ -13,11 +13,16 @@ char** cmd_run_dotcl(int argc,char** argv,struct sub_command* cmd) {
   char* script=get_opt("script",0);
   char* program=get_opt("program",0);
   char* dotcl_version=get_opt("version",0);
+  char* dotnet=which("dotnet");
   LVal ret=0;
 
   s(arch),s(os);
 
-  ret=conss(cat(home,impl_path,DIRSEP,"runtime",EXE_EXTENTION,NULL),ret);
+  if(dotnet[0]) {
+    ret=conss(dotnet,ret);
+    ret=conss(cat(home,impl_path,DIRSEP,"runtime.dll",NULL),ret);
+  }else
+    ret=conss(cat(home,impl_path,DIRSEP,"runtime",EXE_EXTENTION,NULL),ret);
 
   if(dotcl_version) {
     ret=conss(q("--eval"),ret);
