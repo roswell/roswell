@@ -174,7 +174,11 @@ install_roswell_src () {
     if ! which ros >/dev/null; then
         fetch "$ROSWELL_REPO/archive/$ROSWELL_BRANCH.tar.gz" "$ROSWELL_TARBALL_PATH"
         extract -z "$ROSWELL_TARBALL_PATH" "$ROSWELL_DIR"
-        apt_unless_installed libcurl4-openssl-dev
+        if [ `uname` = "Darwin" ]; then
+            brew install autoconf automake
+        else
+            apt_unless_installed libcurl4-openssl-dev
+        fi
         cd $ROSWELL_DIR
         sh bootstrap
         mkdir -p ~/.roswell
