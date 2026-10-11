@@ -28,6 +28,7 @@ struct run_impl_t impls_to_run[]={
   {"npt",&cmd_run_npt},
   {"dotcl",&cmd_run_dotcl},
   {"dotcl-bin",&cmd_run_dotcl},
+  {"clamiga",&cmd_run_clamiga},
 };
 
 struct proc_opt run;

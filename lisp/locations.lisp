@@ -41,6 +41,7 @@
 (defuri slime-git-version-uri"https://github.com/slime/slime/releases.atom")
 (defuri sly-git-version-uri  "https://github.com/joaotavora/sly/releases.atom")
 (defuri npt-git-version-uri "https://github.com/nptcl/npt/releases.atom")
+(defuri clamiga-git-version-uri "https://github.com/mdbergmann/cl-amiga/releases.atom")
 
 (defuri asdf-uri "https://github.com/roswell/asdf/archive/")
 (defuri ecl-uri  "https://github.com/roswell/ecl/archive/")
@@ -48,6 +49,7 @@
 (defuri sbcl-head-uri "https://github.com/roswell/sbcl_head/releases/download/")
 (defuri clisp-head-uri "https://github.com/roswell/clisp_head/releases/download/")
 (defuri npt-uri  "https://github.com/nptcl/npt/archive/")
+(defuri clamiga-uri "https://github.com/mdbergmann/cl-amiga/archive/")
 
 (defuri sbcl-bin-version-uri)
 (defuri sbcl-bin-uri)
