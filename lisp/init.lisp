@@ -273,6 +273,7 @@ As a hacky side effect, files with the same name as PROVIDE is not loaded.
 (defun asdf (&key no-download)
   (setf *downloaded-asdf-loaded*
         (or *downloaded-asdf-loaded*
+            #+dotcl t
             (let* ((version-installed (opt "asdf.version" :reload t))
                    (version (or version-installed
                                 (unless no-download
