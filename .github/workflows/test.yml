@@ -50,11 +50,23 @@ jobs:
           - lisp: abcl
             os: ubuntu-latest
             experimental: true
+          - lisp: dotcl-bin
+            os: macos-latest
+            experimental: true
+          - lisp: dotcl-bin
+            os: ubuntu-latest
+            experimental: true
+          - lisp: clamiga
+            os: macos-latest
+            experimental: true
+          - lisp: clamiga
+            os: ubuntu-latest
+            experimental: true
 
     env:
       LISP: ${{ matrix.lisp }}
       ROSWELL_REPO: https://github.com/${{ github.repository }}
-      ROSWELL_BRANCH: ${{ github.head_ref }}
+      ROSWELL_BRANCH: ${{ github.head_ref || (github.event_name == 'workflow_dispatch' && github.ref_name) || '' }}
 
     steps:
       - uses: actions/checkout@v2
