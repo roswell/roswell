@@ -32,6 +32,7 @@
   #+ecl(ext:setenv name value)
   #+lispworks (hcl:setenv name name value)
   #+mkcl(mkcl:setenv name value)
+  #+dotcl(dotcl:setenv name value)
   value)
 
 (defun unsetenv (name)
@@ -43,6 +44,7 @@
            (when f (funcall f name)))
   #+lispworks(hcl:setenv name nil)
   #+mkcl(mkcl:setenv name nil)
+  #+dotcl(dotcl:unsetenv name)
   nil)
 
 (defun read-call (func &rest params)
