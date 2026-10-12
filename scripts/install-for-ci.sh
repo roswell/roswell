@@ -33,7 +33,7 @@ log () {
 
 fetch () {
     echo "Downloading $1..."
-    if curl --no-progress-bar --retry 10 --connect-timeout 30 \
+    if curl -f --no-progress-bar --retry 10 --connect-timeout 30 \
             --max-time 300 -o "$2" -L "$1" 2>&1; then
         echo "✓ Successfully downloaded $1"
         return 0
@@ -146,15 +146,15 @@ install_roswell_bin () {
                      pacman -S $MINGW_PACKAGE_PREFIX-roswell
                 fi
             fi
-        elif uname -s |grep Linux >/dev/null && uname -m |grep x86_64 >/dev/null; then
+        elif uname -s |grep Linux >/dev/null; then
             if [ "$ROSWELL_INSTALL_DIR" = "/usr/local" ]; then
                 apt_unless_installed curl
                 apt_unless_installed make
-                FILE=roswell-$ROSWELL_RELEASE_VERSION-linux-`uname -m`
+                FILE=roswell-$ROSWELL_RELEASE_VERSION-linux-`uname -m | sed s/aarch64/arm64/`
                 if [ $ROSWELL_BRANCH = release ]; then
-                    fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2
+                    (fetch "https://github.com/roswell/roswell/releases/download/v$ROSWELL_RELEASE_VERSION/$FILE.tar.bz2" /tmp/$FILE.tar.bz2) || true
                 fi
-                if [ -f /tmp/$FILE.tar.bz2 ]; then
+                if [ -s /tmp/$FILE.tar.bz2 ]; then
                     extract -j /tmp/$FILE.tar.bz2 /tmp/roswell;$SUDO make -C /tmp/roswell install
                     rm -rf /tmp/$FILE.tar.bz2
                     rm -rf /tmp/roswell
