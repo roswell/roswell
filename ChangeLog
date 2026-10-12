@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO,Masatoshi <snmsts@gmail.com>  Mon, 12 Oct 2026 06:10:29 +0000
+
 roswell (26.10.117-1) unstable; urgency=low
 
   * New: support dotcl (dotcl-bin).
