@@ -72,6 +72,23 @@ static size_t header_callback(char *buffer, size_t size,size_t nitems, int *opt)
  * 7 rename failure
  */
 #ifndef HAVE_WINDOWS_H
+static void set_cainfo (CURL *curl) {
+#ifdef __linux__
+  char* files[]={"/etc/ssl/certs/ca-certificates.crt",
+                 "/etc/pki/tls/certs/ca-bundle.crt",
+                 "/etc/ssl/ca-bundle.pem",
+                 "/etc/pki/tls/cacert.pem",
+                 "/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem",
+                 "/etc/ssl/cert.pem",NULL};
+  int i;
+  for(i=0;files[i];++i)
+    if(file_exist_p(files[i])) {
+      curl_easy_setopt(curl, CURLOPT_CAINFO, files[i]);
+      break;
+    }
+#endif
+}
+
 int download_simple (char* uri,char* path,int opt) {
   FILE *bodyfile;
   char* path_partial=cat(path,".partial",NULL);
@@ -123,6 +140,7 @@ int download_simple (char* uri,char* path,int opt) {
     curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_data);
     curl_easy_setopt(curl, CURLOPT_HEADERFUNCTION, header_callback);
     curl_easy_setopt(curl, CURLOPT_WRITEDATA,bodyfile);
+    set_cainfo(curl);
     if((verbose & 2) != 0)
       curl_easy_setopt(curl, CURLOPT_VERBOSE, 1L);
     if(ignoressl) {
@@ -156,6 +174,7 @@ int download_head (char* uri,int opt) {
   curl_easy_setopt(curl, CURLOPT_USERAGENT, PACKAGE_STRING);
   curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
   curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+  set_cainfo(curl);
   res = curl_easy_perform(curl);
   long http_code = 0;
   curl_easy_getinfo (curl, CURLINFO_RESPONSE_CODE, &http_code);
