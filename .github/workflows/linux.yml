@@ -18,6 +18,7 @@ jobs:
           - {docker-platform: linux/amd64  ,docker-image-suffix: '', makeopts: musl }
           - {target: arm64   ,docker-platform: linux/arm64   ,docker-image-suffix: 'aarch64' }
           - {target: riscv64 ,docker-platform: linux/riscv64 ,docker-image-suffix: 'riscv64' }
+          - {image: musl-loongarch64, variant: '', target: loongarch64, makeopts: musl, docker-platform: linux/loong64, docker-image-suffix: ''}
           - {image: deb,    makeopts: deb,  target: x86-64 ,docker-platform: linux/amd64}
           - {image: pandoc, makeopts: docs, target: x86-64 ,docker-platform: linux/amd64}
 
@@ -28,7 +29,7 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v3
         with:
-          image: tonistiigi/binfmt:qemu-v8.1.5
+          image: tonistiigi/binfmt:qemu-v10.2.3
       - name: setenv
         run: |
           echo "$HOME/.roswell/bin" >> $GITHUB_PATH

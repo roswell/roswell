@@ -1,3 +1,12 @@
+roswell (26.10.118-1) unstable; urgency=low
+
+  * New: linux loongarch64 binary.
+  * Fix: https download with static linked binary on distributions other than the one it was built on. (search CA bundle on linux)
+  * Change: install-for-ci.sh uses release binary on any linux arch and falls back to source build.
+  * Change: release tag carries its own version in install-for-ci.sh.
+
+ -- SANO,Masatoshi <snmsts@gmail.com>  Mon, 12 Oct 2026 15:10:39 +0900
+
 roswell (26.10.117-1) unstable; urgency=low
 
   * New: support dotcl (dotcl-bin).
