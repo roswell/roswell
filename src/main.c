@@ -1,4 +1,5 @@
 #include "opt.h"
+#include "gend.h"
 
 char** argv_orig;
 int argc_orig;
@@ -13,6 +14,10 @@ int main(int argc,char **argv) {
   char* path=s_cat(configdir(),q("config"),NULL);
   argv_orig=argv;
   argc_orig=argc;
+
+#ifdef STANDALONE_EXECUTABLE
+  init_standalone_dir();
+#endif
 
   lispdir();
   register_top(&top);
