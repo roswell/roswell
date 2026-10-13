@@ -66,7 +66,7 @@ LISPS = helper.el \
 	delete-env.lisp \
 	\
 	util-dump.lisp \
-	dump-ccl.lisp dump-clisp.lisp \
+	dump-ccl.lisp dump-clasp.lisp dump-clisp.lisp \
 	dump-cmucl.lisp dump-ecl.lisp dump-sbcl.lisp \
 	\
 	help-install.lisp help-options.lisp help-run.lisp \
