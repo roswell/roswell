@@ -18,7 +18,7 @@
 (defun clasp-bin-download (argv)
   (let* ((uname (uname))
          (version (getf argv :version))
-         (name (format nil "~@{~A~}" "clasp-" version "-x86-64-" uname)))
+         (name (format nil "~@{~A~}" "clasp-" version "-" (uname-m) "-" uname)))
     (set-opt "as" version)
     (set-opt "download.uri" (or (opt "download.uri")
                                 (format nil "~@{~A~}" (clasp-bin-uri)
@@ -39,7 +39,7 @@
          (uiop/filesystem:delete-directory-tree
           path :validate t))
     (ql-impl-util:rename-directory
-     (merge-pathnames (format nil "~@{~A~}" "clasp-" version "-x86-64-" uname "/") impls)
+     (merge-pathnames (format nil "~@{~A~}" "clasp-" version "-" (uname-m) "-" uname "/") impls)
      (merge-pathnames (opt "as") impls)))
   (cons t argv))
 
