@@ -62,6 +62,9 @@ jobs:
           - lisp: clamiga
             os: ubuntu-latest
             experimental: true
+          - lisp: clasp-bin
+            os: ubuntu-latest
+            experimental: true
 
     env:
       LISP: ${{ matrix.lisp }}
