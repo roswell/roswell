@@ -18,7 +18,7 @@ jobs:
           - {docker-platform: linux/amd64  ,docker-image-suffix: '', makeopts: musl }
           - {target: arm64   ,docker-platform: linux/arm64   ,docker-image-suffix: 'aarch64' }
           - {target: riscv64 ,docker-platform: linux/riscv64 ,docker-image-suffix: 'riscv64' }
-          - {image: musl-loongarch64, variant: '', target: loongarch64, makeopts: musl, docker-platform: linux/loong64, docker-image-suffix: ''}
+          - {image: musl64, makeopts: musl, target: loongarch64 ,docker-platform: linux/loong64 ,docker-image-suffix: 'loongarch64', docker-build-options: '--build-arg BASE=ghcr.io/loong64/alpine:3.21'}
           - {image: deb,    makeopts: deb,  target: x86-64 ,docker-platform: linux/amd64}
           - {image: pandoc, makeopts: docs, target: x86-64 ,docker-platform: linux/amd64}
 
