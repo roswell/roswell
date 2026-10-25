@@ -1,3 +1,9 @@
+roswell (master-changelog-which-not-yet-released-1) unstable; urgency=low
+
+  *
+
+ -- SANO,Masatoshi <snmsts@gmail.com>  Sun, 25 Oct 2026 15:49:15 +0000
+
 roswell (26.10.118-1) unstable; urgency=low
 
   * New: linux loongarch64 binary.
