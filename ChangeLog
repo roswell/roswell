@@ -1,3 +1,14 @@
+roswell (26.10.119-1) unstable; urgency=low
+
+  * New: ros dump output for clasp.
+  * Fix: clasp-bin for clasp 3.0.1.
+  * Fix: unsetenv on clasp.
+  * Fix: segfault on empty config value.
+  * Fix: deleting the impl in use.
+  * Change: linux static binaries are built on alpine 3.21 with libcurl 8.23.0 built without brotli/zstd/nghttp2/idn2/psl/zlib.
+
+ -- SANO,Masatoshi <snmsts@gmail.com>  Mon, 26 Oct 2026 00:49:28 +0900
+
 roswell (26.10.118-1) unstable; urgency=low
 
   * New: linux loongarch64 binary.

@@ -29,5 +29,5 @@
                  (format t "~&~A was deleted successfully.~%" impl-name)
                  (when (equal impl-name config)
                    (format t "~&clear config ~S~%" verstring)
-                   (setf (config verstring) "")))
+                   (setf (config verstring) nil)))
                 (t (format *error-output* "~&~A is not installed.~%" impl-name)))))))

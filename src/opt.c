@@ -60,6 +60,8 @@ struct opts* load_opts(const char* path) {
         last=i+1;
       }
     }
+    if(!cur->value)
+      cur->value=q("");
   }
   fclose (fp);
   return opt.next;
