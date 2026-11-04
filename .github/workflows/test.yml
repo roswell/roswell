@@ -22,6 +22,7 @@ jobs:
          - clisp
          - ccl-bin
          - sbcl/2.6.0
+         - sbcl-bin/2.2.7
          - ccl32
         experimental: [false]
         exclude:
@@ -30,6 +31,8 @@ jobs:
           - lisp: ccl32
             os: macos-latest
           - lisp: cmu-bin/2019-06
+            os: macos-latest
+          - lisp: sbcl-bin/2.2.7
             os: macos-latest
         include:
           - lisp: mkcl
