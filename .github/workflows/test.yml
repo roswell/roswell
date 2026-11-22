@@ -26,8 +26,6 @@ jobs:
          - ccl32
         experimental: [false]
         exclude:
-          - lisp: ccl-bin
-            os: macos-latest
           - lisp: ccl32
             os: macos-latest
           - lisp: cmu-bin/2019-06

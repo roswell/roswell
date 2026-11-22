@@ -5,7 +5,8 @@ char* ccl_binname(char* bit) {
   char* _uname_m=uname_m();
   char* _uname=uname_s();
   if(strcmp(_uname,"linux")==0) {
-    if(strcmp(_uname_m,"armhf")!=0)
+    if(strcmp(_uname_m,"armhf")!=0 &&
+       strcmp(_uname_m,"arm64")!=0)
       ret=s_cat(ret,q("l"),NULL);
   }else if(strcmp(_uname,"windows")==0) {
     ret=s_cat(ret,q("w"),NULL);
@@ -19,8 +20,11 @@ char* ccl_binname(char* bit) {
   if(strcmp(_uname_m,"x86-64")==0 ||
      strcmp(_uname_m,"x86")==0) {
     ret=s_cat(ret,q("x86"),NULL);
-  }else if(strcmp(_uname_m,"armhf")==0)
+  }else if(strcmp(_uname_m,"armhf")==0) {
     ret=s_cat(ret,q("arm"),NULL);
+  }else if(strcmp(_uname_m,"arm64")==0) {
+    ret=s_cat(ret,q("arm64"),NULL);
+  }
   ret=s_cat(ret,q("cl"),NULL);
   if((strcmp(_uname_m,"x86-64")==0 &&
       strcmp(bit,"32")!=0) ||
