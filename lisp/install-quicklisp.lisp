@@ -10,7 +10,7 @@
 (defun quicklisp-patch (path)
   (with-open-file (out (ensure-directories-exist (merge-pathnames "local-init/roswell.lisp" path))
                        :direction :output :if-exists :supersede)
-    (format out "(roswell:include \"patch-quicklisp\")~%")))
+    (format out "#+ros.init (roswell:include \"patch-quicklisp\")~%")))
 
 (defun quicklisp-argv-parse (argv)
   (set-opt "download.uri" (format nil "~A~A" (quicklisp-uri) "quicklisp.lisp"))
