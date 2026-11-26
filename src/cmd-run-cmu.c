@@ -17,7 +17,10 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
   char* program=get_opt("program",0);
   char* dynamic_space_size=get_opt("dynamic-space-size",0);
   char* control_stack_size=get_opt("control-stack-size",0);
-  char* cmucllib=cat(home,impl_path,DIRSEP"lib"DIRSEP"cmucl"DIRSEP"lib",NULL);
+  /* CMUCL 21f and later install the library directory under a
+     version-specific subdirectory, lib/cmucl/<version>/lib.  Earlier
+     releases use lib/cmucl/lib. */
+  char* cmucllib=cat(home,impl_path,DIRSEP"lib"DIRSEP"cmucl"DIRSEP,version,DIRSEP"lib"DIRSEP,NULL);
   char* cmu_version=get_opt("version",0);
   char *bin;
   LVal ret=0;
@@ -32,6 +35,10 @@ char** cmd_run_cmu(int argc,char** argv,struct sub_command* cmd) {
     bin=truename(bin);
   }else
     bin=cat(home,impl_path,DIRSEP,"bin",DIRSEP,"lisp",EXE_EXTENTION,NULL);
+  if(!directory_exist_p(cmucllib)) {
+    s(cmucllib);
+    cmucllib=cat(home,impl_path,DIRSEP"lib"DIRSEP"cmucl"DIRSEP"lib"DIRSEP,NULL);
+  }
   setenv("CMUCLLIB",cmucllib,1);
 
   ret=conss(bin,ret);

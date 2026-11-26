@@ -17,6 +17,7 @@ jobs:
         lisp: 
          - alisp
          - cmu-bin/2019-06
+         - cmu-bin/21f
          - sbcl
          - ecl
          - clisp
@@ -29,6 +30,8 @@ jobs:
           - lisp: ccl32
             os: macos-latest
           - lisp: cmu-bin/2019-06
+            os: macos-latest
+          - lisp: cmu-bin/21f
             os: macos-latest
           - lisp: sbcl-bin/2.2.7
             os: macos-latest
